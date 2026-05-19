@@ -14,7 +14,9 @@ data class ResolvedRecipe(
     val ingredients: List<RecipeIngredient>,
     val permission: String? = null,
     val source: RecipeSource = RecipeSource.UNKNOWN,
-    val shapeless: Boolean = false
+    val shapeless: Boolean = false,
+    val displayType: RecipeDisplayType = RecipeDisplayType.CRAFTING,
+    val locked: Boolean = false
 ) {
     val displayItems: List<ItemStack>
         get() = ingredients.map { it.displayItem.clone() }
@@ -24,7 +26,21 @@ enum class RecipeSource {
     ECO,
     BUKKIT,
     VAULTPACK,
+    CUSTOM,
     UNKNOWN
+}
+
+enum class RecipeDisplayType {
+    CRAFTING,
+    SMELTING,
+    SMITHING,
+    STONECUTTER,
+    CRAFTER,
+    BREWING,
+    CARTOGRAPHY,
+    GRINDSTONE,
+    ANVIL,
+    VILLAGER
 }
 
 data class RecipeIngredient(
