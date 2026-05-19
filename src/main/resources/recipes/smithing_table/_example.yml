@@ -1,0 +1,24 @@
+type: smithing_table
+
+# Smithing transform: template + base + addition → output
+template: netherite_upgrade_smithing_template
+base: diamond_sword
+addition: netherite_ingot
+
+output: netherite_sword name:"&5Example Netherite Sword"
+
+ghost: false
+# ghost: true
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 200
+# conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

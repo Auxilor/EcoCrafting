@@ -1,0 +1,23 @@
+type: furnace
+
+input: raw_iron          # eco item lookup — the item placed in the smelting slot
+output: iron_ingot name:"&7Example Iron"
+
+cook-time: 200           # ticks (200 = 10 seconds, vanilla default)
+experience: 0.7          # xp orbs dropped when smelted
+
+ghost: false
+# ghost: true
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 50
+# conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

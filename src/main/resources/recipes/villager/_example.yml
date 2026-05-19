@@ -1,0 +1,22 @@
+type: villager
+
+input1: emerald           # first trade ingredient (required)
+input2: book              # second trade ingredient (optional — omit for single-item trades)
+
+output: enchanted_book name:"&5Villager Enchanted Book"
+
+ghost: false
+# ghost: true — consume trade inputs, fire effects, give no item
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 100
+# conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

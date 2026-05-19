@@ -1,0 +1,16 @@
+type: campfire
+
+input: rabbit
+output: cooked_rabbit name:"&6Campfire Rabbit"
+
+cook-time: 600           # ticks (campfire is slow, vanilla = 600)
+experience: 0.35
+
+ghost: false
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

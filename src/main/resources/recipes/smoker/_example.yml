@@ -1,0 +1,16 @@
+type: smoker
+
+input: potato
+output: baked_potato name:"&ePerfect Baked Potato"
+
+cook-time: 100           # ticks (smoker is 2x faster than furnace for food)
+experience: 0.35
+
+ghost: false
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

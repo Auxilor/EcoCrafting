@@ -1,0 +1,37 @@
+type: crafting_table
+
+# 3x3 grid, left-to-right top-to-bottom. Use eco item lookup format.
+# Empty slots = "" (blank string).
+recipe:
+  - diamond
+  - diamond
+  - diamond
+  - diamond
+  - netherite_ingot
+  - diamond
+  - diamond
+  - diamond
+  - diamond
+
+shapeless: false   # true = any slot order
+symmetry: false    # true = register all rotations/mirrors automatically
+
+output: netherite_sword name:"&6Example Sword"
+
+ghost: false       # true = no item given; triggers libreforge effects instead
+# ghost: true
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 100
+# conditions: []
+
+permission: ""           # leave blank for no permission requirement
+locked-by-default: false # true = recipe hidden until unlocked
+show-when-locked: false  # show recipe in GUI even when locked (with locked-lore)
+locked-lore:
+  - "&cUnlock this recipe to craft it."
+
+visibility-conditions: []  # libreforge conditions — hide recipe from GUI if not met
+crafting-conditions: []    # libreforge conditions — block crafting if not met
+unlock-conditions: []      # auto-unlock on join if these are met

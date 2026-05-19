@@ -1,0 +1,25 @@
+type: crafter
+
+# 3x3 grid like crafting_table but fires in the Crafter block (auto-crafts on redstone).
+recipe:
+  - iron_ingot
+  - iron_ingot
+  - iron_ingot
+  - ""
+  - iron_ingot
+  - ""
+  - ""
+  - iron_ingot
+  - ""
+
+shapeless: false
+
+output: iron_helmet name:"&7Auto-Crafted Helmet"
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []
