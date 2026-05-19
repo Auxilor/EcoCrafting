@@ -1,0 +1,6 @@
+environment:
+  - name: libreforge version
+    value: ${libreforgeVersion}
+
+options:
+  bstats-id: 31426
