@@ -50,6 +50,7 @@ allprojects {
         implementation("org.bstats:bstats-bukkit:3.1.0")
 
         testImplementation(kotlin("test"))
+        testImplementation(kotlin("reflect"))
     }
 
     java {
