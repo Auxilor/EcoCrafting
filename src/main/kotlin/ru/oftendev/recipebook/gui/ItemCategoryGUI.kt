@@ -154,7 +154,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 .build()
         )
             .onLeftClick { event, _, menu ->
-                RecipeGUI(recipeBookPlugin.configYml.getSubsection("craft-gui"), item)
+                RecipeGUI(item)
                     .open(event.whoClicked as Player, menu)
                 if (sound != null) {
                     event.player.playSound(sound)

@@ -20,6 +20,6 @@ class CommandLookup(plugin: EcoPlugin) : Subcommand(plugin, "lookup", "recipeboo
             sender.sendMessage(plugin.langYml.getMessage("no-recipe"))
             return
         }
-        RecipeGUI(recipeBookPlugin.configYml.getSubsection("craft-gui"), item.item).open(sender, null)
+        RecipeGUI(item.item).open(sender, null)
     }
 }
