@@ -4,75 +4,89 @@ import com.willfp.eco.core.items.CustomItem
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.items.provider.ItemProvider
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.persistence.PersistentDataType
 import ru.oftendev.recipebook.RecipeBookPlugin
 import ru.oftendev.recipebook.recipe.IngredientMatcher
 import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.RecipeSource
 import ru.oftendev.recipebook.recipe.ResolvedRecipe
-import java.net.URL
-import java.util.Base64
-import java.util.UUID
 
 /**
  * Optional VaultPack integration.
  *
- * Kept reflection-based so RecipeBook can still boot if VaultPack is absent or updated.
+ * RecipeBook does not compile against or ship VaultPack. VaultPack exposes a
+ * tiny runtime service through Bukkit's ServicesManager, and this adapter uses
+ * reflection to consume that service only when VaultPack is installed.
  */
 object VaultPackIntegration {
+    private const val SERVICE_CLASS_NAME = "com.vaultpack.api.VaultPackRecipeBookService"
+
     private var pluginAvailable = false
-    private var vaultPackPlugin: Any? = null
-    private var backpackTypeManager: Any? = null
+    private var recipeBookService: Any? = null
 
     fun init(plugin: RecipeBookPlugin) {
         pluginAvailable = Bukkit.getPluginManager().isPluginEnabled("VaultPack")
         if (!pluginAvailable) return
 
         runCatching {
-            val pluginClass = Class.forName("com.vaultpack.VaultPackPlugin")
-            vaultPackPlugin = pluginClass.getMethod("getInstance").invoke(null)
-            backpackTypeManager = vaultPackPlugin?.call("getBackpackTypeManager")
-                ?: vaultPackPlugin?.getProperty("backpackTypeManager")
+            val serviceClass = Class.forName(SERVICE_CLASS_NAME)
+            val registration = Bukkit.getServicesManager().getRegistrationUnchecked(serviceClass)
+                ?: error("VaultPack RecipeBook service is not registered")
+            val service = registration.provider
+
+            if (!(service.call("isAvailable") as? Boolean ?: false)) {
+                error("VaultPack RecipeBook service is not ready")
+            }
+
+            recipeBookService = service
             Items.registerItemProvider(VaultPackItemProvider())
-            plugin.logger.info("[RecipeBook] VaultPack integration enabled")
+            plugin.logger.info("[RecipeBook] VaultPack integration enabled through Bukkit service")
         }.onFailure {
             plugin.logger.warning("[RecipeBook] VaultPack integration disabled: ${it.message}")
             pluginAvailable = false
-            vaultPackPlugin = null
-            backpackTypeManager = null
+            recipeBookService = null
         }
     }
 
-    fun isEnabled(): Boolean = pluginAvailable
+    fun isEnabled(): Boolean = pluginAvailable && recipeBookService != null
+
+    fun hasBackpackType(id: String): Boolean {
+        val service = recipeBookService ?: return false
+        return service.call("hasBackpackType", id) as? Boolean ?: false
+    }
+
+    fun isBackpackItem(item: ItemStack, backpackId: String): Boolean {
+        val service = recipeBookService ?: return false
+        return service.call("isBackpackItem", item, backpackId) as? Boolean ?: false
+    }
+
+    fun createBackpackItem(id: String): ItemStack? {
+        val service = recipeBookService ?: return null
+        return (service.call("createBackpackItem", id) as? ItemStack)?.clone()
+    }
 
     fun resolveRecipe(customItem: CustomItem): ResolvedRecipe? {
         if (customItem.key.namespace != "vaultpack") return null
-        val backpackType = getBackpackType(customItem.key.key) ?: return null
-        if (!(backpackType.call("hasRecipe") as? Boolean ?: false)) return null
 
-        val recipeStrings = backpackType.getProperty("recipe") as? List<*> ?: return null
+        val service = recipeBookService ?: return null
+        val backpackId = customItem.key.key
+        if (!(service.call("hasRecipe", backpackId) as? Boolean ?: false)) return null
+
+        val recipeStrings = service.call("getRecipe", backpackId) as? List<*> ?: return null
         if (recipeStrings.size != 9) return null
 
+        val output = createBackpackItem(backpackId) ?: return null
         val ingredients = recipeStrings.map { parseRecipeItem(it?.toString().orEmpty()) }
+
         return ResolvedRecipe(
             key = customItem.key,
-            output = Items.lookup("vaultpack:${customItem.key.key}").item,
+            output = output,
             ingredients = ingredients,
             source = RecipeSource.VAULTPACK
         )
-    }
-
-    fun getBackpackType(id: String): Any? {
-        val manager = backpackTypeManager ?: return null
-        return manager.call("getBackpackType", id)
     }
 
     private fun parseRecipeItem(recipeString: String): RecipeIngredient {
@@ -92,97 +106,27 @@ object VaultPackIntegration {
 
 class VaultPackItemProvider : ItemProvider("vaultpack") {
     override fun provideForKey(key: String): TestableItem? {
-        val backpackType = VaultPackIntegration.getBackpackType(key) ?: return null
-        return VaultPackCustomItem(key, backpackType)
+        if (!VaultPackIntegration.hasBackpackType(key)) return null
+        val item = VaultPackIntegration.createBackpackItem(key) ?: return null
+        return VaultPackCustomItem(key, item)
     }
 }
 
 class VaultPackCustomItem(
     private val backpackId: String,
-    private val backpackType: Any
+    item: ItemStack
 ) : CustomItem(
     NamespacedKey("vaultpack", backpackId),
-    { item -> isVaultPackItem(item, backpackId) },
-    createBackpackItemStack(backpackType, backpackId)
-) {
-    companion object {
-        private fun isVaultPackItem(item: ItemStack, backpackId: String): Boolean {
-            val meta = item.itemMeta ?: return false
-            val key = NamespacedKey("vaultpack", "backpack_type")
-            return meta.persistentDataContainer.get(key, PersistentDataType.STRING) == backpackId
-        }
+    { stack -> VaultPackIntegration.isBackpackItem(stack, backpackId) },
+    item.clone()
+)
 
-        private fun createBackpackItemStack(type: Any, typeId: String): ItemStack {
-            val material = type.getProperty("material") as? Material ?: Material.CHEST
-            val item = ItemStack(material, 1)
-            val meta = item.itemMeta ?: return item
-
-            if (material == Material.PLAYER_HEAD && (type.call("hasTexture") as? Boolean ?: false)) {
-                val texture = type.getProperty("texture") as? String
-                if (texture != null && meta is SkullMeta) {
-                    applyTexture(meta, texture)
-                }
-            }
-
-            val serializer = LegacyComponentSerializer.legacyAmpersand()
-            (type.getProperty("displayName") as? String)?.let { meta.displayName(serializer.deserialize(it)) }
-
-            val defaultTier = type.getProperty("defaultTier")
-            val tierName = defaultTier?.getProperty("displayName")?.toString().orEmpty()
-            val tierSize = defaultTier?.getProperty("size")?.toString().orEmpty()
-            val lore = (type.getProperty("lore") as? List<*>)?.map {
-                serializer.deserialize(
-                    it.toString()
-                        .replace("%tier%", tierName)
-                        .replace("%size%", tierSize)
-                        .replace("%used%", "0")
-                )
-            }
-            if (lore != null) meta.lore(lore)
-
-            val customModelData = type.getProperty("customModelData") as? Int ?: 0
-            if (customModelData > 0) {
-                @Suppress("DEPRECATION")
-                meta.setCustomModelData(customModelData)
-            }
-
-            if (type.call("hasGlow") as? Boolean ?: false) {
-                meta.addEnchant(Enchantment.LURE, 1, true)
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            }
-
-            meta.persistentDataContainer.set(NamespacedKey("vaultpack", "backpack_type"), PersistentDataType.STRING, typeId)
-            item.itemMeta = meta
-            return item
-        }
-
-        private fun applyTexture(skullMeta: SkullMeta, texture: String) {
-            runCatching {
-                val profile = Bukkit.createPlayerProfile(UUID.randomUUID())
-                val textures = profile.textures
-                val decoded = String(Base64.getDecoder().decode(texture))
-                val urlStart = decoded.indexOf("\"url\":\"") + 7
-                val urlEnd = decoded.indexOf("\"", urlStart)
-                if (urlStart > 6 && urlEnd > urlStart) {
-                    textures.skin = URL(decoded.substring(urlStart, urlEnd))
-                    profile.setTextures(textures)
-                    skullMeta.setOwnerProfile(profile)
-                }
-            }
-        }
-    }
+@Suppress("UNCHECKED_CAST")
+private fun org.bukkit.plugin.ServicesManager.getRegistrationUnchecked(serviceClass: Class<*>): org.bukkit.plugin.RegisteredServiceProvider<Any>? {
+    return getRegistration(serviceClass as Class<Any>)
 }
 
 private fun Any.call(name: String, vararg args: Any?): Any? {
     val method = javaClass.methods.firstOrNull { it.name == name && it.parameterCount == args.size } ?: return null
     return method.invoke(this, *args)
-}
-
-private fun Any.getProperty(name: String): Any? {
-    val capitalized = name.replaceFirstChar { it.uppercase() }
-    return call("get$capitalized") ?: runCatching {
-        val field = javaClass.getDeclaredField(name)
-        field.isAccessible = true
-        field.get(this)
-    }.getOrNull()
 }
