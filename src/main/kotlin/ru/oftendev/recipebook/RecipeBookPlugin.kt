@@ -10,6 +10,21 @@ import ru.oftendev.recipebook.category.RecipeCategories
 import ru.oftendev.recipebook.commands.MainCommand
 import ru.oftendev.recipebook.integration.ShopIntegration
 import ru.oftendev.recipebook.integration.VaultPackIntegration
+import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.triggers.Triggers
+import ru.oftendev.recipebook.custom.BrewingOwnerTracker
+import ru.oftendev.recipebook.custom.CustomRecipeListener
+import ru.oftendev.recipebook.custom.CustomRecipeLoader
+import ru.oftendev.recipebook.custom.FurnaceOwnerTracker
+import ru.oftendev.recipebook.custom.RecipeUnlockStore
+import ru.oftendev.recipebook.custom.libreforge.ConditionHasUnlockedRecipe
+import ru.oftendev.recipebook.custom.libreforge.EffectLockRecipe
+import ru.oftendev.recipebook.custom.libreforge.EffectUnlockRecipe
+import ru.oftendev.recipebook.custom.libreforge.TriggerCustomCraft
+import ru.oftendev.recipebook.custom.libreforge.TriggerGhostCraft
+import ru.oftendev.recipebook.custom.libreforge.TriggerRecipeLocked
+import ru.oftendev.recipebook.custom.libreforge.TriggerRecipeUnlocked
 
 lateinit var recipeBookPlugin: RecipeBookPlugin
     private set
@@ -27,12 +42,34 @@ class RecipeBookPlugin : EcoPlugin() {
         VaultPackIntegration.init(this)
         ShopIntegration.init(this)
         RecipeCategories.reload()
+
+        Triggers.register(TriggerGhostCraft)
+        Triggers.register(TriggerCustomCraft)
+        Triggers.register(TriggerRecipeUnlocked)
+        Triggers.register(TriggerRecipeLocked)
+
+        Effects.register(EffectUnlockRecipe)
+        Effects.register(EffectLockRecipe)
+        Conditions.register(ConditionHasUnlockedRecipe)
+
+        eventManager.registerListener(FurnaceOwnerTracker)
+        eventManager.registerListener(BrewingOwnerTracker)
+        eventManager.registerListener(RecipeUnlockStore)
+        eventManager.registerListener(CustomRecipeListener())
+
+        CustomRecipeLoader.load()
+
         setupMetrics()
     }
 
     override fun handleReload() {
         ShopIntegration.init(this)
         RecipeCategories.reload()
+        CustomRecipeLoader.load()
+    }
+
+    override fun handleDisable() {
+        RecipeUnlockStore.saveAll()
     }
 
     override fun loadPluginCommands(): MutableList<PluginCommand> {
