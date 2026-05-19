@@ -10,6 +10,14 @@ softdepend:
   - EcoShop
   - VaultPack
   - libreforge
+permissions:
+  recipebook.admin.create:
+    description: Open the in-game recipe creator GUI
+    default: op
+  recipebook.admin:
+    description: Admin commands (unlock/lock recipes)
+    default: op
+
 commands:
   recipebook:
     description: Base Command
