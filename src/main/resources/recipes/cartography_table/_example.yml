@@ -1,3 +1,5 @@
+enabled: true
+
 type: cartography_table
 
 map: map          # item in the map slot (left)

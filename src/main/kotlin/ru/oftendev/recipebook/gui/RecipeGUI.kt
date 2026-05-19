@@ -91,6 +91,19 @@ class RecipeGUI(val stack: ItemStack) {
             )
         }
 
+        config.getSubsectionOrNull("buttons.purchase-ingredients")?.let {
+            menu.addComponent(
+                config.getInt("buttons.purchase-ingredients.row"),
+                config.getInt("buttons.purchase-ingredients.column"),
+                purchaseIngredientsSlot(
+                    player,
+                    recipe,
+                    makeSound(config.getStringOrNull("buttons.purchase-ingredients.success_sound")),
+                    makeSound(config.getStringOrNull("buttons.purchase-ingredients.fail_sound"))
+                )
+            )
+        }
+
         for (slotConfig in config.getSubsections("custom-slots")) {
             menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
         }
@@ -106,6 +119,67 @@ class RecipeGUI(val stack: ItemStack) {
         ).onLeftClick { event, _ ->
             menu.open(event.whoClicked as Player)
             sound?.let { event.player.playSound(it) }
+        }.build()
+    }
+
+    private fun purchaseIngredientsSlot(player: Player, recipe: ResolvedRecipe, successSound: Sound?, failSound: Sound?): Slot {
+        val service = QuickCraftService(player, recipe)
+        val materialCounts = service.getMaterialCounts()
+        val hasAllMaterials = materialCounts.all { it.has >= it.needs }
+        val loreLines = config.getFormattedStrings("buttons.purchase-ingredients.lore").toMutableList()
+        val materialsLoreIndex = loreLines.indexOfFirst { it.contains("%materials%") }
+
+        if (materialsLoreIndex != -1) {
+            loreLines.removeAt(materialsLoreIndex)
+            loreLines.addAll(materialsLoreIndex, materialCounts.map { it.toLoreLine(player) })
+            if (ShopIntegration.isAutoBuyEnabled() && !hasAllMaterials) {
+                loreLines.add("")
+                loreLines.add("&eShift-click &7to buy missing materials")
+            }
+        }
+
+        return Slot.builder(
+            ItemStackBuilder(Items.lookup(config.getString("buttons.purchase-ingredients.item")))
+                .addLoreLines(loreLines)
+                .build()
+        ).onLeftClick { event, _ ->
+            val target = event.whoClicked as Player
+            if (hasAllMaterials) {
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-sufficient"))
+                successSound?.let { event.player.playSound(it) }
+                return@onLeftClick
+            }
+            if (!ShopIntegration.isEnabled()) {
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.shop-disabled"))
+                failSound?.let { event.player.playSound(it) }
+                return@onLeftClick
+            }
+            val purchase = ShopIntegration.purchaseMaterials(target, QuickCraftService(target, recipe).getMissingMaterials())
+            if (purchase.success) {
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-purchased")
+                    .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
+                successSound?.let { event.player.playSound(it) }
+            } else {
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-failed")
+                    .replace("%reason%", purchase.message))
+                failSound?.let { event.player.playSound(it) }
+            }
+        }.onShiftLeftClick { event, _ ->
+            val target = event.whoClicked as Player
+            if (!ShopIntegration.canAutoBuy(true)) {
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.shop-disabled"))
+                return@onShiftLeftClick
+            }
+            val purchase = ShopIntegration.purchaseMaterials(target, QuickCraftService(target, recipe).getMissingMaterials())
+            if (purchase.success) {
+                successSound?.let { event.player.playSound(it) }
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-purchased")
+                    .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
+            } else {
+                failSound?.let { event.player.playSound(it) }
+                target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-failed")
+                    .replace("%reason%", purchase.message))
+            }
         }.build()
     }
 

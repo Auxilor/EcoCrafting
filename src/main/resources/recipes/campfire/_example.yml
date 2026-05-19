@@ -1,3 +1,5 @@
+enabled: true
+
 type: campfire
 
 input: rabbit

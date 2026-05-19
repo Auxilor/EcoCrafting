@@ -1,3 +1,5 @@
+enabled: true
+
 type: crafting_table
 
 # 3x3 grid, left-to-right top-to-bottom. Use eco item lookup format.

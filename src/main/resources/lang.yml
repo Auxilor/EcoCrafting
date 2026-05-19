@@ -13,6 +13,7 @@ messages:
   shop-disabled: "&cEcoShop auto-purchase is disabled."
   shop-unavailable: "&cEcoShop does not sell one or more missing materials."
   shop-cannot-afford: "&cYou can't afford the missing materials."
+  craft-sufficient: "&aYou already have all required materials."
   craft-failed: "&cCrafting failed: %reason%"
   must-specify-category: "&cYou must specify a category!"
   invalid-category: "&cInvalid category!"

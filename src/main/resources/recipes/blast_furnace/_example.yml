@@ -1,3 +1,5 @@
+enabled: true
+
 type: blast_furnace
 
 input: raw_gold

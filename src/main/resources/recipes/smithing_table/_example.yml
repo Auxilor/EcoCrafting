@@ -1,3 +1,5 @@
+enabled: true
+
 type: smithing_table
 
 # Smithing transform: template + base + addition → output

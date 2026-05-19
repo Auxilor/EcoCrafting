@@ -30,6 +30,7 @@ object CustomRecipeLoader {
 
     private fun loadFile(file: File) {
         val config = YamlBaseConfig(file, recipeBookPlugin)
+        if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
         val recipe = when (type) {
             "crafting_table"    -> loadCraftingTable(file.nameWithoutExtension, config)

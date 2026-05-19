@@ -1,3 +1,5 @@
+enabled: true
+
 type: brewing_stand
 
 base: glass_bottle        # item in the bottle slots (can be an existing potion too)

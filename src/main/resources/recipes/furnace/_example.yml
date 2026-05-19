@@ -1,3 +1,5 @@
+enabled: true
+
 type: furnace
 
 input: raw_iron          # eco item lookup — the item placed in the smelting slot
