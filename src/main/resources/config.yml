@@ -50,3 +50,163 @@ craft-gui:
       success_sound: entity.player.levelup
       fail_sound: entity.villager.no
   custom-slots: []
+
+furnace-gui:
+  title: "&8Smelting Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i11111"
+      - "111111o11"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+smithing-gui:
+  title: "&8Smithing Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1t1b1a1o1"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+stonecutter-gui:
+  title: "&8Stonecutter Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i11111"
+      - "111111111"
+      - "1oooooooo"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+brewing-gui:
+  title: "&8Brewing Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i1g111"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+cartography-gui:
+  title: "&8Cartography Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i1a1o1"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+grindstone-gui:
+  title: "&8Grindstone Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i1j1o1"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+anvil-gui:
+  title: "&8Anvil Recipe"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i1m1o1"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+
+villager-gui:
+  title: "&8Villager Trade"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i1j1o1"
+      - "111111111"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click

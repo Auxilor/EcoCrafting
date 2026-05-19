@@ -1,6 +1,5 @@
 package ru.oftendev.recipebook.gui
 
-import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -19,17 +18,31 @@ import ru.oftendev.recipebook.craft.MaterialCount
 import ru.oftendev.recipebook.craft.QuickCraftService
 import ru.oftendev.recipebook.integration.ShopIntegration
 import ru.oftendev.recipebook.makeSound
+import ru.oftendev.recipebook.recipe.RecipeDisplayType
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipe.ResolvedRecipe
 import ru.oftendev.recipebook.recipeBookPlugin
 
-class RecipeGUI(val config: Config, val stack: ItemStack) {
+class RecipeGUI(val stack: ItemStack) {
     fun open(player: Player, parent: Menu?) {
-        val recipe = RecipeResolver.resolve(stack) ?: run {
+        val recipe = RecipeResolver.resolveForPlayer(stack, player) ?: run {
             player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
             return
         }
         val items = recipe.displayItems
+        val guiSection = when (recipe.displayType) {
+            RecipeDisplayType.CRAFTING     -> "craft-gui"
+            RecipeDisplayType.SMELTING     -> "furnace-gui"
+            RecipeDisplayType.SMITHING     -> "smithing-gui"
+            RecipeDisplayType.STONECUTTER  -> "stonecutter-gui"
+            RecipeDisplayType.CRAFTER      -> "craft-gui"
+            RecipeDisplayType.BREWING      -> "brewing-gui"
+            RecipeDisplayType.CARTOGRAPHY  -> "cartography-gui"
+            RecipeDisplayType.GRINDSTONE   -> "grindstone-gui"
+            RecipeDisplayType.ANVIL        -> "anvil-gui"
+            RecipeDisplayType.VILLAGER     -> "villager-gui"
+        }
+        val config = recipeBookPlugin.configYml.getSubsection(guiSection)
         val pattern = config.getStrings("mask.pattern")
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title"))
@@ -105,7 +118,7 @@ class RecipeGUI(val config: Config, val stack: ItemStack) {
             val clicked = item.clone().apply { amount = 1 }
             val clickedRecipe = RecipeResolver.resolve(clicked)
             if (recipe && clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
-                RecipeGUI(recipeBookPlugin.configYml.getSubsection("craft-gui"), clicked)
+                RecipeGUI(clicked)
                     .open(event.whoClicked as Player, menu)
             }
             sound?.let { event.player.playSound(it) }
