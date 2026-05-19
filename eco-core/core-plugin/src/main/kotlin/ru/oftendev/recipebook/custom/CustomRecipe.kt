@@ -1,11 +1,11 @@
 package ru.oftendev.recipebook.custom
 
-import com.willfp.libreforge.SimpleHolder
 import com.willfp.libreforge.conditions.ConditionList
+import com.willfp.libreforge.effects.Chain
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.RecipeDisplayType
+import ru.oftendev.recipebook.recipe.RecipeIngredient
 
 enum class SmeltingType {
     FURNACE, BLAST_FURNACE, SMOKER, CAMPFIRE
@@ -14,7 +14,7 @@ enum class SmeltingType {
 data class StonecutterOutput(
     val item: ItemStack,
     val ghost: Boolean,
-    val ghostHolder: SimpleHolder?
+    val ghostChain: Chain?
 )
 
 sealed class CustomRecipe {
@@ -22,7 +22,7 @@ sealed class CustomRecipe {
     abstract val output: ItemStack
     abstract val permission: String?
     abstract val ghost: Boolean
-    abstract val ghostHolder: SimpleHolder?
+    abstract val ghostChain: Chain?
     abstract val visibilityConditions: ConditionList
     abstract val craftingConditions: ConditionList
     abstract val lockedByDefault: Boolean
@@ -39,7 +39,7 @@ sealed class CustomRecipe {
         val symmetry: Boolean,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -59,7 +59,7 @@ sealed class CustomRecipe {
         val experience: Float,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -78,7 +78,7 @@ sealed class CustomRecipe {
         val addition: RecipeIngredient,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -103,7 +103,7 @@ sealed class CustomRecipe {
     ) : CustomRecipe() {
         override val output: ItemStack get() = outputs.first().item
         override val ghost: Boolean get() = outputs.any { it.ghost }
-        override val ghostHolder: SimpleHolder? get() = null
+        override val ghostChain: Chain? get() = null
         override val displayType = RecipeDisplayType.STONECUTTER
     }
 
@@ -117,7 +117,7 @@ sealed class CustomRecipe {
         override val craftingConditions: ConditionList
     ) : CustomRecipe() {
         override val ghost = false
-        override val ghostHolder: SimpleHolder? = null
+        override val ghostChain: Chain? = null
         override val lockedByDefault = false
         override val showWhenLocked = false
         override val lockedLore: List<String> = emptyList()
@@ -132,7 +132,7 @@ sealed class CustomRecipe {
         val ingredient: RecipeIngredient,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -150,7 +150,7 @@ sealed class CustomRecipe {
         val addition: RecipeIngredient,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -168,7 +168,7 @@ sealed class CustomRecipe {
         val item2: RecipeIngredient?,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -188,7 +188,7 @@ sealed class CustomRecipe {
         val repairCost: Int,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,
@@ -206,7 +206,7 @@ sealed class CustomRecipe {
         val input2: RecipeIngredient?,
         override val permission: String?,
         override val ghost: Boolean,
-        override val ghostHolder: SimpleHolder?,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
         override val craftingConditions: ConditionList,
         override val lockedByDefault: Boolean,

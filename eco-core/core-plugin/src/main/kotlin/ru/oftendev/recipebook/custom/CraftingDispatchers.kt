@@ -1,31 +1,23 @@
 package ru.oftendev.recipebook.custom
 
 import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.SimpleProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.custom.libreforge.TriggerCustomCraft
-import ru.oftendev.recipebook.custom.libreforge.TriggerGhostCraft
 import ru.oftendev.recipebook.recipeBookPlugin
 
 fun fireGhostEffects(player: Player, recipe: CustomRecipe, item: ItemStack, amount: Int) {
-    val holder = recipe.ghostHolder ?: return
+    val chain = recipe.ghostChain ?: return
     val data = TriggerData(
         player = player,
         item = item,
-        value = amount.toDouble()
+        value = amount.toDouble(),
+        text = recipe.key.toString()
     )
-    TriggerGhostCraft.dispatch(
-        player.toDispatcher(),
-        data,
-        listOf(SimpleProvidedHolder(holder))
-    )
-    TriggerCustomCraft.dispatch(
-        player.toDispatcher(),
-        data.copy(text = recipe.key.toString())
-    )
+    chain.trigger(player.toDispatcher(), data)
+    TriggerCustomCraft.dispatch(player.toDispatcher(), data)
 }
 
 fun fireStonecutterGhostEffects(
@@ -34,21 +26,15 @@ fun fireStonecutterGhostEffects(
     output: StonecutterOutput,
     amount: Int
 ) {
-    val holder = output.ghostHolder ?: return
+    val chain = output.ghostChain ?: return
     val data = TriggerData(
         player = player,
         item = output.item,
-        value = amount.toDouble()
+        value = amount.toDouble(),
+        text = recipe.key.toString()
     )
-    TriggerGhostCraft.dispatch(
-        player.toDispatcher(),
-        data,
-        listOf(SimpleProvidedHolder(holder))
-    )
-    TriggerCustomCraft.dispatch(
-        player.toDispatcher(),
-        data.copy(text = recipe.key.toString())
-    )
+    chain.trigger(player.toDispatcher(), data)
+    TriggerCustomCraft.dispatch(player.toDispatcher(), data)
 }
 
 fun fireCustomCraftTrigger(player: Player, recipe: CustomRecipe, item: ItemStack, amount: Int) {

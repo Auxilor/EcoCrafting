@@ -4,7 +4,7 @@ import com.willfp.eco.core.config.ConfigType
 import com.willfp.eco.core.config.TransientConfig
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
-import com.willfp.libreforge.SimpleHolder
+import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.conditions.Conditions
@@ -95,12 +95,10 @@ object CustomRecipeLoader {
         )
     }
 
-    internal fun parseGhostHolder(id: String, config: Config): SimpleHolder? {
+    internal fun parseGhostChain(id: String, config: Config): Chain? {
         if (!config.getBool("ghost")) return null
         val ctx = ViolationContext(recipeBookPlugin, "recipe-$id-ghost")
-        val effects = Effects.compile(config.getSubsections("effects"), ctx.with("effects"))
-        val conditions = Conditions.compile(config.getSubsections("conditions"), ctx.with("conditions"))
-        return SimpleHolder(key(id), effects, conditions)
+        return Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
     }
 
     // ── Type-specific parsers (added in Tasks 14–18) ─────────────────────
@@ -147,7 +145,7 @@ object CustomRecipeLoader {
             symmetry = config.getBool("symmetry"),
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -167,7 +165,7 @@ object CustomRecipeLoader {
             experience = config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -187,7 +185,7 @@ object CustomRecipeLoader {
             addition = parseIngredient(config.getString("addition")),
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -204,11 +202,9 @@ object CustomRecipeLoader {
         require(rawOutputs.isNotEmpty()) { "stonecutter recipe '$id' must have at least one output" }
         val outputs = rawOutputs.mapIndexed { idx, outCfg ->
             val ghost = outCfg.getBool("ghost")
-            val ghostHolder: SimpleHolder? = if (ghost) {
+            val ghostChain: Chain? = if (ghost) {
                 val scCtx = ViolationContext(recipeBookPlugin, "recipe-$id-out$idx")
-                val effects = Effects.compile(outCfg.getSubsections("effects"), scCtx.with("effects"))
-                val conditions = Conditions.compile(outCfg.getSubsections("conditions"), scCtx.with("conditions"))
-                SimpleHolder(NamespacedKey("recipebook", "${id}_out$idx"), effects, conditions)
+                Effects.compileChain(outCfg.getSubsections("effects"), scCtx.with("effects"))
             } else null
             StonecutterOutput(
                 item = run {
@@ -225,7 +221,7 @@ object CustomRecipeLoader {
                     baseItem
                 },
                 ghost = ghost,
-                ghostHolder = ghostHolder
+                ghostChain = ghostChain
             )
         }
         return CustomRecipe.Stonecutter(
@@ -266,7 +262,7 @@ object CustomRecipeLoader {
             ingredient = parseIngredient(config.getString("ingredient")),
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -285,7 +281,7 @@ object CustomRecipeLoader {
             addition = parseIngredient(config.getString("addition")),
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -304,7 +300,7 @@ object CustomRecipeLoader {
             item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) },
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -325,7 +321,7 @@ object CustomRecipeLoader {
             repairCost = config.getIntOrNull("repair-cost") ?: 1,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,
@@ -344,7 +340,7 @@ object CustomRecipeLoader {
             input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) },
             permission = cc.permission,
             ghost = config.getBool("ghost"),
-            ghostHolder = parseGhostHolder(id, config),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
             craftingConditions = cc.craftingConditions,
             lockedByDefault = cc.lockedByDefault,

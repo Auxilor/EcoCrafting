@@ -19,10 +19,10 @@ class CustomRecipeTest {
     }
 
     @Test
-    fun `StonecutterOutput ghost true requires non-null ghostHolder contract documented`() {
+    fun `StonecutterOutput has expected fields`() {
         val fields = StonecutterOutput::class.members.map { it.name }.toSet()
         assertTrue("item" in fields)
         assertTrue("ghost" in fields)
-        assertTrue("ghostHolder" in fields)
+        assertTrue("ghostChain" in fields)
     }
 }
