@@ -9,61 +9,58 @@ import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.items.builder.modify
 import com.willfp.eco.util.formatEco
 import net.kyori.adventure.sound.Sound
-import org.bukkit.Material
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.category.canCraft
-import ru.oftendev.recipebook.category.getRecipe
-import ru.oftendev.recipebook.category.getRecipeResult
+import ru.oftendev.recipebook.craft.MaterialCount
+import ru.oftendev.recipebook.craft.QuickCraftService
 import ru.oftendev.recipebook.integration.ShopIntegration
-import ru.oftendev.recipebook.makesound
+import ru.oftendev.recipebook.makeSound
+import ru.oftendev.recipebook.recipe.RecipeResolver
+import ru.oftendev.recipebook.recipe.ResolvedRecipe
 import ru.oftendev.recipebook.recipeBookPlugin
 
 class RecipeGUI(val config: Config, val stack: ItemStack) {
     fun open(player: Player, parent: Menu?) {
-        val items = getRecipe(stack)!!
+        val recipe = RecipeResolver.resolve(stack) ?: run {
+            player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
+            return
+        }
+        val items = recipe.displayItems
         val pattern = config.getStrings("mask.pattern")
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title"))
+
         var row = 1
         var num = 0
-        pattern.forEach {
+        pattern.forEach { line ->
             var col = 1
-            it.toCharArray().forEach {
-                    s -> kotlin.run {
-                if (s.equals('i', true)) {
-                    if (num < items.size) {
-                        if (!items[num].type.isAir) {
-                            menu.setSlot(row, col, slot(items[num], makesound(config
-                                .getStringOrNull("buttons.back.click_sound")), true))
-                        }
+            line.toCharArray().forEach { marker ->
+                if (marker.equals('i', true)) {
+                    if (num < items.size && !items[num].type.isAir) {
+                        menu.setSlot(row, col, slot(items[num], makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
                     }
                     num++
                 }
-                if (s.equals('o', true)) {
-                    menu.setSlot(row, col, slot(stack,
-                        makesound(config.getStringOrNull("buttons.slot.click_sound")), false))
+                if (marker.equals('o', true)) {
+                    menu.setSlot(row, col, slot(recipe.output, makeSound(config.getStringOrNull("buttons.slot.click_sound")), false))
                 }
-            }
                 col++
             }
             row++
         }
-        menu.setMask(
-            FillerMask(
-                MaskItems.fromItemNames(config.getStrings("mask.items")),
-                *pattern.toTypedArray()
-            )
-        )
+
+        menu.setMask(FillerMask(MaskItems.fromItemNames(config.getStrings("mask.items")), *pattern.toTypedArray()))
+
         config.getSubsectionOrNull("buttons.back")?.let {
             parent?.let {
                 menu.addComponent(
                     config.getInt("buttons.back.row"),
                     config.getInt("buttons.back.column"),
-                    backSlot(parent, makesound(config.getStringOrNull("buttons.back.click_sound")))
+                    backSlot(parent, makeSound(config.getStringOrNull("buttons.back.click_sound")))
                 )
             }
         }
@@ -74,19 +71,15 @@ class RecipeGUI(val config: Config, val stack: ItemStack) {
                 config.getInt("buttons.quick-craft.column"),
                 quickCraftSlot(
                     player,
-                    items,
-                    makesound(config.getStringOrNull("buttons.quick-craft.success_sound")),
-                    makesound(config.getStringOrNull("buttons.quick-craft.fail_sound"))
+                    recipe,
+                    makeSound(config.getStringOrNull("buttons.quick-craft.success_sound")),
+                    makeSound(config.getStringOrNull("buttons.quick-craft.fail_sound"))
                 )
             )
         }
 
-        for (config in config.getSubsections("custom-slots")) {
-            menu.setSlot(
-                config.getInt("row"),
-                config.getInt("column"),
-                ConfigSlot(config)
-            )
+        for (slotConfig in config.getSubsections("custom-slots")) {
+            menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
         }
 
         menu.build().open(player)
@@ -97,206 +90,127 @@ class RecipeGUI(val config: Config, val stack: ItemStack) {
             ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
                 .build()
-        )
-            .onLeftClick { t, _ ->
-                menu.open(t.whoClicked as Player)
-                if (sound != null) {
-                    t.player.playSound(sound)
-                }
-            }
-            .build()
+        ).onLeftClick { event, _ ->
+            menu.open(event.whoClicked as Player)
+            sound?.let { event.player.playSound(it) }
+        }.build()
     }
 
     private fun slot(item: ItemStack, sound: Sound?, recipe: Boolean): Slot {
         return Slot.builder(
             ItemStackBuilder(item.clone())
-                .addLoreLines(
-                    config.getFormattedStrings("buttons.recipe-parts-lore")
-                )
+                .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
                 .build()
-        )
-            .onLeftClick { t, _, m ->
-                getRecipe(item) ?: return@onLeftClick
-                if (recipe) {
-                    val itm = item.clone().modify { this.setAmount(1) }
-                    if (canCraft(t.whoClicked as Player, itm)) {
-                        RecipeGUI(recipeBookPlugin.configYml.getSubsection("craft-gui"), itm)
-                            .open(t.whoClicked as Player, m)
-                    }
-                }
-                if (sound != null) {
-                    t.player.playSound(sound)
-                }
+        ).onLeftClick { event, _, menu ->
+            val clicked = item.clone().apply { amount = 1 }
+            val clickedRecipe = RecipeResolver.resolve(clicked)
+            if (recipe && clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
+                RecipeGUI(recipeBookPlugin.configYml.getSubsection("craft-gui"), clicked)
+                    .open(event.whoClicked as Player, menu)
             }
-            .build()
+            sound?.let { event.player.playSound(it) }
+        }.build()
     }
 
-    private fun quickCraftSlot(player: Player, items: List<ItemStack>, successSound: Sound?, failSound: Sound?): Slot {
-        val materialCounts = checkMaterials(player, items)
-        val hasAllMaterials = materialCounts.all { it.second >= it.third }
-
+    private fun quickCraftSlot(player: Player, recipe: ResolvedRecipe, successSound: Sound?, failSound: Sound?): Slot {
+        val service = QuickCraftService(player, recipe)
+        val materialCounts = service.getMaterialCounts()
+        val hasAllMaterials = materialCounts.all { it.has >= it.needs }
         val loreLines = config.getFormattedStrings("buttons.quick-craft.lore").toMutableList()
         val materialsLoreIndex = loreLines.indexOfFirst { it.contains("%materials%") }
 
         if (materialsLoreIndex != -1) {
             loreLines.removeAt(materialsLoreIndex)
-            val materialLines = mutableListOf<String>()
-
-            for ((item, has, needs) in materialCounts) {
-                val color = if (has >= needs) "&a" else "&c"
-                val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {
-                    item.itemMeta.displayName
-                } else {
-                    item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
-                }
-
-                var line = "$color  $has/$needs &7$itemName"
-
-                // Add shop info if enabled and material is missing
-                if (ShopIntegration.isEnabled() && has < needs) {
-                    val shopInfo = ShopIntegration.getMaterialShopInfo(player, item, needs - has)
-                    if (shopInfo != null && ShopIntegration.shouldShowPrices()) {
-                        val affordColor = if (shopInfo.canAfford) "&e" else "&c"
-                        line += " $affordColor(${shopInfo.priceDisplay})"
-                    } else if (shopInfo != null) {
-                        line += " &e(Available in shop)"
-                    }
-                }
-
-                materialLines.add(line)
-            }
-
-            loreLines.addAll(materialsLoreIndex, materialLines)
-
-            // Add purchase hint if shop integration is enabled and materials are missing
-            if (ShopIntegration.isEnabled() && !hasAllMaterials) {
+            loreLines.addAll(materialsLoreIndex, materialCounts.map { it.toLoreLine(player) })
+            if (ShopIntegration.isAutoBuyEnabled() && !hasAllMaterials) {
                 loreLines.add("")
-                loreLines.add("&7Click to purchase missing materials")
-                loreLines.add("&7and craft automatically!")
+                loreLines.add("&eShift-click &7to buy missing materials and craft")
             }
+        }
+
+        fun finishQuickCraft(
+            event: InventoryClickEvent,
+            target: Player,
+            result: ru.oftendev.recipebook.craft.CraftAttempt,
+            purchasedMaterials: Boolean
+        ) {
+            if (result.success) {
+                val key = if (purchasedMaterials) "messages.craft-purchased" else "messages.craft-success"
+                target.sendMessage(
+                    recipeBookPlugin.langYml.getFormattedString(key)
+                        .replace("%item%", recipe.output.type.name.lowercase().replace("_", " "))
+                )
+                successSound?.let { event.player.playSound(it) }
+                target.closeInventory()
+            } else {
+                val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
+                target.sendMessage(
+                    recipeBookPlugin.langYml.getFormattedString(key)
+                        .replace("%reason%", result.reason)
+                        .formatEco(target)
+                )
+                failSound?.let { event.player.playSound(it) }
+            }
+        }
+
+        fun schedulePurchasedCraftAttempt(event: InventoryClickEvent, target: Player, attempts: Int = 0) {
+            Bukkit.getScheduler().runTaskLater(recipeBookPlugin, Runnable {
+                val delayedResult = QuickCraftService(target, recipe).craft()
+                if (delayedResult.success || delayedResult.reason != "Missing materials" || attempts >= 20) {
+                    finishQuickCraft(event, target, delayedResult, true)
+                } else {
+                    schedulePurchasedCraftAttempt(event, target, attempts + 1)
+                }
+            }, 1L)
+        }
+
+        fun handleQuickCraft(event: InventoryClickEvent) {
+            val target = event.whoClicked as Player
+            val liveService = QuickCraftService(target, recipe)
+            var result = liveService.craft()
+
+            if (!result.success && result.reason == "Missing materials") {
+                if (ShopIntegration.canAutoBuy(event.isShiftClick)) {
+                    val purchase = ShopIntegration.purchaseMaterials(target, liveService.getMissingMaterials())
+                    if (purchase.success) {
+                        schedulePurchasedCraftAttempt(event, target)
+                        return
+                    }
+                    result = result.copy(reason = purchase.message)
+                } else if (event.isShiftClick && ShopIntegration.isEnabled()) {
+                    result = result.copy(reason = "EcoShop auto-purchase is disabled in RecipeBook config")
+                }
+            }
+
+            finishQuickCraft(event, target, result, false)
         }
 
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.quick-craft.item")))
                 .addLoreLines(loreLines)
                 .build()
-        )
-            .onLeftClick { t, _ ->
-                val p = t.whoClicked as Player
-
-                // Check materials again (dynamic check)
-                val currentMaterialCounts = checkMaterials(p, items)
-                val currentHasAllMaterials = currentMaterialCounts.all { it.second >= it.third }
-
-                if (currentHasAllMaterials) {
-                    // Has all materials, just craft
-                    if (craftItem(p, items)) {
-                        p.sendMessage(
-                            recipeBookPlugin.langYml.getFormattedString("messages.craft-success")
-                                .replace("%item%", stack.itemMeta.displayName)
-                        )
-                        if (successSound != null) {
-                            t.player.playSound(successSound)
-                        }
-                        p.closeInventory()
-                    } else {
-                        p.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-insufficient"))
-                        if (failSound != null) {
-                            t.player.playSound(failSound)
-                        }
-                    }
-                } else if (ShopIntegration.isEnabled()) {
-                    // Missing materials but shop integration is enabled - try to purchase
-                    val missingMaterials = currentMaterialCounts
-                        .filter { it.second < it.third }
-                        .map { (item, has, needs) ->
-                            val sampleItem = item.clone().apply { amount = 1 }
-                            sampleItem to (needs - has)
-                        }
-
-                    val purchaseResult = ShopIntegration.purchaseMaterials(p, missingMaterials)
-
-                    if (purchaseResult.success) {
-                        // Successfully purchased, now try to craft
-                        if (craftItem(p, items)) {
-                            p.sendMessage(
-                                recipeBookPlugin.langYml.getFormattedString("messages.craft-success")
-                                    .replace("%item%", stack.itemMeta.displayName)
-                            )
-                            p.sendMessage("&aPurchased missing materials from shop!".formatEco(p))
-                            if (successSound != null) {
-                                t.player.playSound(successSound)
-                            }
-                            p.closeInventory()
-                        } else {
-                            p.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-insufficient"))
-                            if (failSound != null) {
-                                t.player.playSound(failSound)
-                            }
-                        }
-                    } else {
-                        // Could not purchase
-                        p.sendMessage("&c${purchaseResult.message}".formatEco(p))
-                        if (failSound != null) {
-                            t.player.playSound(failSound)
-                        }
-                    }
-                } else {
-                    // Missing materials and shop integration disabled
-                    p.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-insufficient"))
-                    if (failSound != null) {
-                        t.player.playSound(failSound)
-                    }
-                }
-            }
-            .build()
+        ).onLeftClick { event, _ ->
+            handleQuickCraft(event)
+        }.onShiftLeftClick { event, _ ->
+            handleQuickCraft(event)
+        }.build()
     }
 
-    private fun checkMaterials(player: Player, items: List<ItemStack>): List<Triple<ItemStack, Int, Int>> {
-        val materialMap = mutableMapOf<Material, MutableList<ItemStack>>()
-
-        // Group items by material type
-        items.forEach { item ->
-            if (!item.type.isAir) {
-                materialMap.getOrPut(item.type) { mutableListOf() }.add(item)
-            }
-        }
-
-        val results = mutableListOf<Triple<ItemStack, Int, Int>>()
-
-        materialMap.forEach { (material, itemList) ->
-            val needed = itemList.sumOf { it.amount }
-            val has = player.inventory.all(material).values.sumOf { it.amount }
-            results.add(Triple(itemList.first(), has, needed))
-        }
-
-        return results
-    }
-
-    private fun craftItem(player: Player, items: List<ItemStack>): Boolean {
-        val materialCounts = checkMaterials(player, items)
-
-        // Double check materials
-        if (!materialCounts.all { it.second >= it.third }) {
-            return false
-        }
-
-        // Remove materials from inventory
-        items.forEach { item ->
-            if (!item.type.isAir) {
-                player.inventory.removeItem(item)
-            }
-        }
-
-        // Give the crafted item - use clean recipe result instead of display stack
-        val recipeResult = getRecipeResult(stack)
-        if (recipeResult != null) {
-            player.inventory.addItem(recipeResult)
+    private fun MaterialCount.toLoreLine(player: Player): String {
+        val color = if (has >= needs) "&a" else "&c"
+        val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {
+            item.itemMeta.displayName
         } else {
-            // Fallback to cloned stack if recipe result not found
-            player.inventory.addItem(stack.clone())
+            item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
         }
-
-        return true
+        var line = "$color  $has/$needs &7$itemName"
+        if (has < needs && ShopIntegration.shouldShowPrices()) {
+            val info = ShopIntegration.getMaterialShopInfo(player, item, needs - has)
+            if (info != null) {
+                val shopColor = if (info.canBuy) "&e" else "&c"
+                line += " $shopColor(${info.priceDisplay.ifBlank { info.status }})"
+            }
+        }
+        return line
     }
 }

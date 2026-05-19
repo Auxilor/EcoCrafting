@@ -1,11 +1,19 @@
-# Shop Integration Settings
-shop-integration:
-  # Enable integration with EcoShop to allow purchasing missing materials
-  enabled: true
-  # Show shop prices in the QuickCraft lore for missing materials
-  show-prices: true
+# RecipeBook main configuration
+# Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
+
+debug: false
 
 default-category: "main"
+
+# Shop Integration Settings
+shop-integration:
+  # Enable integration with EcoShop to allow purchasing missing materials.
+  enabled: true
+  # Show shop prices in the QuickCraft lore for missing materials.
+  show-prices: true
+  auto-buy-missing-materials: false
+  require-shift-click: true
+
 craft-gui:
   title: "&8Crafting Recipe"
   mask:

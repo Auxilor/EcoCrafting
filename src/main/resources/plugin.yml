@@ -1,8 +1,8 @@
-folia-supported: true
+folia-supported: false
 name: ${pluginName}
 version: ${version}
 main: ru.oftendev.recipebook.RecipeBookPlugin
-api-version: 1.17
+api-version: 1.21.8
 authors: [ _OfTeN_, joogiebear ]
 depend:
   - eco

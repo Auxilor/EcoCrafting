@@ -1,27 +1,37 @@
 type: "items"
 icon:
-  item: "diamond_sword name:\"&6Test Category\""
+  item: diamond_sword name:"&cCombat"
   lore:
     - ""
-    - "&fThis is a test category"
+    - "&7Weapons, armor, arrows, and combat utilities."
     - ""
-    - "&bLeft Click &fto show category items"
+    - "&bLeft Click &fto browse recipes"
     - ""
-keys:
-  - "test"
 items:
-  - item: "diamond_block"
+  - item: "wooden_sword"
     display-no-perm: false
-    no-perm-item:
-      item: grey_dye
-      name: "&c???"
-      lore:
-        - ""
-        - "&7Requires &aCactus Collection I&7!"
-        - ""
+  - item: "stone_sword"
+    display-no-perm: false
+  - item: "iron_sword"
+    display-no-perm: false
+  - item: "diamond_sword"
+    display-no-perm: false
+  - item: "bow"
+    display-no-perm: false
+  - item: "crossbow"
+    display-no-perm: false
+  - item: "arrow"
+    display-no-perm: false
+  - item: "shield"
+    display-no-perm: false
+  - item: "iron_chestplate"
+    display-no-perm: false
+  - item: "diamond_chestplate"
+    display-no-perm: false
+
 gui:
   custom-slots: []
-  title: "&8Test Category | Page &6%page%"
+  title: "&8Combat Recipes | Page &6%page%"
   mask:
     items:
       - black_stained_glass_pane
@@ -36,15 +46,15 @@ gui:
       row: 5
       column: 5
       item: barrier name:"&cBack"
-      lore: [ ]
+      lore: []
       click_sound: ui.button_click
     next-page:
       item:
         active: orange_stained_glass_pane name:"&aNext page"
         inactive: gray_stained_glass_pane name:"&7Next page"
       lore:
-        active: [ ]
-        inactive: [ ]
+        active: []
+        inactive: []
       row: 5
       column: 6
       click_sound: ui.button_click
@@ -53,8 +63,8 @@ gui:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: gray_stained_glass_pane name:"&7Previous page"
       lore:
-        active: [ ]
-        inactive: [ ]
+        active: []
+        inactive: []
       row: 5
       column: 4
       click_sound: ui.button_click

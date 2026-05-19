@@ -2,144 +2,113 @@ package ru.oftendev.recipebook.integration
 
 import com.willfp.ecoshop.shop.BuyStatus
 import com.willfp.ecoshop.shop.BuyType
-import com.willfp.ecoshop.shop.ShopItems
 import com.willfp.ecoshop.shop.getDisplay
 import com.willfp.ecoshop.shop.shopItem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import ru.oftendev.recipebook.RecipeBookPlugin
 
 /**
- * Integration with EcoShop plugin for purchasing missing recipe materials
+ * Optional EcoShop integration boundary.
+ * Keep all direct EcoShop calls here so weekly EcoShop API changes are isolated.
  */
 object ShopIntegration {
     private var pluginAvailable = false
     private var configEnabled = false
     private var showPrices = true
+    private var autoBuy = false
+    private var requireShiftClick = true
 
-    /**
-     * Initialize the shop integration
-     */
-    fun init(plugin: ru.oftendev.recipebook.RecipeBookPlugin) {
+    fun init(plugin: RecipeBookPlugin) {
         pluginAvailable = Bukkit.getPluginManager().isPluginEnabled("EcoShop")
         configEnabled = plugin.configYml.getBool("shop-integration.enabled")
         showPrices = plugin.configYml.getBool("shop-integration.show-prices")
+        autoBuy = plugin.configYml.getBool("shop-integration.auto-buy-missing-materials")
+        requireShiftClick = plugin.configYml.getBool("shop-integration.require-shift-click")
 
-        if (pluginAvailable && configEnabled) {
-            Bukkit.getLogger().info("[RecipeBook] EcoShop integration enabled")
-        } else if (pluginAvailable && !configEnabled) {
-            Bukkit.getLogger().info("[RecipeBook] EcoShop found but integration disabled in config")
+        when {
+            pluginAvailable && configEnabled -> plugin.logger.info("[RecipeBook] EcoShop integration enabled")
+            pluginAvailable -> plugin.logger.info("[RecipeBook] EcoShop found but integration disabled in config")
         }
     }
 
-    /**
-     * Check if shop integration is available and enabled
-     */
     fun isEnabled(): Boolean = pluginAvailable && configEnabled
 
-    /**
-     * Check if prices should be shown in lore
-     */
     fun shouldShowPrices(): Boolean = isEnabled() && showPrices
 
-    /**
-     * Get information about a material's availability in the shop
-     */
-    fun getMaterialShopInfo(player: Player, material: ItemStack, amountNeeded: Int): MaterialShopInfo? {
-        if (!isEnabled()) return null
+    fun isAutoBuyEnabled(): Boolean = isEnabled() && autoBuy
 
-        // Create a sample item to check against shop
+    fun canAutoBuy(shiftClick: Boolean): Boolean {
+        return isAutoBuyEnabled() && (!requireShiftClick || shiftClick)
+    }
+
+    fun getMaterialShopInfo(player: Player, material: ItemStack, amountNeeded: Int): MaterialShopInfo? {
+        if (!isEnabled() || amountNeeded <= 0) return null
         val sampleItem = material.clone().apply { amount = 1 }
         val shopItem = sampleItem.shopItem ?: return null
-
-        // Check if the item is buyable
         if (!shopItem.isBuyable) return null
-
-        // Get buy status for the amount needed
-        val buyStatus = shopItem.getBuyStatus(player, amountNeeded, BuyType.NORMAL)
+        val purchaseTimes = shopItem.getPurchaseTimesFor(amountNeeded)
+        val status = shopItem.getBuyStatus(player, purchaseTimes, BuyType.NORMAL)
         val price = shopItem.buyPrice ?: return null
-
         return MaterialShopInfo(
-            shopItem = shopItem,
             amountNeeded = amountNeeded,
-            canAfford = buyStatus == BuyStatus.ALLOW,
-            buyStatus = buyStatus,
-            priceDisplay = price.getDisplay(player, amountNeeded)
+            canAfford = status == BuyStatus.ALLOW,
+            canBuy = status == BuyStatus.ALLOW,
+            status = status.name,
+            priceDisplay = price.getDisplay(player, purchaseTimes * shopItem.getEffectiveBuyMultiplier(BuyType.NORMAL, player))
         )
     }
 
-    /**
-     * Attempt to purchase missing materials from the shop
-     */
     fun purchaseMaterials(player: Player, materials: List<Pair<ItemStack, Int>>): PurchaseResult {
-        if (!isEnabled()) {
-            return PurchaseResult(false, "Shop integration not available")
+        if (!isEnabled() || !autoBuy) {
+            return PurchaseResult(false, "EcoShop auto-purchase is disabled")
         }
 
-        val missingItems = mutableListOf<String>()
-        val cannotAffordItems = mutableListOf<String>()
-        val purchaseList = mutableListOf<Pair<com.willfp.ecoshop.shop.ShopItem, Int>>()
+        val purchases = mutableListOf<Pair<com.willfp.ecoshop.shop.ShopItem, Int>>()
+        val unavailable = mutableListOf<String>()
+        val unaffordable = mutableListOf<String>()
 
-        // First, validate all materials can be purchased
         for ((material, amount) in materials) {
+            if (amount <= 0) continue
             val sampleItem = material.clone().apply { this.amount = 1 }
             val shopItem = sampleItem.shopItem
-
             if (shopItem == null || !shopItem.isBuyable) {
-                missingItems.add(material.type.name)
+                unavailable += material.type.name
                 continue
             }
-
-            val buyStatus = shopItem.getBuyStatus(player, amount, BuyType.NORMAL)
-            when (buyStatus) {
-                BuyStatus.ALLOW -> {
-                    purchaseList.add(shopItem to amount)
-                }
-                BuyStatus.CANNOT_AFFORD -> {
-                    cannotAffordItems.add("${material.type.name} x$amount")
-                }
-                else -> {
-                    missingItems.add("${material.type.name} (${buyStatus.name})")
-                }
+            when (val status = shopItem.getBuyStatus(player, shopItem.getPurchaseTimesFor(amount), BuyType.NORMAL)) {
+                BuyStatus.ALLOW -> purchases += shopItem to shopItem.getPurchaseTimesFor(amount)
+                BuyStatus.CANNOT_AFFORD -> unaffordable += "${material.type.name} x$amount"
+                else -> unavailable += "${material.type.name} (${status.name})"
             }
         }
 
-        // If any items can't be purchased, return error
-        if (missingItems.isNotEmpty()) {
-            return PurchaseResult(false, "Cannot buy from shop: ${missingItems.joinToString(", ")}")
-        }
+        if (unavailable.isNotEmpty()) return PurchaseResult(false, "Unavailable: ${unavailable.joinToString(", ")}")
+        if (unaffordable.isNotEmpty()) return PurchaseResult(false, "Cannot afford: ${unaffordable.joinToString(", ")}")
 
-        if (cannotAffordItems.isNotEmpty()) {
-            return PurchaseResult(false, "Cannot afford: ${cannotAffordItems.joinToString(", ")}")
-        }
-
-        // Purchase all items
-        for ((shopItem, amount) in purchaseList) {
-            try {
-                shopItem.buy(player, amount, BuyType.NORMAL)
-            } catch (e: Exception) {
-                return PurchaseResult(false, "Purchase failed: ${e.message}")
+        return runCatching {
+            for ((shopItem, purchaseTimes) in purchases) {
+                shopItem.buy(player, purchaseTimes, BuyType.NORMAL)
             }
-        }
+            PurchaseResult(true, "Purchased missing materials")
+        }.getOrElse { PurchaseResult(false, it.message ?: "Purchase failed") }
+    }
 
-        return PurchaseResult(true, "Successfully purchased all materials!")
+    private fun com.willfp.ecoshop.shop.ShopItem.getPurchaseTimesFor(amountNeeded: Int): Int {
+        val buyAmount = this.buyAmount.coerceAtLeast(1)
+        return ((amountNeeded + buyAmount - 1) / buyAmount).coerceAtLeast(1)
     }
 }
 
-/**
- * Information about a material's availability in the shop
- */
 data class MaterialShopInfo(
-    val shopItem: com.willfp.ecoshop.shop.ShopItem,
     val amountNeeded: Int,
     val canAfford: Boolean,
-    val buyStatus: BuyStatus,
+    val canBuy: Boolean,
+    val status: String,
     val priceDisplay: String
 )
 
-/**
- * Result of attempting to purchase materials
- */
 data class PurchaseResult(
     val success: Boolean,
     val message: String

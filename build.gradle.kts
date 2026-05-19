@@ -1,10 +1,16 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("io.github.goooler.shadow") version "8.1.8"
+    kotlin("jvm") version "2.3.0"
+    id("com.gradleup.shadow") version "9.3.1"
 }
 
 group = "ru.oftendev"
 version = findProperty("version")!!
+
+base {
+    archivesName.set(rootProject.name)
+}
 
 repositories {
     mavenLocal()
@@ -17,19 +23,32 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
-    compileOnly("com.willfp:eco:6.76.2")
-    compileOnly("com.willfp:EcoShop:1.38.0")
-    compileOnly(files("libs/VaultPack.jar"))
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("com.willfp:eco:7.6.0")
+    compileOnly("com.willfp:EcoShop:2.5.0")
+    compileOnly("org.jetbrains:annotations:26.0.2")
+
+    // Kotlin is not provided by Paper/eco for this plugin's relocated package,
+    // so it must be included in the shaded jar.
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
+
+    // bStats is shaded/relocated into the plugin jar.
+    implementation("org.bstats:bstats-bukkit:3.1.0")
+
     testImplementation(kotlin("test"))
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 }
 
 tasks {
     compileJava {
         options.isDeprecation = true
         options.encoding = "UTF-8"
+    }
 
-        dependsOn(clean)
+    compileKotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 
     processResources {
@@ -40,11 +59,26 @@ tasks {
             )
         }
     }
+
+    shadowJar {
+        archiveFileName.set("RecipeBook.jar")
+        exclude("META-INF/**")
+        relocate("kotlin", "ru.oftendev.recipebook.libs.kotlin")
+        relocate("kotlin.jvm", "ru.oftendev.recipebook.libs.kotlin.jvm")
+        relocate("kotlin.coroutines", "ru.oftendev.recipebook.libs.kotlin.coroutines")
+        relocate("kotlin.reflect", "ru.oftendev.recipebook.libs.kotlin.reflect")
+        relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
     jvmToolchain(21)
 }

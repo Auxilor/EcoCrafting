@@ -13,7 +13,7 @@ import net.kyori.adventure.sound.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.category.RecipeCategory
-import ru.oftendev.recipebook.makesound
+import ru.oftendev.recipebook.makeSound
 import ru.oftendev.recipebook.recipeBookPlugin
 
 class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
@@ -31,7 +31,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                     s -> kotlin.run {
                 if (s.equals('i', true)) {
                     if (num < items.size) {
-                        menu.setSlot(row, col, slot(items[num], makesound(config.getStringOrNull("buttons.slot.click_sound"))))
+                        menu.setSlot(row, col, slot(items[num], makeSound(config.getStringOrNull("buttons.slot.click_sound"))))
                     }
                     num++
                 }
@@ -45,7 +45,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 menu.addComponent(
                     config.getInt("buttons.back.row"),
                     config.getInt("buttons.back.column"),
-                    backSlot(prevMenu,makesound(config.getStringOrNull("buttons.back.click_sound")))
+                    backSlot(prevMenu,makeSound(config.getStringOrNull("buttons.back.click_sound")))
                 )
             }
         }
@@ -58,12 +58,12 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         menu.setSlot(
             config.getInt("buttons.next-page.row"),
             config.getInt("buttons.next-page.column"),
-            nextSlot(page, prevMenu, player, makesound(config.getStringOrNull("buttons.next-page.click_sound")))
+            nextSlot(page, prevMenu, player, makeSound(config.getStringOrNull("buttons.next-page.click_sound")))
         )
         menu.setSlot(
             config.getInt("buttons.prev-page.row"),
             config.getInt("buttons.prev-page.column"),
-            prevSlot(page, prevMenu, makesound(config.getStringOrNull("buttons.prev-page.click_sound")))
+            prevSlot(page, prevMenu, makeSound(config.getStringOrNull("buttons.prev-page.click_sound")))
         )
         for (config in config.getSubsections("custom-slots")) {
             menu.setSlot(

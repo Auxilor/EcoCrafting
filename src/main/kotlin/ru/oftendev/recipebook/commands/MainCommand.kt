@@ -13,6 +13,9 @@ class MainCommand(plugin: EcoPlugin) : PluginCommand(plugin, "recipebook",
         this.addSubcommand(CommandReload(plugin))
             .addSubcommand(CommandLookup(plugin))
             .addSubcommand(CommandOpen(plugin))
+            .addSubcommand(CommandDebug(plugin))
+            .addSubcommand(CommandValidate(plugin))
+            .addSubcommand(CommandList(plugin))
     }
 
     override fun onExecute(sender: CommandSender, args: List<String>) {

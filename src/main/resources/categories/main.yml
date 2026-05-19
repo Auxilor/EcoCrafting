@@ -1,6 +1,9 @@
 type: "categories"
 categories:
-  - "test"
+  - "farming"
+  - "mining"
+  - "combat"
+  - "utility"
 gui:
   custom-slots: []
   title: "&8RecipeBook | Page &6%page%"
@@ -19,16 +22,18 @@ gui:
         active: orange_stained_glass_pane name:"&aNext page"
         inactive: gray_stained_glass_pane name:"&7Next page"
       lore:
-        active: [ ]
-        inactive: [ ]
+        active: []
+        inactive: []
       row: 5
       column: 6
+      click_sound: ui.button_click
     prev-page:
       item:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: gray_stained_glass_pane name:"&7Previous page"
       lore:
-        active: [ ]
-        inactive: [ ]
+        active: []
+        inactive: []
       row: 5
       column: 4
+      click_sound: ui.button_click
