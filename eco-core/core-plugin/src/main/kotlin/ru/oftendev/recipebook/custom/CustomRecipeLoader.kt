@@ -384,6 +384,7 @@ object CustomRecipeLoader {
                 }
                 builder.build().register()
             }
+            CustomRecipes.trackBukkitKey(recipeKey)
         }
 
         register(key, parts)
@@ -410,6 +411,7 @@ object CustomRecipeLoader {
             SmeltingType.CAMPFIRE -> org.bukkit.Bukkit.addRecipe(
                 org.bukkit.inventory.CampfireRecipe(recipeKey, out, inputChoice, xp, cookTime ?: 600))
         }
+        CustomRecipes.trackBukkitKey(recipeKey)
     }
 
     private fun CustomRecipe.Smithing.registerSmithing() {
@@ -421,16 +423,19 @@ object CustomRecipeLoader {
             org.bukkit.inventory.RecipeChoice.ExactChoice(addition.displayItem)
         )
         org.bukkit.Bukkit.addRecipe(r)
+        CustomRecipes.trackBukkitKey(key)
     }
 
     private fun CustomRecipe.Stonecutter.registerStonecutter() {
         outputs.forEachIndexed { idx, out ->
+            val rKey = NamespacedKey("recipebook", "${key.key}_$idx")
             val r = org.bukkit.inventory.StonecuttingRecipe(
-                NamespacedKey("recipebook", "${key.key}_$idx"),
+                rKey,
                 out.item.clone(),
                 org.bukkit.inventory.RecipeChoice.ExactChoice(input.displayItem)
             )
             org.bukkit.Bukkit.addRecipe(r)
+            CustomRecipes.trackBukkitKey(rKey)
         }
     }
 
@@ -442,6 +447,7 @@ object CustomRecipeLoader {
             if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
         }
         builder.build().register()
+        CustomRecipes.trackBukkitKey(key)
     }
 }
 

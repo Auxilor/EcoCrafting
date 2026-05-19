@@ -1,12 +1,14 @@
 package ru.oftendev.recipebook.custom
 
 import com.willfp.eco.core.items.HashedItem
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
 object CustomRecipes {
     private val byKey = mutableMapOf<NamespacedKey, CustomRecipe>()
     private val byOutput = mutableMapOf<HashedItem, CustomRecipe>()
+    private val registeredBukkitKeys = mutableSetOf<NamespacedKey>()
 
     fun register(recipe: CustomRecipe) {
         byKey[recipe.key] = recipe
@@ -18,7 +20,13 @@ object CustomRecipes {
         }
     }
 
+    fun trackBukkitKey(key: NamespacedKey) {
+        registeredBukkitKeys.add(key)
+    }
+
     fun clear() {
+        registeredBukkitKeys.forEach { Bukkit.removeRecipe(it) }
+        registeredBukkitKeys.clear()
         byKey.clear()
         byOutput.clear()
     }
