@@ -89,3 +89,10 @@ sealed interface IngredientMatcher {
         }
     }
 }
+
+fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
+    is IngredientMatcher.Empty        -> com.willfp.eco.core.recipe.parts.EmptyTestableItem()
+    is IngredientMatcher.EcoPart      -> part
+    is IngredientMatcher.SimilarItem  -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
+    is IngredientMatcher.MaterialOnly -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
+}
