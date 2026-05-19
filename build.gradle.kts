@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     kotlin("jvm") version "2.3.0"
     id("com.gradleup.shadow") version "9.3.1"
+    id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
 }
 
 group = "ru.oftendev"
@@ -26,7 +27,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.willfp:eco:7.6.0")
     compileOnly("com.willfp:EcoShop:2.5.0")
-    compileOnly("com.willfp:libreforge:${findProperty("libreforge-version")}")
     compileOnly("org.jetbrains:annotations:26.0.2")
 
     // Kotlin is not provided by Paper/eco for this plugin's relocated package,
@@ -68,6 +68,7 @@ tasks {
         relocate("kotlin.jvm", "ru.oftendev.recipebook.libs.kotlin.jvm")
         relocate("kotlin.coroutines", "ru.oftendev.recipebook.libs.kotlin.coroutines")
         relocate("kotlin.reflect", "ru.oftendev.recipebook.libs.kotlin.reflect")
+        relocate("com.willfp.libreforge.loader", "ru.oftendev.recipebook.libreforge.loader")
         relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
     }
 
