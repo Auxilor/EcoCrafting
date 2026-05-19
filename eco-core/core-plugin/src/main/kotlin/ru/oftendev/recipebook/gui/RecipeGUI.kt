@@ -24,6 +24,8 @@ import ru.oftendev.recipebook.recipe.ResolvedRecipe
 import ru.oftendev.recipebook.recipeBookPlugin
 
 class RecipeGUI(val stack: ItemStack) {
+    private lateinit var config: com.willfp.eco.core.config.interfaces.Config
+
     fun open(player: Player, parent: Menu?) {
         val recipe = RecipeResolver.resolveForPlayer(stack, player) ?: run {
             player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
@@ -42,7 +44,7 @@ class RecipeGUI(val stack: ItemStack) {
             RecipeDisplayType.ANVIL        -> "anvil-gui"
             RecipeDisplayType.VILLAGER     -> "villager-gui"
         }
-        val config = recipeBookPlugin.configYml.getSubsection(guiSection)
+        config = recipeBookPlugin.configYml.getSubsection(guiSection)
         val pattern = config.getStrings("mask.pattern")
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title"))

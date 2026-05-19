@@ -207,16 +207,15 @@ class CustomRecipeListener : Listener {
 
     // ── Group B PrepareEvent handlers ─────────────────────────────────────
 
-    @EventHandler(priority = EventPriority.HIGH)
-    fun onPrepareCartographyItem(event: org.bukkit.event.inventory.PrepareCartographyItemEvent) {
-        val player = event.view.player as? Player ?: return
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onCartographyItem(event: io.papermc.paper.event.player.CartographyItemEvent) {
+        val player = event.whoClicked as? Player ?: return
         val inv = event.inventory
         val recipe = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Cartography>()
             .firstOrNull { it.map.matches(inv.getItem(0)) && it.addition.matches(inv.getItem(1)) }
             ?: return
         if (!recipe.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return
-        event.result = recipe.output.clone()
         pendingRecipe[player.uniqueId] = recipe
     }
 
