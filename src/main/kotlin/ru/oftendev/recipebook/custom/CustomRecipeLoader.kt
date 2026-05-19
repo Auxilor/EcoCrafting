@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.Material
 import ru.oftendev.recipebook.recipe.IngredientMatcher
 import ru.oftendev.recipebook.recipe.RecipeIngredient
+import ru.oftendev.recipebook.recipe.toTestableItem
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.io.File
 
@@ -96,7 +97,57 @@ object CustomRecipeLoader {
 
     // ── Type-specific parsers (added in Tasks 14–18) ─────────────────────
 
-    private fun loadCraftingTable(id: String, config: Config): CustomRecipe = TODO()
+    // Flat 9-element index remappings for shaped recipe symmetry variants.
+    // Original grid indices: 0 1 2 / 3 4 5 / 6 7 8
+    internal val ROT_90_CW  = intArrayOf(6, 3, 0, 7, 4, 1, 8, 5, 2)
+    internal val ROT_180    = intArrayOf(8, 7, 6, 5, 4, 3, 2, 1, 0)
+    internal val ROT_270_CW = intArrayOf(2, 5, 8, 1, 4, 7, 0, 3, 6)
+    internal val MIRROR_H   = intArrayOf(2, 1, 0, 5, 4, 3, 8, 7, 6)
+
+    internal fun generateSymmetryVariants(parts: List<RecipeIngredient>): List<Pair<String, List<RecipeIngredient>>> {
+        val variants = mutableListOf<Pair<String, List<RecipeIngredient>>>()
+        val seen = mutableSetOf<List<Int>>()
+        fun fingerprint(p: List<RecipeIngredient>) = p.indices.filter { !p[it].empty }
+
+        fun addVariant(suffix: String, remap: IntArray) {
+            val remapped = remap.map { parts[it] }
+            val fp = fingerprint(remapped)
+            if (seen.add(fp)) variants.add(suffix to remapped)
+        }
+
+        seen.add(fingerprint(parts))
+        addVariant("_rot90",  ROT_90_CW)
+        addVariant("_rot180", ROT_180)
+        addVariant("_rot270", ROT_270_CW)
+        addVariant("_mir",    MIRROR_H)
+        addVariant("_mir90",  MIRROR_H.map { ROT_90_CW[it] }.toIntArray())
+        addVariant("_mir180", MIRROR_H.map { ROT_180[it] }.toIntArray())
+        addVariant("_mir270", MIRROR_H.map { ROT_270_CW[it] }.toIntArray())
+        return variants
+    }
+
+    private fun loadCraftingTable(id: String, config: Config): CustomRecipe {
+        val rawParts = config.getStrings("recipe")
+        require(rawParts.size == 9) { "crafting_table recipe must have exactly 9 entries, got ${rawParts.size}" }
+        val parts = rawParts.map { parseIngredient(it) }
+        val cc = parseCommonConditions(id, config)
+        return CustomRecipe.CraftingTable(
+            key = key(id),
+            output = Items.lookup(config.getString("output")).item,
+            parts = parts,
+            shapeless = config.getBool("shapeless"),
+            symmetry = config.getBool("symmetry"),
+            permission = cc.permission,
+            ghost = config.getBool("ghost"),
+            ghostHolder = parseGhostHolder(id, config),
+            visibilityConditions = cc.visibilityConditions,
+            craftingConditions = cc.craftingConditions,
+            lockedByDefault = cc.lockedByDefault,
+            showWhenLocked = cc.showWhenLocked,
+            lockedLore = cc.lockedLore,
+            unlockConditions = cc.unlockConditions
+        )
+    }
     private fun loadSmelting(id: String, config: Config, type: SmeltingType): CustomRecipe = TODO()
     private fun loadSmithing(id: String, config: Config): CustomRecipe = TODO()
     private fun loadStonecutter(id: String, config: Config): CustomRecipe = TODO()
@@ -110,8 +161,47 @@ object CustomRecipeLoader {
     // ── Bukkit registration ──────────────────────────────────────────────
 
     internal fun CustomRecipe.registerBukkit() {
-        // implemented in Task 14
+        when (this) {
+            is CustomRecipe.CraftingTable -> registerCraftingTable()
+            is CustomRecipe.Smelting      -> registerSmelting()
+            is CustomRecipe.Smithing      -> registerSmithing()
+            is CustomRecipe.Stonecutter   -> registerStonecutter()
+            is CustomRecipe.Crafter       -> registerCrafter()
+            else -> { /* Group B — no Bukkit recipe needed */ }
+        }
     }
+
+    private fun CustomRecipe.CraftingTable.registerCraftingTable() {
+        fun register(recipeKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
+            if (shapeless) {
+                val builder = com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
+                    .builder(recipeBookPlugin, recipeKey.key)
+                    .setOutput(output)
+                recipeParts.filter { !it.empty }.forEach { builder.addRecipePart(it.matcher.toTestableItem()) }
+                builder.build().register()
+            } else {
+                val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
+                    .builder(recipeBookPlugin, recipeKey.key)
+                    .setOutput(output)
+                recipeParts.forEachIndexed { idx, part ->
+                    if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
+                }
+                builder.build().register()
+            }
+        }
+
+        register(key, parts)
+        if (symmetry && !shapeless) {
+            generateSymmetryVariants(parts).forEach { (suffix, variantParts) ->
+                register(NamespacedKey("recipebook", "${key.key}$suffix"), variantParts)
+            }
+        }
+    }
+
+    private fun CustomRecipe.Smelting.registerSmelting() { /* Task 16 */ }
+    private fun CustomRecipe.Smithing.registerSmithing() { /* Task 17 */ }
+    private fun CustomRecipe.Stonecutter.registerStonecutter() { /* Task 17 */ }
+    private fun CustomRecipe.Crafter.registerCrafter() { /* Task 17 */ }
 }
 
 data class CommonConditions(
