@@ -2,6 +2,7 @@ type: blast_furnace
 
 input: raw_gold
 output: gold_ingot name:"&6Example Gold"
+lore: []             # optional — lore lines for the output item
 
 cook-time: 100           # ticks (blast furnace is 2x faster, vanilla = 100)
 experience: 1.0

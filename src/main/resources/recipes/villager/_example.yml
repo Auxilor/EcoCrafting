@@ -4,6 +4,7 @@ input1: emerald           # first trade ingredient (required)
 input2: book              # second trade ingredient (optional — omit for single-item trades)
 
 output: enchanted_book name:"&5Villager Enchanted Book"
+lore: []             # optional — lore lines for the output item
 
 ghost: false
 # ghost: true — consume trade inputs, fire effects, give no item

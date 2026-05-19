@@ -55,6 +55,20 @@ object CustomRecipeLoader {
 
     internal fun key(id: String) = NamespacedKey("recipebook", id.lowercase())
 
+    internal fun parseOutputItem(config: Config): ItemStack {
+        val item = runCatching { Items.lookup(config.getString("output")).item }.getOrNull()
+            ?: error("Cannot resolve output: ${config.getString("output")}")
+        val lore = config.getFormattedStrings("lore")
+        if (lore.isNotEmpty()) {
+            val meta = item.itemMeta ?: return item
+            meta.lore(lore.map {
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
+            })
+            item.itemMeta = meta
+        }
+        return item
+    }
+
     internal fun parseIngredient(lookup: String): RecipeIngredient {
         if (lookup.isBlank()) return RecipeIngredient.empty(ItemStack(Material.AIR))
         val item = runCatching { Items.lookup(lookup).item }.getOrNull()
@@ -133,7 +147,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.CraftingTable(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             parts = parts,
             shapeless = config.getBool("shapeless"),
             symmetry = config.getBool("symmetry"),
@@ -152,7 +166,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Smelting(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             input = parseIngredient(config.getString("input")),
             stationType = type,
             cookTime = if (config.has("cook-time")) config.getInt("cook-time") else -1,
@@ -173,7 +187,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Smithing(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             template = parseIngredient(config.getString("template")),
             base = parseIngredient(config.getString("base")),
             addition = parseIngredient(config.getString("addition")),
@@ -202,7 +216,19 @@ object CustomRecipeLoader {
                 SimpleHolder(NamespacedKey("recipebook", "${id}_out$idx"), effects, conditions)
             } else null
             StonecutterOutput(
-                item = Items.lookup(outCfg.getString("item")).item,
+                item = run {
+                    val baseItem = runCatching { Items.lookup(outCfg.getString("item")).item }.getOrNull()
+                        ?: error("Cannot resolve stonecutter output item: ${outCfg.getString("item")}")
+                    val lore = outCfg.getFormattedStrings("lore")
+                    if (lore.isNotEmpty()) {
+                        val meta = baseItem.itemMeta ?: return@run baseItem
+                        meta.lore(lore.map {
+                            net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
+                        })
+                        baseItem.itemMeta = meta
+                    }
+                    baseItem
+                },
                 ghost = ghost,
                 ghostHolder = ghostHolder
             )
@@ -227,7 +253,7 @@ object CustomRecipeLoader {
         require(rawParts.size == 9) { "crafter recipe must have exactly 9 entries" }
         return CustomRecipe.Crafter(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             parts = rawParts.map { parseIngredient(it) },
             shapeless = config.getBool("shapeless"),
             permission = cc.permission,
@@ -240,7 +266,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Brewing(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             base = parseIngredient(config.getString("base")),
             ingredient = parseIngredient(config.getString("ingredient")),
             permission = cc.permission,
@@ -259,7 +285,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Cartography(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             map = parseIngredient(config.getString("map")),
             addition = parseIngredient(config.getString("addition")),
             permission = cc.permission,
@@ -278,7 +304,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Grindstone(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             item1 = parseIngredient(config.getString("item1")),
             item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) },
             permission = cc.permission,
@@ -297,7 +323,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Anvil(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             base = parseIngredient(config.getString("base")),
             material = config.getStringOrNull("material")?.let { parseIngredient(it) },
             resultName = config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() },
@@ -318,7 +344,7 @@ object CustomRecipeLoader {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Villager(
             key = key(id),
-            output = Items.lookup(config.getString("output")).item,
+            output = parseOutputItem(config),
             input1 = parseIngredient(config.getString("input1")),
             input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) },
             permission = cc.permission,

@@ -2,6 +2,7 @@ type: campfire
 
 input: rabbit
 output: cooked_rabbit name:"&6Campfire Rabbit"
+lore: []             # optional — lore lines for the output item
 
 cook-time: 600           # ticks (campfire is slow, vanilla = 600)
 experience: 0.35

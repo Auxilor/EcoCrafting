@@ -15,6 +15,7 @@ recipe:
 shapeless: false
 
 output: iron_helmet name:"&7Auto-Crafted Helmet"
+lore: []             # optional — lore lines for the output item
 
 permission: ""
 locked-by-default: false

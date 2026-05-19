@@ -4,6 +4,7 @@ map: map          # item in the map slot (left)
 addition: paper   # item in the addition slot (right)
 
 output: filled_map name:"&2Example Map"
+lore: []             # optional — lore lines for the output item
 
 ghost: false
 # ghost: true

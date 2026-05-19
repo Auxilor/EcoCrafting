@@ -238,6 +238,7 @@ object RecipeCreatorGUI {
                 sb.appendLine("input: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
                 sb.appendLine("outputs:")
                 sb.appendLine("  - item: ${pending.output.type.name.lowercase()}")
+                sb.appendLine("    lore: []")
                 sb.appendLine("    ghost: ${pending.ghost}")
                 if (pending.ghost) { sb.appendLine("    effects: []"); sb.appendLine("    conditions: []") }
             }
@@ -258,6 +259,7 @@ object RecipeCreatorGUI {
 
         if (pending.typeKey != "stonecutter") {
             sb.appendLine("output: ${pending.output.type.name.lowercase()}")
+            sb.appendLine("lore: []")
             sb.appendLine("ghost: ${pending.ghost}")
             if (pending.ghost) {
                 sb.appendLine("effects: []")

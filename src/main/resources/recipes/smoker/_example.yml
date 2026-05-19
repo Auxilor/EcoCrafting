@@ -2,6 +2,7 @@ type: smoker
 
 input: potato
 output: baked_potato name:"&ePerfect Baked Potato"
+lore: []             # optional — lore lines for the output item
 
 cook-time: 100           # ticks (smoker is 2x faster than furnace for food)
 experience: 0.35

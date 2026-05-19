@@ -2,6 +2,7 @@ type: furnace
 
 input: raw_iron          # eco item lookup — the item placed in the smelting slot
 output: iron_ingot name:"&7Example Iron"
+lore: []             # optional — lore lines for the output item
 
 cook-time: 200           # ticks (200 = 10 seconds, vanilla default)
 experience: 0.7          # xp orbs dropped when smelted
