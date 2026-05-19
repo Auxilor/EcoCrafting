@@ -1,0 +1,25 @@
+type: anvil
+
+base: iron_sword          # item in the left slot (required)
+material: diamond         # item in the right slot (optional — omit for rename-only)
+
+result-name: "&bDiamond-Edged Sword"   # optional — renames the result item
+repair-cost: 3            # levels displayed and consumed
+
+output: diamond_sword name:"&bDiamond-Edged Sword"
+
+ghost: false
+# ghost: true — consume inputs, pay cost, fire effects, give no item
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 30
+# conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

@@ -1,0 +1,24 @@
+type: brewing_stand
+
+base: glass_bottle        # item in the bottle slots (can be an existing potion too)
+ingredient: nether_wart   # item in the ingredient slot (top)
+
+output: potion name:"&dExample Potion"
+
+ghost: false
+# ghost: true — cancel the brew and fire effects instead of producing a potion
+# effects:
+#   - id: give_effect
+#     args:
+#       effect: speed
+#       duration: 200
+#       amplifier: 1
+# conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

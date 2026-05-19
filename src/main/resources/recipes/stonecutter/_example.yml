@@ -1,0 +1,28 @@
+type: stonecutter
+
+input: stone
+
+# Multiple outputs supported — each appears as a separate option in the stonecutter UI.
+# ghost: true on an output means no item is given; libreforge effects fire instead.
+outputs:
+  - item: stone_slab
+    ghost: false
+
+  - item: stone_stairs
+    ghost: false
+
+  - item: stone_brick_wall name:"&7Ghost Wall"
+    ghost: true
+    effects:
+      - id: give_xp
+        args:
+          xp: 25
+    conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []
