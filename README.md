@@ -8,7 +8,7 @@ RecipeBook is a Paper/eco recipe viewer and quick-craft helper for modern Minecr
 - Paper / AdvancedSlimePaper 1.21.8+
 - eco 7.x, tested against 7.6.0
 - Optional: EcoShop 2.5.x
-- Optional: VaultPack
+- Optional: VaultPack (runtime softdepend; no VaultPack jar is needed at build time)
 
 ## Build
 
@@ -104,6 +104,6 @@ RecipeBook keeps fast-moving integrations isolated:
 - `recipe/RecipeResolver.kt` owns Bukkit + eco recipe lookup.
 - `craft/QuickCraftService.kt` owns inventory matching and mutation.
 - `integration/ShopIntegration.kt` owns EcoShop integration boundaries.
-- `integration/VaultPackIntegration.kt` owns optional VaultPack support through reflection.
+- `integration/VaultPackIntegration.kt` owns optional VaultPack support through reflection, so RecipeBook does not compile against or ship a VaultPack jar.
 
 When eco updates, start by checking `RecipeResolver.kt`, especially the fallback reflection used to list eco recipes.

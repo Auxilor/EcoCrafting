@@ -37,3 +37,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Runtime integration jars should not be committed.
+# VaultPack support is handled through reflection at runtime.
+libs/*.jar
