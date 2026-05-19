@@ -1,3 +1,5 @@
+enabled: true
+
 type: anvil
 
 base: iron_sword          # item in the left slot (required)

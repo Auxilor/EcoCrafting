@@ -70,6 +70,19 @@ furnace-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 smithing-gui:
   title: "&8Smithing Recipe"
@@ -90,6 +103,19 @@ smithing-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
@@ -110,6 +136,19 @@ stonecutter-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 brewing-gui:
   title: "&8Brewing Recipe"
@@ -130,6 +169,19 @@ brewing-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 cartography-gui:
   title: "&8Cartography Recipe"
@@ -150,6 +202,19 @@ cartography-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 grindstone-gui:
   title: "&8Grindstone Recipe"
@@ -170,6 +235,19 @@ grindstone-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 anvil-gui:
   title: "&8Anvil Recipe"
@@ -190,6 +268,19 @@ anvil-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
 
 villager-gui:
   title: "&8Villager Trade"
@@ -210,3 +301,16 @@ villager-gui:
       item: barrier name:"&cBack"
       lore: []
       click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no

@@ -1,3 +1,5 @@
+enabled: true
+
 type: stonecutter
 
 input: stone

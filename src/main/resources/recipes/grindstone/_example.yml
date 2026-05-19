@@ -1,3 +1,5 @@
+enabled: true
+
 type: grindstone
 
 item1: enchanted_book   # required — left slot

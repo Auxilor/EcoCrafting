@@ -1,3 +1,5 @@
+enabled: true
+
 type: villager
 
 input1: emerald           # first trade ingredient (required)
