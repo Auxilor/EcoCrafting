@@ -4,6 +4,7 @@ base: glass_bottle        # item in the bottle slots (can be an existing potion 
 ingredient: nether_wart   # item in the ingredient slot (top)
 
 output: potion name:"&dExample Potion"
+lore: []             # optional — lore lines for the output item
 
 ghost: false
 # ghost: true — cancel the brew and fire effects instead of producing a potion

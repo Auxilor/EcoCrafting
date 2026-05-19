@@ -17,6 +17,7 @@ shapeless: false   # true = any slot order
 symmetry: false    # true = register all rotations/mirrors automatically
 
 output: netherite_sword name:"&6Example Sword"
+lore: []             # optional — lore lines for the output item
 
 ghost: false       # true = no item given; triggers libreforge effects instead
 # ghost: true

@@ -6,12 +6,18 @@ input: stone
 # ghost: true on an output means no item is given; libreforge effects fire instead.
 outputs:
   - item: stone_slab
+    lore: []
     ghost: false
 
   - item: stone_stairs
+    lore:
+      - "&7Crafted from stone"
     ghost: false
 
   - item: stone_brick_wall name:"&7Ghost Wall"
+    lore:
+      - "&8Ghost output — no item given"
+      - "&7Effects fire on craft"
     ghost: true
     effects:
       - id: give_xp

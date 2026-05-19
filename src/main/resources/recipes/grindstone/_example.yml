@@ -4,6 +4,7 @@ item1: enchanted_book   # required — left slot
 item2: enchanted_book   # optional — right slot (omit for single-item recipes)
 
 output: experience_bottle name:"&aDisenchanted XP"
+lore: []             # optional — lore lines for the output item
 
 ghost: false
 # ghost: true — cancel result, fire effects instead (e.g. give XP to player)
