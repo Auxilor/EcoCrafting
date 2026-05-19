@@ -14,6 +14,9 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
+import ru.oftendev.recipebook.custom.CustomRecipe
+import ru.oftendev.recipebook.custom.CustomRecipes
+import ru.oftendev.recipebook.custom.RecipeUnlockStore
 import ru.oftendev.recipebook.integration.VaultPackIntegration
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.lang.reflect.Field
@@ -36,11 +39,49 @@ object RecipeResolver {
             findEcoRecipe(customItem)?.let { return it }
         }
 
+        CustomRecipes.getByOutput(clean)?.let { return it.toResolvedRecipe() }
+
         return findBukkitRecipe(clean)
     }
 
     fun resolveOutput(itemStack: ItemStack): ItemStack? {
         return resolve(itemStack)?.output?.clone()
+    }
+
+    fun resolveForPlayer(itemStack: ItemStack, player: Player): ResolvedRecipe? {
+        val recipe = resolve(itemStack) ?: return null
+        val locked = if (recipe.source == RecipeSource.CUSTOM) {
+            val customRecipe = CustomRecipes.getByOutput(itemStack.clone().apply { amount = 1 })
+            customRecipe?.let { RecipeUnlockStore.isLocked(player, it) } ?: false
+        } else false
+        return recipe.copy(locked = locked)
+    }
+
+    private fun CustomRecipe.toResolvedRecipe(): ResolvedRecipe {
+        val airStack = ItemStack(Material.AIR)
+        fun emptyIng() = RecipeIngredient.empty(airStack)
+
+        val ingredients: List<RecipeIngredient> = when (this) {
+            is CustomRecipe.CraftingTable -> parts
+            is CustomRecipe.Smelting      -> listOf(input) + List(8) { emptyIng() }
+            is CustomRecipe.Smithing      -> listOf(template, base, addition) + List(6) { emptyIng() }
+            is CustomRecipe.Stonecutter   -> listOf(input) + List(8) { emptyIng() }
+            is CustomRecipe.Crafter       -> parts
+            is CustomRecipe.Brewing       -> listOf(base, ingredient) + List(7) { emptyIng() }
+            is CustomRecipe.Cartography   -> listOf(map, addition) + List(7) { emptyIng() }
+            is CustomRecipe.Grindstone    -> listOfNotNull(item1, item2) + List(7) { emptyIng() }
+            is CustomRecipe.Anvil         -> listOfNotNull(base, material) + List(7) { emptyIng() }
+            is CustomRecipe.Villager      -> listOfNotNull(input1, input2) + List(7) { emptyIng() }
+        }
+
+        return ResolvedRecipe(
+            key = key,
+            output = output.clone(),
+            ingredients = ingredients,
+            permission = permission,
+            source = RecipeSource.CUSTOM,
+            displayType = displayType
+        )
     }
 
     fun findEcoRecipe(customItem: CustomItem): ResolvedRecipe? {
