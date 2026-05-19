@@ -164,15 +164,15 @@ object RecipeCreatorGUI {
     ) {
         // Prompt for recipe ID via chat
         player.sendMessage("&aType the recipe ID (lowercase, no spaces) in chat, or &ccancel &ato abort.")
-        awaitingInput[player.uniqueId] = { id ->
+        awaitingInput[player.uniqueId] = handler@{ id ->
             val cleanId = id.lowercase().replace(" ", "_").replace(Regex("[^a-z0-9_]"), "")
             if (cleanId.isBlank()) {
                 player.sendMessage("&cID cannot be blank.")
-                return@let
+                return@handler
             }
             if (CustomRecipes.getByKey(NamespacedKey("recipebook", cleanId)) != null) {
                 player.sendMessage("&cRecipe '$cleanId' already exists.")
-                return@let
+                return@handler
             }
             player.sendMessage("&aType a permission node (or leave blank and press enter):")
             awaitingInput[player.uniqueId] = { perm ->

@@ -1,13 +1,17 @@
 package ru.oftendev.recipebook.custom
 
+import com.willfp.eco.core.config.ConfigType
+import com.willfp.eco.core.config.TransientConfig
 import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.config.yaml.YamlBaseConfig
 import com.willfp.eco.core.items.Items
 import com.willfp.libreforge.SimpleHolder
+import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.ConditionList
+import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.effects.Effects
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
-import org.bukkit.Material
 import ru.oftendev.recipebook.recipe.IngredientMatcher
 import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.toTestableItem
@@ -29,7 +33,7 @@ object CustomRecipeLoader {
     }
 
     private fun loadFile(file: File) {
-        val config = YamlBaseConfig(file, recipeBookPlugin)
+        val config = TransientConfig(file, ConfigType.YAML)
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
         val recipe = when (type) {
@@ -79,34 +83,23 @@ object CustomRecipeLoader {
 
     internal fun parseCommonConditions(id: String, config: Config): CommonConditions {
         val permission = config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }
-        val visConds = recipeBookPlugin.compileConditions(
-            config.getSubsections("visibility-conditions"), "visibility-conditions-$id", null
-        )
-        val craftConds = recipeBookPlugin.compileConditions(
-            config.getSubsections("crafting-conditions"), "crafting-conditions-$id", null
-        )
-        val unlockConds = recipeBookPlugin.compileConditions(
-            config.getSubsections("unlock-conditions"), "unlock-conditions-$id", null
-        )
+        val ctx = ViolationContext(recipeBookPlugin, "recipe-$id")
         return CommonConditions(
             permission = permission,
-            visibilityConditions = ConditionList(visConds),
-            craftingConditions = ConditionList(craftConds),
+            visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
+            craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
             lockedByDefault = config.getBool("locked-by-default"),
             showWhenLocked = config.getBool("show-when-locked"),
             lockedLore = config.getFormattedStrings("locked-lore"),
-            unlockConditions = ConditionList(unlockConds)
+            unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions"))
         )
     }
 
     internal fun parseGhostHolder(id: String, config: Config): SimpleHolder? {
         if (!config.getBool("ghost")) return null
-        val effects = recipeBookPlugin.compileEffects(
-            config.getSubsections("effects"), "ghost-effects-$id", null
-        )
-        val conditions = recipeBookPlugin.compileConditions(
-            config.getSubsections("conditions"), "ghost-conditions-$id", null
-        )
+        val ctx = ViolationContext(recipeBookPlugin, "recipe-$id-ghost")
+        val effects = Effects.compile(config.getSubsections("effects"), ctx.with("effects"))
+        val conditions = Conditions.compile(config.getSubsections("conditions"), ctx.with("conditions"))
         return SimpleHolder(key(id), effects, conditions)
     }
 
@@ -171,7 +164,7 @@ object CustomRecipeLoader {
             input = parseIngredient(config.getString("input")),
             stationType = type,
             cookTime = if (config.has("cook-time")) config.getInt("cook-time") else -1,
-            experience = config.getFloatOrNull("experience") ?: 0f,
+            experience = config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
             ghostHolder = parseGhostHolder(id, config),
@@ -212,8 +205,9 @@ object CustomRecipeLoader {
         val outputs = rawOutputs.mapIndexed { idx, outCfg ->
             val ghost = outCfg.getBool("ghost")
             val ghostHolder: SimpleHolder? = if (ghost) {
-                val effects = recipeBookPlugin.compileEffects(outCfg.getSubsections("effects"), "sc-effects-$id-$idx", null)
-                val conditions = recipeBookPlugin.compileConditions(outCfg.getSubsections("conditions"), "sc-conds-$id-$idx", null)
+                val scCtx = ViolationContext(recipeBookPlugin, "recipe-$id-out$idx")
+                val effects = Effects.compile(outCfg.getSubsections("effects"), scCtx.with("effects"))
+                val conditions = Conditions.compile(outCfg.getSubsections("conditions"), scCtx.with("conditions"))
                 SimpleHolder(NamespacedKey("recipebook", "${id}_out$idx"), effects, conditions)
             } else null
             StonecutterOutput(

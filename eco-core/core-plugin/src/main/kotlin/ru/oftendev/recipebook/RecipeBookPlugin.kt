@@ -1,7 +1,7 @@
 package ru.oftendev.recipebook
 
-import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.command.impl.PluginCommand
+import com.willfp.libreforge.loader.LibreforgePlugin
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import org.bstats.bukkit.Metrics
@@ -31,7 +31,7 @@ lateinit var recipeBookPlugin: RecipeBookPlugin
 
 private const val BSTATS_PLUGIN_ID = 31426
 
-class RecipeBookPlugin : EcoPlugin() {
+class RecipeBookPlugin : LibreforgePlugin() {
     private var metrics: Metrics? = null
 
     init {
