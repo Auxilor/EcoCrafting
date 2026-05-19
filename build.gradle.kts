@@ -63,10 +63,7 @@ allprojects {
             archiveFileName.set("RecipeBook.jar")
             exclude("META-INF/**")
             relocate("com.willfp.libreforge.loader", "ru.oftendev.recipebook.libreforge.loader")
-            relocate("kotlin", "ru.oftendev.recipebook.libs.kotlin")
-            relocate("kotlin.jvm", "ru.oftendev.recipebook.libs.kotlin.jvm")
-            relocate("kotlin.coroutines", "ru.oftendev.recipebook.libs.kotlin.coroutines")
-            relocate("kotlin.reflect", "ru.oftendev.recipebook.libs.kotlin.reflect")
+            relocate("kotlin", "com.willfp.eco.libs.kotlin")
             relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
         }
 
