@@ -9,6 +9,7 @@ depend:
 softdepend:
   - EcoShop
   - VaultPack
+  - libreforge
 commands:
   recipebook:
     description: Base Command
