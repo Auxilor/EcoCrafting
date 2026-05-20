@@ -113,15 +113,15 @@ sealed class CustomRecipe {
         val parts: List<RecipeIngredient>,
         val shapeless: Boolean,
         override val permission: String?,
+        override val ghost: Boolean,
+        override val ghostChain: Chain?,
         override val visibilityConditions: ConditionList,
-        override val craftingConditions: ConditionList
+        override val craftingConditions: ConditionList,
+        override val lockedByDefault: Boolean,
+        override val showWhenLocked: Boolean,
+        override val lockedLore: List<String>,
+        override val unlockConditions: ConditionList
     ) : CustomRecipe() {
-        override val ghost = false
-        override val ghostChain: Chain? = null
-        override val lockedByDefault = false
-        override val showWhenLocked = false
-        override val lockedLore: List<String> = emptyList()
-        override val unlockConditions = ConditionList(emptyList())
         override val displayType = RecipeDisplayType.CRAFTER
     }
 
