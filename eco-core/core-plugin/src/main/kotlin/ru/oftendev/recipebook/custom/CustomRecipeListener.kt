@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.CraftItemEvent
-import org.bukkit.event.inventory.PrepareSmithingItemEvent
 import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
 import ru.oftendev.recipebook.custom.event.CustomBrewEvent
@@ -327,9 +326,12 @@ class CustomRecipeListener : Listener {
         pendingRecipe[player.uniqueId] = recipe
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    fun onPrepareSmithing(event: PrepareSmithingItemEvent) {
-        val player = event.view.player as? Player ?: return
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onSmithingResultClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
+        if (event.inventory.type != org.bukkit.event.inventory.InventoryType.SMITHING) return
+        if (event.rawSlot != 3) return
+        val player = event.whoClicked as? Player ?: return
+
         val inv = event.inventory
         val recipe = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Smithing>()
@@ -337,33 +339,14 @@ class CustomRecipeListener : Listener {
                 it.template.matches(inv.getItem(0)) &&
                 it.base.matches(inv.getItem(1)) &&
                 it.addition.matches(inv.getItem(2))
-            } ?: run {
-                pendingRecipe.remove(player.uniqueId)
-                return
-            }
-        if (!recipe.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) {
-            pendingRecipe.remove(player.uniqueId)
-            return
-        }
-        event.result = recipe.output.clone()
-        pendingRecipe[player.uniqueId] = recipe
-        recipeBookPlugin.debug("[Smithing] PrepareSmithingItemEvent: recipe=${recipe.key} ghost=${recipe.ghost}")
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    fun onSmithingResultClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
-        if (event.inventory.type != org.bukkit.event.inventory.InventoryType.SMITHING) return
-        if (event.rawSlot != 3) return
-        val player = event.whoClicked as? Player ?: return
-        val recipe = pendingRecipe[player.uniqueId] as? CustomRecipe.Smithing ?: return
+            } ?: return
         if (!recipe.ghost) return
 
         recipeBookPlugin.debug("[Smithing] onSmithingResultClick: ghost recipe=${recipe.key}")
         if (!checkCraftingConditions(player, recipe)) { event.isCancelled = true; return }
 
         event.isCancelled = true
-        pendingRecipe.remove(player.uniqueId)
-        consumeSmithingSlots(event.view.topInventory)
+        consumeSmithingSlots(inv)
         val item = recipe.output.clone()
         val ce = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(ce)
