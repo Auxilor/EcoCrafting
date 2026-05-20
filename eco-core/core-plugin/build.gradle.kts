@@ -3,6 +3,7 @@ version = rootProject.version
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("com.willfp:libreforge:5.4.2")
 }
 
 tasks {
