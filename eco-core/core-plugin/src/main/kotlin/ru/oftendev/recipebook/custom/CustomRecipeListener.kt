@@ -110,8 +110,12 @@ class CustomRecipeListener : Listener {
     fun onSmelt(event: org.bukkit.event.inventory.FurnaceSmeltEvent) {
         val loc = event.block.location
         val player = FurnaceOwnerTracker.getOwner(loc)
+
         if (player == null) {
-            recipeBookPlugin.debug("[RecipeListener] Smelt at $loc — owner offline, skipping custom recipe")
+            val ghostMatch = CustomRecipes.all()
+                .filterIsInstance<CustomRecipe.Smelting>()
+                .firstOrNull { it.input.matches(event.source) && it.stationType != SmeltingType.CAMPFIRE && it.ghost }
+            if (ghostMatch != null) event.isCancelled = true
             return
         }
 
@@ -125,6 +129,8 @@ class CustomRecipeListener : Listener {
         val item = recipe.output.clone()
         if (recipe.ghost) {
             event.isCancelled = true
+            val furnaceState = event.block.state
+            if (furnaceState is org.bukkit.block.Furnace) consume(furnaceState.inventory, 0)
             val ce = CustomSmeltEvent(player, recipe, item, loc)
             Bukkit.getPluginManager().callEvent(ce)
             if (!ce.isCancelled) fireGhostEffects(player, recipe, item, 1)
@@ -139,7 +145,15 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onCampfire(event: org.bukkit.event.block.BlockCookEvent) {
         val loc = event.block.location
-        val player = FurnaceOwnerTracker.getOwner(loc) ?: return
+        val player = FurnaceOwnerTracker.getOwner(loc)
+
+        if (player == null) {
+            val ghostMatch = CustomRecipes.all()
+                .filterIsInstance<CustomRecipe.Smelting>()
+                .firstOrNull { it.input.matches(event.source) && it.stationType == SmeltingType.CAMPFIRE && it.ghost }
+            if (ghostMatch != null) event.isCancelled = true
+            return
+        }
 
         val recipe = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Smelting>()
@@ -151,6 +165,18 @@ class CustomRecipeListener : Listener {
         val item = recipe.output.clone()
         if (recipe.ghost) {
             event.isCancelled = true
+            val campfire = event.block.state as? org.bukkit.block.Campfire
+            if (campfire != null) {
+                for (slot in 0 until 4) {
+                    val slotItem = campfire.getItem(slot) ?: continue
+                    if (slotItem.isSimilar(event.source)) {
+                        if (slotItem.amount <= 1) campfire.setItem(slot, null)
+                        else { slotItem.amount--; campfire.setItem(slot, slotItem) }
+                        campfire.update()
+                        break
+                    }
+                }
+            }
             val ce = CustomSmeltEvent(player, recipe, item, loc)
             Bukkit.getPluginManager().callEvent(ce)
             if (!ce.isCancelled) fireGhostEffects(player, recipe, item, 1)
