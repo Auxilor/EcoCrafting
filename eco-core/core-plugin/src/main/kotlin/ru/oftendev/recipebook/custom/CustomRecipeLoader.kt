@@ -17,6 +17,7 @@ import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.toTestableItem
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.io.File
+import java.io.FileOutputStream
 import java.util.zip.ZipFile
 
 object CustomRecipeLoader {
@@ -39,6 +40,7 @@ object CustomRecipeLoader {
 
     private fun copyRecipeConfigs(firstLoad: Boolean) {
         runCatching {
+            val source = recipeBookPlugin.javaClass.classLoader
             val jarFile = File(recipeBookPlugin.javaClass.protectionDomain.codeSource.location.toURI())
             ZipFile(jarFile).use { zip ->
                 zip.entries().asSequence()
@@ -46,7 +48,13 @@ object CustomRecipeLoader {
                     .forEach { entry ->
                         val isExample = entry.name.substringAfterLast("/").startsWith("_")
                         if (firstLoad || isExample) {
-                            recipeBookPlugin.saveResource(entry.name, false)
+                            val outFile = recipeBookPlugin.dataFolder.resolve(entry.name)
+                            if (!outFile.exists()) {
+                                outFile.parentFile.mkdirs()
+                                source.getResourceAsStream(entry.name)?.use { input ->
+                                    FileOutputStream(outFile).use { input.copyTo(it) }
+                                }
+                            }
                         }
                     }
             }
