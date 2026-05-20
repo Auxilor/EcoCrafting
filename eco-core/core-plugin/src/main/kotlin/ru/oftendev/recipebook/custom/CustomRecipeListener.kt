@@ -104,6 +104,30 @@ class CustomRecipeListener : Listener {
         }
     }
 
+    // ── Crafter block ────────────────────────────────────────────────────
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onCrafterCraft(event: org.bukkit.event.block.CrafterCraftEvent) {
+        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
+        val baseKey = if (recipeKey.namespace == "recipebook" && recipeKey.key.endsWith("_crafter"))
+            NamespacedKey("recipebook", recipeKey.key.removeSuffix("_crafter"))
+        else recipeKey
+
+        val recipe = CustomRecipes.getByKey(baseKey) as? CustomRecipe.Crafter ?: return
+
+        if (recipe.ghost) {
+            event.isCancelled = true
+            val crafterState = event.block.state as? org.bukkit.block.Crafter
+            if (crafterState != null) {
+                val inv = crafterState.inventory
+                for (slot in 0 until 9) consume(inv, slot)
+                crafterState.update()
+            }
+        } else {
+            event.isCancelled = false
+        }
+    }
+
     // ── Furnace + campfire ────────────────────────────────────────────────
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

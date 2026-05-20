@@ -247,8 +247,14 @@ object CustomRecipeLoader {
             parts = rawParts.map { parseIngredient(it) },
             shapeless = config.getBool("shapeless"),
             permission = cc.permission,
+            ghost = config.getBool("ghost"),
+            ghostChain = parseGhostChain(id, config),
             visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions
+            craftingConditions = cc.craftingConditions,
+            lockedByDefault = cc.lockedByDefault,
+            showWhenLocked = cc.showWhenLocked,
+            lockedLore = cc.lockedLore,
+            unlockConditions = cc.unlockConditions
         )
     }
 
@@ -422,14 +428,37 @@ object CustomRecipeLoader {
     }
 
     private fun CustomRecipe.Crafter.registerCrafter() {
-        val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
+        // Eco recipe — crafting table + GUI display
+        val ecoBuilder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
             .builder(recipeBookPlugin, key.key)
             .setOutput(output)
         parts.forEachIndexed { idx, part ->
-            if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
+            if (!part.empty) ecoBuilder.setRecipePart(idx, part.matcher.toTestableItem())
         }
-        builder.build().register()
+        ecoBuilder.build().register()
         CustomRecipes.trackBukkitKey(key)
+
+        // Explicit Bukkit ShapedRecipe — required for Crafter block vanilla item matching
+        val crafterKey = NamespacedKey("recipebook", "${key.key}_crafter")
+        val chars = "ABCDEFGHI".toList()
+        var charIdx = 0
+        val slotToChar = mutableMapOf<Int, Char>()
+        parts.forEachIndexed { idx, part ->
+            if (!part.empty) slotToChar[idx] = chars[charIdx++]
+        }
+        val rows = (0..2).map { row ->
+            (0..2).joinToString("") { col ->
+                val idx = row * 3 + col
+                slotToChar[idx]?.toString() ?: " "
+            }
+        }
+        val bukkit = org.bukkit.inventory.ShapedRecipe(crafterKey, output.clone())
+        bukkit.shape(*rows.toTypedArray())
+        slotToChar.forEach { (idx, ch) ->
+            bukkit.setIngredient(ch, org.bukkit.inventory.RecipeChoice.ExactChoice(parts[idx].displayItem.clone()))
+        }
+        org.bukkit.Bukkit.addRecipe(bukkit)
+        CustomRecipes.trackBukkitKey(crafterKey)
     }
 }
 
