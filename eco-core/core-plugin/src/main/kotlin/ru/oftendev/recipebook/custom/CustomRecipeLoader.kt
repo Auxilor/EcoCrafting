@@ -121,11 +121,6 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     // ── Symmetry helpers ─────────────────────────────────────────────────
 
-    internal val ROT_90_CW  = intArrayOf(6, 3, 0, 7, 4, 1, 8, 5, 2)
-    internal val ROT_180    = intArrayOf(8, 7, 6, 5, 4, 3, 2, 1, 0)
-    internal val ROT_270_CW = intArrayOf(2, 5, 8, 1, 4, 7, 0, 3, 6)
-    internal val MIRROR_H   = intArrayOf(2, 1, 0, 5, 4, 3, 8, 7, 6)
-
     internal fun generateSymmetryVariants(parts: List<RecipeIngredient>): List<Pair<String, List<RecipeIngredient>>> {
         val variants = mutableListOf<Pair<String, List<RecipeIngredient>>>()
         val seen = mutableSetOf<List<Int>>()
@@ -138,13 +133,13 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         }
 
         seen.add(fingerprint(parts))
-        addVariant("_rot90",  ROT_90_CW)
-        addVariant("_rot180", ROT_180)
-        addVariant("_rot270", ROT_270_CW)
-        addVariant("_mir",    MIRROR_H)
-        addVariant("_mir90",  MIRROR_H.map { ROT_90_CW[it] }.toIntArray())
-        addVariant("_mir180", MIRROR_H.map { ROT_180[it] }.toIntArray())
-        addVariant("_mir270", MIRROR_H.map { ROT_270_CW[it] }.toIntArray())
+        addVariant("_rot90",  RecipeSymmetry.ROT_90_CW)
+        addVariant("_rot180", RecipeSymmetry.ROT_180)
+        addVariant("_rot270", RecipeSymmetry.ROT_270_CW)
+        addVariant("_mir",    RecipeSymmetry.MIRROR_H)
+        addVariant("_mir90",  RecipeSymmetry.MIRROR_H.map { RecipeSymmetry.ROT_90_CW[it] }.toIntArray())
+        addVariant("_mir180", RecipeSymmetry.MIRROR_H.map { RecipeSymmetry.ROT_180[it] }.toIntArray())
+        addVariant("_mir270", RecipeSymmetry.MIRROR_H.map { RecipeSymmetry.ROT_270_CW[it] }.toIntArray())
         return variants
     }
 
