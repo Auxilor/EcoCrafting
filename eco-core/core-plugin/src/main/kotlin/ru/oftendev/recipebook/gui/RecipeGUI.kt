@@ -39,7 +39,6 @@ class RecipeGUI(val stack: ItemStack) {
             RecipeDisplayType.STONECUTTER  -> "stonecutter-gui"
             RecipeDisplayType.CRAFTER      -> "craft-gui"
             RecipeDisplayType.BREWING      -> "brewing-gui"
-            RecipeDisplayType.CARTOGRAPHY  -> "cartography-gui"
             RecipeDisplayType.GRINDSTONE   -> "grindstone-gui"
             RecipeDisplayType.ANVIL        -> "anvil-gui"
             RecipeDisplayType.VILLAGER     -> "villager-gui"

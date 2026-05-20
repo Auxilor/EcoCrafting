@@ -46,7 +46,6 @@ object CustomRecipeLoader {
             "stonecutter"       -> loadStonecutter(file.nameWithoutExtension, config)
             "crafter"           -> loadCrafter(file.nameWithoutExtension, config)
             "brewing_stand"     -> loadBrewing(file.nameWithoutExtension, config)
-            "cartography_table" -> loadCartography(file.nameWithoutExtension, config)
             "grindstone"        -> loadGrindstone(file.nameWithoutExtension, config)
             "anvil"             -> loadAnvil(file.nameWithoutExtension, config)
             "villager"          -> loadVillager(file.nameWithoutExtension, config)
@@ -260,25 +259,6 @@ object CustomRecipeLoader {
             output = parseOutputItem(config),
             base = parseIngredient(config.getString("base")),
             ingredient = parseIngredient(config.getString("ingredient")),
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadCartography(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Cartography(
-            key = key(id),
-            output = parseOutputItem(config),
-            map = parseIngredient(config.getString("map")),
-            addition = parseIngredient(config.getString("addition")),
             permission = cc.permission,
             ghost = config.getBool("ghost"),
             ghostChain = parseGhostChain(id, config),

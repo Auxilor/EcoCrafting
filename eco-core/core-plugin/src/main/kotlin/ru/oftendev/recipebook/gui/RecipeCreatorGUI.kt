@@ -26,7 +26,6 @@ object RecipeCreatorGUI {
         Triple("stonecutter",       Material.STONECUTTER,       "&aStonecutter"),
         Triple("crafter",           Material.CRAFTER,           "&aCrafter"),
         Triple("brewing_stand",     Material.BREWING_STAND,     "&aBrewing Stand"),
-        Triple("cartography_table", Material.CARTOGRAPHY_TABLE, "&aCartography Table"),
         Triple("grindstone",        Material.GRINDSTONE,        "&aGrindstone"),
         Triple("anvil",             Material.ANVIL,             "&aAnvil"),
         Triple("villager",          Material.EMERALD,           "&aVillager Trade")
@@ -110,7 +109,7 @@ object RecipeCreatorGUI {
         "furnace", "blast_furnace", "smoker", "campfire", "stonecutter" -> listOf(2 to 2)
         "smithing_table" -> listOf(2 to 2, 2 to 4, 2 to 6)
         "brewing_stand"  -> listOf(2 to 2, 2 to 4)
-        "cartography_table", "grindstone", "villager" -> listOf(2 to 2, 2 to 4)
+        "grindstone", "villager" -> listOf(2 to 2, 2 to 4)
         "anvil" -> listOf(2 to 2, 2 to 4)
         else -> emptyList()
     }
@@ -246,7 +245,7 @@ object RecipeCreatorGUI {
                 sb.appendLine("base: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
                 sb.appendLine("ingredient: ${pending.parts[1]?.type?.name?.lowercase() ?: "air"}")
             }
-            "cartography_table", "grindstone", "villager" -> {
+            "grindstone", "villager" -> {
                 sb.appendLine("input1: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
                 pending.parts[1]?.let { sb.appendLine("input2: ${it.type.name.lowercase()}") }
             }
