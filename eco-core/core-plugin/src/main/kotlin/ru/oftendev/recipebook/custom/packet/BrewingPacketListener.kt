@@ -52,7 +52,8 @@ object BrewingPacketListener : PacketListener {
             else cursor.amount--
             player.updateInventory()
 
-            val loc = topInv.location ?: return@Runnable
+            // Use block location for stable map key (normalises pitch/yaw to 0)
+            val loc = topInv.location?.block?.location ?: return@Runnable
             scheduleBrew(loc, recipe)
         })
     }
