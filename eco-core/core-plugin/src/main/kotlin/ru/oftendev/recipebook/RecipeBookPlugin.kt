@@ -13,11 +13,11 @@ import ru.oftendev.recipebook.integration.VaultPackIntegration
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.triggers.Triggers
-import ru.oftendev.recipebook.custom.BrewingOwnerTracker
+import ru.oftendev.recipebook.custom.BlockOwnerTracker
 import ru.oftendev.recipebook.custom.CustomRecipeListener
 import ru.oftendev.recipebook.custom.CustomRecipeLoader
-import ru.oftendev.recipebook.custom.FurnaceOwnerTracker
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
+import ru.oftendev.recipebook.custom.packet.BrewingPacketListener
 import ru.oftendev.recipebook.custom.libreforge.ConditionHasUnlockedRecipe
 import ru.oftendev.recipebook.custom.libreforge.EffectLockRecipe
 import ru.oftendev.recipebook.custom.libreforge.EffectUnlockRecipe
@@ -52,10 +52,10 @@ class RecipeBookPlugin : LibreforgePlugin() {
         Effects.register(EffectLockRecipe)
         Conditions.register(ConditionHasUnlockedRecipe)
 
-        eventManager.registerListener(FurnaceOwnerTracker)
-        eventManager.registerListener(BrewingOwnerTracker)
+        eventManager.registerListener(BlockOwnerTracker)
         eventManager.registerListener(RecipeUnlockStore)
         eventManager.registerListener(CustomRecipeListener())
+        eventManager.registerPacketListener(BrewingPacketListener)
 
         CustomRecipeLoader.load()
 
