@@ -130,6 +130,7 @@ sealed class CustomRecipe {
         override val output: ItemStack,
         val base: RecipeIngredient,
         val ingredient: RecipeIngredient,
+        val brewTime: Int,
         override val permission: String?,
         override val ghost: Boolean,
         override val ghostChain: Chain?,

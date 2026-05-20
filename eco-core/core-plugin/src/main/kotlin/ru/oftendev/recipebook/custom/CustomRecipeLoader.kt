@@ -287,6 +287,7 @@ object CustomRecipeLoader {
             output = parseOutputItem(config),
             base = parseIngredient(config.getStringOrNull("base") ?: ""),
             ingredient = parseIngredient(config.getString("ingredient")),
+            brewTime = config.getIntOrNull("brew-time") ?: 400,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
             ghostChain = parseGhostChain(id, config),
