@@ -29,7 +29,6 @@ object BrewingPacketListener : PacketListener {
         }.getOrElse {
             packet.javaClass.methods.firstOrNull { it.name == "getSlotNum" }?.invoke(packet) as? Int
         } ?: return
-        if (slotNum != 3) return
 
         val player = event.player
         if (player.openInventory.topInventory.type != InventoryType.BREWING) return
@@ -37,25 +36,40 @@ object BrewingPacketListener : PacketListener {
         val cursor = player.itemOnCursor
         if (cursor == null || cursor.type.isAir) return
 
-        val recipe = CustomRecipes.all()
-            .filterIsInstance<CustomRecipe.Brewing>()
-            .firstOrNull { it.ingredient.matches(cursor) } ?: return
-
-        event.isCancelled = true
-
-        Bukkit.getScheduler().runTask(recipeBookPlugin, Runnable {
-            val topInv = player.openInventory.topInventory
-            if (topInv.type != InventoryType.BREWING) return@Runnable
-
-            val toPlace = cursor.clone().apply { amount = 1 }
-            topInv.setItem(3, toPlace)
-            if (cursor.amount <= 1) player.setItemOnCursor(null)
-            else cursor.amount--
-            player.updateInventory()
-
-            val loc = topInv.location?.block?.location ?: return@Runnable
-            scheduleBrew(loc, recipe, player)
-        })
+        if (slotNum == 3) {
+            val recipe = CustomRecipes.all()
+                .filterIsInstance<CustomRecipe.Brewing>()
+                .firstOrNull { it.ingredient.matches(cursor) } ?: return
+            event.isCancelled = true
+            Bukkit.getScheduler().runTask(recipeBookPlugin, Runnable {
+                val topInv = player.openInventory.topInventory
+                if (topInv.type != InventoryType.BREWING) return@Runnable
+                val toPlace = cursor.clone().apply { amount = 1 }
+                topInv.setItem(3, toPlace)
+                if (cursor.amount <= 1) player.setItemOnCursor(null)
+                else cursor.amount--
+                player.updateInventory()
+                val loc = topInv.location?.block?.location ?: return@Runnable
+                scheduleBrew(loc, recipe, player)
+            })
+        } else if (slotNum in 0..2) {
+            val matches = CustomRecipes.all()
+                .filterIsInstance<CustomRecipe.Brewing>()
+                .any { it.base.matches(cursor) }
+            if (!matches) return
+            event.isCancelled = true
+            Bukkit.getScheduler().runTask(recipeBookPlugin, Runnable {
+                val topInv = player.openInventory.topInventory
+                if (topInv.type != InventoryType.BREWING) return@Runnable
+                val current = topInv.getItem(slotNum)
+                if (current != null && !current.type.isAir) return@Runnable
+                val toPlace = cursor.clone().apply { amount = 1 }
+                topInv.setItem(slotNum, toPlace)
+                if (cursor.amount <= 1) player.setItemOnCursor(null)
+                else cursor.amount--
+                player.updateInventory()
+            })
+        }
     }
 
     fun cancelBrew(location: Location) {
