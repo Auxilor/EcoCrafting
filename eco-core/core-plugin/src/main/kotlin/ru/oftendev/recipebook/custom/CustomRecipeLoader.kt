@@ -323,6 +323,8 @@ object CustomRecipeLoader {
             runCatching { org.bukkit.entity.Villager.Profession.valueOf(it.uppercase()) }.getOrNull()
         }
         val minLevel = config.getIntOrNull("min-level") ?: 0
+        val chance = config.getStringOrNull("chance")?.toDoubleOrNull()?.coerceIn(0.0, 1.0) ?: 1.0
+        val wanderingTrader = config.getBool("wandering-trader")
         return CustomRecipe.Villager(
             key = key(id),
             output = parseOutputItem(config),
@@ -330,6 +332,8 @@ object CustomRecipeLoader {
             input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) },
             profession = profession,
             minLevel = minLevel,
+            chance = chance,
+            wanderingTrader = wanderingTrader,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
             ghostChain = parseGhostChain(id, config),
