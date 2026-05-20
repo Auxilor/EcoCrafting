@@ -64,7 +64,14 @@ class CustomRecipeListener : Listener {
     }
 
     private fun handleSmithing(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
-        val recipe = CustomRecipes.getByKey(recipeKey) as? CustomRecipe.Smithing ?: return
+        val recipe = (CustomRecipes.getByKey(recipeKey)
+            ?: event.recipe.result?.let { CustomRecipes.getByOutput(it) })
+            as? CustomRecipe.Smithing
+            ?: run {
+                recipeBookPlugin.debug("[Smithing] no recipe for key=$recipeKey result=${event.recipe.result?.type}")
+                return
+            }
+
         if (!checkCraftingConditions(player, recipe)) { event.isCancelled = true; return }
 
         val item = recipe.output.clone()
@@ -74,6 +81,7 @@ class CustomRecipeListener : Listener {
             val ce = CustomSmithEvent(player, recipe, item)
             Bukkit.getPluginManager().callEvent(ce)
             if (!ce.isCancelled) fireGhostEffects(player, recipe, item, 1)
+            recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
         } else {
             val ce = CustomSmithEvent(player, recipe, item)
             Bukkit.getPluginManager().callEvent(ce)
@@ -83,8 +91,18 @@ class CustomRecipeListener : Listener {
     }
 
     private fun handleStonecutter(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
-        val (baseId, idx) = parseStonecutterKey(recipeKey) ?: return
-        val recipe = CustomRecipes.getByKey(NamespacedKey("recipebook", baseId)) as? CustomRecipe.Stonecutter ?: return
+        val parsed = parseStonecutterKey(recipeKey)
+        if (parsed == null) {
+            recipeBookPlugin.debug("[Stonecutter] could not parse key=$recipeKey")
+            return
+        }
+        val (baseId, idx) = parsed
+        val baseKey = NamespacedKey("recipebook", baseId)
+        val recipe = CustomRecipes.getByKey(baseKey) as? CustomRecipe.Stonecutter
+            ?: run {
+                recipeBookPlugin.debug("[Stonecutter] no recipe for baseKey=$baseKey (from key=$recipeKey idx=$idx)")
+                return
+            }
         val out = recipe.outputs.getOrNull(idx) ?: return
         if (!checkCraftingConditions(player, recipe)) { event.isCancelled = true; return }
 
@@ -97,6 +115,7 @@ class CustomRecipeListener : Listener {
             val ce = CustomCraftEvent(player, recipe, item, amount)
             Bukkit.getPluginManager().callEvent(ce)
             if (!ce.isCancelled) fireStonecutterGhostEffects(player, recipe, out, amount)
+            recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
         } else {
             val ce = CustomCraftEvent(player, recipe, item, amount)
             Bukkit.getPluginManager().callEvent(ce)
@@ -283,6 +302,7 @@ class CustomRecipeListener : Listener {
         if (!recipe.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return
         event.result = recipe.output.clone()
         pendingRecipe[player.uniqueId] = recipe
+        recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
     }
 
     @EventHandler(priority = EventPriority.HIGH)
