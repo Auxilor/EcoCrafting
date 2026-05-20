@@ -3,6 +3,20 @@
 
 debug: false
 
+# Owner tracking for block-based recipes (furnace, brewing, crafter, campfire)
+# placed: dispatch effects on the player who placed (or first opened) the block
+# nearest: dispatch effects on the nearest online player within owner-nearest-radius blocks
+owner-mode: placed
+owner-nearest-radius: 32
+
+# Brewing stand ghost recipe behaviour
+brewing-stand:
+  # When true, ghost effects fire once per matched base slot (not once total)
+  ghost-per-slot: true
+
+# Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
+villager-scan-on-reload: true
+
 default-category: "main"
 
 # Shop Integration Settings
