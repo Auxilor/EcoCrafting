@@ -1,0 +1,20 @@
+enabled: true
+
+type: villager
+
+input1: emerald
+input2: paper
+
+output: map name:"&fvillager_no_ghost"
+lore:
+  - "&8villager | two inputs | no ghost"
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

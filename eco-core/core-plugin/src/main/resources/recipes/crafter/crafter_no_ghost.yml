@@ -1,0 +1,28 @@
+enabled: true
+
+type: crafter
+
+recipe:
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - ""
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - oak_planks
+
+shapeless: false
+
+output: chest name:"&fcrafter_no_ghost"
+lore:
+  - "&8crafter | shaped | no ghost"
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

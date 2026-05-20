@@ -1,0 +1,32 @@
+enabled: true
+
+type: crafting_table
+
+recipe:
+  - ""
+  - diamond
+  - ""
+  - diamond
+  - emerald
+  - diamond
+  - ""
+  - diamond
+  - ""
+
+shapeless: false
+symmetry: true
+
+output: nether_star name:"&fcrafting_table_symmetry_no_ghost"
+lore:
+  - "&8crafting_table | symmetry | no ghost"
+  - "&7All rotations & mirrors registered"
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

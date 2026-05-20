@@ -1,0 +1,27 @@
+enabled: true
+
+type: blast_furnace
+
+input: raw_gold
+output: gold_ingot name:"&fblast_furnace_ghost"
+lore:
+  - "&8blast_furnace | ghost"
+  - "&cNo item given — effects fire instead"
+
+cook-time: 100
+experience: 0.0
+
+ghost: true
+effects:
+  - id: send_message
+    args:
+      message: "&aGhost craft triggered: blast_furnace"
+conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

@@ -1,0 +1,37 @@
+enabled: true
+
+type: crafting_table
+
+recipe:
+  - redstone
+  - glowstone_dust
+  - ""
+  - ""
+  - ""
+  - ""
+  - ""
+  - ""
+  - ""
+
+shapeless: true
+symmetry: false
+
+output: glowstone name:"&fcrafting_table_shapeless_ghost"
+lore:
+  - "&8crafting_table | shapeless | ghost"
+  - "&cNo item given — effects fire instead"
+
+ghost: true
+effects:
+  - id: send_message
+    args:
+      message: "&aGhost craft triggered: crafting_table"
+conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

@@ -1,0 +1,23 @@
+enabled: true
+
+type: anvil
+
+base: iron_sword
+material: diamond
+
+result-name: "&bTest Diamond Sword"
+repair-cost: 2
+
+output: diamond_sword name:"&fanvil_no_ghost"
+lore:
+  - "&8anvil | no ghost"
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []
