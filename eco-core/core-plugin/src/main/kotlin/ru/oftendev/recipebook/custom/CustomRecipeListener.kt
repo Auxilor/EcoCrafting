@@ -117,15 +117,12 @@ class CustomRecipeListener : Listener {
 
         if (recipe.ghost) {
             event.isCancelled = true
-            val crafterState = event.block.state as? org.bukkit.block.Crafter
-            if (crafterState != null) {
-                val inv = crafterState.inventory
-                for (slot in 0 until 9) consume(inv, slot)
-                crafterState.update()
-            }
-        } else {
-            event.isCancelled = false
+            val crafterInv = (event.block.state as? org.bukkit.block.Crafter)?.inventory ?: return
+            for (slot in 0 until 9) consume(crafterInv, slot)
+            val player = BlockOwnerTracker.getOwner(event.block.location) ?: return
+            fireGhostEffects(player, recipe, recipe.output.clone(), 1)
         }
+        // non-ghost: vanilla handles item delivery
     }
 
     // ── Furnace + campfire ────────────────────────────────────────────────
@@ -133,7 +130,7 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onSmelt(event: org.bukkit.event.inventory.FurnaceSmeltEvent) {
         val loc = event.block.location
-        val player = FurnaceOwnerTracker.getOwner(loc)
+        val player = BlockOwnerTracker.getOwner(loc)
 
         if (player == null) {
             val ghostMatch = CustomRecipes.all()
@@ -169,7 +166,7 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onCampfire(event: org.bukkit.event.block.BlockCookEvent) {
         val loc = event.block.location
-        val player = FurnaceOwnerTracker.getOwner(loc)
+        val player = BlockOwnerTracker.getOwner(loc)
 
         if (player == null) {
             val ghostMatch = CustomRecipes.all()
@@ -217,7 +214,7 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBrew(event: org.bukkit.event.inventory.BrewEvent) {
         val loc = event.block.location
-        val player = BrewingOwnerTracker.getOwner(loc)
+        val player = BlockOwnerTracker.getOwner(loc)
         if (player == null) {
             recipeBookPlugin.debug("[RecipeListener] Brew at $loc — owner offline")
             return
