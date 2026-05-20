@@ -10,6 +10,13 @@ cook-time: 100           # ticks (smoker is 2x faster than furnace for food)
 experience: 0.35
 
 ghost: false
+# ghost: true — cancel the smelt, fire effects instead of producing the item
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 50
+# conditions: []
+
 permission: ""
 locked-by-default: false
 show-when-locked: false

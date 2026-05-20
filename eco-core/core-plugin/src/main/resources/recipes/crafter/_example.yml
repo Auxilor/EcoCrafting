@@ -16,6 +16,14 @@ recipe:
 
 shapeless: false
 
+ghost: false
+# ghost: true — cancel the craft, fire effects instead of producing the item
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 50
+# conditions: []
+
 output: iron_helmet name:"&7Auto-Crafted Helmet"
 lore: []             # optional — lore lines for the output item
 
