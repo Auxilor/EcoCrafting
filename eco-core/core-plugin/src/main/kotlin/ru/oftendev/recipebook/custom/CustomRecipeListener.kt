@@ -17,6 +17,7 @@ import ru.oftendev.recipebook.custom.event.CustomSmeltEvent
 import ru.oftendev.recipebook.custom.event.CustomSmithEvent
 import ru.oftendev.recipebook.custom.event.CustomWorkbenchCraftEvent
 import com.willfp.eco.util.formatEco
+import org.bukkit.persistence.PersistentDataType
 import ru.oftendev.recipebook.custom.packet.BrewingPacketListener
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.util.UUID
@@ -378,31 +379,43 @@ class CustomRecipeListener : Listener {
         val merchant = (event.inventory.holder as? org.bukkit.entity.AbstractVillager) ?: return
         val isWanderingTrader = merchant is org.bukkit.entity.WanderingTrader
 
-        val villagerRecipes = CustomRecipes.all()
+        val allCustomOutputs = CustomRecipes.all()
+            .filterIsInstance<CustomRecipe.Villager>()
+            .map { it.output }
+
+        val filteredRecipes = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Villager>()
             .filter { vr ->
                 if (!vr.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return@filter false
-                // Target type filter
                 if (isWanderingTrader) {
                     if (!vr.wanderingTrader) return@filter false
                 } else {
                     if (vr.wanderingTrader) return@filter false
-                    // Profession + level only apply to regular Villager
                     if (vr.profession != null || vr.minLevel > 0) {
                         val v = merchant as? org.bukkit.entity.Villager ?: return@filter false
                         if (vr.profession != null && v.profession != vr.profession) return@filter false
                         if (vr.minLevel > 0 && v.villagerLevel < vr.minLevel) return@filter false
                     }
                 }
-                // Chance roll
-                if (vr.chance < 1.0 && Math.random() > vr.chance) return@filter false
-                true
+                val pdcKey = NamespacedKey("recipebook", "vr_${vr.key.key}")
+                val pdc = merchant.persistentDataContainer
+                if (pdc.has(pdcKey, PersistentDataType.BYTE)) {
+                    pdc.get(pdcKey, PersistentDataType.BYTE) == 1.toByte()
+                } else {
+                    val include = vr.chance >= 1.0 || Math.random() <= vr.chance
+                    pdc.set(pdcKey, PersistentDataType.BYTE, if (include) 1.toByte() else 0.toByte())
+                    include
+                }
             }
 
-        if (villagerRecipes.isEmpty()) return
+        val validOutputs = filteredRecipes.map { it.output }
 
         val existing = merchant.recipes.toMutableList()
-        villagerRecipes.forEach { vr ->
+        existing.removeIf { mr ->
+            allCustomOutputs.any { it.isSimilar(mr.result) } &&
+            validOutputs.none { it.isSimilar(mr.result) }
+        }
+        filteredRecipes.forEach { vr ->
             if (existing.none { it.result.isSimilar(vr.output) }) {
                 val mr = org.bukkit.inventory.MerchantRecipe(vr.output.clone(), Int.MAX_VALUE)
                 mr.addIngredient(vr.input1.displayItem.clone())
