@@ -105,24 +105,23 @@ class CustomRecipeListener : Listener {
                 return
             }
         val out = recipe.outputs.getOrNull(idx) ?: return
+
+        recipeBookPlugin.debug("[Stonecutter] handleStonecutter: key=$recipeKey ghost=${out.ghost}")
+        if (out.ghost) {
+            event.isCancelled = true
+            recipeBookPlugin.debug("[Stonecutter] ghost: cancelling CraftItemEvent (safety)")
+            return
+        }
+
         if (!checkCraftingConditions(player, recipe)) { event.isCancelled = true; return }
 
         val amount = calculateCraftAmount(event)
         val item = out.item.clone().apply { this.amount = amount }
-
-        if (out.ghost) {
-            event.isCancelled = true
-            consumeStonecutterSlot(event)
-            val ce = CustomCraftEvent(player, recipe, item, amount)
-            Bukkit.getPluginManager().callEvent(ce)
-            if (!ce.isCancelled) fireStonecutterGhostEffects(player, recipe, out, amount)
-            recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
-        } else {
-            val ce = CustomCraftEvent(player, recipe, item, amount)
-            Bukkit.getPluginManager().callEvent(ce)
-            if (ce.isCancelled) { event.isCancelled = true; return }
-            fireCustomCraftTrigger(player, recipe, item, amount)
-        }
+        val ce = CustomCraftEvent(player, recipe, item, amount)
+        Bukkit.getPluginManager().callEvent(ce)
+        if (ce.isCancelled) { event.isCancelled = true; return }
+        fireCustomCraftTrigger(player, recipe, item, amount)
+        recipeBookPlugin.debug("[Stonecutter] non-ghost: effects fired for recipe=${recipe.key}")
     }
 
     // ── Crafter block ────────────────────────────────────────────────────
@@ -372,6 +371,46 @@ class CustomRecipeListener : Listener {
         recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onStonecutterResultClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
+        if (event.inventory.type != org.bukkit.event.inventory.InventoryType.STONECUTTER) return
+        if (event.rawSlot != 1) return
+        val player = event.whoClicked as? Player ?: return
+
+        val inv = event.inventory
+        val inputItem = inv.getItem(0) ?: return
+        val resultItem = inv.getItem(1) ?: return
+
+        val recipe = CustomRecipes.all()
+            .filterIsInstance<CustomRecipe.Stonecutter>()
+            .firstOrNull { it.input.matches(inputItem) } ?: return
+        val out = recipe.outputs.firstOrNull { it.item.isSimilar(resultItem) } ?: return
+        if (!out.ghost) return
+
+        recipeBookPlugin.debug("[Stonecutter] onStonecutterResultClick: ghost recipe=${recipe.key}")
+        if (!checkCraftingConditions(player, recipe)) { event.isCancelled = true; return }
+
+        val amount = if (event.isShiftClick) {
+            val playerInv = player.inventory
+            val freeSpace = playerInv.storageContents.sumOf { slot ->
+                when {
+                    slot == null || slot.type.isAir -> out.item.maxStackSize
+                    slot.isSimilar(out.item) -> out.item.maxStackSize - slot.amount
+                    else -> 0
+                }
+            }
+            (freeSpace / out.item.amount.coerceAtLeast(1)).coerceAtLeast(1)
+        } else 1
+
+        val item = out.item.clone().apply { this.amount = amount }
+        event.isCancelled = true
+        consumeStonecutterSlot(inv)
+        val ce = CustomCraftEvent(player, recipe, item, amount)
+        Bukkit.getPluginManager().callEvent(ce)
+        if (!ce.isCancelled) fireStonecutterGhostEffects(player, recipe, out, amount)
+        recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
+    }
+
     // ── InventoryClickEvent + villager injection ───────────────────────────
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -493,8 +532,8 @@ class CustomRecipeListener : Listener {
         for (slot in 0..2) consume(inv, slot)
     }
 
-    private fun consumeStonecutterSlot(event: CraftItemEvent) {
-        consume(event.view.topInventory, 0)
+    private fun consumeStonecutterSlot(inv: org.bukkit.inventory.Inventory) {
+        consume(inv, 0)
     }
 
     private fun consumeWorkbenchInputs(inv: org.bukkit.inventory.Inventory, recipe: CustomRecipe) {
