@@ -17,6 +17,7 @@ import ru.oftendev.recipebook.custom.BlockOwnerTracker
 import ru.oftendev.recipebook.custom.CustomRecipeListener
 import ru.oftendev.recipebook.custom.CustomRecipeLoader
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
+import com.willfp.libreforge.loader.configs.ConfigCategory
 import ru.oftendev.recipebook.custom.packet.BrewingPacketListener
 import ru.oftendev.recipebook.custom.packet.GrindstonePacketListener
 import ru.oftendev.recipebook.custom.libreforge.ConditionHasUnlockedRecipe
@@ -59,15 +60,16 @@ class RecipeBookPlugin : LibreforgePlugin() {
         eventManager.registerPacketListener(BrewingPacketListener)
         eventManager.registerPacketListener(GrindstonePacketListener)
 
-        CustomRecipeLoader.load()
-
         setupMetrics()
     }
 
     override fun handleReload() {
         ShopIntegration.init(this)
         RecipeCategories.reload()
-        CustomRecipeLoader.load()
+    }
+
+    override fun loadConfigCategories(): List<ConfigCategory> {
+        return listOf(CustomRecipeLoader)
     }
 
     override fun handleDisable() {

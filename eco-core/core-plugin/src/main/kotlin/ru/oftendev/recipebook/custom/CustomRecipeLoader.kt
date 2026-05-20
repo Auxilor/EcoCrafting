@@ -1,7 +1,5 @@
 package ru.oftendev.recipebook.custom
 
-import com.willfp.eco.core.config.ConfigType
-import com.willfp.eco.core.config.TransientConfig
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
 import com.willfp.libreforge.effects.Chain
@@ -9,6 +7,8 @@ import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.loader.LibreforgePlugin
+import com.willfp.libreforge.loader.configs.ConfigCategory
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -16,42 +16,42 @@ import ru.oftendev.recipebook.recipe.IngredientMatcher
 import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.toTestableItem
 import ru.oftendev.recipebook.recipeBookPlugin
-import java.io.File
-import java.util.zip.ZipFile
 
-object CustomRecipeLoader {
+object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
-    fun load() {
+    override fun clear(plugin: LibreforgePlugin) {
         CustomRecipes.clear()
-        val recipesDir = File(recipeBookPlugin.dataFolder, "recipes")
-        val firstLoad = !recipesDir.exists()
-        copyRecipeConfigs(firstLoad)
-        recipesDir.walkTopDown()
-            .filter { it.isFile && it.extension == "yml" && !it.nameWithoutExtension.startsWith("_") }
-            .forEach { file ->
-                runCatching { loadFile(file) }
-                    .onFailure { recipeBookPlugin.logger.warning("[RecipeBook] Failed to load recipe ${file.name}: ${it.message}") }
+    }
+
+    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+        if (config.has("enabled") && !config.getBool("enabled")) return
+        val type = config.getString("type").lowercase()
+        runCatching {
+            val recipe = when (type) {
+                "crafting_table"    -> loadCraftingTable(id, config)
+                "furnace"           -> loadSmelting(id, config, SmeltingType.FURNACE)
+                "blast_furnace"     -> loadSmelting(id, config, SmeltingType.BLAST_FURNACE)
+                "smoker"            -> loadSmelting(id, config, SmeltingType.SMOKER)
+                "campfire"          -> loadSmelting(id, config, SmeltingType.CAMPFIRE)
+                "smithing_table"    -> loadSmithing(id, config)
+                "stonecutter"       -> loadStonecutter(id, config)
+                "crafter"           -> loadCrafter(id, config)
+                "brewing_stand"     -> loadBrewing(id, config)
+                "grindstone"        -> loadGrindstone(id, config)
+                "anvil"             -> loadAnvil(id, config)
+                "villager"          -> loadVillager(id, config)
+                else -> error("Unknown recipe type: $type")
             }
-        if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) {
-            scanVillagers()
+            CustomRecipes.register(recipe)
+            recipe.registerBukkit()
+        }.onFailure {
+            recipeBookPlugin.logger.warning("[RecipeBook] Failed to load recipe $id: ${it.message}")
         }
     }
 
-    private fun copyRecipeConfigs(firstLoad: Boolean) {
-        runCatching {
-            val jarFile = File(recipeBookPlugin.javaClass.protectionDomain.codeSource.location.toURI())
-            ZipFile(jarFile).use { zip ->
-                zip.entries().asSequence()
-                    .filter { !it.isDirectory && it.name.startsWith("recipes/") && it.name.endsWith(".yml") }
-                    .forEach { entry ->
-                        val isExample = entry.name.substringAfterLast("/").startsWith("_")
-                        if (firstLoad || isExample) {
-                            recipeBookPlugin.saveResource(entry.name, false)
-                        }
-                    }
-            }
-        }.onFailure {
-            recipeBookPlugin.logger.warning("[RecipeBook] Could not copy default recipes: ${it.message}")
+    override fun afterReload(plugin: LibreforgePlugin) {
+        if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) {
+            scanVillagers()
         }
     }
 
@@ -71,29 +71,6 @@ object CustomRecipeLoader {
                     .filter { it.key !in validKeyNames }
                     .forEach { pdc.remove(it) }
             }
-    }
-
-    private fun loadFile(file: File) {
-        val config = TransientConfig(file, ConfigType.YAML)
-        if (config.has("enabled") && !config.getBool("enabled")) return
-        val type = config.getString("type").lowercase()
-        val recipe = when (type) {
-            "crafting_table"    -> loadCraftingTable(file.nameWithoutExtension, config)
-            "furnace"           -> loadSmelting(file.nameWithoutExtension, config, SmeltingType.FURNACE)
-            "blast_furnace"     -> loadSmelting(file.nameWithoutExtension, config, SmeltingType.BLAST_FURNACE)
-            "smoker"            -> loadSmelting(file.nameWithoutExtension, config, SmeltingType.SMOKER)
-            "campfire"          -> loadSmelting(file.nameWithoutExtension, config, SmeltingType.CAMPFIRE)
-            "smithing_table"    -> loadSmithing(file.nameWithoutExtension, config)
-            "stonecutter"       -> loadStonecutter(file.nameWithoutExtension, config)
-            "crafter"           -> loadCrafter(file.nameWithoutExtension, config)
-            "brewing_stand"     -> loadBrewing(file.nameWithoutExtension, config)
-            "grindstone"        -> loadGrindstone(file.nameWithoutExtension, config)
-            "anvil"             -> loadAnvil(file.nameWithoutExtension, config)
-            "villager"          -> loadVillager(file.nameWithoutExtension, config)
-            else -> error("Unknown recipe type: $type")
-        }
-        CustomRecipes.register(recipe)
-        recipe.registerBukkit()
     }
 
     // ── Common helpers ───────────────────────────────────────────────────
@@ -142,10 +119,8 @@ object CustomRecipeLoader {
         return Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
     }
 
-    // ── Type-specific parsers (added in Tasks 14–18) ─────────────────────
+    // ── Symmetry helpers ─────────────────────────────────────────────────
 
-    // Flat 9-element index remappings for shaped recipe symmetry variants.
-    // Original grid indices: 0 1 2 / 3 4 5 / 6 7 8
     internal val ROT_90_CW  = intArrayOf(6, 3, 0, 7, 4, 1, 8, 5, 2)
     internal val ROT_180    = intArrayOf(8, 7, 6, 5, 4, 3, 2, 1, 0)
     internal val ROT_270_CW = intArrayOf(2, 5, 8, 1, 4, 7, 0, 3, 6)
@@ -173,6 +148,8 @@ object CustomRecipeLoader {
         return variants
     }
 
+    // ── Type-specific loaders ────────────────────────────────────────────
+
     private fun loadCraftingTable(id: String, config: Config): CustomRecipe {
         val rawParts = config.getStrings("recipe")
         require(rawParts.size == 9) { "crafting_table recipe must have exactly 9 entries, got ${rawParts.size}" }
@@ -195,6 +172,7 @@ object CustomRecipeLoader {
             unlockConditions = cc.unlockConditions
         )
     }
+
     private fun loadSmelting(id: String, config: Config, type: SmeltingType): CustomRecipe {
         val cc = parseCommonConditions(id, config)
         return CustomRecipe.Smelting(
@@ -475,7 +453,6 @@ object CustomRecipeLoader {
     }
 
     private fun CustomRecipe.Crafter.registerCrafter() {
-        // Eco recipe — crafting table + GUI display
         val ecoBuilder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
             .builder(recipeBookPlugin, key.key)
             .setOutput(output)
@@ -485,7 +462,6 @@ object CustomRecipeLoader {
         ecoBuilder.build().register()
         CustomRecipes.trackBukkitKey(key)
 
-        // Explicit Bukkit ShapedRecipe — required for Crafter block vanilla item matching
         val crafterKey = NamespacedKey("recipebook", "${key.key}_crafter")
         val chars = "ABCDEFGHI".toList()
         var charIdx = 0
