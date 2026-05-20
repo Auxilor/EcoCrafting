@@ -17,6 +17,7 @@ import ru.oftendev.recipebook.custom.event.CustomSmeltEvent
 import ru.oftendev.recipebook.custom.event.CustomSmithEvent
 import ru.oftendev.recipebook.custom.event.CustomWorkbenchCraftEvent
 import com.willfp.eco.util.formatEco
+import ru.oftendev.recipebook.custom.packet.BrewingPacketListener
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.util.UUID
 
@@ -214,6 +215,10 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBrew(event: org.bukkit.event.inventory.BrewEvent) {
         val loc = event.block.location
+
+        // Cancel any pending custom-brew timer (non-vanilla ingredient path) to prevent double-firing
+        BrewingPacketListener.cancelBrew(loc)
+
         val player = BlockOwnerTracker.getOwner(loc)
         if (player == null) {
             recipeBookPlugin.debug("[RecipeListener] Brew at $loc — owner offline")
@@ -244,9 +249,19 @@ class CustomRecipeListener : Listener {
         Bukkit.getPluginManager().callEvent(ce)
         if (ce.isCancelled) return
 
+        val ghostPerSlot = recipeBookPlugin.configYml.getBool("brewing-stand.ghost-per-slot")
         if (recipe.ghost) {
-            matchedSlots.forEach { brewer.setItem(it, null) }
-            fireGhostEffects(player, recipe, item, 1)
+            if (ghostPerSlot) {
+                matchedSlots.forEach { slot ->
+                    brewer.setItem(slot, null)
+                    val slotCe = CustomBrewEvent(player, recipe, item.clone(), loc, 1)
+                    Bukkit.getPluginManager().callEvent(slotCe)
+                    if (!slotCe.isCancelled) fireGhostEffects(player, recipe, item.clone(), 1)
+                }
+            } else {
+                matchedSlots.forEach { brewer.setItem(it, null) }
+                fireGhostEffects(player, recipe, item, 1)
+            }
         } else {
             matchedSlots.forEach { brewer.setItem(it, item.clone()) }
             fireCustomCraftTrigger(player, recipe, item, matchedSlots.size)
