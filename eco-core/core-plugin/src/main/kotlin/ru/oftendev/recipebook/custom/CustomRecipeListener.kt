@@ -462,10 +462,6 @@ class CustomRecipeListener : Listener {
         val merchant = (event.inventory.holder as? org.bukkit.entity.AbstractVillager) ?: return
         val isWanderingTrader = merchant is org.bukkit.entity.WanderingTrader
 
-        val allCustomOutputs = CustomRecipes.all()
-            .filterIsInstance<CustomRecipe.Villager>()
-            .map { it.output }
-
         val filteredRecipes = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Villager>()
             .filter { vr ->
@@ -491,16 +487,31 @@ class CustomRecipeListener : Listener {
                 }
             }
 
-        val validOutputs = filteredRecipes.map { it.output }
-
+        val tradeNsKey = NamespacedKey("recipebook", "trade_key")
         val existing = merchant.recipes.toMutableList()
+
         existing.removeIf { mr ->
-            allCustomOutputs.any { it.isSimilar(mr.result) } &&
-            validOutputs.none { it.isSimilar(mr.result) }
+            val tradeKey = mr.result.itemMeta
+                ?.persistentDataContainer
+                ?.get(tradeNsKey, PersistentDataType.STRING)
+                ?: return@removeIf false
+            val recipe = CustomRecipes.getByKey(NamespacedKey("recipebook", tradeKey))
+                ?: return@removeIf true
+            filteredRecipes.none { it.key == recipe.key }
         }
+
         filteredRecipes.forEach { vr ->
-            if (existing.none { it.result.isSimilar(vr.output) }) {
-                val mr = org.bukkit.inventory.MerchantRecipe(vr.output.clone(), Int.MAX_VALUE)
+            val alreadyAdded = existing.any { mr ->
+                val tag = mr.result.itemMeta?.persistentDataContainer
+                    ?.get(tradeNsKey, PersistentDataType.STRING)
+                if (tag != null) tag == vr.key.key else mr.result.isSimilar(vr.output)
+            }
+            if (!alreadyAdded) {
+                val resultItem = vr.output.clone()
+                resultItem.itemMeta = resultItem.itemMeta?.also { meta ->
+                    meta.persistentDataContainer.set(tradeNsKey, PersistentDataType.STRING, vr.key.key)
+                }
+                val mr = org.bukkit.inventory.MerchantRecipe(resultItem, Int.MAX_VALUE)
                 mr.addIngredient(vr.input1.displayItem.clone())
                 vr.input2?.let { mr.addIngredient(it.displayItem.clone()) }
                 existing.add(mr)
