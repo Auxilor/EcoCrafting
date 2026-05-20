@@ -234,7 +234,7 @@ class CustomRecipeListener : Listener {
 
     // ── Group B PrepareEvent handlers ─────────────────────────────────────
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareGrindstone(event: org.bukkit.event.inventory.PrepareGrindstoneEvent) {
         val player = event.view.player as? Player ?: return
         val inv = event.inventory
