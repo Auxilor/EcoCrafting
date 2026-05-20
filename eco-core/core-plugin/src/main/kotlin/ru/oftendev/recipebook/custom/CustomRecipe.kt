@@ -188,6 +188,8 @@ sealed class CustomRecipe {
         val input2: RecipeIngredient?,
         val profession: org.bukkit.entity.Villager.Profession?,
         val minLevel: Int,
+        val chance: Double,
+        val wanderingTrader: Boolean,
         override val permission: String?,
         override val ghost: Boolean,
         override val ghostChain: Chain?,

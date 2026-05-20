@@ -344,16 +344,26 @@ class CustomRecipeListener : Listener {
         if (event.inventory.type != org.bukkit.event.inventory.InventoryType.MERCHANT) return
         val player = event.player as? Player ?: return
         val merchant = (event.inventory.holder as? org.bukkit.entity.AbstractVillager) ?: return
+        val isWanderingTrader = merchant is org.bukkit.entity.WanderingTrader
 
         val villagerRecipes = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Villager>()
             .filter { vr ->
                 if (!vr.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return@filter false
-                if (vr.profession != null || vr.minLevel > 0) {
-                    val v = merchant as? org.bukkit.entity.Villager ?: return@filter false
-                    if (vr.profession != null && v.profession != vr.profession) return@filter false
-                    if (vr.minLevel > 0 && v.villagerLevel < vr.minLevel) return@filter false
+                // Target type filter
+                if (isWanderingTrader) {
+                    if (!vr.wanderingTrader) return@filter false
+                } else {
+                    if (vr.wanderingTrader) return@filter false
+                    // Profession + level only apply to regular Villager
+                    if (vr.profession != null || vr.minLevel > 0) {
+                        val v = merchant as? org.bukkit.entity.Villager ?: return@filter false
+                        if (vr.profession != null && v.profession != vr.profession) return@filter false
+                        if (vr.minLevel > 0 && v.villagerLevel < vr.minLevel) return@filter false
+                    }
                 }
+                // Chance roll
+                if (vr.chance < 1.0 && Math.random() > vr.chance) return@filter false
                 true
             }
 
