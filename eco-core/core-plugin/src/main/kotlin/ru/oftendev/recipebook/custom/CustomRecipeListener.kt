@@ -296,16 +296,26 @@ class CustomRecipeListener : Listener {
 
         val villagerRecipes = CustomRecipes.all()
             .filterIsInstance<CustomRecipe.Villager>()
-            .filter { it.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder) }
+            .filter { vr ->
+                if (!vr.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return@filter false
+                if (vr.profession != null || vr.minLevel > 0) {
+                    val v = merchant as? org.bukkit.entity.Villager ?: return@filter false
+                    if (vr.profession != null && v.profession != vr.profession) return@filter false
+                    if (vr.minLevel > 0 && v.villagerLevel < vr.minLevel) return@filter false
+                }
+                true
+            }
 
         if (villagerRecipes.isEmpty()) return
 
         val existing = merchant.recipes.toMutableList()
         villagerRecipes.forEach { vr ->
-            val mr = org.bukkit.inventory.MerchantRecipe(vr.output.clone(), Int.MAX_VALUE)
-            mr.addIngredient(vr.input1.displayItem.clone())
-            vr.input2?.let { mr.addIngredient(it.displayItem.clone()) }
-            existing.add(mr)
+            if (existing.none { it.result.isSimilar(vr.output) }) {
+                val mr = org.bukkit.inventory.MerchantRecipe(vr.output.clone(), Int.MAX_VALUE)
+                mr.addIngredient(vr.input1.displayItem.clone())
+                vr.input2?.let { mr.addIngredient(it.displayItem.clone()) }
+                existing.add(mr)
+            }
         }
         merchant.recipes = existing
     }

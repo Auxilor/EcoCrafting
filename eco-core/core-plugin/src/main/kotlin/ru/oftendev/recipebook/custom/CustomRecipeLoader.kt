@@ -313,11 +313,17 @@ object CustomRecipeLoader {
 
     private fun loadVillager(id: String, config: Config): CustomRecipe {
         val cc = parseCommonConditions(id, config)
+        val profession = config.getStringOrNull("profession")?.let {
+            runCatching { org.bukkit.entity.Villager.Profession.valueOf(it.uppercase()) }.getOrNull()
+        }
+        val minLevel = config.getIntOrNull("min-level") ?: 0
         return CustomRecipe.Villager(
             key = key(id),
             output = parseOutputItem(config),
             input1 = parseIngredient(config.getString("input1")),
             input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) },
+            profession = profession,
+            minLevel = minLevel,
             permission = cc.permission,
             ghost = config.getBool("ghost"),
             ghostChain = parseGhostChain(id, config),
