@@ -95,7 +95,8 @@ object CustomRecipeLoader {
     }
 
     internal fun parseIngredient(lookup: String): RecipeIngredient {
-        if (lookup.isBlank()) return RecipeIngredient.empty(ItemStack(Material.AIR))
+        if (lookup.isBlank() || lookup == "*")
+            return RecipeIngredient(ItemStack(Material.AIR), IngredientMatcher.AnyItem)
         val item = runCatching { Items.lookup(lookup).item }.getOrNull()
             ?: error("Cannot resolve item: $lookup")
         return RecipeIngredient(item.clone(), IngredientMatcher.SimilarItem(item.clone()))
@@ -284,7 +285,7 @@ object CustomRecipeLoader {
         return CustomRecipe.Brewing(
             key = key(id),
             output = parseOutputItem(config),
-            base = parseIngredient(config.getString("base")),
+            base = parseIngredient(config.getStringOrNull("base") ?: ""),
             ingredient = parseIngredient(config.getString("ingredient")),
             permission = cc.permission,
             ghost = config.getBool("ghost"),

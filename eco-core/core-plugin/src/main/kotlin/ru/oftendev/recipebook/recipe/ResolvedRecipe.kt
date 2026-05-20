@@ -87,6 +87,10 @@ sealed interface IngredientMatcher {
             return stack.type == item.type
         }
     }
+
+    data object AnyItem : IngredientMatcher {
+        override fun matches(stack: ItemStack?): Boolean = stack != null && !stack.type.isAir
+    }
 }
 
 fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
@@ -94,4 +98,5 @@ fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
     is IngredientMatcher.EcoPart      -> part
     is IngredientMatcher.SimilarItem  -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
     is IngredientMatcher.MaterialOnly -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
+    is IngredientMatcher.AnyItem      -> com.willfp.eco.core.recipe.parts.EmptyTestableItem()
 }
