@@ -10,6 +10,13 @@ cook-time: 600           # ticks (campfire is slow, vanilla = 600)
 experience: 0.35
 
 ghost: false
+# ghost: true — cancel the cook, fire effects instead of producing the item
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 50
+# conditions: []
+
 permission: ""
 locked-by-default: false
 show-when-locked: false
