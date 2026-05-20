@@ -6,17 +6,18 @@ import com.willfp.libreforge.triggers.TriggerData
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.custom.libreforge.TriggerCustomCraft
+import ru.oftendev.recipebook.custom.libreforge.TriggerGhostCraft
 import ru.oftendev.recipebook.recipeBookPlugin
 
 fun fireGhostEffects(player: Player, recipe: CustomRecipe, item: ItemStack, amount: Int) {
-    val chain = recipe.ghostChain ?: return
     val data = TriggerData(
         player = player,
         item = item,
         value = amount.toDouble(),
         text = recipe.key.toString()
     )
-    chain.trigger(player.toDispatcher(), data)
+    recipe.ghostChain?.trigger(player.toDispatcher(), data)
+    TriggerGhostCraft.dispatch(player.toDispatcher(), data)
     TriggerCustomCraft.dispatch(player.toDispatcher(), data)
 }
 
@@ -26,14 +27,14 @@ fun fireStonecutterGhostEffects(
     output: StonecutterOutput,
     amount: Int
 ) {
-    val chain = output.ghostChain ?: return
     val data = TriggerData(
         player = player,
         item = output.item,
         value = amount.toDouble(),
         text = recipe.key.toString()
     )
-    chain.trigger(player.toDispatcher(), data)
+    output.ghostChain?.trigger(player.toDispatcher(), data)
+    TriggerGhostCraft.dispatch(player.toDispatcher(), data)
     TriggerCustomCraft.dispatch(player.toDispatcher(), data)
 }
 
