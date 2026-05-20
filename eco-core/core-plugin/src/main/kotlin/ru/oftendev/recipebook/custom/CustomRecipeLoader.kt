@@ -30,6 +30,27 @@ object CustomRecipeLoader {
                 runCatching { loadFile(file) }
                     .onFailure { recipeBookPlugin.logger.warning("[RecipeBook] Failed to load recipe ${file.name}: ${it.message}") }
             }
+        if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) {
+            scanVillagers()
+        }
+    }
+
+    private fun scanVillagers() {
+        val validKeyNames = CustomRecipes.all()
+            .filterIsInstance<CustomRecipe.Villager>()
+            .map { "vr_${it.key.key}" }
+            .toSet()
+
+        org.bukkit.Bukkit.getWorlds()
+            .flatMap { it.entities }
+            .filterIsInstance<org.bukkit.entity.AbstractVillager>()
+            .forEach { villager ->
+                val pdc = villager.persistentDataContainer
+                pdc.keys
+                    .filter { it.namespace == "recipebook" && it.key.startsWith("vr_") }
+                    .filter { it.key !in validKeyNames }
+                    .forEach { pdc.remove(it) }
+            }
     }
 
     private fun loadFile(file: File) {
