@@ -143,24 +143,6 @@ sealed class CustomRecipe {
         override val displayType = RecipeDisplayType.BREWING
     }
 
-    data class Cartography(
-        override val key: NamespacedKey,
-        override val output: ItemStack,
-        val map: RecipeIngredient,
-        val addition: RecipeIngredient,
-        override val permission: String?,
-        override val ghost: Boolean,
-        override val ghostChain: Chain?,
-        override val visibilityConditions: ConditionList,
-        override val craftingConditions: ConditionList,
-        override val lockedByDefault: Boolean,
-        override val showWhenLocked: Boolean,
-        override val lockedLore: List<String>,
-        override val unlockConditions: ConditionList
-    ) : CustomRecipe() {
-        override val displayType = RecipeDisplayType.CARTOGRAPHY
-    }
-
     data class Grindstone(
         override val key: NamespacedKey,
         override val output: ItemStack,

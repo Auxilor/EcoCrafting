@@ -37,7 +37,6 @@ enum class RecipeDisplayType {
     STONECUTTER,
     CRAFTER,
     BREWING,
-    CARTOGRAPHY,
     GRINDSTONE,
     ANVIL,
     VILLAGER

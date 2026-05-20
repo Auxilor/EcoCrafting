@@ -207,18 +207,6 @@ class CustomRecipeListener : Listener {
 
     // ── Group B PrepareEvent handlers ─────────────────────────────────────
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    fun onCartographyItem(event: io.papermc.paper.event.player.CartographyItemEvent) {
-        val player = event.whoClicked as? Player ?: return
-        val inv = event.inventory
-        val recipe = CustomRecipes.all()
-            .filterIsInstance<CustomRecipe.Cartography>()
-            .firstOrNull { it.map.matches(inv.getItem(0)) && it.addition.matches(inv.getItem(1)) }
-            ?: return
-        if (!recipe.visibilityConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return
-        pendingRecipe[player.uniqueId] = recipe
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     fun onPrepareGrindstone(event: org.bukkit.event.inventory.PrepareGrindstoneEvent) {
         val player = event.view.player as? Player ?: return
@@ -264,7 +252,6 @@ class CustomRecipeListener : Listener {
         val inv = event.inventory
 
         val isResultSlot = when (inv.type) {
-            org.bukkit.event.inventory.InventoryType.CARTOGRAPHY,
             org.bukkit.event.inventory.InventoryType.GRINDSTONE,
             org.bukkit.event.inventory.InventoryType.ANVIL -> event.rawSlot == 2
             org.bukkit.event.inventory.InventoryType.MERCHANT -> event.rawSlot == 2

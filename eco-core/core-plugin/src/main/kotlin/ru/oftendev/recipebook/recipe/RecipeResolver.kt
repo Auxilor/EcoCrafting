@@ -68,7 +68,6 @@ object RecipeResolver {
             is CustomRecipe.Stonecutter   -> listOf(input) + List(8) { emptyIng() }
             is CustomRecipe.Crafter       -> parts
             is CustomRecipe.Brewing       -> listOf(base, ingredient) + List(7) { emptyIng() }
-            is CustomRecipe.Cartography   -> listOf(map, addition) + List(7) { emptyIng() }
             is CustomRecipe.Grindstone    -> listOfNotNull(item1, item2) + List(7) { emptyIng() }
             is CustomRecipe.Anvil         -> listOfNotNull(base, material) + List(7) { emptyIng() }
             is CustomRecipe.Villager      -> listOfNotNull(input1, input2) + List(7) { emptyIng() }
