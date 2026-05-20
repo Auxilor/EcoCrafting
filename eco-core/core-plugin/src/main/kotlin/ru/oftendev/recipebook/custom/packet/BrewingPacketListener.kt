@@ -2,7 +2,6 @@ package ru.oftendev.recipebook.custom.packet
 
 import com.willfp.eco.core.packet.PacketEvent
 import com.willfp.eco.core.packet.PacketListener
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.inventory.InventoryType
@@ -10,9 +9,9 @@ import org.bukkit.scheduler.BukkitTask
 import ru.oftendev.recipebook.custom.BlockOwnerTracker
 import ru.oftendev.recipebook.custom.CustomRecipe
 import ru.oftendev.recipebook.custom.CustomRecipes
-import ru.oftendev.recipebook.custom.CraftingDispatchers.checkCraftingConditions
-import ru.oftendev.recipebook.custom.CraftingDispatchers.fireCustomCraftTrigger
-import ru.oftendev.recipebook.custom.CraftingDispatchers.fireGhostEffects
+import ru.oftendev.recipebook.custom.checkCraftingConditions
+import ru.oftendev.recipebook.custom.fireCustomCraftTrigger
+import ru.oftendev.recipebook.custom.fireGhostEffects
 import ru.oftendev.recipebook.custom.event.CustomBrewEvent
 import ru.oftendev.recipebook.recipeBookPlugin
 
@@ -21,8 +20,15 @@ object BrewingPacketListener : PacketListener {
     private val pendingBrews = mutableMapOf<Location, BukkitTask>()
 
     override fun onReceive(event: PacketEvent) {
-        val packet = event.packet.handle as? ServerboundContainerClickPacket ?: return
-        if (packet.slotNum != 3) return
+        val packet = event.packet.handle
+        // Use reflection to avoid depending on NMS at compile time
+        if (!packet.javaClass.name.endsWith("ServerboundContainerClickPacket")) return
+        val slotNum = runCatching {
+            packet.javaClass.getDeclaredField("slotNum").apply { isAccessible = true }.getInt(packet)
+        }.getOrElse {
+            packet.javaClass.methods.firstOrNull { it.name == "getSlotNum" }?.invoke(packet) as? Int
+        } ?: return
+        if (slotNum != 3) return
 
         val player = event.player
         if (player.openInventory.topInventory.type != InventoryType.BREWING) return
