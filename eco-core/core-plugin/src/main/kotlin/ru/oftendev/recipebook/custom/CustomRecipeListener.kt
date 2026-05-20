@@ -16,6 +16,7 @@ import ru.oftendev.recipebook.custom.event.CustomCraftEvent
 import ru.oftendev.recipebook.custom.event.CustomSmeltEvent
 import ru.oftendev.recipebook.custom.event.CustomSmithEvent
 import ru.oftendev.recipebook.custom.event.CustomWorkbenchCraftEvent
+import com.willfp.eco.util.formatEco
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.util.UUID
 
@@ -236,7 +237,7 @@ class CustomRecipeListener : Listener {
         val result = recipe.output.clone()
         recipe.resultName?.let { name ->
             val meta = result.itemMeta
-            meta?.setDisplayName(name)
+            meta?.setDisplayName(name.formatEco())
             result.itemMeta = meta
         }
         event.result = result
