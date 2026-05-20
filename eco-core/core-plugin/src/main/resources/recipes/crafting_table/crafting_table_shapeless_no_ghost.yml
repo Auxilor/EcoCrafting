@@ -1,0 +1,31 @@
+enabled: true
+
+type: crafting_table
+
+recipe:
+  - cobblestone
+  - cobblestone
+  - cobblestone
+  - ""
+  - ""
+  - ""
+  - ""
+  - ""
+  - ""
+
+shapeless: true
+symmetry: false
+
+output: stone name:"&fcrafting_table_shapeless_no_ghost"
+lore:
+  - "&8crafting_table | shapeless | no ghost"
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

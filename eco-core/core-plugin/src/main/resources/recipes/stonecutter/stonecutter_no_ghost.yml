@@ -1,0 +1,29 @@
+enabled: true
+
+type: stonecutter
+
+input: granite
+
+outputs:
+  - item: granite_slab name:"&fstonecutter_no_ghost_1"
+    lore:
+      - "&8stonecutter | no ghost"
+    ghost: false
+
+  - item: granite_stairs name:"&fstonecutter_no_ghost_2"
+    lore:
+      - "&8stonecutter | no ghost"
+    ghost: false
+
+  - item: polished_granite name:"&fstonecutter_no_ghost_3"
+    lore:
+      - "&8stonecutter | no ghost"
+    ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

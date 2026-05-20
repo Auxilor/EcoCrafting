@@ -1,0 +1,20 @@
+enabled: true
+
+type: brewing_stand
+
+base: glass_bottle
+ingredient: nether_wart
+
+output: potion name:"&fbrewing_stand_no_ghost"
+lore:
+  - "&8brewing_stand | no ghost"
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

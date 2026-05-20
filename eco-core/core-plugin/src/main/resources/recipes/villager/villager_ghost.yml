@@ -1,0 +1,25 @@
+enabled: true
+
+type: villager
+
+input1: emerald
+
+output: diamond name:"&fvillager_ghost"
+lore:
+  - "&8villager | single input | ghost"
+  - "&cNo item given — effects fire instead"
+
+ghost: true
+effects:
+  - id: send_message
+    args:
+      message: "&aGhost craft triggered: villager"
+conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

@@ -1,0 +1,21 @@
+enabled: true
+
+type: furnace
+
+input: cobblestone
+output: stone name:"&ffurnace_no_ghost"
+lore:
+  - "&8furnace | no ghost"
+
+cook-time: 200
+experience: 0.1
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

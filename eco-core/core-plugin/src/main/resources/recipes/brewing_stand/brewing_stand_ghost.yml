@@ -1,0 +1,26 @@
+enabled: true
+
+type: brewing_stand
+
+base: potion
+ingredient: glowstone_dust
+
+output: potion name:"&fbrewing_stand_ghost"
+lore:
+  - "&8brewing_stand | ghost"
+  - "&cNo item given — effects fire instead"
+
+ghost: true
+effects:
+  - id: send_message
+    args:
+      message: "&aGhost craft triggered: brewing_stand"
+conditions: []
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []

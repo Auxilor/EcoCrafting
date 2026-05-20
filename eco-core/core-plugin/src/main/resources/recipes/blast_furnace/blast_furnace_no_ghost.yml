@@ -1,0 +1,21 @@
+enabled: true
+
+type: blast_furnace
+
+input: raw_copper
+output: copper_ingot name:"&fblast_furnace_no_ghost"
+lore:
+  - "&8blast_furnace | no ghost"
+
+cook-time: 100
+experience: 0.7
+
+ghost: false
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: []
+visibility-conditions: []
+crafting-conditions: []
+unlock-conditions: []
