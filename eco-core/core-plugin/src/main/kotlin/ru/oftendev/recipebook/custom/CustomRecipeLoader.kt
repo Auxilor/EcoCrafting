@@ -17,13 +17,15 @@ import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.toTestableItem
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.io.File
+import java.util.zip.ZipFile
 
 object CustomRecipeLoader {
 
     fun load() {
         CustomRecipes.clear()
         val recipesDir = File(recipeBookPlugin.dataFolder, "recipes")
-        if (!recipesDir.exists()) recipesDir.mkdirs()
+        val firstLoad = !recipesDir.exists()
+        copyRecipeConfigs(firstLoad)
         recipesDir.walkTopDown()
             .filter { it.isFile && it.extension == "yml" && !it.nameWithoutExtension.startsWith("_") }
             .forEach { file ->
@@ -32,6 +34,24 @@ object CustomRecipeLoader {
             }
         if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) {
             scanVillagers()
+        }
+    }
+
+    private fun copyRecipeConfigs(firstLoad: Boolean) {
+        runCatching {
+            val jarFile = File(recipeBookPlugin.javaClass.protectionDomain.codeSource.location.toURI())
+            ZipFile(jarFile).use { zip ->
+                zip.entries().asSequence()
+                    .filter { !it.isDirectory && it.name.startsWith("recipes/") && it.name.endsWith(".yml") }
+                    .forEach { entry ->
+                        val isExample = entry.name.substringAfterLast("/").startsWith("_")
+                        if (firstLoad || isExample) {
+                            recipeBookPlugin.saveResource(entry.name, false)
+                        }
+                    }
+            }
+        }.onFailure {
+            recipeBookPlugin.logger.warning("[RecipeBook] Could not copy default recipes: ${it.message}")
         }
     }
 
