@@ -325,6 +325,12 @@ class CustomRecipeListener : Listener {
 
     // ── Grid consumption helpers ──────────────────────────────────────────
 
+    private fun consume(inv: org.bukkit.inventory.Inventory, slot: Int) {
+        val stack = inv.getItem(slot) ?: return
+        if (stack.amount <= 1) inv.setItem(slot, null)
+        else { stack.amount--; inv.setItem(slot, stack) }
+    }
+
     private fun consumeCraftingGrid(event: CraftItemEvent) {
         val matrix = event.inventory.matrix
         for (i in matrix.indices) {
@@ -338,31 +344,18 @@ class CustomRecipeListener : Listener {
 
     private fun consumeSmithingSlots(event: CraftItemEvent) {
         val inv = event.view.topInventory
-        for (slot in 0..2) {
-            val stack = inv.getItem(slot) ?: continue
-            if (stack.amount <= 1) inv.setItem(slot, null)
-            else stack.amount--
-        }
+        for (slot in 0..2) consume(inv, slot)
     }
 
     private fun consumeStonecutterSlot(event: CraftItemEvent) {
-        val inv = event.view.topInventory
-        val stack = inv.getItem(0) ?: return
-        if (stack.amount <= 1) inv.setItem(0, null)
-        else stack.amount--
+        consume(event.view.topInventory, 0)
     }
 
     private fun consumeWorkbenchInputs(inv: org.bukkit.inventory.Inventory, recipe: CustomRecipe) {
-        fun consume(slot: Int) {
-            val stack = inv.getItem(slot) ?: return
-            if (stack.amount <= 1) inv.setItem(slot, null)
-            else stack.amount--
-        }
         when (recipe) {
-            is CustomRecipe.Cartography -> { consume(0); consume(1) }
-            is CustomRecipe.Grindstone  -> { consume(0); if (recipe.item2 != null) consume(1) }
-            is CustomRecipe.Anvil       -> { consume(0); if (recipe.material != null) consume(1) }
-            is CustomRecipe.Villager    -> { consume(0); if (recipe.input2 != null) consume(1) }
+            is CustomRecipe.Grindstone -> { consume(inv, 0); if (recipe.item2 != null) consume(inv, 1) }
+            is CustomRecipe.Anvil      -> { consume(inv, 0); if (recipe.material != null) consume(inv, 1) }
+            is CustomRecipe.Villager   -> { consume(inv, 0); if (recipe.input2 != null) consume(inv, 1) }
             else -> {}
         }
     }
