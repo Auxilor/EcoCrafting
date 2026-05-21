@@ -103,13 +103,11 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): RecipeBookMeta {
         val ctx = ViolationContext(recipeBookPlugin, "recipe-$id")
-        val ghost = config.getBool("ghost")
-        val ghostChain = if (ghost)
-            Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
-        else null
+        val giveResultItem = config.getBool("give-result-item")
+        val effectsChain = Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
         return RecipeBookMeta(
-            ghost = ghost,
-            ghostChain = ghostChain,
+            giveResultItem = giveResultItem,
+            effectsChain = effectsChain,
             visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
             craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
             lockedByDefault = config.getBool("locked-by-default"),
@@ -242,12 +240,10 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 .inputDisplay(input.displayItem)
                 .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
                 .build()
-            val ghost = outCfg.getBool("ghost")
-            val ghostChain = if (ghost)
-                Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
-            else null
+            val giveResultItem = outCfg.getBool("give-result-item")
+            val effectsChain = Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
             val outMeta = RecipeBookMeta(
-                ghost = ghost, ghostChain = ghostChain,
+                giveResultItem = giveResultItem, effectsChain = effectsChain,
                 visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
                 craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
                 lockedByDefault = config.getBool("locked-by-default"),

@@ -6,8 +6,8 @@ import org.bukkit.NamespacedKey
 import ru.oftendev.recipebook.recipe.RecipeDisplayType
 
 data class RecipeBookMeta(
-    val ghost: Boolean,
-    val ghostChain: Chain?,
+    val giveResultItem: Boolean,
+    val effectsChain: Chain?,
     val visibilityConditions: ConditionList,
     val craftingConditions: ConditionList,
     val lockedByDefault: Boolean,
