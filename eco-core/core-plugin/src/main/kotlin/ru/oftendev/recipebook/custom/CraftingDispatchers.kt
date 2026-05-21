@@ -10,15 +10,10 @@ import ru.oftendev.recipebook.custom.libreforge.TriggerCustomCraft
 import ru.oftendev.recipebook.custom.libreforge.TriggerGhostCraft
 import ru.oftendev.recipebook.recipeBookPlugin
 
-fun fireGhostEffects(player: Player, recipe: WorkstationRecipe, meta: RecipeBookMeta, item: ItemStack, amount: Int) {
+fun fireCraftEffects(player: Player, recipe: WorkstationRecipe, meta: RecipeBookMeta, item: ItemStack, amount: Int) {
     val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString())
-    meta.ghostChain?.trigger(player.toDispatcher(), data)
-    TriggerGhostCraft.dispatch(player.toDispatcher(), data)
-    TriggerCustomCraft.dispatch(player.toDispatcher(), data)
-}
-
-fun fireCustomCraftTrigger(player: Player, recipe: WorkstationRecipe, item: ItemStack, amount: Int) {
-    val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString())
+    meta.effectsChain?.trigger(player.toDispatcher(), data)
+    if (!meta.giveResultItem) TriggerGhostCraft.dispatch(player.toDispatcher(), data)
     TriggerCustomCraft.dispatch(player.toDispatcher(), data)
 }
 
