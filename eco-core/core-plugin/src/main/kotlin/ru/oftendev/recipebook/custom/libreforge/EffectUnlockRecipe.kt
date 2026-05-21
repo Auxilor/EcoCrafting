@@ -21,11 +21,12 @@ object EffectUnlockRecipe : Effect<NoCompileData>("unlock_recipe") {
     ): Boolean {
         val player = data.player ?: return false
         val recipeId = config.getString("args.recipe")
-        val recipe = CustomRecipes.getByKey(NamespacedKey("recipebook", recipeId)) ?: return false
-        RecipeUnlockStore.unlock(player, recipe)
+        val key = NamespacedKey("recipebook", recipeId)
+        val meta = CustomRecipes.getMeta(key) ?: return false
+        RecipeUnlockStore.unlock(player, key, meta)
         TriggerRecipeUnlocked.dispatch(
             player.toDispatcher(),
-            data.copy(text = recipe.key.toString())
+            data.copy(text = key.toString())
         )
         return true
     }

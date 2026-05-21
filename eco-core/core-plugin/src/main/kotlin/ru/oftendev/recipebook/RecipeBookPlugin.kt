@@ -18,8 +18,6 @@ import ru.oftendev.recipebook.custom.CustomRecipeListener
 import ru.oftendev.recipebook.custom.CustomRecipeLoader
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
 import com.willfp.libreforge.loader.configs.ConfigCategory
-import ru.oftendev.recipebook.custom.packet.BrewingPacketListener
-import ru.oftendev.recipebook.custom.packet.GrindstonePacketListener
 import ru.oftendev.recipebook.custom.libreforge.ConditionHasUnlockedRecipe
 import ru.oftendev.recipebook.custom.libreforge.EffectLockRecipe
 import ru.oftendev.recipebook.custom.libreforge.EffectUnlockRecipe
@@ -57,8 +55,6 @@ class RecipeBookPlugin : LibreforgePlugin() {
         eventManager.registerListener(BlockOwnerTracker)
         eventManager.registerListener(RecipeUnlockStore)
         eventManager.registerListener(CustomRecipeListener())
-        eventManager.registerPacketListener(BrewingPacketListener)
-        eventManager.registerPacketListener(GrindstonePacketListener)
 
         setupMetrics()
     }

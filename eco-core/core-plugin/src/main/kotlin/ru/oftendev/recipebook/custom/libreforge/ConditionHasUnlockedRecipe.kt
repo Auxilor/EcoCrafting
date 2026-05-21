@@ -1,6 +1,7 @@
 package ru.oftendev.recipebook.custom.libreforge
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.libreforge.Dispatcher
 import com.willfp.libreforge.NoCompileData
 import com.willfp.libreforge.ProvidedHolder
@@ -20,7 +21,9 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
     ): Boolean {
         val player = dispatcher.get<Player>() ?: return false
         val recipeId = config.getString("args.recipe")
-        val recipe = CustomRecipes.getByKey(NamespacedKey("recipebook", recipeId)) ?: return false
-        return RecipeUnlockStore.isUnlocked(player, recipe)
+        val key = NamespacedKey("recipebook", recipeId)
+        WorkstationRecipes.getByKey(key) ?: return false
+        val meta = CustomRecipes.getMeta(key) ?: return false
+        return RecipeUnlockStore.isUnlocked(player, key, meta)
     }
 }

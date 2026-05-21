@@ -9,8 +9,8 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import ru.oftendev.recipebook.custom.CustomRecipes
-import ru.oftendev.recipebook.custom.RecipeUnlockStore
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.util.UUID
 
@@ -169,7 +169,7 @@ object RecipeCreatorGUI {
                 player.sendMessage("&cID cannot be blank.")
                 return@handler
             }
-            if (CustomRecipes.getByKey(NamespacedKey("recipebook", cleanId)) != null) {
+            if (WorkstationRecipes.getByKey(NamespacedKey("recipebook", cleanId)) != null) {
                 player.sendMessage("&cRecipe '$cleanId' already exists.")
                 return@handler
             }
