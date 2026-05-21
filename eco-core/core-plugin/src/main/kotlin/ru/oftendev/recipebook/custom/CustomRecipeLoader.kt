@@ -2,9 +2,18 @@ package ru.oftendev.recipebook.custom
 
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
-import com.willfp.libreforge.effects.Chain
+import com.willfp.eco.core.recipe.workstation.AnvilRecipe
+import com.willfp.eco.core.recipe.workstation.BrewingRecipe
+import com.willfp.eco.core.recipe.workstation.CrafterRecipe
+import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
+import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
+import com.willfp.eco.core.recipe.workstation.SmithingRecipe
+import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
+import com.willfp.eco.core.recipe.workstation.VillagerRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
+import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.loader.LibreforgePlugin
@@ -13,6 +22,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.recipe.IngredientMatcher
+import ru.oftendev.recipebook.recipe.RecipeDisplayType
 import ru.oftendev.recipebook.recipe.RecipeIngredient
 import ru.oftendev.recipebook.recipe.toTestableItem
 import ru.oftendev.recipebook.recipeBookPlugin
@@ -20,6 +30,7 @@ import ru.oftendev.recipebook.recipeBookPlugin
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     override fun clear(plugin: LibreforgePlugin) {
+        WorkstationRecipes.clear()
         CustomRecipes.clear()
     }
 
@@ -27,53 +38,44 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
         runCatching {
-            val recipe = when (type) {
-                "crafting_table"    -> loadCraftingTable(id, config)
-                "furnace"           -> loadSmelting(id, config, SmeltingType.FURNACE)
-                "blast_furnace"     -> loadSmelting(id, config, SmeltingType.BLAST_FURNACE)
-                "smoker"            -> loadSmelting(id, config, SmeltingType.SMOKER)
-                "campfire"          -> loadSmelting(id, config, SmeltingType.CAMPFIRE)
-                "smithing_table"    -> loadSmithing(id, config)
-                "stonecutter"       -> loadStonecutter(id, config)
-                "crafter"           -> loadCrafter(id, config)
-                "brewing_stand"     -> loadBrewing(id, config)
-                "grindstone"        -> loadGrindstone(id, config)
-                "anvil"             -> loadAnvil(id, config)
-                "villager"          -> loadVillager(id, config)
+            when (type) {
+                "crafting_table"  -> loadCraftingTable(id, config)
+                "furnace"         -> loadSmelting(id, config, WSmeltingType.FURNACE)
+                "blast_furnace"   -> loadSmelting(id, config, WSmeltingType.BLAST_FURNACE)
+                "smoker"          -> loadSmelting(id, config, WSmeltingType.SMOKER)
+                "campfire"        -> loadSmelting(id, config, WSmeltingType.CAMPFIRE)
+                "smithing_table"  -> loadSmithing(id, config)
+                "stonecutter"     -> loadStonecutter(id, config)
+                "crafter"         -> loadCrafter(id, config)
+                "brewing_stand"   -> loadBrewing(id, config)
+                "grindstone"      -> loadGrindstone(id, config)
+                "anvil"           -> loadAnvil(id, config)
+                "villager"        -> loadVillager(id, config)
                 else -> error("Unknown recipe type: $type")
             }
-            CustomRecipes.register(recipe)
-            recipe.registerBukkit()
         }.onFailure {
             recipeBookPlugin.logger.warning("[RecipeBook] Failed to load recipe $id: ${it.message}")
         }
     }
 
     override fun afterReload(plugin: LibreforgePlugin) {
-        if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) {
-            scanVillagers()
-        }
+        if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
     }
 
     private fun scanVillagers() {
-        val validKeyNames = CustomRecipes.all()
-            .filterIsInstance<CustomRecipe.Villager>()
-            .map { "vr_${it.key.key}" }
-            .toSet()
-
-        org.bukkit.Bukkit.getWorlds()
-            .flatMap { it.entities }
+        val validKeyNames = WorkstationRecipes.getAll(VillagerRecipe::class.java)
+            .map { "vr_${it.key.key}" }.toSet()
+        org.bukkit.Bukkit.getWorlds().flatMap { it.entities }
             .filterIsInstance<org.bukkit.entity.AbstractVillager>()
             .forEach { villager ->
                 val pdc = villager.persistentDataContainer
-                pdc.keys
-                    .filter { it.namespace == "recipebook" && it.key.startsWith("vr_") }
+                pdc.keys.filter { it.namespace == "recipebook" && it.key.startsWith("vr_") }
                     .filter { it.key !in validKeyNames }
                     .forEach { pdc.remove(it) }
             }
     }
 
-    // ── Common helpers ───────────────────────────────────────────────────
+    // ── Helpers ──────────────────────────────────────────────────────────
 
     internal fun key(id: String) = NamespacedKey("recipebook", id.lowercase())
 
@@ -99,39 +101,39 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         return RecipeIngredient(item.clone(), IngredientMatcher.SimilarItem(item.clone()))
     }
 
-    internal fun parseCommonConditions(id: String, config: Config): CommonConditions {
-        val permission = config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }
+    internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): RecipeBookMeta {
         val ctx = ViolationContext(recipeBookPlugin, "recipe-$id")
-        return CommonConditions(
-            permission = permission,
+        val ghost = config.getBool("ghost")
+        val ghostChain = if (ghost)
+            Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
+        else null
+        return RecipeBookMeta(
+            ghost = ghost,
+            ghostChain = ghostChain,
             visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
             craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
             lockedByDefault = config.getBool("locked-by-default"),
             showWhenLocked = config.getBool("show-when-locked"),
             lockedLore = config.getFormattedStrings("locked-lore"),
-            unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions"))
+            unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
+            displayType = displayType
         )
     }
 
-    internal fun parseGhostChain(id: String, config: Config): Chain? {
-        if (!config.getBool("ghost")) return null
-        val ctx = ViolationContext(recipeBookPlugin, "recipe-$id-ghost")
-        return Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
+    private fun registerWithMeta(recipe: WorkstationRecipe, meta: RecipeBookMeta) {
+        recipe.register()
+        CustomRecipes.register(recipe.key, meta)
     }
-
-    // ── Symmetry helpers ─────────────────────────────────────────────────
 
     internal fun generateSymmetryVariants(parts: List<RecipeIngredient>): List<Pair<String, List<RecipeIngredient>>> {
         val variants = mutableListOf<Pair<String, List<RecipeIngredient>>>()
         val seen = mutableSetOf<List<Int>>()
         fun fingerprint(p: List<RecipeIngredient>) = p.indices.filter { !p[it].empty }
-
         fun addVariant(suffix: String, remap: IntArray) {
             val remapped = remap.map { parts[it] }
             val fp = fingerprint(remapped)
             if (seen.add(fp)) variants.add(suffix to remapped)
         }
-
         seen.add(fingerprint(parts))
         addVariant("_rot90",  RecipeSymmetry.ROT_90_CW)
         addVariant("_rot180", RecipeSymmetry.ROT_180)
@@ -145,347 +147,179 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     // ── Type-specific loaders ────────────────────────────────────────────
 
-    private fun loadCraftingTable(id: String, config: Config): CustomRecipe {
+    private fun loadCraftingTable(id: String, config: Config) {
         val rawParts = config.getStrings("recipe")
         require(rawParts.size == 9) { "crafting_table recipe must have exactly 9 entries, got ${rawParts.size}" }
-        val parts = rawParts.map { parseIngredient(it) }
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.CraftingTable(
-            key = key(id),
-            output = parseOutputItem(config),
-            parts = parts,
-            shapeless = config.getBool("shapeless"),
-            symmetry = config.getBool("symmetry"),
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
+        val ingredients = rawParts.map { parseIngredient(it) }
+        val output = parseOutputItem(config)
+        val shapeless = config.getBool("shapeless")
+        val symmetry = config.getBool("symmetry")
+        val permission = config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }
+        val meta = parseMeta(id, config, RecipeDisplayType.CRAFTING)
+        val baseKey = key(id)
 
-    private fun loadSmelting(id: String, config: Config, type: SmeltingType): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Smelting(
-            key = key(id),
-            output = parseOutputItem(config),
-            input = parseIngredient(config.getString("input")),
-            stationType = type,
-            cookTime = if (config.has("cook-time")) config.getInt("cook-time") else -1,
-            experience = config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f,
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadSmithing(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Smithing(
-            key = key(id),
-            output = parseOutputItem(config),
-            template = parseIngredient(config.getString("template")),
-            base = parseIngredient(config.getString("base")),
-            addition = parseIngredient(config.getString("addition")),
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadStonecutter(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        val input = parseIngredient(config.getString("input"))
-        val rawOutputs = config.getSubsections("outputs")
-        require(rawOutputs.isNotEmpty()) { "stonecutter recipe '$id' must have at least one output" }
-        val outputs = rawOutputs.mapIndexed { idx, outCfg ->
-            val ghost = outCfg.getBool("ghost")
-            val ghostChain: Chain? = if (ghost) {
-                val scCtx = ViolationContext(recipeBookPlugin, "recipe-$id-out$idx")
-                Effects.compileChain(outCfg.getSubsections("effects"), scCtx.with("effects"))
-            } else null
-            StonecutterOutput(
-                item = run {
-                    val baseItem = runCatching { Items.lookup(outCfg.getString("item")).item }.getOrNull()
-                        ?: error("Cannot resolve stonecutter output item: ${outCfg.getString("item")}")
-                    val lore = outCfg.getFormattedStrings("lore")
-                    if (lore.isNotEmpty()) {
-                        val meta = baseItem.itemMeta ?: return@run baseItem
-                        meta.lore(lore.map {
-                            net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
-                        })
-                        baseItem.itemMeta = meta
-                    }
-                    baseItem
-                },
-                ghost = ghost,
-                ghostChain = ghostChain
-            )
-        }
-        return CustomRecipe.Stonecutter(
-            key = key(id),
-            input = input,
-            outputs = outputs,
-            permission = cc.permission,
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadCrafter(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        val rawParts = config.getStrings("recipe")
-        require(rawParts.size == 9) { "crafter recipe must have exactly 9 entries" }
-        return CustomRecipe.Crafter(
-            key = key(id),
-            output = parseOutputItem(config),
-            parts = rawParts.map { parseIngredient(it) },
-            shapeless = config.getBool("shapeless"),
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadBrewing(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Brewing(
-            key = key(id),
-            output = parseOutputItem(config),
-            base = parseIngredient(config.getStringOrNull("base") ?: ""),
-            ingredient = parseIngredient(config.getString("ingredient")),
-            brewTime = config.getIntOrNull("brew-time") ?: 400,
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadGrindstone(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Grindstone(
-            key = key(id),
-            output = parseOutputItem(config),
-            item1 = parseIngredient(config.getString("item1")),
-            item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) },
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadAnvil(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        return CustomRecipe.Anvil(
-            key = key(id),
-            output = parseOutputItem(config),
-            base = parseIngredient(config.getString("base")),
-            material = config.getStringOrNull("material")?.let { parseIngredient(it) },
-            resultName = config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() },
-            repairCost = config.getIntOrNull("repair-cost") ?: 1,
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    private fun loadVillager(id: String, config: Config): CustomRecipe {
-        val cc = parseCommonConditions(id, config)
-        val profession = config.getStringOrNull("profession")?.let {
-            runCatching { org.bukkit.entity.Villager.Profession.valueOf(it.uppercase()) }.getOrNull()
-        }
-        val minLevel = config.getIntOrNull("min-level") ?: 0
-        val chance = config.getStringOrNull("chance")?.toDoubleOrNull()?.coerceIn(0.0, 1.0) ?: 1.0
-        val wanderingTrader = config.getBool("wandering-trader")
-        return CustomRecipe.Villager(
-            key = key(id),
-            output = parseOutputItem(config),
-            input1 = parseIngredient(config.getString("input1")),
-            input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) },
-            profession = profession,
-            minLevel = minLevel,
-            chance = chance,
-            wanderingTrader = wanderingTrader,
-            permission = cc.permission,
-            ghost = config.getBool("ghost"),
-            ghostChain = parseGhostChain(id, config),
-            visibilityConditions = cc.visibilityConditions,
-            craftingConditions = cc.craftingConditions,
-            lockedByDefault = cc.lockedByDefault,
-            showWhenLocked = cc.showWhenLocked,
-            lockedLore = cc.lockedLore,
-            unlockConditions = cc.unlockConditions
-        )
-    }
-
-    // ── Bukkit registration ──────────────────────────────────────────────
-
-    internal fun CustomRecipe.registerBukkit() {
-        when (this) {
-            is CustomRecipe.CraftingTable -> registerCraftingTable()
-            is CustomRecipe.Smelting      -> registerSmelting()
-            is CustomRecipe.Smithing      -> registerSmithing()
-            is CustomRecipe.Stonecutter   -> registerStonecutter()
-            is CustomRecipe.Crafter       -> registerCrafter()
-            else -> { /* Group B — no Bukkit recipe needed */ }
-        }
-    }
-
-    private fun CustomRecipe.CraftingTable.registerCraftingTable() {
-        fun register(recipeKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
+        fun registerEcoVariant(variantKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
             if (shapeless) {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-                    .builder(recipeBookPlugin, recipeKey.key)
-                    .setOutput(output)
+                    .builder(recipeBookPlugin, variantKey.key).setOutput(output)
                 recipeParts.filter { !it.empty }.forEach { builder.addRecipePart(it.matcher.toTestableItem()) }
                 builder.build().register()
             } else {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-                    .builder(recipeBookPlugin, recipeKey.key)
-                    .setOutput(output)
+                    .builder(recipeBookPlugin, variantKey.key).setOutput(output)
                 recipeParts.forEachIndexed { idx, part ->
                     if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
                 }
                 builder.build().register()
             }
-            CustomRecipes.trackBukkitKey(recipeKey)
+            WorkstationRecipes.trackBukkitKey(variantKey)
         }
 
-        register(key, parts)
+        // Register via eco's shaped/shapeless recipe system for crafting table
+        registerEcoVariant(baseKey, ingredients)
         if (symmetry && !shapeless) {
-            generateSymmetryVariants(parts).forEach { (suffix, variantParts) ->
-                register(NamespacedKey("recipebook", "${key.key}$suffix"), variantParts)
+            generateSymmetryVariants(ingredients).forEach { (suffix, variantParts) ->
+                registerEcoVariant(NamespacedKey("recipebook", "${baseKey.key}$suffix"), variantParts)
             }
         }
+
+        // Register a CrafterRecipe stub in WorkstationRecipes for listener key lookup
+        val crafterStub = CrafterRecipe.builder(baseKey, output)
+            .parts(ingredients.map { it.matcher.toTestableItem() }, ingredients.map { it.displayItem })
+            .shapeless(shapeless)
+            .also { b -> permission?.let { b.permission(it) } }
+            .build()
+        WorkstationRecipes.register(crafterStub)
+        CustomRecipes.register(baseKey, meta)
     }
 
-    private fun CustomRecipe.Smelting.registerSmelting() {
-        val recipeKey = key
-        val inputChoice = org.bukkit.inventory.RecipeChoice.ExactChoice(input.displayItem)
-        val out = output.clone()
-        val cookTime = if (cookTime < 0) null else cookTime
-        val xp = experience
-        when (stationType) {
-            SmeltingType.FURNACE -> org.bukkit.Bukkit.addRecipe(
-                org.bukkit.inventory.FurnaceRecipe(recipeKey, out, inputChoice, xp, cookTime ?: 200))
-            SmeltingType.BLAST_FURNACE -> org.bukkit.Bukkit.addRecipe(
-                org.bukkit.inventory.BlastingRecipe(recipeKey, out, inputChoice, xp, cookTime ?: 100))
-            SmeltingType.SMOKER -> org.bukkit.Bukkit.addRecipe(
-                org.bukkit.inventory.SmokingRecipe(recipeKey, out, inputChoice, xp, cookTime ?: 100))
-            SmeltingType.CAMPFIRE -> org.bukkit.Bukkit.addRecipe(
-                org.bukkit.inventory.CampfireRecipe(recipeKey, out, inputChoice, xp, cookTime ?: 600))
-        }
-        CustomRecipes.trackBukkitKey(recipeKey)
+    private fun loadSmelting(id: String, config: Config, type: WSmeltingType) {
+        val ingredient = parseIngredient(config.getString("input"))
+        val recipe = SmeltingRecipe.builder(key(id), parseOutputItem(config), ingredient.matcher.toTestableItem(), type)
+            .inputDisplay(ingredient.displayItem)
+            .cookTime(if (config.has("cook-time")) config.getInt("cook-time") else -1)
+            .experience(config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f)
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMELTING))
     }
 
-    private fun CustomRecipe.Smithing.registerSmithing() {
-        val r = org.bukkit.inventory.SmithingTransformRecipe(
-            key,
-            output.clone(),
-            org.bukkit.inventory.RecipeChoice.ExactChoice(template.displayItem),
-            org.bukkit.inventory.RecipeChoice.ExactChoice(base.displayItem),
-            org.bukkit.inventory.RecipeChoice.ExactChoice(addition.displayItem)
-        )
-        org.bukkit.Bukkit.addRecipe(r)
-        CustomRecipes.trackBukkitKey(key)
+    private fun loadSmithing(id: String, config: Config) {
+        val template = parseIngredient(config.getString("template"))
+        val base = parseIngredient(config.getString("base"))
+        val addition = parseIngredient(config.getString("addition"))
+        val recipe = SmithingRecipe.builder(key(id), parseOutputItem(config))
+            .template(template.matcher.toTestableItem(), template.displayItem)
+            .base(base.matcher.toTestableItem(), base.displayItem)
+            .addition(addition.matcher.toTestableItem(), addition.displayItem)
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMITHING))
     }
 
-    private fun CustomRecipe.Stonecutter.registerStonecutter() {
-        outputs.forEachIndexed { idx, out ->
-            val rKey = NamespacedKey("recipebook", "${key.key}_$idx")
-            val r = org.bukkit.inventory.StonecuttingRecipe(
-                rKey,
-                out.item.clone(),
-                org.bukkit.inventory.RecipeChoice.ExactChoice(input.displayItem)
+    private fun loadStonecutter(id: String, config: Config) {
+        val input = parseIngredient(config.getString("input"))
+        val ctx = ViolationContext(recipeBookPlugin, "recipe-$id")
+        val rawOutputs = config.getSubsections("outputs")
+        require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
+
+        rawOutputs.forEachIndexed { idx, outCfg ->
+            val outKey = NamespacedKey("recipebook", "${id.lowercase()}_$idx")
+            val outItem = run {
+                val base = runCatching { Items.lookup(outCfg.getString("item")).item }.getOrNull()
+                    ?: error("Cannot resolve stonecutter output: ${outCfg.getString("item")}")
+                val lore = outCfg.getFormattedStrings("lore")
+                if (lore.isNotEmpty()) {
+                    val itemMeta = base.itemMeta ?: return@run base
+                    itemMeta.lore(lore.map {
+                        net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
+                    })
+                    base.itemMeta = itemMeta
+                }
+                base
+            }
+            val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
+                .inputDisplay(input.displayItem)
+                .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+                .build()
+            val ghost = outCfg.getBool("ghost")
+            val ghostChain = if (ghost)
+                Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
+            else null
+            val outMeta = RecipeBookMeta(
+                ghost = ghost, ghostChain = ghostChain,
+                visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
+                craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
+                lockedByDefault = config.getBool("locked-by-default"),
+                showWhenLocked = config.getBool("show-when-locked"),
+                lockedLore = config.getFormattedStrings("locked-lore"),
+                unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
+                displayType = RecipeDisplayType.STONECUTTER
             )
-            org.bukkit.Bukkit.addRecipe(r)
-            CustomRecipes.trackBukkitKey(rKey)
+            registerWithMeta(recipe, outMeta)
         }
     }
 
-    private fun CustomRecipe.Crafter.registerCrafter() {
-        val ecoBuilder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-            .builder(recipeBookPlugin, key.key)
-            .setOutput(output)
-        parts.forEachIndexed { idx, part ->
-            if (!part.empty) ecoBuilder.setRecipePart(idx, part.matcher.toTestableItem())
-        }
-        ecoBuilder.build().register()
-        CustomRecipes.trackBukkitKey(key)
+    private fun loadCrafter(id: String, config: Config) {
+        val rawParts = config.getStrings("recipe")
+        require(rawParts.size == 9) { "crafter recipe must have exactly 9 entries" }
+        val ingredients = rawParts.map { parseIngredient(it) }
+        val recipe = CrafterRecipe.builder(key(id), parseOutputItem(config))
+            .parts(ingredients.map { it.matcher.toTestableItem() }, ingredients.map { it.displayItem })
+            .shapeless(config.getBool("shapeless"))
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.CRAFTER))
+    }
 
-        val crafterKey = NamespacedKey("recipebook", "${key.key}_crafter")
-        val chars = "ABCDEFGHI".toList()
-        var charIdx = 0
-        val slotToChar = mutableMapOf<Int, Char>()
-        parts.forEachIndexed { idx, part ->
-            if (!part.empty) slotToChar[idx] = chars[charIdx++]
+    private fun loadBrewing(id: String, config: Config) {
+        val base = parseIngredient(config.getStringOrNull("base") ?: "")
+        val ingredient = parseIngredient(config.getString("ingredient"))
+        val recipe = BrewingRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem(), ingredient.matcher.toTestableItem())
+            .brewTime(config.getIntOrNull("brew-time") ?: 400)
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.BREWING))
+    }
+
+    private fun loadGrindstone(id: String, config: Config) {
+        val item1 = parseIngredient(config.getString("item1"))
+        val item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) }
+        val recipe = GrindstoneRecipe.builder(key(id), parseOutputItem(config), item1.matcher.toTestableItem())
+            .item2(item2?.matcher?.toTestableItem())
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.GRINDSTONE))
+    }
+
+    private fun loadAnvil(id: String, config: Config) {
+        val base = parseIngredient(config.getString("base"))
+        val material = config.getStringOrNull("material")?.let { parseIngredient(it) }
+        val recipe = AnvilRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem())
+            .material(material?.matcher?.toTestableItem())
+            .resultName(config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() })
+            .repairCost(config.getIntOrNull("repair-cost") ?: 1)
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.ANVIL))
+    }
+
+    private fun loadVillager(id: String, config: Config) {
+        val input1 = parseIngredient(config.getString("input1"))
+        val input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) }
+        val profession = config.getStringOrNull("profession")?.let {
+            runCatching { org.bukkit.entity.Villager.Profession.valueOf(it.uppercase()) }.getOrNull()
         }
-        val rows = (0..2).map { row ->
-            (0..2).joinToString("") { col ->
-                val idx = row * 3 + col
-                slotToChar[idx]?.toString() ?: " "
-            }
-        }
-        val bukkit = org.bukkit.inventory.ShapedRecipe(crafterKey, output.clone())
-        bukkit.shape(*rows.toTypedArray())
-        slotToChar.forEach { (idx, ch) ->
-            bukkit.setIngredient(ch, org.bukkit.inventory.RecipeChoice.ExactChoice(parts[idx].displayItem.clone()))
-        }
-        org.bukkit.Bukkit.addRecipe(bukkit)
-        CustomRecipes.trackBukkitKey(crafterKey)
+        val recipe = VillagerRecipe.builder(key(id), parseOutputItem(config), input1.matcher.toTestableItem())
+            .input1Display(input1.displayItem)
+            .input2(input2?.matcher?.toTestableItem())
+            .input2Display(input2?.displayItem)
+            .profession(profession)
+            .minLevel(config.getIntOrNull("min-level") ?: 0)
+            .chance((config.getStringOrNull("chance")?.toDoubleOrNull() ?: 1.0).coerceIn(0.0, 1.0))
+            .wanderingTrader(config.getBool("wandering-trader"))
+            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .build()
+        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.VILLAGER))
     }
 }
-
-data class CommonConditions(
-    val permission: String?,
-    val visibilityConditions: ConditionList,
-    val craftingConditions: ConditionList,
-    val lockedByDefault: Boolean,
-    val showWhenLocked: Boolean,
-    val lockedLore: List<String>,
-    val unlockConditions: ConditionList
-)

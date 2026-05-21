@@ -6,6 +6,16 @@ import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.recipe.Recipes
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.recipes.CraftingRecipe
+import com.willfp.eco.core.recipe.workstation.AnvilRecipe
+import com.willfp.eco.core.recipe.workstation.BrewingRecipe
+import com.willfp.eco.core.recipe.workstation.CrafterRecipe
+import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
+import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
+import com.willfp.eco.core.recipe.workstation.SmithingRecipe
+import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
+import com.willfp.eco.core.recipe.workstation.VillagerRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -14,7 +24,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
-import ru.oftendev.recipebook.custom.CustomRecipe
 import ru.oftendev.recipebook.custom.CustomRecipes
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
 import ru.oftendev.recipebook.integration.VaultPackIntegration
@@ -39,7 +48,7 @@ object RecipeResolver {
             findEcoRecipe(customItem)?.let { return it }
         }
 
-        CustomRecipes.getByOutput(clean)?.let { return it.toResolvedRecipe() }
+        findWorkstationRecipeByOutput(clean)?.let { return it }
 
         return findBukkitRecipe(clean)
     }
@@ -50,36 +59,88 @@ object RecipeResolver {
 
     fun resolveForPlayer(itemStack: ItemStack, player: Player): ResolvedRecipe? {
         val recipe = resolve(itemStack) ?: return null
-        val locked = if (recipe.source == RecipeSource.CUSTOM) {
-            val customRecipe = CustomRecipes.getByOutput(itemStack.clone().apply { amount = 1 })
-            customRecipe?.let { RecipeUnlockStore.isLocked(player, it) } ?: false
+        val locked = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
+            val meta = CustomRecipes.getMeta(recipe.key)
+            if (meta != null) RecipeUnlockStore.isLocked(player, recipe.key, meta) else false
         } else false
         return recipe.copy(locked = locked)
     }
 
-    private fun CustomRecipe.toResolvedRecipe(): ResolvedRecipe {
-        val airStack = ItemStack(Material.AIR)
-        fun emptyIng() = RecipeIngredient.empty(airStack)
+    private fun findWorkstationRecipeByOutput(clean: ItemStack): ResolvedRecipe? {
+        return WorkstationRecipes.getAll()
+            .firstOrNull { r -> r.output?.let { it.isSimilar(clean) } == true && CustomRecipes.getMeta(r.key) != null }
+            ?.workstationToResolvedRecipe()
+    }
+
+    private fun WorkstationRecipe.workstationToResolvedRecipe(): ResolvedRecipe {
+        fun emptyIng() = RecipeIngredient.empty(air)
+        fun displayOrAir(display: ItemStack?) = display?.clone() ?: air.clone()
 
         val ingredients: List<RecipeIngredient> = when (this) {
-            is CustomRecipe.CraftingTable -> parts
-            is CustomRecipe.Smelting      -> listOf(input) + List(8) { emptyIng() }
-            is CustomRecipe.Smithing      -> listOf(template, base, addition) + List(6) { emptyIng() }
-            is CustomRecipe.Stonecutter   -> listOf(input) + List(8) { emptyIng() }
-            is CustomRecipe.Crafter       -> parts
-            is CustomRecipe.Brewing       -> listOf(base, ingredient) + List(7) { emptyIng() }
-            is CustomRecipe.Grindstone    -> listOfNotNull(item1, item2) + List(7) { emptyIng() }
-            is CustomRecipe.Anvil         -> listOfNotNull(base, material) + List(7) { emptyIng() }
-            is CustomRecipe.Villager      -> listOfNotNull(input1, input2) + List(7) { emptyIng() }
+            is CrafterRecipe -> {
+                val displays = partDisplays
+                parts.mapIndexed { idx, testable ->
+                    if (testable == null) emptyIng()
+                    else RecipeIngredient(
+                        displays.getOrNull(idx)?.clone() ?: air.clone(),
+                        IngredientMatcher.EcoPart(testable)
+                    )
+                }
+            }
+            is SmeltingRecipe -> {
+                val display = displayOrAir(inputDisplay)
+                listOf(RecipeIngredient(display, IngredientMatcher.EcoPart(input))) +
+                    List(8) { emptyIng() }
+            }
+            is SmithingRecipe -> {
+                listOf(
+                    RecipeIngredient(displayOrAir(templateDisplay), IngredientMatcher.EcoPart(template)),
+                    RecipeIngredient(displayOrAir(baseDisplay), IngredientMatcher.EcoPart(base)),
+                    RecipeIngredient(displayOrAir(additionDisplay), IngredientMatcher.EcoPart(addition))
+                ) + List(6) { emptyIng() }
+            }
+            is StonecuttingRecipe -> {
+                listOf(RecipeIngredient(displayOrAir(inputDisplay), IngredientMatcher.EcoPart(input))) +
+                    List(8) { emptyIng() }
+            }
+            is BrewingRecipe -> {
+                listOf(
+                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(base)),
+                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(ingredient))
+                ) + List(7) { emptyIng() }
+            }
+            is GrindstoneRecipe -> {
+                val i2 = item2
+                listOfNotNull(
+                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(item1)),
+                    if (i2 != null) RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(i2)) else null
+                ) + List(7) { emptyIng() }
+            }
+            is AnvilRecipe -> {
+                val mat = material
+                listOfNotNull(
+                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(base)),
+                    if (mat != null) RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(mat)) else null
+                ) + List(7) { emptyIng() }
+            }
+            is VillagerRecipe -> {
+                val i2 = input2
+                listOfNotNull(
+                    RecipeIngredient(displayOrAir(input1Display), IngredientMatcher.EcoPart(input1)),
+                    if (i2 != null) RecipeIngredient(displayOrAir(input2Display), IngredientMatcher.EcoPart(i2)) else null
+                ) + List(7) { emptyIng() }
+            }
+            else -> List(9) { emptyIng() }
         }
 
+        val meta = CustomRecipes.getMeta(key)
         return ResolvedRecipe(
             key = key,
-            output = output.clone(),
-            ingredients = ingredients,
+            output = (output ?: air).clone(),
+            ingredients = ingredients.normalizeToNine(),
             permission = permission,
             source = RecipeSource.CUSTOM,
-            displayType = displayType
+            displayType = meta?.displayType ?: RecipeDisplayType.CRAFTING
         )
     }
 

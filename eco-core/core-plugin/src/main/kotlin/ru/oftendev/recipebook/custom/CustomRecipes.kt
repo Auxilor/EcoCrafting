@@ -1,40 +1,34 @@
 package ru.oftendev.recipebook.custom
 
-import com.willfp.eco.core.items.HashedItem
-import org.bukkit.Bukkit
+import com.willfp.libreforge.conditions.ConditionList
+import com.willfp.libreforge.effects.Chain
 import org.bukkit.NamespacedKey
-import org.bukkit.inventory.ItemStack
+import ru.oftendev.recipebook.recipe.RecipeDisplayType
+
+data class RecipeBookMeta(
+    val ghost: Boolean,
+    val ghostChain: Chain?,
+    val visibilityConditions: ConditionList,
+    val craftingConditions: ConditionList,
+    val lockedByDefault: Boolean,
+    val showWhenLocked: Boolean,
+    val lockedLore: List<String>,
+    val unlockConditions: ConditionList,
+    val displayType: RecipeDisplayType
+)
 
 object CustomRecipes {
-    private val byKey = mutableMapOf<NamespacedKey, CustomRecipe>()
-    private val byOutput = mutableMapOf<HashedItem, CustomRecipe>()
-    private val registeredBukkitKeys = mutableSetOf<NamespacedKey>()
+    private val meta = mutableMapOf<NamespacedKey, RecipeBookMeta>()
 
-    fun register(recipe: CustomRecipe) {
-        byKey[recipe.key] = recipe
-        when (recipe) {
-            is CustomRecipe.Stonecutter -> recipe.outputs.forEach { out ->
-                byOutput[HashedItem.of(out.item.clone().apply { amount = 1 })] = recipe
-            }
-            else -> byOutput[HashedItem.of(recipe.output.clone().apply { amount = 1 })] = recipe
-        }
+    fun register(key: NamespacedKey, m: RecipeBookMeta) {
+        meta[key] = m
     }
 
-    fun trackBukkitKey(key: NamespacedKey) {
-        registeredBukkitKeys.add(key)
-    }
+    fun getMeta(key: NamespacedKey): RecipeBookMeta? = meta[key]
+
+    fun allKeys(): Set<NamespacedKey> = meta.keys
 
     fun clear() {
-        registeredBukkitKeys.forEach { Bukkit.removeRecipe(it) }
-        registeredBukkitKeys.clear()
-        byKey.clear()
-        byOutput.clear()
+        meta.clear()
     }
-
-    fun getByKey(key: NamespacedKey): CustomRecipe? = byKey[key]
-
-    fun getByOutput(stack: ItemStack): CustomRecipe? =
-        byOutput[HashedItem.of(stack.clone().apply { amount = 1 })]
-
-    fun all(): Collection<CustomRecipe> = byKey.values
 }

@@ -4,12 +4,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.custom.CustomRecipe
 
 class CustomSmithEvent(
     player: Player,
-    val recipe: CustomRecipe.Smithing,
+    val recipe: SmithingRecipe,
     val item: ItemStack
 ) : PlayerEvent(player), Cancellable {
     private var cancelled = false

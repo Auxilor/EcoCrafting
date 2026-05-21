@@ -5,12 +5,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.custom.CustomRecipe
 
 class CustomBrewEvent(
     player: Player,
-    val recipe: CustomRecipe.Brewing,
+    val recipe: BrewingRecipe,
     val item: ItemStack,
     val brewingLocation: Location,
     val bottlesAffected: Int

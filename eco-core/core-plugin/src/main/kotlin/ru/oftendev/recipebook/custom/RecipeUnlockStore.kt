@@ -2,6 +2,7 @@ package ru.oftendev.recipebook.custom
 
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
+import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
@@ -38,26 +39,26 @@ object RecipeUnlockStore : Listener {
         cache.keys.toList().forEach { savePlayer(it) }
     }
 
-    fun isUnlocked(player: OfflinePlayer, recipe: CustomRecipe): Boolean {
-        if (!recipe.lockedByDefault) return true
-        return recipe.key.key in (cache[player.uniqueId] ?: emptySet())
+    fun isUnlocked(player: OfflinePlayer, key: NamespacedKey, meta: RecipeBookMeta): Boolean {
+        if (!meta.lockedByDefault) return true
+        return key.key in (cache[player.uniqueId] ?: emptySet())
     }
 
-    fun isLocked(player: OfflinePlayer, recipe: CustomRecipe): Boolean =
-        !isUnlocked(player, recipe)
+    fun isLocked(player: OfflinePlayer, key: NamespacedKey, meta: RecipeBookMeta): Boolean =
+        !isUnlocked(player, key, meta)
 
-    fun unlock(player: Player, recipe: CustomRecipe) {
-        if (!recipe.lockedByDefault) return
+    fun unlock(player: Player, key: NamespacedKey, meta: RecipeBookMeta) {
+        if (!meta.lockedByDefault) return
         val set = cache.getOrPut(player.uniqueId) { mutableSetOf() }
-        if (recipe.key.key in set) return
-        set.add(recipe.key.key)
+        if (key.key in set) return
+        set.add(key.key)
         savePlayer(player.uniqueId)
     }
 
-    fun lock(player: Player, recipe: CustomRecipe) {
+    fun lock(player: Player, key: NamespacedKey, meta: RecipeBookMeta) {
         val set = cache[player.uniqueId] ?: return
-        if (recipe.key.key !in set) return
-        set.remove(recipe.key.key)
+        if (key.key !in set) return
+        set.remove(key.key)
         savePlayer(player.uniqueId)
     }
 
@@ -65,11 +66,12 @@ object RecipeUnlockStore : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         loadPlayer(event.player.uniqueId)
         val player = event.player
-        for (recipe in CustomRecipes.all()) {
-            if (!recipe.lockedByDefault) continue
-            if (!isLocked(player, recipe)) continue
-            if (recipe.unlockConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) {
-                unlock(player, recipe)
+        for (recipe in com.willfp.eco.core.recipe.workstation.WorkstationRecipes.getAll()) {
+            val meta = CustomRecipes.getMeta(recipe.key) ?: continue
+            if (!meta.lockedByDefault) continue
+            if (!isLocked(player, recipe.key, meta)) continue
+            if (meta.unlockConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) {
+                unlock(player, recipe.key, meta)
             }
         }
     }

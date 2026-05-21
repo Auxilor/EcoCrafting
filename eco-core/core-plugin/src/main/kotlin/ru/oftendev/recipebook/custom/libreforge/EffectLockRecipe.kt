@@ -20,11 +20,12 @@ object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
     ): Boolean {
         val player = data.player ?: return false
         val recipeId = config.getString("args.recipe")
-        val recipe = CustomRecipes.getByKey(NamespacedKey("recipebook", recipeId)) ?: return false
-        RecipeUnlockStore.lock(player, recipe)
+        val key = NamespacedKey("recipebook", recipeId)
+        val meta = CustomRecipes.getMeta(key) ?: return false
+        RecipeUnlockStore.lock(player, key, meta)
         TriggerRecipeLocked.dispatch(
             player.toDispatcher(),
-            data.copy(text = recipe.key.toString())
+            data.copy(text = key.toString())
         )
         return true
     }

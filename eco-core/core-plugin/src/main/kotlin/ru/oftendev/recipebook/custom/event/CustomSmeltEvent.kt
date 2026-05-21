@@ -5,12 +5,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.custom.CustomRecipe
 
 class CustomSmeltEvent(
     player: Player,
-    val recipe: CustomRecipe.Smelting,
+    val recipe: SmeltingRecipe,
     val item: ItemStack,
     val furnaceLocation: Location
 ) : PlayerEvent(player), Cancellable {

@@ -4,12 +4,12 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import org.bukkit.inventory.ItemStack
-import ru.oftendev.recipebook.custom.CustomRecipe
 
 class CustomCraftEvent(
     player: Player,
-    val recipe: CustomRecipe,
+    val recipe: WorkstationRecipe,
     val item: ItemStack,
     val amount: Int
 ) : PlayerEvent(player), Cancellable {
