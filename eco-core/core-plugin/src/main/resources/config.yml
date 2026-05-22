@@ -63,6 +63,22 @@ craft-gui:
         - ""
       success_sound: entity.player.levelup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
   custom-slots: []
 
 furnace-gui:
@@ -97,6 +113,22 @@ furnace-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 smithing-gui:
   title: "&8Smithing Recipe"
@@ -130,6 +162,22 @@ smithing-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
@@ -163,6 +211,22 @@ stonecutter-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 brewing-gui:
   title: "&8Brewing Recipe"
@@ -196,6 +260,22 @@ brewing-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 cartography-gui:
   title: "&8Cartography Recipe"
@@ -229,6 +309,22 @@ cartography-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 grindstone-gui:
   title: "&8Grindstone Recipe"
@@ -262,6 +358,22 @@ grindstone-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 anvil-gui:
   title: "&8Anvil Recipe"
@@ -295,6 +407,22 @@ anvil-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
 
 villager-gui:
   title: "&8Villager Trade"
@@ -328,3 +456,19 @@ villager-gui:
         - ""
       success_sound: entity.experience_orb.pickup
       fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
