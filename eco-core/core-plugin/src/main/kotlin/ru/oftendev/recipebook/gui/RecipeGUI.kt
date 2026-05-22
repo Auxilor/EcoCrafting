@@ -8,8 +8,8 @@ import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
+import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.formatEco
-import net.kyori.adventure.sound.Sound
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.craft.MaterialCount
 import ru.oftendev.recipebook.craft.QuickCraftService
 import ru.oftendev.recipebook.integration.ShopIntegration
-import ru.oftendev.recipebook.makeSound
 import ru.oftendev.recipebook.recipe.RecipeDisplayType
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipe.ResolvedRecipe
@@ -31,12 +30,14 @@ class RecipeGUI(
     private lateinit var config: com.willfp.eco.core.config.interfaces.Config
 
     fun open(player: Player, parent: Menu?) {
-        val recipe = alternatives.getOrNull(altIndex)
+        val effectiveAlternatives = if (alternatives.isEmpty()) RecipeResolver.resolveAll(stack) else alternatives
+        val recipe = effectiveAlternatives.getOrNull(altIndex)
             ?: RecipeResolver.resolveForPlayer(stack, player)
             ?: run {
                 player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
                 return
             }
+
         val items = recipe.displayItems
         val guiSection = when (recipe.displayType) {
             RecipeDisplayType.CRAFTING      -> "craft-gui"
@@ -58,67 +59,26 @@ class RecipeGUI(
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title").replace("%cook_time%", cookTimeDisplay))
 
+        val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
+        val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
+
         var row = 1
         var num = 0
         pattern.forEach { line ->
             var col = 1
             line.toCharArray().forEach { marker ->
-                if (marker.equals('i', true)) {
-                    if (num < items.size && !items[num].type.isAir) {
-                        menu.setSlot(row, col, slot(items[num], makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                when {
+                    marker.equals('i', true) -> {
+                        if (num < items.size && !items[num].type.isAir) {
+                            menu.setSlot(row, col, ingredientSlot(items[num], isIngredient = true))
+                        }
+                        num++
                     }
-                    num++
-                }
-                if (marker.equals('o', true)) {
-                    menu.setSlot(row, col, slot(recipe.output, makeSound(config.getStringOrNull("buttons.slot.click_sound")), false))
-                }
-                // smithing template (ingredients[0])
-                if (marker.equals('t', true)) {
-                    val item = items.getOrNull(0)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    marker.equals('o', true) -> {
+                        menu.setSlot(row, col, ingredientSlot(recipe.output, isIngredient = false))
                     }
-                }
-                // smithing base (ingredients[1])
-                if (marker.equals('b', true)) {
-                    val item = items.getOrNull(1)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
-                    }
-                }
-                // smithing addition (ingredients[2])
-                if (marker.equals('a', true)) {
-                    val item = items.getOrNull(2)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
-                    }
-                }
-                // brewing ingredient / top slot (ingredients[1])
-                if (marker.equals('g', true)) {
-                    val item = items.getOrNull(1)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
-                    }
-                }
-                // brewing base slot (ingredients[0])
-                if (marker.equals('s', true)) {
-                    val item = items.getOrNull(0)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
-                    }
-                }
-                // grindstone/villager second input (ingredients[1])
-                if (marker.equals('j', true)) {
-                    val item = items.getOrNull(1)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
-                    }
-                }
-                // anvil material (ingredients[1])
-                if (marker.equals('m', true)) {
-                    val item = items.getOrNull(1)
-                    if (item != null && !item.type.isAir) {
-                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    WORKSTATION_MARKERS.containsKey(marker) -> {
+                        menu.setSlot(row, col, workstationSlot(marker, currentType, currentTypes, effectiveAlternatives, parent))
                     }
                 }
                 col++
@@ -133,7 +93,7 @@ class RecipeGUI(
                 menu.addComponent(
                     config.getInt("buttons.back.row"),
                     config.getInt("buttons.back.column"),
-                    backSlot(parent, makeSound(config.getStringOrNull("buttons.back.click_sound")))
+                    backSlot(parent)
                 )
             }
         }
@@ -144,12 +104,7 @@ class RecipeGUI(
                 menu.addComponent(
                     config.getInt("buttons.quick-craft.row"),
                     config.getInt("buttons.quick-craft.column"),
-                    quickCraftSlot(
-                        player,
-                        recipe,
-                        makeSound(config.getStringOrNull("buttons.quick-craft.success_sound")),
-                        makeSound(config.getStringOrNull("buttons.quick-craft.fail_sound"))
-                    )
+                    quickCraftSlot(player, recipe)
                 )
             }
 
@@ -159,20 +114,14 @@ class RecipeGUI(
                 menu.addComponent(
                     config.getInt("buttons.purchase-ingredients.row"),
                     config.getInt("buttons.purchase-ingredients.column"),
-                    purchaseIngredientsSlot(
-                        player,
-                        recipe,
-                        makeSound(config.getStringOrNull("buttons.purchase-ingredients.success_sound")),
-                        makeSound(config.getStringOrNull("buttons.purchase-ingredients.fail_sound"))
-                    )
+                    purchaseIngredientsSlot(player, recipe)
                 )
             }
 
-        if (alternatives.size > 1) {
+        if (effectiveAlternatives.size > 1) {
             config.getSubsectionOrNull("buttons.prev-variant")?.let {
                 val prevActive = altIndex > 0
                 val state = if (prevActive) "active" else "inactive"
-                val sound = makeSound(config.getStringOrNull("buttons.prev-variant.click_sound"))
                 val slotBuilder = Slot.builder(
                     ItemStackBuilder(Items.lookup(config.getString("buttons.prev-variant.item.$state")))
                         .addLoreLines(config.getFormattedStrings("buttons.prev-variant.lore"))
@@ -180,8 +129,8 @@ class RecipeGUI(
                 )
                 if (prevActive) {
                     slotBuilder.onLeftClick { event, _ ->
-                        RecipeGUI(stack, alternatives, altIndex - 1).open(event.whoClicked as Player, parent)
-                        sound?.let { event.player.playSound(it) }
+                        RecipeGUI(stack, effectiveAlternatives, altIndex - 1).open(event.whoClicked as Player, parent)
+                        sound("prev-page")?.playTo(event.whoClicked as Player)
                     }
                 }
                 menu.setSlot(
@@ -192,9 +141,8 @@ class RecipeGUI(
             }
 
             config.getSubsectionOrNull("buttons.next-variant")?.let {
-                val nextActive = altIndex < alternatives.size - 1
+                val nextActive = altIndex < effectiveAlternatives.size - 1
                 val state = if (nextActive) "active" else "inactive"
-                val sound = makeSound(config.getStringOrNull("buttons.next-variant.click_sound"))
                 val slotBuilder = Slot.builder(
                     ItemStackBuilder(Items.lookup(config.getString("buttons.next-variant.item.$state")))
                         .addLoreLines(config.getFormattedStrings("buttons.next-variant.lore"))
@@ -202,8 +150,8 @@ class RecipeGUI(
                 )
                 if (nextActive) {
                     slotBuilder.onLeftClick { event, _ ->
-                        RecipeGUI(stack, alternatives, altIndex + 1).open(event.whoClicked as Player, parent)
-                        sound?.let { event.player.playSound(it) }
+                        RecipeGUI(stack, effectiveAlternatives, altIndex + 1).open(event.whoClicked as Player, parent)
+                        sound("next-page")?.playTo(event.whoClicked as Player)
                     }
                 }
                 menu.setSlot(
@@ -221,18 +169,72 @@ class RecipeGUI(
         menu.build().open(player)
     }
 
-    private fun backSlot(menu: Menu, sound: Sound?): Slot {
+    private fun sound(key: String): PlayableSound? =
+        recipeBookPlugin.configYml.getSubsectionOrNull("sounds.$key")
+            ?.let { PlayableSound.create(it) }
+
+    private fun workstationSlot(
+        marker: Char,
+        currentType: RecipeDisplayType?,
+        currentTypes: Set<RecipeDisplayType>,
+        effectiveAlternatives: List<ResolvedRecipe>,
+        parent: Menu?
+    ): Slot {
+        val markerTypes = WORKSTATION_MARKERS[marker]!!
+        val configKey = MARKER_CONFIG_KEY[marker]!!
+        val wsName = recipeBookPlugin.langYml.getString("workstation-names.$configKey")
+        val state = workstationMarkerState(markerTypes, currentType, currentTypes)
+        val stateKey = state.name.lowercase().replace("_", "-")
+
+        val rawItem = recipeBookPlugin.configYml.getString("workstation-markers.$configKey.$stateKey")
+        val lore = recipeBookPlugin.configYml.getFormattedStrings("workstation-markers.$configKey.lore.$stateKey")
+            .map { it.replace("%workstation%", wsName) }
+        val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", wsName)))
+            .addLoreLines(lore)
+            .build()
+
+        val slotBuilder = Slot.builder(item)
+        if (state == WorkstationMarkerState.INACTIVE) {
+            val targetIndex = effectiveAlternatives.indexOfFirst { markerTypes.contains(it.displayType) }
+            if (targetIndex >= 0) {
+                slotBuilder.onLeftClick { event, _ ->
+                    RecipeGUI(stack, effectiveAlternatives, targetIndex).open(event.whoClicked as Player, parent)
+                    sound("workstation-switch")?.playTo(event.whoClicked as Player)
+                }
+            }
+        }
+        return slotBuilder.build()
+    }
+
+    private fun ingredientSlot(item: ItemStack, isIngredient: Boolean): Slot {
+        return Slot.builder(
+            ItemStackBuilder(item.clone())
+                .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
+                .build()
+        ).onLeftClick { event, _, menu ->
+            if (isIngredient) {
+                val clicked = item.clone().apply { amount = 1 }
+                val clickedRecipe = RecipeResolver.resolve(clicked)
+                if (clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
+                    RecipeGUI(clicked).open(event.whoClicked as Player, menu)
+                }
+            }
+            sound("slot-click")?.playTo(event.whoClicked as Player)
+        }.build()
+    }
+
+    private fun backSlot(menu: Menu): Slot {
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
                 .build()
         ).onLeftClick { event, _ ->
             menu.open(event.whoClicked as Player)
-            sound?.let { event.player.playSound(it) }
+            sound("back")?.playTo(event.whoClicked as Player)
         }.build()
     }
 
-    private fun purchaseIngredientsSlot(player: Player, recipe: ResolvedRecipe, successSound: Sound?, failSound: Sound?): Slot {
+    private fun purchaseIngredientsSlot(player: Player, recipe: ResolvedRecipe): Slot {
         val service = QuickCraftService(player, recipe)
         val materialCounts = service.getMaterialCounts()
         val hasAllMaterials = materialCounts.all { it.has >= it.needs }
@@ -256,23 +258,23 @@ class RecipeGUI(
             val target = event.whoClicked as Player
             if (hasAllMaterials) {
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-sufficient"))
-                successSound?.let { event.player.playSound(it) }
+                sound("purchase-success")?.playTo(target)
                 return@onLeftClick
             }
             if (!ShopIntegration.isEnabled()) {
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.shop-disabled"))
-                failSound?.let { event.player.playSound(it) }
+                sound("purchase-fail")?.playTo(target)
                 return@onLeftClick
             }
             val purchase = ShopIntegration.purchaseMaterials(target, QuickCraftService(target, recipe).getMissingMaterials())
             if (purchase.success) {
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-purchased")
                     .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
-                successSound?.let { event.player.playSound(it) }
+                sound("purchase-success")?.playTo(target)
             } else {
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-failed")
                     .replace("%reason%", purchase.message))
-                failSound?.let { event.player.playSound(it) }
+                sound("purchase-fail")?.playTo(target)
             }
         }.onShiftLeftClick { event, _ ->
             val target = event.whoClicked as Player
@@ -282,34 +284,18 @@ class RecipeGUI(
             }
             val purchase = ShopIntegration.purchaseMaterials(target, QuickCraftService(target, recipe).getMissingMaterials())
             if (purchase.success) {
-                successSound?.let { event.player.playSound(it) }
+                sound("purchase-success")?.playTo(target)
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-purchased")
                     .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
             } else {
-                failSound?.let { event.player.playSound(it) }
+                sound("purchase-fail")?.playTo(target)
                 target.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.craft-failed")
                     .replace("%reason%", purchase.message))
             }
         }.build()
     }
 
-    private fun slot(item: ItemStack, sound: Sound?, recipe: Boolean): Slot {
-        return Slot.builder(
-            ItemStackBuilder(item.clone())
-                .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
-                .build()
-        ).onLeftClick { event, _, menu ->
-            val clicked = item.clone().apply { amount = 1 }
-            val clickedRecipe = RecipeResolver.resolve(clicked)
-            if (recipe && clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
-                RecipeGUI(clicked)
-                    .open(event.whoClicked as Player, menu)
-            }
-            sound?.let { event.player.playSound(it) }
-        }.build()
-    }
-
-    private fun quickCraftSlot(player: Player, recipe: ResolvedRecipe, successSound: Sound?, failSound: Sound?): Slot {
+    private fun quickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot {
         val service = QuickCraftService(player, recipe)
         val materialCounts = service.getMaterialCounts()
         val hasAllMaterials = materialCounts.all { it.has >= it.needs }
@@ -325,19 +311,14 @@ class RecipeGUI(
             }
         }
 
-        fun finishQuickCraft(
-            event: InventoryClickEvent,
-            target: Player,
-            result: ru.oftendev.recipebook.craft.CraftAttempt,
-            purchasedMaterials: Boolean
-        ) {
+        fun finishQuickCraft(event: InventoryClickEvent, target: Player, result: ru.oftendev.recipebook.craft.CraftAttempt, purchasedMaterials: Boolean) {
             if (result.success) {
                 val key = if (purchasedMaterials) "messages.craft-purchased" else "messages.craft-success"
                 target.sendMessage(
                     recipeBookPlugin.langYml.getFormattedString(key)
                         .replace("%item%", recipe.output.type.name.lowercase().replace("_", " "))
                 )
-                successSound?.let { event.player.playSound(it) }
+                sound("quick-craft-success")?.playTo(target)
                 target.closeInventory()
             } else {
                 val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
@@ -346,7 +327,7 @@ class RecipeGUI(
                         .replace("%reason%", result.reason)
                         .formatEco(target)
                 )
-                failSound?.let { event.player.playSound(it) }
+                sound("quick-craft-fail")?.playTo(target)
             }
         }
 
