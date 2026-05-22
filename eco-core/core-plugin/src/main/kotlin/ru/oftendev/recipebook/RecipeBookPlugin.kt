@@ -61,7 +61,6 @@ class RecipeBookPlugin : LibreforgePlugin() {
 
     override fun handleReload() {
         ShopIntegration.init(this)
-        RecipeCategories.reload()
     }
 
     override fun loadConfigCategories(): List<ConfigCategory> {
