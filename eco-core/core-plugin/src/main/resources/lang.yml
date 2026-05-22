@@ -22,3 +22,16 @@ messages:
   recipe-locked: "&cThis recipe is locked."
   recipe-unlocked: "&aRecipe unlocked: &f%recipe%"
   craft-conditions-not-met: "&cYou do not meet the requirements to craft this."
+
+workstation-names:
+  crafting: "Crafting Table"
+  smelting: "Furnace"
+  blast-furnace: "Blast Furnace"
+  smoker: "Smoker"
+  campfire: "Campfire"
+  smithing: "Smithing Table"
+  stonecutter: "Stonecutter"
+  brewing: "Brewing Stand"
+  grindstone: "Grindstone"
+  anvil: "Anvil"
+  villager: "Villager"
