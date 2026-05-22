@@ -111,6 +111,52 @@ class RecipeGUI(
             )
         }
 
+        if (alternatives.size > 1) {
+            config.getSubsectionOrNull("buttons.prev-variant")?.let {
+                val prevActive = altIndex > 0
+                val state = if (prevActive) "active" else "inactive"
+                val sound = makeSound(config.getStringOrNull("buttons.prev-variant.click_sound"))
+                val slotBuilder = Slot.builder(
+                    ItemStackBuilder(Items.lookup(config.getString("buttons.prev-variant.item.$state")))
+                        .addLoreLines(config.getFormattedStrings("buttons.prev-variant.lore"))
+                        .build()
+                )
+                if (prevActive) {
+                    slotBuilder.onLeftClick { event, _ ->
+                        RecipeGUI(stack, alternatives, altIndex - 1).open(event.whoClicked as Player, parent)
+                        sound?.let { event.player.playSound(it) }
+                    }
+                }
+                menu.setSlot(
+                    config.getInt("buttons.prev-variant.row"),
+                    config.getInt("buttons.prev-variant.column"),
+                    slotBuilder.build()
+                )
+            }
+
+            config.getSubsectionOrNull("buttons.next-variant")?.let {
+                val nextActive = altIndex < alternatives.size - 1
+                val state = if (nextActive) "active" else "inactive"
+                val sound = makeSound(config.getStringOrNull("buttons.next-variant.click_sound"))
+                val slotBuilder = Slot.builder(
+                    ItemStackBuilder(Items.lookup(config.getString("buttons.next-variant.item.$state")))
+                        .addLoreLines(config.getFormattedStrings("buttons.next-variant.lore"))
+                        .build()
+                )
+                if (nextActive) {
+                    slotBuilder.onLeftClick { event, _ ->
+                        RecipeGUI(stack, alternatives, altIndex + 1).open(event.whoClicked as Player, parent)
+                        sound?.let { event.player.playSound(it) }
+                    }
+                }
+                menu.setSlot(
+                    config.getInt("buttons.next-variant.row"),
+                    config.getInt("buttons.next-variant.column"),
+                    slotBuilder.build()
+                )
+            }
+        }
+
         for (slotConfig in config.getSubsections("custom-slots")) {
             menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
         }
