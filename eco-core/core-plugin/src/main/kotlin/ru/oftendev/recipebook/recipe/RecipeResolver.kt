@@ -130,22 +130,22 @@ object RecipeResolver {
             }
             is BrewingRecipe -> {
                 listOf(
-                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(base)),
-                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(ingredient))
+                    RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base)),
+                    RecipeIngredient(ingredient.item.clone(), IngredientMatcher.EcoPart(ingredient))
                 ) + List(7) { emptyIng() }
             }
             is GrindstoneRecipe -> {
-                val i2 = item2
+                val secondItem = item2
                 listOfNotNull(
-                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(item1)),
-                    if (i2 != null) RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(i2)) else null
+                    RecipeIngredient(item1.item.clone(), IngredientMatcher.EcoPart(item1)),
+                    if (secondItem != null) RecipeIngredient(secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem)) else null
                 ) + List(7) { emptyIng() }
             }
             is AnvilRecipe -> {
-                val mat = material
+                val materialItem = material
                 listOfNotNull(
-                    RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(base)),
-                    if (mat != null) RecipeIngredient(air.clone(), IngredientMatcher.EcoPart(mat)) else null
+                    RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base)),
+                    if (materialItem != null) RecipeIngredient(materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem)) else null
                 ) + List(7) { emptyIng() }
             }
             is VillagerRecipe -> {
@@ -165,7 +165,8 @@ object RecipeResolver {
             ingredients = ingredients.normalizeToNine(),
             permission = permission,
             source = RecipeSource.CUSTOM,
-            displayType = meta?.displayType ?: RecipeDisplayType.CRAFTING
+            displayType = meta?.displayType ?: RecipeDisplayType.CRAFTING,
+            cookTime = (this as? SmeltingRecipe)?.cookTime?.takeIf { it > 0 }
         )
     }
 
