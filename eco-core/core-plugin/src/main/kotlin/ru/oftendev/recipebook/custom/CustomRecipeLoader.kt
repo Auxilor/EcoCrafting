@@ -114,7 +114,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             lockedLore = config.getFormattedStrings("locked-lore"),
             unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
             displayType = displayType,
-            supportCrafter = config.getBool("support-crafter")
+            supportCrafter = config.getBool("support-crafter"),
+            categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() }
         )
     }
 
@@ -272,7 +273,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 showWhenLocked = config.getBool("show-when-locked"),
                 lockedLore = config.getFormattedStrings("locked-lore"),
                 unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
-                displayType = RecipeDisplayType.STONECUTTER
+                displayType = RecipeDisplayType.STONECUTTER,
+                categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() }
             )
             registerWithMeta(recipe, outMeta)
         }
