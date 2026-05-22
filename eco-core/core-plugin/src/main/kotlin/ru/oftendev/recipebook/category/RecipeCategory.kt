@@ -19,6 +19,12 @@ class RecipeCategory(val config: Config) {
     val parsedCategories: List<RecipeCategory>
         get() = categories.mapNotNull { RecipeCategories.getById(it) }
 
+    private val runtimeItems = mutableListOf<ItemStack>()
+
+    fun registerCustomRecipe(item: ItemStack) {
+        runtimeItems += item
+    }
+
     val gui = if (type == "items") {
         ItemCategoryGUI(config.getSubsection("gui"), this)
     } else {
@@ -34,7 +40,7 @@ class RecipeCategory(val config: Config) {
     }
 
     fun getMemberItemsRecipes(player: Player): List<ItemStack> {
-        return items.mapNotNull {
+        val configured = items.mapNotNull {
             if (canCraft(player, it.item.item)) {
                 it.item.item
             } else if (it.displayNoPerm) {
@@ -43,6 +49,7 @@ class RecipeCategory(val config: Config) {
                 null
             }
         }
+        return configured + runtimeItems
     }
 
     private fun lockedFallback(item: ItemStack): ItemStack {
