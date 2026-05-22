@@ -1,4 +1,5 @@
 ﻿enabled: true
+# category: main   # optional — assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: blast_furnace
 
