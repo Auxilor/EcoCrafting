@@ -4,17 +4,14 @@
 # Pattern marker key (used in mask.pattern of each GUI section):
 #   1 = filler (uses mask items list)
 #   0 = transparent/empty
-#   i = ingredient slot — auto-increments left→right top→bottom
-#         used by: crafting_table, crafter, smelting, stonecutter
+#   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
 #   o = output slot (all types)
-#   t = smithing template (ingredients[0])
-#   b = smithing base     (ingredients[1])
-#   a = smithing addition (ingredients[2])
-#   s = brewing base slot (ingredients[0])
-#   g = brewing ingredient / top slot (ingredients[1])
-#   j = second input — grindstone item2 / villager input2 (ingredients[1])
-#   m = anvil material (ingredients[1])
 #   f = smelting fuel slot (display only, no interaction)
+#   Workstation sidebar markers (configure items in workstation-markers below):
+#   C = crafting table   F = furnace        B = blast furnace
+#   S = smoker           P = campfire       M = smithing table
+#   T = stonecutter      W = brewing stand  G = grindstone
+#   A = anvil            V = villager
 
 debug: false
 
