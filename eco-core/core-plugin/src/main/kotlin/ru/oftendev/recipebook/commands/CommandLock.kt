@@ -10,6 +10,14 @@ import ru.oftendev.recipebook.custom.CustomRecipes
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
 
 class CommandLock(plugin: EcoPlugin) : Subcommand(plugin, "lock", "recipebook.admin", true) {
+    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
+        return when (args.size) {
+            1 -> Bukkit.getOnlinePlayers().map { it.name }
+            2 -> CustomRecipes.allKeys().map { it.key }
+            else -> emptyList()
+        }
+    }
+
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.size < 2) { sender.sendMessage("Usage: /recipebook lock <player> <recipe-id>"); return }
         val target = Bukkit.getPlayer(args[0]) ?: run { sender.sendMessage("Player not found or offline."); return }
