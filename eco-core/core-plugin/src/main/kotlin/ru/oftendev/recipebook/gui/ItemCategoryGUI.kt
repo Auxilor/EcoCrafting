@@ -14,6 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.category.RecipeCategory
 import ru.oftendev.recipebook.makeSound
+import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipeBookPlugin
 
 class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
@@ -154,7 +155,8 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 .build()
         )
             .onLeftClick { event, _, menu ->
-                RecipeGUI(item)
+                val alternatives = RecipeResolver.resolveAll(item)
+                RecipeGUI(item, alternatives, 0)
                     .open(event.whoClicked as Player, menu)
                 if (sound != null) {
                     event.player.playSound(sound)
