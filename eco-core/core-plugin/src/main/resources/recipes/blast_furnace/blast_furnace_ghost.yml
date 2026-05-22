@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: blast_furnace
 
@@ -11,7 +11,7 @@ lore:
 cook-time: 100
 experience: 0.0
 
-ghost: true
+give-result-item: false
 effects:
   - id: send_message
     args:

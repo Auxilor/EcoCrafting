@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: campfire
 
@@ -9,8 +9,8 @@ lore: []             # optional — lore lines for the output item
 cook-time: 600           # ticks (campfire is slow, vanilla = 600)
 experience: 0.35
 
-ghost: false
-# ghost: true — cancel the cook, fire effects instead of producing the item
+give-result-item: true
+# give-result-item: false — cancel the cook, fire effects instead of producing the item
 # effects:
 #   - id: give_xp
 #     args:

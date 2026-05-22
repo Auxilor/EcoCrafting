@@ -46,7 +46,6 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 "campfire"        -> loadSmelting(id, config, WSmeltingType.CAMPFIRE)
                 "smithing_table"  -> loadSmithing(id, config)
                 "stonecutter"     -> loadStonecutter(id, config)
-                "crafter"         -> loadCrafter(id, config)
                 "brewing_stand"   -> loadBrewing(id, config)
                 "grindstone"      -> loadGrindstone(id, config)
                 "anvil"           -> loadAnvil(id, config)
@@ -114,7 +113,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             showWhenLocked = config.getBool("show-when-locked"),
             lockedLore = config.getFormattedStrings("locked-lore"),
             unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
-            displayType = displayType
+            displayType = displayType,
+            supportCrafter = config.getBool("support-crafter")
         )
     }
 
@@ -169,26 +169,32 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         fun registerEcoVariant(variantKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
             if (shapeless) {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-                    .builder(recipeBookPlugin, variantKey.key).setOutput(output)
-                // Eco's ShapelessCraftingRecipe.register iterates ALL parts and calls
-                // Bukkit's ShapelessRecipe.addIngredient(part.getItem().getType()); AIR
-                // ingredients break Bukkit registration. Skip blank/wildcard slots.
+                    .builder(recipeBookPlugin, variantKey.key)
+                    .setOutput(output)
+                    .setSupportCrafter(meta.supportCrafter)
                 recipeParts
                     .filter { !it.empty && it.matcher !is IngredientMatcher.AnyItem }
                     .forEach { builder.addRecipePart(it.matcher.toTestableItem()) }
                 builder.build().register()
             } else {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-                    .builder(recipeBookPlugin, variantKey.key).setOutput(output)
+                    .builder(recipeBookPlugin, variantKey.key)
+                    .setOutput(output)
+                    .setSupportCrafter(meta.supportCrafter)
                 recipeParts.forEachIndexed { idx, part ->
                     if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
                 }
                 builder.build().register()
             }
             WorkstationRecipes.trackBukkitKey(variantKey)
+            if (meta.supportCrafter) {
+                WorkstationRecipes.trackBukkitKey(NamespacedKey(variantKey.namespace, "${variantKey.key}_crafter"))
+            }
         }
 
-        // Register via eco's shaped/shapeless recipe system for crafting table
+        // Register via eco's shaped/shapeless recipe system for crafting table.
+        // Eco now handles the <key>_crafter Bukkit registration when
+        // setSupportCrafter(true) is set on the builder.
         registerEcoVariant(baseKey, ingredients)
         if (symmetry && !shapeless) {
             generateSymmetryVariants(ingredients).forEach { (suffix, variantParts) ->
@@ -196,7 +202,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             }
         }
 
-        // Register a CrafterRecipe stub in WorkstationRecipes for listener key lookup
+        // CrafterRecipe entry in WorkstationRecipes is for listener key lookup
+        // (matrix-fallback when vanilla wins at Bukkit, or _crafter suffix lookup).
         val crafterStub = CrafterRecipe.builder(baseKey, output)
             .parts(crafterParts(ingredients), crafterDisplays(ingredients))
             .shapeless(shapeless)
@@ -269,29 +276,6 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             )
             registerWithMeta(recipe, outMeta)
         }
-    }
-
-    private fun loadCrafter(id: String, config: Config) {
-        val rawParts = config.getStrings("recipe")
-        require(rawParts.size == 9) { "crafter recipe must have exactly 9 entries" }
-        val ingredients = rawParts.map { parseIngredient(it) }
-        val output = parseOutputItem(config)
-        val shapeless = config.getBool("shapeless")
-
-        // Register eco ShapedCraftingRecipe so Recipes.getMatch finds it (GUI visibility + ComplexInComplex)
-        val ecoBuilder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-            .builder(recipeBookPlugin, key(id).key).setOutput(output)
-        ingredients.forEachIndexed { idx, part ->
-            if (!part.empty) ecoBuilder.setRecipePart(idx, part.matcher.toTestableItem())
-        }
-        ecoBuilder.build().register()
-
-        val recipe = CrafterRecipe.builder(key(id), output)
-            .parts(crafterParts(ingredients), crafterDisplays(ingredients))
-            .shapeless(shapeless)
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
-            .build()
-        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.CRAFTER))
     }
 
     private fun loadBrewing(id: String, config: Config) {

@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: smithing_table
 
@@ -10,8 +10,8 @@ addition: netherite_ingot
 output: netherite_sword name:"&5Example Netherite Sword"
 lore: []             # optional — lore lines for the output item
 
-ghost: false
-# ghost: true
+give-result-item: true
+# give-result-item: false
 # effects:
 #   - id: give_xp
 #     args:

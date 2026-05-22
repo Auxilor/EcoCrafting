@@ -14,7 +14,8 @@ data class RecipeBookMeta(
     val showWhenLocked: Boolean,
     val lockedLore: List<String>,
     val unlockConditions: ConditionList,
-    val displayType: RecipeDisplayType
+    val displayType: RecipeDisplayType,
+    val supportCrafter: Boolean = false
 )
 
 object CustomRecipes {

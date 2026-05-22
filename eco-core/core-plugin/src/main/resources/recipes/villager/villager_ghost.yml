@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: villager
 
@@ -9,7 +9,7 @@ lore:
   - "&8villager | single input | ghost"
   - "&cNo item given — effects fire instead"
 
-ghost: true
+give-result-item: false
 effects:
   - id: send_message
     args:

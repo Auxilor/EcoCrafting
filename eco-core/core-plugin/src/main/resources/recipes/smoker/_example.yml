@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: smoker
 
@@ -9,8 +9,8 @@ lore: []             # optional — lore lines for the output item
 cook-time: 100           # ticks (smoker is 2x faster than furnace for food)
 experience: 0.35
 
-ghost: false
-# ghost: true — cancel the smelt, fire effects instead of producing the item
+give-result-item: true
+# give-result-item: false — cancel the smelt, fire effects instead of producing the item
 # effects:
 #   - id: give_xp
 #     args:

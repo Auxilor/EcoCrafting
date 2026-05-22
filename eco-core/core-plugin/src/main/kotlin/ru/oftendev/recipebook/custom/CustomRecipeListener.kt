@@ -183,6 +183,11 @@ class CustomRecipeListener : Listener {
         val recipe = WorkstationRecipes.getByKey(baseKey) as? CrafterRecipe ?: return
         val meta = CustomRecipes.getMeta(baseKey) ?: return
 
+        // Opt-in: only handle Crafter for recipes that declare support-crafter=true.
+        // Without this gate, eco's AutocrafterPatch cancels the event and we'd be
+        // silently uncancelling every recipebook recipe.
+        if (!meta.supportCrafter) return
+
         if (!meta.giveResultItem) {
             event.isCancelled = true
             val crafterInv = (event.block.state as? org.bukkit.block.Crafter)?.inventory ?: return

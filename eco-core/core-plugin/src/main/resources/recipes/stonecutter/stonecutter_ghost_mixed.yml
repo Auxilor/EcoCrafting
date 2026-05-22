@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: stonecutter
 
@@ -8,18 +8,18 @@ outputs:
   - item: cobbled_deepslate_slab name:"&fstonecutter_ghost_mixed_1"
     lore:
       - "&8stonecutter | output 1 | no ghost"
-    ghost: false
+    give-result-item: true
 
   - item: cobbled_deepslate_stairs name:"&fstonecutter_ghost_mixed_2"
     lore:
       - "&8stonecutter | output 2 | no ghost"
-    ghost: false
+    give-result-item: true
 
   - item: deepslate_brick_wall name:"&fstonecutter_ghost_mixed_3"
     lore:
       - "&8stonecutter | output 3 | ghost"
       - "&cNo item given — effects fire instead"
-    ghost: true
+    give-result-item: false
     effects:
       - id: send_message
         args:

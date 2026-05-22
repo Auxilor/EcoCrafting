@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: anvil
 
@@ -12,7 +12,7 @@ output: diamond_sword name:"&fanvil_no_ghost"
 lore:
   - "&8anvil | no ghost"
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

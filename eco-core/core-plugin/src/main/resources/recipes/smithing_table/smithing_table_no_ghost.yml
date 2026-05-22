@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: smithing_table
 
@@ -10,7 +10,7 @@ output: netherite_pickaxe name:"&fsmithing_table_no_ghost"
 lore:
   - "&8smithing_table | no ghost"
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false
