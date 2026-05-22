@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: villager
 
@@ -13,8 +13,8 @@ wandering-trader: false   # true = inject into WanderingTrader instead of regula
 output: enchanted_book name:"&5Villager Enchanted Book"
 lore: []             # optional — lore lines for the output item
 
-ghost: false
-# ghost: true — consume trade inputs, fire effects, give no item
+give-result-item: true
+# give-result-item: false — consume trade inputs, fire effects, give no item
 # effects:
 #   - id: give_xp
 #     args:

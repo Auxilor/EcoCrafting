@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: furnace
 
@@ -10,7 +10,7 @@ lore:
 cook-time: 200
 experience: 0.1
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

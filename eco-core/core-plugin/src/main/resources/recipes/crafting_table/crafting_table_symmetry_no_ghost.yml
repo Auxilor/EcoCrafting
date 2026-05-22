@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: crafting_table
 
@@ -21,7 +21,7 @@ lore:
   - "&8crafting_table | symmetry | no ghost"
   - "&7All rotations & mirrors registered"
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

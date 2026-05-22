@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: blast_furnace
 
@@ -10,7 +10,7 @@ lore:
 cook-time: 100
 experience: 0.7
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

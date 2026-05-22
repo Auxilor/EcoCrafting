@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: crafting_table
 
@@ -21,7 +21,7 @@ lore:
   - "&8crafting_table | shapeless | ghost"
   - "&cNo item given — effects fire instead"
 
-ghost: true
+give-result-item: false
 effects:
   - id: send_message
     args:

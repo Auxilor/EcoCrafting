@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: anvil
 
@@ -11,8 +11,8 @@ repair-cost: 3            # levels displayed and consumed
 output: diamond_sword name:"&bDiamond-Edged Sword"
 lore: []             # optional — lore lines for the output item
 
-ghost: false
-# ghost: true — consume inputs, pay cost, fire effects, give no item
+give-result-item: true
+# give-result-item: false — consume inputs, pay cost, fire effects, give no item
 # effects:
 #   - id: give_xp
 #     args:

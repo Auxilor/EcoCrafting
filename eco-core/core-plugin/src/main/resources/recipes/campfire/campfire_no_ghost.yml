@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: campfire
 
@@ -10,7 +10,7 @@ lore:
 cook-time: 600
 experience: 0.35
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

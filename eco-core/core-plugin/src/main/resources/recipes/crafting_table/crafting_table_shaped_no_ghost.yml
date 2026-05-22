@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: crafting_table
 
@@ -20,7 +20,7 @@ output: iron_sword name:"&fcrafting_table_shaped_no_ghost"
 lore:
   - "&8crafting_table | shaped | no ghost"
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false

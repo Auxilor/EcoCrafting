@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: brewing_stand
 
@@ -10,7 +10,7 @@ lore:
   - "&8brewing_stand | ghost"
   - "&cNo item given — effects fire instead"
 
-ghost: true
+give-result-item: false
 effects:
   - id: send_message
     args:

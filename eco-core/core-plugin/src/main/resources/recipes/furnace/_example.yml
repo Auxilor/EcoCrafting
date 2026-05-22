@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: furnace
 
@@ -9,8 +9,8 @@ lore: []             # optional — lore lines for the output item
 cook-time: 200           # ticks (200 = 10 seconds, vanilla default)
 experience: 0.7          # xp orbs dropped when smelted
 
-ghost: false
-# ghost: true
+give-result-item: true
+# give-result-item: false
 # effects:
 #   - id: give_xp
 #     args:

@@ -1,4 +1,4 @@
-enabled: true
+﻿enabled: true
 
 type: villager
 
@@ -9,7 +9,7 @@ output: map name:"&fvillager_no_ghost"
 lore:
   - "&8villager | two inputs | no ghost"
 
-ghost: false
+give-result-item: true
 
 permission: ""
 locked-by-default: false
