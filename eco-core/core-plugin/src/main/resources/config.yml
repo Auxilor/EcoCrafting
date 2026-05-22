@@ -1,5 +1,20 @@
 # RecipeBook main configuration
 # Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
+#
+# Pattern marker key (used in mask.pattern of each GUI section):
+#   1 = filler (uses mask items list)
+#   0 = transparent/empty
+#   i = ingredient slot — auto-increments left→right top→bottom
+#         used by: crafting_table, crafter, smelting, stonecutter
+#   o = output slot (all types)
+#   t = smithing template (ingredients[0])
+#   b = smithing base     (ingredients[1])
+#   a = smithing addition (ingredients[2])
+#   s = brewing base slot (ingredients[0])
+#   g = brewing ingredient / top slot (ingredients[1])
+#   j = second input — grindstone item2 / villager input2 (ingredients[1])
+#   m = anvil material (ingredients[1])
+#   f = smelting fuel slot (display only, no interaction)
 
 debug: false
 
@@ -93,7 +108,7 @@ furnace-gui:
     pattern:
       - "111111111"
       - "111i11111"
-      - "111111o11"
+      - "111f11o11"
       - "111111111"
       - "111010111"
   buttons:
@@ -195,8 +210,8 @@ stonecutter-gui:
     pattern:
       - "111111111"
       - "111i11111"
+      - "111111o11"
       - "111111111"
-      - "1oooooooo"
       - "111010111"
   buttons:
     recipe-parts-lore: []
@@ -245,7 +260,7 @@ brewing-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1g111"
+      - "111s1g111"
       - "111111111"
       - "111111111"
       - "111010111"
@@ -296,7 +311,7 @@ cartography-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1a1o1"
+      - "111i1j1o1"
       - "111111111"
       - "111111111"
       - "111010111"
