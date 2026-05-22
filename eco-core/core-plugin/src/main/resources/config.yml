@@ -216,24 +216,25 @@ craft-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "1iii11111"
-      - "1iii11o11"
-      - "1iii11111"
-      - "111010111"
+      - "1111111CF"
+      - "1iii111BS"
+      - "1iii1o1PW"
+      - "1iii111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore:
       - ""
       - "&bLeft Click&f to see the recipe"
       - ""
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     quick-craft:
-      row: 5
-      column: 3
+      row: 6
+      column: 1
       item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
@@ -243,18 +244,18 @@ craft-gui:
         - "&bLeft Click&f to craft"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
   custom-slots: []
 
@@ -266,20 +267,21 @@ furnace-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i11111"
-      - "111f11o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11f1111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -290,18 +292,18 @@ furnace-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 blast-furnace-gui:
@@ -312,20 +314,21 @@ blast-furnace-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i11111"
-      - "111f11o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11f1111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -336,18 +339,18 @@ blast-furnace-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 smoker-gui:
@@ -358,20 +361,21 @@ smoker-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i11111"
-      - "111f11o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11f1111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -382,18 +386,18 @@ smoker-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 campfire-gui:
@@ -404,20 +408,21 @@ campfire-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i11111"
-      - "111f11o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -428,18 +433,18 @@ campfire-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 smithing-gui:
@@ -450,20 +455,21 @@ smithing-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "1i1i1i1o1"
-      - "111111111"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "1iii1o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -474,18 +480,18 @@ smithing-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 stonecutter-gui:
@@ -496,20 +502,21 @@ stonecutter-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i11111"
-      - "111111o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i11o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -520,18 +527,18 @@ stonecutter-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 brewing-gui:
@@ -542,20 +549,21 @@ brewing-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i1i111"
-      - "111111o11"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -566,18 +574,18 @@ brewing-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 cartography-gui:
@@ -588,20 +596,21 @@ cartography-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i1i1o1"
-      - "111111111"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -612,18 +621,18 @@ cartography-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 grindstone-gui:
@@ -634,20 +643,21 @@ grindstone-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i1i1o1"
-      - "111111111"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -658,18 +668,18 @@ grindstone-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 anvil-gui:
@@ -680,20 +690,21 @@ anvil-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i1i1o1"
-      - "111111111"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
@@ -704,18 +715,18 @@ anvil-gui:
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
 
 villager-gui:
@@ -726,40 +737,40 @@ villager-gui:
     items:
       - black_stained_glass_pane
     pattern:
-      - "111111111"
-      - "111i1i1o1"
-      - "111111111"
-      - "111111111"
-      - "111010111"
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11101011V"
   buttons:
     recipe-parts-lore: []
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
     purchase-ingredients:
-      row: 5
+      row: 6
       column: 3
       item: gold_ingot name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
-        - "%materials%"
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
     prev-variant:
-      row: 5
-      column: 1
+      row: 6
+      column: 4
       item:
         active: arrow name:"&aPrevious Method"
-        inactive: gray_dye name:"&7Previous Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
     next-variant:
-      row: 5
-      column: 9
+      row: 6
+      column: 6
       item:
         active: arrow name:"&aNext Method"
-        inactive: gray_dye name:"&7Next Method"
+        inactive: black_stained_glass_pane name:""
       lore: []
