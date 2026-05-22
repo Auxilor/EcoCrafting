@@ -85,31 +85,35 @@ class RecipeGUI(
             }
         }
 
-        config.getSubsectionOrNull("buttons.quick-craft")?.let {
-            menu.addComponent(
-                config.getInt("buttons.quick-craft.row"),
-                config.getInt("buttons.quick-craft.column"),
-                quickCraftSlot(
-                    player,
-                    recipe,
-                    makeSound(config.getStringOrNull("buttons.quick-craft.success_sound")),
-                    makeSound(config.getStringOrNull("buttons.quick-craft.fail_sound"))
+        config.getSubsectionOrNull("buttons.quick-craft")
+            ?.takeIf { if (config.has("quick-craft-enabled")) config.getBool("quick-craft-enabled") else true }
+            ?.let {
+                menu.addComponent(
+                    config.getInt("buttons.quick-craft.row"),
+                    config.getInt("buttons.quick-craft.column"),
+                    quickCraftSlot(
+                        player,
+                        recipe,
+                        makeSound(config.getStringOrNull("buttons.quick-craft.success_sound")),
+                        makeSound(config.getStringOrNull("buttons.quick-craft.fail_sound"))
+                    )
                 )
-            )
-        }
+            }
 
-        config.getSubsectionOrNull("buttons.purchase-ingredients")?.let {
-            menu.addComponent(
-                config.getInt("buttons.purchase-ingredients.row"),
-                config.getInt("buttons.purchase-ingredients.column"),
-                purchaseIngredientsSlot(
-                    player,
-                    recipe,
-                    makeSound(config.getStringOrNull("buttons.purchase-ingredients.success_sound")),
-                    makeSound(config.getStringOrNull("buttons.purchase-ingredients.fail_sound"))
+        config.getSubsectionOrNull("buttons.purchase-ingredients")
+            ?.takeIf { if (config.has("buy-materials-enabled")) config.getBool("buy-materials-enabled") else true }
+            ?.let {
+                menu.addComponent(
+                    config.getInt("buttons.purchase-ingredients.row"),
+                    config.getInt("buttons.purchase-ingredients.column"),
+                    purchaseIngredientsSlot(
+                        player,
+                        recipe,
+                        makeSound(config.getStringOrNull("buttons.purchase-ingredients.success_sound")),
+                        makeSound(config.getStringOrNull("buttons.purchase-ingredients.fail_sound"))
+                    )
                 )
-            )
-        }
+            }
 
         if (alternatives.size > 1) {
             config.getSubsectionOrNull("buttons.prev-variant")?.let {

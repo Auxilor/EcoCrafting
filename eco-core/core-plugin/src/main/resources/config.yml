@@ -30,6 +30,8 @@ shop-integration:
 
 craft-gui:
   title: "&8Crafting Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -83,6 +85,8 @@ craft-gui:
 
 furnace-gui:
   title: "&8Smelting Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -132,6 +136,8 @@ furnace-gui:
 
 smithing-gui:
   title: "&8Smithing Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -181,6 +187,8 @@ smithing-gui:
 
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -230,6 +238,8 @@ stonecutter-gui:
 
 brewing-gui:
   title: "&8Brewing Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -279,6 +289,8 @@ brewing-gui:
 
 cartography-gui:
   title: "&8Cartography Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -328,6 +340,8 @@ cartography-gui:
 
 grindstone-gui:
   title: "&8Grindstone Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -377,6 +391,8 @@ grindstone-gui:
 
 anvil-gui:
   title: "&8Anvil Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -426,6 +442,8 @@ anvil-gui:
 
 villager-gui:
   title: "&8Villager Trade"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
