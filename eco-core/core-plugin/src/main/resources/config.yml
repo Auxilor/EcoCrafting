@@ -99,7 +99,7 @@ craft-gui:
   custom-slots: []
 
 furnace-gui:
-  title: "&8Smelting Recipe"
+  title: "&8Smelting Recipe &7[%cook_time%]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
@@ -150,7 +150,7 @@ furnace-gui:
       click_sound: ui.button_click
 
 blast-furnace-gui:
-  title: "&8Blast Furnace Recipe"
+  title: "&8Blast Furnace Recipe &7[%cook_time%]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
@@ -201,7 +201,7 @@ blast-furnace-gui:
       click_sound: ui.button_click
 
 smoker-gui:
-  title: "&8Smoker Recipe"
+  title: "&8Smoker Recipe &7[%cook_time%]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
@@ -252,7 +252,7 @@ smoker-gui:
       click_sound: ui.button_click
 
 campfire-gui:
-  title: "&8Campfire Recipe"
+  title: "&8Campfire Recipe &7[%cook_time%]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
@@ -414,7 +414,7 @@ brewing-gui:
     pattern:
       - "111111111"
       - "111s1g111"
-      - "111111111"
+      - "111111o11"
       - "111111111"
       - "111010111"
   buttons:
