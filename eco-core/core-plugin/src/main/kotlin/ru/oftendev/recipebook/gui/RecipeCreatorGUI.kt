@@ -10,7 +10,6 @@ import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import ru.oftendev.recipebook.custom.CustomRecipes
 import ru.oftendev.recipebook.recipeBookPlugin
 import java.util.UUID
 
@@ -209,70 +208,70 @@ object RecipeCreatorGUI {
         val dir = java.io.File(recipeBookPlugin.dataFolder, "recipes")
         dir.mkdirs()
         val file = java.io.File(dir, "${pending.id}.yml")
-        val sb = StringBuilder()
-        sb.appendLine("type: ${pending.typeKey}")
+        val yaml = StringBuilder()
+        yaml.appendLine("type: ${pending.typeKey}")
 
         when (pending.typeKey) {
             "crafting_table", "crafter" -> {
-                sb.appendLine("shapeless: false")
-                sb.appendLine("recipe:")
-                for (i in 0..8) {
-                    val item = pending.parts[i]
+                yaml.appendLine("shapeless: false")
+                yaml.appendLine("recipe:")
+                for (slot in 0..8) {
+                    val item = pending.parts[slot]
                     val lookup = if (item == null || item.type.isAir) "\"\"" else item.type.name.lowercase()
-                    sb.appendLine("  - $lookup")
+                    yaml.appendLine("  - $lookup")
                 }
             }
             "furnace", "blast_furnace", "smoker", "campfire" -> {
                 val input = pending.parts[0]?.type?.name?.lowercase() ?: "air"
-                sb.appendLine("input: $input")
-                sb.appendLine("cook-time: 200")
-                sb.appendLine("experience: 0.0")
+                yaml.appendLine("input: $input")
+                yaml.appendLine("cook-time: 200")
+                yaml.appendLine("experience: 0.0")
             }
             "smithing_table" -> {
-                sb.appendLine("template: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
-                sb.appendLine("base: ${pending.parts[1]?.type?.name?.lowercase() ?: "air"}")
-                sb.appendLine("addition: ${pending.parts[2]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("template: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("base: ${pending.parts[1]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("addition: ${pending.parts[2]?.type?.name?.lowercase() ?: "air"}")
             }
             "stonecutter" -> {
-                sb.appendLine("input: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
-                sb.appendLine("outputs:")
-                sb.appendLine("  - item: ${pending.output.type.name.lowercase()}")
-                sb.appendLine("    lore: []")
-                sb.appendLine("    ghost: ${pending.ghost}")
-                if (pending.ghost) { sb.appendLine("    effects: []"); sb.appendLine("    conditions: []") }
+                yaml.appendLine("input: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("outputs:")
+                yaml.appendLine("  - item: ${pending.output.type.name.lowercase()}")
+                yaml.appendLine("    lore: []")
+                yaml.appendLine("    ghost: ${pending.ghost}")
+                if (pending.ghost) { yaml.appendLine("    effects: []"); yaml.appendLine("    conditions: []") }
             }
             "brewing_stand" -> {
-                sb.appendLine("base: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
-                sb.appendLine("ingredient: ${pending.parts[1]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("base: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
+                yaml.appendLine("ingredient: ${pending.parts[1]?.type?.name?.lowercase() ?: "air"}")
             }
             "grindstone", "villager" -> {
-                sb.appendLine("input1: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
-                pending.parts[1]?.let { sb.appendLine("input2: ${it.type.name.lowercase()}") }
+                yaml.appendLine("input1: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
+                pending.parts[1]?.let { yaml.appendLine("input2: ${it.type.name.lowercase()}") }
             }
             "anvil" -> {
-                sb.appendLine("base: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
-                pending.parts[1]?.let { sb.appendLine("material: ${it.type.name.lowercase()}") }
-                sb.appendLine("repair-cost: 1")
+                yaml.appendLine("base: ${pending.parts[0]?.type?.name?.lowercase() ?: "air"}")
+                pending.parts[1]?.let { yaml.appendLine("material: ${it.type.name.lowercase()}") }
+                yaml.appendLine("repair-cost: 1")
             }
         }
 
         if (pending.typeKey != "stonecutter") {
-            sb.appendLine("output: ${pending.output.type.name.lowercase()}")
-            sb.appendLine("lore: []")
-            sb.appendLine("ghost: ${pending.ghost}")
+            yaml.appendLine("output: ${pending.output.type.name.lowercase()}")
+            yaml.appendLine("lore: []")
+            yaml.appendLine("ghost: ${pending.ghost}")
             if (pending.ghost) {
-                sb.appendLine("effects: []")
-                sb.appendLine("conditions: []")
+                yaml.appendLine("effects: []")
+                yaml.appendLine("conditions: []")
             }
         }
 
-        if (pending.permission.isNotBlank()) sb.appendLine("permission: \"${pending.permission}\"")
-        sb.appendLine("locked-by-default: false")
-        sb.appendLine("visibility-conditions: []")
-        sb.appendLine("crafting-conditions: []")
-        sb.appendLine("unlock-conditions: []")
+        if (pending.permission.isNotBlank()) yaml.appendLine("permission: \"${pending.permission}\"")
+        yaml.appendLine("locked-by-default: false")
+        yaml.appendLine("visibility-conditions: []")
+        yaml.appendLine("crafting-conditions: []")
+        yaml.appendLine("unlock-conditions: []")
 
-        file.writeText(sb.toString())
+        file.writeText(yaml.toString())
     }
 }
 
