@@ -74,6 +74,118 @@ sounds:
     enabled: true
     category: MASTER
 
+workstation-markers:
+  crafting:
+    active: crafting_table name:"&aCrafting Table"
+    inactive: crafting_table name:"&7Crafting Table"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  smelting:
+    active: furnace name:"&aFurnace"
+    inactive: furnace name:"&7Furnace"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  blast-furnace:
+    active: blast_furnace name:"&aBlast Furnace"
+    inactive: blast_furnace name:"&7Blast Furnace"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  smoker:
+    active: smoker name:"&aSmoker"
+    inactive: smoker name:"&7Smoker"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  campfire:
+    active: campfire name:"&aCampfire"
+    inactive: campfire name:"&7Campfire"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  smithing:
+    active: smithing_table name:"&aSmithing Table"
+    inactive: smithing_table name:"&7Smithing Table"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  stonecutter:
+    active: stonecutter name:"&aStonecutter"
+    inactive: stonecutter name:"&7Stonecutter"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  brewing:
+    active: brewing_stand name:"&aBrewing Stand"
+    inactive: brewing_stand name:"&7Brewing Stand"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  grindstone:
+    active: grindstone name:"&aGrindstone"
+    inactive: grindstone name:"&7Grindstone"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  anvil:
+    active: anvil name:"&aAnvil"
+    inactive: anvil name:"&7Anvil"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  villager:
+    active: villager_spawn_egg name:"&aVillager"
+    inactive: villager_spawn_egg name:"&7Villager"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: []
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+
 # Owner tracking for block-based recipes (furnace, brewing, crafter, campfire)
 # placed: dispatch effects on the player who placed (or first opened) the block
 # nearest: dispatch effects on the nearest online player within owner-nearest-radius blocks
@@ -342,7 +454,7 @@ smithing-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "1t1b1a1o1"
+      - "1i1i1i1o1"
       - "111111111"
       - "111111111"
       - "111010111"
@@ -434,7 +546,7 @@ brewing-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111s1g111"
+      - "111i1i111"
       - "111111o11"
       - "111111111"
       - "111010111"
@@ -480,7 +592,7 @@ cartography-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1j1o1"
+      - "111i1i1o1"
       - "111111111"
       - "111111111"
       - "111010111"
@@ -526,7 +638,7 @@ grindstone-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1j1o1"
+      - "111i1i1o1"
       - "111111111"
       - "111111111"
       - "111010111"
@@ -572,7 +684,7 @@ anvil-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1m1o1"
+      - "111i1i1o1"
       - "111111111"
       - "111111111"
       - "111010111"
@@ -618,7 +730,7 @@ villager-gui:
       - black_stained_glass_pane
     pattern:
       - "111111111"
-      - "111i1j1o1"
+      - "111i1i1o1"
       - "111111111"
       - "111111111"
       - "111010111"
