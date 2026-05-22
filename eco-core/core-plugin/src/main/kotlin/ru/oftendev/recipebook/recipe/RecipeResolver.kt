@@ -68,7 +68,7 @@ object RecipeResolver {
 
     private fun findWorkstationRecipeByOutput(clean: ItemStack): ResolvedRecipe? {
         return WorkstationRecipes.getAll()
-            .firstOrNull { r -> r.output?.let { it.isSimilar(clean) } == true && CustomRecipes.getMeta(r.key) != null }
+            .firstOrNull { recipe -> recipe.output?.let { it.isSimilar(clean) } == true && CustomRecipes.getMeta(recipe.key) != null }
             ?.workstationToResolvedRecipe()
     }
 

@@ -126,11 +126,11 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     internal fun generateSymmetryVariants(parts: List<RecipeIngredient>): List<Pair<String, List<RecipeIngredient>>> {
         val variants = mutableListOf<Pair<String, List<RecipeIngredient>>>()
         val seen = mutableSetOf<List<Int>>()
-        fun fingerprint(p: List<RecipeIngredient>) = p.indices.filter { !p[it].empty }
+        fun fingerprint(ingredients: List<RecipeIngredient>) = ingredients.indices.filter { !ingredients[it].empty }
         fun addVariant(suffix: String, remap: IntArray) {
             val remapped = remap.map { parts[it] }
-            val fp = fingerprint(remapped)
-            if (seen.add(fp)) variants.add(suffix to remapped)
+            val signature = fingerprint(remapped)
+            if (seen.add(signature)) variants.add(suffix to remapped)
         }
         seen.add(fingerprint(parts))
         addVariant("_rot90",  RecipeSymmetry.ROT_90_CW)
@@ -207,7 +207,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         val crafterStub = CrafterRecipe.builder(baseKey, output)
             .parts(crafterParts(ingredients), crafterDisplays(ingredients))
             .shapeless(shapeless)
-            .also { b -> permission?.let { b.permission(it) } }
+            .also { builder -> permission?.let { builder.permission(it) } }
             .build()
         WorkstationRecipes.register(crafterStub)
         CustomRecipes.register(baseKey, meta)
@@ -219,7 +219,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .inputDisplay(ingredient.displayItem)
             .cookTime(if (config.has("cook-time")) config.getInt("cook-time") else -1)
             .experience(config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f)
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMELTING))
     }
@@ -232,7 +232,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .template(template.matcher.toTestableItem(), template.displayItem)
             .base(base.matcher.toTestableItem(), base.displayItem)
             .addition(addition.matcher.toTestableItem(), addition.displayItem)
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMITHING))
     }
@@ -260,7 +260,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             }
             val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
                 .inputDisplay(input.displayItem)
-                .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+                .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
                 .build()
             val giveResultItem = if (outCfg.has("give-result-item")) outCfg.getBool("give-result-item") else true
             val effectsChain = Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
@@ -283,7 +283,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         val ingredient = parseIngredient(config.getString("ingredient"))
         val recipe = BrewingRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem(), ingredient.matcher.toTestableItem())
             .brewTime(config.getIntOrNull("brew-time") ?: 400)
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.BREWING))
     }
@@ -293,7 +293,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         val item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) }
         val recipe = GrindstoneRecipe.builder(key(id), parseOutputItem(config), item1.matcher.toTestableItem())
             .item2(item2?.matcher?.toTestableItem())
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.GRINDSTONE))
     }
@@ -305,7 +305,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .material(material?.matcher?.toTestableItem())
             .resultName(config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() })
             .repairCost(config.getIntOrNull("repair-cost") ?: 1)
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.ANVIL))
     }
@@ -324,7 +324,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .minLevel(config.getIntOrNull("min-level") ?: 0)
             .chance((config.getStringOrNull("chance")?.toDoubleOrNull() ?: 1.0).coerceIn(0.0, 1.0))
             .wanderingTrader(config.getBool("wandering-trader"))
-            .also { b -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { b.permission(it) } }
+            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.VILLAGER))
     }

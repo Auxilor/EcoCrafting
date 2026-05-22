@@ -28,8 +28,8 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         pattern.forEach {
             var col = 1
             it.toCharArray().forEach {
-                    s -> kotlin.run {
-                if (s.equals('i', true)) {
+                    character -> kotlin.run {
+                if (character.equals('i', true)) {
                     if (num < items.size) {
                         menu.setSlot(row, col, slot(items[num], makeSound(config.getStringOrNull("buttons.slot.click_sound"))))
                     }

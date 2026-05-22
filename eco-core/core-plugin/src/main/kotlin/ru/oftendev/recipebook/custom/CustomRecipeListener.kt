@@ -37,8 +37,8 @@ import ru.oftendev.recipebook.recipeBookPlugin
 class CustomRecipeListener : Listener {
 
     init {
-        WorkstationRecipes.registerBrewCompletedHook { loc, recipe, matchedSlots ->
-            handleBrewCompleted(loc, recipe, matchedSlots)
+        WorkstationRecipes.registerBrewCompletedHook { location, recipe, matchedSlots ->
+            handleBrewCompleted(location, recipe, matchedSlots)
         }
     }
 
@@ -76,9 +76,9 @@ class CustomRecipeListener : Listener {
         val amount = calculateCraftAmount(event)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
 
-        val ce = CustomCraftEvent(player, recipe, item, amount)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        val customEvent = CustomCraftEvent(player, recipe, item, amount)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         when {
             !meta.giveResultItem -> {
@@ -114,9 +114,9 @@ class CustomRecipeListener : Listener {
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = recipe.output?.clone() ?: return
-        val ce = CustomSmithEvent(player, recipe, item)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        val customEvent = CustomSmithEvent(player, recipe, item)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
@@ -142,9 +142,9 @@ class CustomRecipeListener : Listener {
 
         val amount = calculateCraftAmount(event)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
-        val ce = CustomCraftEvent(player, recipe, item, amount)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        val customEvent = CustomCraftEvent(player, recipe, item, amount)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
@@ -194,14 +194,14 @@ class CustomRecipeListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onSmelt(event: org.bukkit.event.inventory.FurnaceSmeltEvent) {
-        val loc = event.block.location
-        val player = BlockOwnerTracker.getOwner(loc)
+        val location = event.block.location
+        val player = BlockOwnerTracker.getOwner(location)
 
         if (player == null) {
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
-                .firstOrNull { r ->
-                    r.smeltingType != SmeltingType.CAMPFIRE && r.input.matches(event.source) &&
-                    (CustomRecipes.getMeta(r.key)?.giveResultItem == false)
+                .firstOrNull { recipe ->
+                    recipe.smeltingType != SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
+                    (CustomRecipes.getMeta(recipe.key)?.giveResultItem == false)
                 }
             if (noItemMatch != null) event.isCancelled = true
             return
@@ -215,9 +215,9 @@ class CustomRecipeListener : Listener {
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = recipe.output?.clone() ?: return
-        val ce = CustomSmeltEvent(player, recipe, item, loc)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        val customEvent = CustomSmeltEvent(player, recipe, item, location)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
@@ -229,14 +229,14 @@ class CustomRecipeListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onCampfire(event: org.bukkit.event.block.BlockCookEvent) {
-        val loc = event.block.location
-        val player = BlockOwnerTracker.getOwner(loc)
+        val location = event.block.location
+        val player = BlockOwnerTracker.getOwner(location)
 
         if (player == null) {
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
-                .firstOrNull { r ->
-                    r.smeltingType == SmeltingType.CAMPFIRE && r.input.matches(event.source) &&
-                    (CustomRecipes.getMeta(r.key)?.giveResultItem == false)
+                .firstOrNull { recipe ->
+                    recipe.smeltingType == SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
+                    (CustomRecipes.getMeta(recipe.key)?.giveResultItem == false)
                 }
             if (noItemMatch != null) event.isCancelled = true
             return
@@ -250,9 +250,9 @@ class CustomRecipeListener : Listener {
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = recipe.output?.clone() ?: return
-        val ce = CustomSmeltEvent(player, recipe, item, loc)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        val customEvent = CustomSmeltEvent(player, recipe, item, location)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
@@ -282,15 +282,15 @@ class CustomRecipeListener : Listener {
         WorkstationRecipes.cancelPendingBrew(event.block.location)
     }
 
-    private fun handleBrewCompleted(loc: Location, recipe: BrewingRecipe, matchedSlots: List<Int>) {
+    private fun handleBrewCompleted(location: Location, recipe: BrewingRecipe, matchedSlots: List<Int>) {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
-        val brewer = (loc.block.state as? org.bukkit.block.BrewingStand)?.inventory ?: return
+        val brewer = (location.block.state as? org.bukkit.block.BrewingStand)?.inventory ?: return
 
         if (!meta.giveResultItem) {
             matchedSlots.forEach { brewer.setItem(it, null) }
         }
 
-        val player = BlockOwnerTracker.getOwner(loc) ?: return
+        val player = BlockOwnerTracker.getOwner(location) ?: return
         val item = recipe.output?.clone() ?: return
 
         val ghostPerSlot = recipeBookPlugin.configYml.getBool("brewing-stand.ghost-per-slot")
@@ -364,9 +364,9 @@ class CustomRecipeListener : Listener {
         event.isCancelled = true
         consumeSmithingSlots(inv)
         val item = recipe.output?.clone() ?: return
-        val ce = CustomSmithEvent(player, recipe, item)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (!ce.isCancelled) fireCraftEffects(player, recipe, meta, item, 1)
+        val customEvent = CustomSmithEvent(player, recipe, item)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1)
         recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
     }
 
@@ -406,9 +406,9 @@ class CustomRecipeListener : Listener {
         val craftItem = item.clone().apply { this.amount = amount }
         event.isCancelled = true
         consumeStonecutterSlot(inv)
-        val ce = CustomCraftEvent(player, recipe, craftItem, amount)
-        Bukkit.getPluginManager().callEvent(ce)
-        if (!ce.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
+        val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
         recipeBookPlugin.server.scheduler.runTask(recipeBookPlugin, Runnable { player.updateInventory() })
     }
 
@@ -458,10 +458,10 @@ class CustomRecipeListener : Listener {
 
         val item = workstationRecipe.output?.clone() ?: return
         val stationType = meta.displayType
-        val ce = CustomWorkbenchCraftEvent(player, workstationRecipe, item, stationType)
+        val customEvent = CustomWorkbenchCraftEvent(player, workstationRecipe, item, stationType)
 
-        Bukkit.getPluginManager().callEvent(ce)
-        if (ce.isCancelled) { event.isCancelled = true; return }
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
@@ -481,10 +481,10 @@ class CustomRecipeListener : Listener {
 
     private fun consumeCraftingGrid(event: CraftItemEvent) {
         val matrix = event.inventory.matrix
-        for (i in matrix.indices) {
-            val stack = matrix[i] ?: continue
+        for (slot in matrix.indices) {
+            val stack = matrix[slot] ?: continue
             if (stack.type.isAir) continue
-            if (stack.amount <= 1) matrix[i] = null
+            if (stack.amount <= 1) matrix[slot] = null
             else stack.amount--
         }
         event.inventory.matrix = matrix
