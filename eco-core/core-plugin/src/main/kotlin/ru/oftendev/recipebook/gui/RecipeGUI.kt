@@ -39,15 +39,18 @@ class RecipeGUI(
             }
         val items = recipe.displayItems
         val guiSection = when (recipe.displayType) {
-            RecipeDisplayType.CRAFTING     -> "craft-gui"
-            RecipeDisplayType.SMELTING     -> "furnace-gui"
-            RecipeDisplayType.SMITHING     -> "smithing-gui"
-            RecipeDisplayType.STONECUTTER  -> "stonecutter-gui"
-            RecipeDisplayType.CRAFTER      -> "craft-gui"
-            RecipeDisplayType.BREWING      -> "brewing-gui"
-            RecipeDisplayType.GRINDSTONE   -> "grindstone-gui"
-            RecipeDisplayType.ANVIL        -> "anvil-gui"
-            RecipeDisplayType.VILLAGER     -> "villager-gui"
+            RecipeDisplayType.CRAFTING      -> "craft-gui"
+            RecipeDisplayType.SMELTING      -> "furnace-gui"
+            RecipeDisplayType.BLAST_FURNACE -> "blast-furnace-gui"
+            RecipeDisplayType.SMOKER        -> "smoker-gui"
+            RecipeDisplayType.CAMPFIRE      -> "campfire-gui"
+            RecipeDisplayType.SMITHING      -> "smithing-gui"
+            RecipeDisplayType.STONECUTTER   -> "stonecutter-gui"
+            RecipeDisplayType.CRAFTER       -> "craft-gui"
+            RecipeDisplayType.BREWING       -> "brewing-gui"
+            RecipeDisplayType.GRINDSTONE    -> "grindstone-gui"
+            RecipeDisplayType.ANVIL         -> "anvil-gui"
+            RecipeDisplayType.VILLAGER      -> "villager-gui"
         }
         config = recipeBookPlugin.configYml.getSubsection(guiSection)
         val pattern = config.getStrings("mask.pattern")

@@ -33,6 +33,9 @@ enum class RecipeSource {
 enum class RecipeDisplayType {
     CRAFTING,
     SMELTING,
+    BLAST_FURNACE,
+    SMOKER,
+    CAMPFIRE,
     SMITHING,
     STONECUTTER,
     CRAFTER,

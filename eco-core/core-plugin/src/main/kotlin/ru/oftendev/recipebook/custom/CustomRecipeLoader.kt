@@ -234,7 +234,14 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .experience(config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f)
             .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
-        registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMELTING))
+        val displayType = when (type) {
+            WSmeltingType.FURNACE       -> RecipeDisplayType.SMELTING
+            WSmeltingType.BLAST_FURNACE -> RecipeDisplayType.BLAST_FURNACE
+            WSmeltingType.SMOKER        -> RecipeDisplayType.SMOKER
+            WSmeltingType.CAMPFIRE      -> RecipeDisplayType.CAMPFIRE
+            else                        -> RecipeDisplayType.SMELTING
+        }
+        registerWithMeta(recipe, parseMeta(id, config, displayType))
     }
 
     private fun loadSmithing(id: String, config: Config) {

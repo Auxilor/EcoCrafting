@@ -149,6 +149,159 @@ furnace-gui:
       lore: []
       click_sound: ui.button_click
 
+blast-furnace-gui:
+  title: "&8Blast Furnace Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i11111"
+      - "111f11o11"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
+
+smoker-gui:
+  title: "&8Smoker Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i11111"
+      - "111f11o11"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
+
+campfire-gui:
+  title: "&8Campfire Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "111i11111"
+      - "111f11o11"
+      - "111111111"
+      - "111010111"
+  buttons:
+    recipe-parts-lore: []
+    back:
+      row: 5
+      column: 5
+      item: barrier name:"&cBack"
+      lore: []
+      click_sound: ui.button_click
+    purchase-ingredients:
+      row: 5
+      column: 3
+      item: gold_ingot name:"&6Purchase Ingredients"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to buy missing materials"
+        - ""
+      success_sound: entity.experience_orb.pickup
+      fail_sound: entity.villager.no
+    prev-variant:
+      row: 5
+      column: 1
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: gray_dye name:"&7Previous Method"
+      lore: []
+      click_sound: ui.button_click
+    next-variant:
+      row: 5
+      column: 9
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: gray_dye name:"&7Next Method"
+      lore: []
+      click_sound: ui.button_click
+
 smithing-gui:
   title: "&8Smithing Recipe"
   quick-craft-enabled: true
