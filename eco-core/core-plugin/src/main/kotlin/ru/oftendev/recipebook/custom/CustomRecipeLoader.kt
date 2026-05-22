@@ -21,6 +21,7 @@ import com.willfp.libreforge.loader.configs.ConfigCategory
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
+import ru.oftendev.recipebook.category.RecipeCategories
 import ru.oftendev.recipebook.recipe.IngredientMatcher
 import ru.oftendev.recipebook.recipe.RecipeDisplayType
 import ru.oftendev.recipebook.recipe.RecipeIngredient
@@ -59,6 +60,16 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     override fun afterReload(plugin: LibreforgePlugin) {
         if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
+        CustomRecipes.allKeys().forEach { key ->
+            val categoryId = CustomRecipes.getMeta(key)?.categoryId ?: return@forEach
+            val output = WorkstationRecipes.getAll().firstOrNull { it.key == key }?.output ?: return@forEach
+            val category = RecipeCategories.getById(categoryId)
+            if (category != null) {
+                category.registerCustomRecipe(output.clone())
+            } else {
+                recipeBookPlugin.logger.fine("[RecipeBook] Unknown category '$categoryId' for recipe '${key.key}', skipping")
+            }
+        }
     }
 
     private fun scanVillagers() {
