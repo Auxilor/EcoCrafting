@@ -68,6 +68,55 @@ class RecipeGUI(
                 if (marker.equals('o', true)) {
                     menu.setSlot(row, col, slot(recipe.output, makeSound(config.getStringOrNull("buttons.slot.click_sound")), false))
                 }
+                // smithing template (ingredients[0])
+                if (marker.equals('t', true)) {
+                    val item = items.getOrNull(0)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // smithing base (ingredients[1])
+                if (marker.equals('b', true)) {
+                    val item = items.getOrNull(1)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // smithing addition (ingredients[2])
+                if (marker.equals('a', true)) {
+                    val item = items.getOrNull(2)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // brewing ingredient / top slot (ingredients[1])
+                if (marker.equals('g', true)) {
+                    val item = items.getOrNull(1)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // brewing base slot (ingredients[0])
+                if (marker.equals('s', true)) {
+                    val item = items.getOrNull(0)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // grindstone/villager second input (ingredients[1])
+                if (marker.equals('j', true)) {
+                    val item = items.getOrNull(1)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
+                // anvil material (ingredients[1])
+                if (marker.equals('m', true)) {
+                    val item = items.getOrNull(1)
+                    if (item != null && !item.type.isAir) {
+                        menu.setSlot(row, col, slot(item, makeSound(config.getStringOrNull("buttons.back.click_sound")), true))
+                    }
+                }
                 col++
             }
             row++
