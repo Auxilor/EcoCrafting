@@ -1,5 +1,6 @@
 package ru.oftendev.recipebook.custom
 
+import com.willfp.eco.core.recipe.Recipes
 import com.willfp.eco.core.recipe.workstation.AnvilRecipe
 import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import com.willfp.eco.core.recipe.workstation.CrafterRecipe
@@ -85,30 +86,13 @@ class CustomRecipeListener : Listener {
                 consumeCraftingGrid(event)
             }
             needsTakeover -> {
-                // Vanilla recipe won at Bukkit level; cancel and deliver our item manually.
-                event.isCancelled = true
-                consumeCraftingGrid(event)
-                deliverCraftItem(player, item, event.isShiftClick, event.cursor)
+                // Vanilla recipe won at Bukkit level; defer to eco's shared takeover
+                // utility (cancel event, decrement grid by 1, deliver via cursor or
+                // inventory.addItem). Used by other eco plugins too for collisions.
+                Recipes.takeOverCraftItem(event, item)
             }
         }
         fireCraftEffects(player, recipe, meta, item, amount)
-    }
-
-    private fun deliverCraftItem(player: Player, item: ItemStack, shift: Boolean, cursor: ItemStack?) {
-        if (shift) {
-            val drops = player.inventory.addItem(item)
-            drops.values.forEach { player.world.dropItemNaturally(player.location, it) }
-        } else {
-            if (cursor == null || cursor.type.isAir) {
-                player.setItemOnCursor(item)
-            } else if (cursor.isSimilar(item) && cursor.amount + item.amount <= item.maxStackSize) {
-                cursor.amount += item.amount
-                player.setItemOnCursor(cursor)
-            } else {
-                val drops = player.inventory.addItem(item)
-                drops.values.forEach { player.world.dropItemNaturally(player.location, it) }
-            }
-        }
     }
 
     private fun handleSmithing(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
