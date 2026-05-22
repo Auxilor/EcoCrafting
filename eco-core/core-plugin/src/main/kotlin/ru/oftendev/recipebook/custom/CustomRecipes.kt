@@ -15,7 +15,8 @@ data class RecipeBookMeta(
     val lockedLore: List<String>,
     val unlockConditions: ConditionList,
     val displayType: RecipeDisplayType,
-    val supportCrafter: Boolean = false
+    val supportCrafter: Boolean = false,
+    val categoryId: String? = null
 )
 
 object CustomRecipes {
