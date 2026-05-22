@@ -2,8 +2,6 @@ package ru.oftendev.recipebook
 
 import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.libreforge.loader.LibreforgePlugin
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import ru.oftendev.recipebook.category.RecipeCategories
@@ -109,11 +107,3 @@ class RecipeBookPlugin : LibreforgePlugin() {
     }
 }
 
-fun makeSound(string: String?): Sound? {
-    return string?.takeIf { it.isNotBlank() }?.let {
-        runCatching { Sound.sound(Key.key(it), Sound.Source.AMBIENT, 1.0f, 1.0f) }.getOrNull()
-    }
-}
-
-@Deprecated("Use makeSound", ReplaceWith("makeSound(string)"))
-fun makesound(string: String?): Sound? = makeSound(string)

@@ -13,7 +13,6 @@ import net.kyori.adventure.sound.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.category.RecipeCategory
-import ru.oftendev.recipebook.makeSound
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipeBookPlugin
 
@@ -32,7 +31,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                     character -> kotlin.run {
                 if (character.equals('i', true)) {
                     if (num < items.size) {
-                        menu.setSlot(row, col, slot(items[num], makeSound(config.getStringOrNull("buttons.slot.click_sound"))))
+                        menu.setSlot(row, col, slot(items[num], config.getStringOrNull("buttons.slot.click_sound").toAdventureSound()))
                     }
                     num++
                 }
@@ -46,7 +45,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 menu.addComponent(
                     config.getInt("buttons.back.row"),
                     config.getInt("buttons.back.column"),
-                    backSlot(prevMenu,makeSound(config.getStringOrNull("buttons.back.click_sound")))
+                    backSlot(prevMenu,config.getStringOrNull("buttons.back.click_sound").toAdventureSound())
                 )
             }
         }
@@ -59,12 +58,12 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         menu.setSlot(
             config.getInt("buttons.next-page.row"),
             config.getInt("buttons.next-page.column"),
-            nextSlot(page, prevMenu, player, makeSound(config.getStringOrNull("buttons.next-page.click_sound")))
+            nextSlot(page, prevMenu, player, config.getStringOrNull("buttons.next-page.click_sound").toAdventureSound())
         )
         menu.setSlot(
             config.getInt("buttons.prev-page.row"),
             config.getInt("buttons.prev-page.column"),
-            prevSlot(page, prevMenu, makeSound(config.getStringOrNull("buttons.prev-page.click_sound")))
+            prevSlot(page, prevMenu, config.getStringOrNull("buttons.prev-page.click_sound").toAdventureSound())
         )
         for (config in config.getSubsections("custom-slots")) {
             menu.setSlot(
@@ -165,3 +164,8 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
             .build()
     }
 }
+
+private fun String?.toAdventureSound(): Sound? =
+    takeIf { !isNullOrBlank() }?.let {
+        runCatching { Sound.sound(net.kyori.adventure.key.Key.key(it), Sound.Source.AMBIENT, 1.0f, 1.0f) }.getOrNull()
+    }
