@@ -18,6 +18,62 @@
 
 debug: false
 
+sounds:
+  next-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  prev-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  workstation-switch:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  back:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  slot-click:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-success:
+    sound: entity.player.levelup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-success:
+    sound: entity.experience_orb.pickup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+
 # Owner tracking for block-based recipes (furnace, brewing, crafter, campfire)
 # placed: dispatch effects on the player who placed (or first opened) the block
 # nearest: dispatch effects on the nearest online player within owner-nearest-radius blocks
@@ -66,7 +122,6 @@ craft-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     quick-craft:
       row: 5
       column: 3
@@ -78,8 +133,6 @@ craft-gui:
         - ""
         - "&bLeft Click&f to craft"
         - ""
-      success_sound: entity.player.levelup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -87,7 +140,6 @@ craft-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -95,7 +147,6 @@ craft-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
   custom-slots: []
 
 furnace-gui:
@@ -118,7 +169,6 @@ furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -130,8 +180,6 @@ furnace-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -139,7 +187,6 @@ furnace-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -147,7 +194,6 @@ furnace-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 blast-furnace-gui:
   title: "&8Blast Furnace Recipe &7[%cook_time%]"
@@ -169,7 +215,6 @@ blast-furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -181,8 +226,6 @@ blast-furnace-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -190,7 +233,6 @@ blast-furnace-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -198,7 +240,6 @@ blast-furnace-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 smoker-gui:
   title: "&8Smoker Recipe &7[%cook_time%]"
@@ -220,7 +261,6 @@ smoker-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -232,8 +272,6 @@ smoker-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -241,7 +279,6 @@ smoker-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -249,7 +286,6 @@ smoker-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 campfire-gui:
   title: "&8Campfire Recipe &7[%cook_time%]"
@@ -271,7 +307,6 @@ campfire-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -283,8 +318,6 @@ campfire-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -292,7 +325,6 @@ campfire-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -300,7 +332,6 @@ campfire-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 smithing-gui:
   title: "&8Smithing Recipe"
@@ -322,7 +353,6 @@ smithing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -334,8 +364,6 @@ smithing-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -343,7 +371,6 @@ smithing-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -351,7 +378,6 @@ smithing-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
@@ -373,7 +399,6 @@ stonecutter-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -385,8 +410,6 @@ stonecutter-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -394,7 +417,6 @@ stonecutter-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -402,7 +424,6 @@ stonecutter-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 brewing-gui:
   title: "&8Brewing Recipe"
@@ -424,7 +445,6 @@ brewing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -436,8 +456,6 @@ brewing-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -445,7 +463,6 @@ brewing-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -453,7 +470,6 @@ brewing-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 cartography-gui:
   title: "&8Cartography Recipe"
@@ -475,7 +491,6 @@ cartography-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -487,8 +502,6 @@ cartography-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -496,7 +509,6 @@ cartography-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -504,7 +516,6 @@ cartography-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 grindstone-gui:
   title: "&8Grindstone Recipe"
@@ -526,7 +537,6 @@ grindstone-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -538,8 +548,6 @@ grindstone-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -547,7 +555,6 @@ grindstone-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -555,7 +562,6 @@ grindstone-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 anvil-gui:
   title: "&8Anvil Recipe"
@@ -577,7 +583,6 @@ anvil-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -589,8 +594,6 @@ anvil-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -598,7 +601,6 @@ anvil-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -606,7 +608,6 @@ anvil-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
 
 villager-gui:
   title: "&8Villager Trade"
@@ -628,7 +629,6 @@ villager-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     purchase-ingredients:
       row: 5
       column: 3
@@ -640,8 +640,6 @@ villager-gui:
         - ""
         - "&bLeft Click&f to buy missing materials"
         - ""
-      success_sound: entity.experience_orb.pickup
-      fail_sound: entity.villager.no
     prev-variant:
       row: 5
       column: 1
@@ -649,7 +647,6 @@ villager-gui:
         active: arrow name:"&aPrevious Method"
         inactive: gray_dye name:"&7Previous Method"
       lore: []
-      click_sound: ui.button_click
     next-variant:
       row: 5
       column: 9
@@ -657,4 +654,3 @@ villager-gui:
         active: arrow name:"&aNext Method"
         inactive: gray_dye name:"&7Next Method"
       lore: []
-      click_sound: ui.button_click
