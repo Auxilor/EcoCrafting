@@ -23,14 +23,20 @@ import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipe.ResolvedRecipe
 import ru.oftendev.recipebook.recipeBookPlugin
 
-class RecipeGUI(val stack: ItemStack) {
+class RecipeGUI(
+    val stack: ItemStack,
+    val alternatives: List<ResolvedRecipe> = emptyList(),
+    val altIndex: Int = 0
+) {
     private lateinit var config: com.willfp.eco.core.config.interfaces.Config
 
     fun open(player: Player, parent: Menu?) {
-        val recipe = RecipeResolver.resolveForPlayer(stack, player) ?: run {
-            player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
-            return
-        }
+        val recipe = alternatives.getOrNull(altIndex)
+            ?: RecipeResolver.resolveForPlayer(stack, player)
+            ?: run {
+                player.sendMessage(recipeBookPlugin.langYml.getFormattedString("messages.no-recipe"))
+                return
+            }
         val items = recipe.displayItems
         val guiSection = when (recipe.displayType) {
             RecipeDisplayType.CRAFTING     -> "craft-gui"
