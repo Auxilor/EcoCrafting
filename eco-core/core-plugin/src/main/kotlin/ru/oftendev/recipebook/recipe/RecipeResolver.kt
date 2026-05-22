@@ -57,6 +57,25 @@ object RecipeResolver {
         return resolve(itemStack)?.output?.clone()
     }
 
+    fun resolveAll(itemStack: ItemStack): List<ResolvedRecipe> {
+        val clean = itemStack.clone().apply { amount = 1 }
+        val customItem = Items.getCustomItem(clean)
+        val results = mutableListOf<ResolvedRecipe>()
+
+        if (customItem != null) {
+            VaultPackIntegration.resolveRecipe(customItem)?.let { results += it }
+            findEcoRecipe(customItem)?.let { results += it }
+        }
+
+        results += findAllWorkstationRecipesByOutput(clean)
+
+        findAllBukkitRecipes(clean).forEach { bukkit ->
+            if (results.none { it.key == bukkit.key }) results += bukkit
+        }
+
+        return results.sortedBy { it.displayType.name }
+    }
+
     fun resolveForPlayer(itemStack: ItemStack, player: Player): ResolvedRecipe? {
         val recipe = resolve(itemStack) ?: return null
         val locked = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
@@ -70,6 +89,12 @@ object RecipeResolver {
         return WorkstationRecipes.getAll()
             .firstOrNull { recipe -> recipe.output?.let { it.isSimilar(clean) } == true && CustomRecipes.getMeta(recipe.key) != null }
             ?.workstationToResolvedRecipe()
+    }
+
+    private fun findAllWorkstationRecipesByOutput(clean: ItemStack): List<ResolvedRecipe> {
+        return WorkstationRecipes.getAll()
+            .filter { recipe -> recipe.output?.let { it.isSimilar(clean) } == true && CustomRecipes.getMeta(recipe.key) != null }
+            .map { it.workstationToResolvedRecipe() }
     }
 
     private fun WorkstationRecipe.workstationToResolvedRecipe(): ResolvedRecipe {
@@ -191,6 +216,16 @@ object RecipeResolver {
 
     private fun findBukkitRecipe(stack: ItemStack): ResolvedRecipe? {
         return Bukkit.getRecipesFor(stack).firstNotNullOfOrNull { recipe ->
+            when (recipe) {
+                is ShapedRecipe -> recipe.toResolvedRecipe()
+                is ShapelessRecipe -> recipe.toResolvedRecipe()
+                else -> null
+            }
+        }
+    }
+
+    private fun findAllBukkitRecipes(stack: ItemStack): List<ResolvedRecipe> {
+        return Bukkit.getRecipesFor(stack).mapNotNull { recipe ->
             when (recipe) {
                 is ShapedRecipe -> recipe.toResolvedRecipe()
                 is ShapelessRecipe -> recipe.toResolvedRecipe()
