@@ -14,6 +14,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.ItemFlag
 import ru.oftendev.recipebook.craft.MaterialCount
 import ru.oftendev.recipebook.craft.QuickCraftService
 import ru.oftendev.recipebook.integration.ShopIntegration
@@ -56,8 +57,11 @@ class RecipeGUI(
         config = recipeBookPlugin.configYml.getSubsection(guiSection)
         val pattern = config.getStrings("mask.pattern")
         val cookTimeDisplay = recipe.cookTime?.let { "${it / 20}s" } ?: "-"
+        val brewTimeDisplay = recipe.brewTime?.let { "${it / 20}s" } ?: "-"
         val menu = Menu.builder(pattern.size)
-            .setTitle(config.getFormattedString("title").replace("%cook_time%", cookTimeDisplay))
+            .setTitle(config.getFormattedString("title")
+                .replace("%cook_time%", cookTimeDisplay)
+                .replace("%brew_time%", brewTimeDisplay))
 
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
@@ -82,6 +86,7 @@ class RecipeGUI(
                             menu.setSlot(row, col, Slot.builder(
                                 ItemStackBuilder(Items.lookup(fuelCfg.getString("item")))
                                     .addLoreLines(fuelCfg.getFormattedStrings("lore"))
+                                    .withGlobalFlags()
                                     .build()
                             ).build())
                         }
@@ -138,6 +143,7 @@ class RecipeGUI(
                     Slot.builder(
                         ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
                             .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
+                            .withGlobalFlags()
                             .build()
                     ).build()
                 )
@@ -153,6 +159,7 @@ class RecipeGUI(
                     Slot.builder(
                         ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
                             .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
+                            .withGlobalFlags()
                             .build()
                     ).build()
                 )
@@ -165,6 +172,7 @@ class RecipeGUI(
                 val slotBuilder = Slot.builder(
                     ItemStackBuilder(Items.lookup(config.getString("buttons.prev-variant.item.$state")))
                         .addLoreLines(config.getFormattedStrings("buttons.prev-variant.lore"))
+                        .withGlobalFlags()
                         .build()
                 )
                 if (prevActive) {
@@ -186,6 +194,7 @@ class RecipeGUI(
                 val slotBuilder = Slot.builder(
                     ItemStackBuilder(Items.lookup(config.getString("buttons.next-variant.item.$state")))
                         .addLoreLines(config.getFormattedStrings("buttons.next-variant.lore"))
+                        .withGlobalFlags()
                         .build()
                 )
                 if (nextActive) {
@@ -209,6 +218,15 @@ class RecipeGUI(
         menu.build().open(player)
     }
 
+    private val globalFlags: Array<ItemFlag> by lazy {
+        recipeBookPlugin.configYml.getStrings("item-flags")
+            .mapNotNull { runCatching { ItemFlag.valueOf(it.uppercase()) }.getOrNull() }
+            .toTypedArray()
+    }
+
+    private fun ItemStackBuilder.withGlobalFlags(): ItemStackBuilder =
+        if (globalFlags.isEmpty()) this else addItemFlag(*globalFlags)
+
     private fun sound(key: String): PlayableSound? =
         recipeBookPlugin.configYml.getSubsectionOrNull("sounds.$key")
             ?.let { PlayableSound.create(it) }
@@ -231,6 +249,7 @@ class RecipeGUI(
             .map { it.replace("%workstation%", wsName) }
         val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", wsName)))
             .addLoreLines(lore)
+            .withGlobalFlags()
             .build()
 
         val slotBuilder = Slot.builder(item)
@@ -250,6 +269,7 @@ class RecipeGUI(
         return Slot.builder(
             ItemStackBuilder(item.clone())
                 .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
+                .withGlobalFlags()
                 .build()
         ).onLeftClick { event, _, menu ->
             if (isIngredient) {
@@ -267,6 +287,7 @@ class RecipeGUI(
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
+                .withGlobalFlags()
                 .build()
         ).onLeftClick { event, _ ->
             menu.open(event.whoClicked as Player)
@@ -289,6 +310,7 @@ class RecipeGUI(
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.purchase-ingredients.item")))
                 .addLoreLines(loreLines)
+                .withGlobalFlags()
                 .build()
         ).onLeftClick { event, _ ->
             val target = event.whoClicked as Player
@@ -397,6 +419,7 @@ class RecipeGUI(
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.quick-craft.item")))
                 .addLoreLines(loreLines)
+                .withGlobalFlags()
                 .build()
         ).onLeftClick { event, _ ->
             handleQuickCraft(event)
