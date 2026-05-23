@@ -55,7 +55,7 @@ class RecipeGUI(
         }
         config = recipeBookPlugin.configYml.getSubsection(guiSection)
         val pattern = config.getStrings("mask.pattern")
-        val cookTimeDisplay = recipe.cookTime?.let { "${it}t (${it / 20}s)" } ?: "-"
+        val cookTimeDisplay = recipe.cookTime?.let { "${it / 20}s" } ?: "-"
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title").replace("%cook_time%", cookTimeDisplay))
 
