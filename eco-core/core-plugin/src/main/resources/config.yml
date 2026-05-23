@@ -766,7 +766,7 @@ anvil-gui:
       lore: []
 
 villager-gui:
-  title: "&8Villager Trade"
+  title: "&8Villager Trade &7[&6%xp% XP&7]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
