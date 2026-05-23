@@ -3,14 +3,14 @@
 
 type: anvil
 
-base: iron_sword          # item in the left slot (required)
-material: diamond         # item in the right slot (optional — omit for rename-only)
+base: iron_sword # item in the left slot (required)
+material: diamond # item in the right slot (optional — omit for rename-only)
 
-result-name: "&bDiamond-Edged Sword"   # optional — renames the result item
-repair-cost: 3            # levels displayed and consumed
+result-name: "&bDiamond-Edged Sword" # optional — renames the result item
+repair-cost: 3 # levels displayed and consumed
 
 output: diamond_sword name:"&bDiamond-Edged Sword"
-lore: []             # optional — lore lines for the output item
+lore: [] # optional — lore lines for the output item
 
 give-result-item: true
 # give-result-item: false — consume inputs, pay cost, fire effects, give no item

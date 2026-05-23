@@ -5,10 +5,10 @@ type: smoker
 
 input: potato
 output: baked_potato name:"&ePerfect Baked Potato"
-lore: []             # optional — lore lines for the output item
+lore: [] # optional — lore lines for the output item
 
-cook-time: 100           # ticks (smoker is 2x faster than furnace for food)
-experience: 0.35
+cook-time: 100 # ticks (smoker is 2x faster than furnace for food)
+experience: 0.35 # experience given to the player when the item is taken out of the smoker (vanilla = 0.35 for baked potato)
 
 give-result-item: true
 # give-result-item: false — cancel the smelt, fire effects instead of producing the item

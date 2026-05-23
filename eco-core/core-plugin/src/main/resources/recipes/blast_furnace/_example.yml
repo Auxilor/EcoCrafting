@@ -5,10 +5,10 @@ type: blast_furnace
 
 input: raw_gold
 output: gold_ingot name:"&6Example Gold"
-lore: []             # optional — lore lines for the output item
+lore: [] # optional — lore lines for the output item
 
-cook-time: 100           # ticks (blast furnace is 2x faster, vanilla = 100)
-experience: 1.0
+cook-time: 100 # ticks (blast furnace is 2x faster, vanilla = 100)
+experience: 1.0 # experience given to the player when the item is taken out of the blast furnace (vanilla = 0.7 for gold ingot)
 
 give-result-item: true
 # give-result-item: false — cancel the smelt, fire effects instead of producing the item

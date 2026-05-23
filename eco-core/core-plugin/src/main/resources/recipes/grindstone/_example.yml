@@ -3,11 +3,11 @@
 
 type: grindstone
 
-item1: enchanted_book   # required — left slot
-item2: enchanted_book   # optional — right slot (omit for single-item recipes)
+item1: enchanted_book # required — left slot
+item2: enchanted_book # optional — right slot (omit for single-item recipes)
 
 output: experience_bottle name:"&aDisenchanted XP"
-lore: []             # optional — lore lines for the output item
+lore: [] # optional — lore lines for the output item
 
 give-result-item: true
 # give-result-item: false — cancel result, fire effects instead (e.g. give XP to player)
