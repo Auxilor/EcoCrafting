@@ -345,6 +345,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             .minLevel(config.getIntOrNull("min-level") ?: 0)
             .chance((config.getStringOrNull("chance")?.toDoubleOrNull() ?: 1.0).coerceIn(0.0, 1.0))
             .wanderingTrader(config.getBool("wandering-trader"))
+            .villagerXp(config.getIntOrNull("villager-xp") ?: 0)
             .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
             .build()
         registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.VILLAGER))

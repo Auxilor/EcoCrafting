@@ -3,13 +3,14 @@
 
 type: villager
 
-input1: emerald           # first trade ingredient (required)
-input2: book              # second trade ingredient (optional — omit for single-item trades)
+input1: emerald # first trade ingredient (required)
+input2: book # second trade ingredient (optional — omit for single-item trades)
 
-profession: FARMER        # optional — restrict to this villager profession (e.g. FARMER, LIBRARIAN, WEAPONSMITH)
-min-level: 1              # optional — minimum villager level required (1-5); 0 = any level
-chance: 1.0               # probability this trade appears on the villager (0.0–1.0); rolled once per entity and persisted
-wandering-trader: false   # true = inject into WanderingTrader instead of regular villagers
+profession: FARMER # optional — restrict to this villager profession (e.g. FARMER, LIBRARIAN, WEAPONSMITH)
+min-level: 1 # optional — minimum villager level required (1-5); 0 = any level
+chance: 1.0 # probability this trade appears on the villager (0.0–1.0); rolled once per entity and persisted
+wandering-trader: false # true = inject into WanderingTrader instead of regular villagers
+villager-xp: 0 # XP awarded to the villager on trade completion (0 = none)
 
 output: enchanted_book name:"&5Villager Enchanted Book"
 lore: []             # optional — lore lines for the output item
