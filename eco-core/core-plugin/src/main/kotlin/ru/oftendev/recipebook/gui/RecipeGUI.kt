@@ -58,10 +58,12 @@ class RecipeGUI(
         val pattern = config.getStrings("mask.pattern")
         val cookTimeDisplay = recipe.cookTime?.let { "${it / 20}s" } ?: "-"
         val brewTimeDisplay = recipe.brewTime?.let { "${it / 20}s" } ?: "-"
+        val villagerXpDisplay = recipe.villagerXp?.toString() ?: "-"
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title")
                 .replace("%cook_time%", cookTimeDisplay)
-                .replace("%brew_time%", brewTimeDisplay))
+                .replace("%brew_time%", brewTimeDisplay)
+                .replace("%xp%", villagerXpDisplay))
 
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType

@@ -200,7 +200,8 @@ object RecipeResolver {
             source = RecipeSource.CUSTOM,
             displayType = meta?.displayType ?: RecipeDisplayType.CRAFTING,
             cookTime = (this as? SmeltingRecipe)?.cookTime?.takeIf { it > 0 },
-            brewTime = (this as? BrewingRecipe)?.brewTime?.takeIf { it > 0 }
+            brewTime = (this as? BrewingRecipe)?.brewTime?.takeIf { it > 0 },
+            villagerXp = (this as? VillagerRecipe)?.villagerXp?.takeIf { it > 0 }
         )
     }
 
