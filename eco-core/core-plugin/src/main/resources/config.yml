@@ -15,6 +15,13 @@
 
 debug: false
 
+# Exclude rotated/mirrored duplicates of shaped crafting recipes
+deduplicate-symmetrical: true
+
+# When true, recipe lookup matches full item (name/lore/meta), not just base material
+# Useful when renamed items should not show vanilla recipes
+strict-item-matching: false
+
 fuel-slot:
   item: charcoal name:"&7Fuel"
   lore: []
@@ -261,6 +268,15 @@ craft-gui:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
       lore: []
+    crafter-indicator:
+      row: 5
+      column: 7
+      item:
+        active: crafter name:"&aAvailable in Crafter"
+        inactive: gray_dye name:"&7Not available in Crafter"
+      lore:
+        active: []
+        inactive: []
   custom-slots: []
 
 furnace-gui:
