@@ -199,7 +199,8 @@ object RecipeResolver {
             permission = permission,
             source = RecipeSource.CUSTOM,
             displayType = meta?.displayType ?: RecipeDisplayType.CRAFTING,
-            cookTime = (this as? SmeltingRecipe)?.cookTime?.takeIf { it > 0 }
+            cookTime = (this as? SmeltingRecipe)?.cookTime?.takeIf { it > 0 },
+            brewTime = (this as? BrewingRecipe)?.brewTime?.takeIf { it > 0 }
         )
     }
 

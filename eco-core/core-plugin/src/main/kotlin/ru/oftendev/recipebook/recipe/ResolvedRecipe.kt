@@ -17,7 +17,8 @@ data class ResolvedRecipe(
     val shapeless: Boolean = false,
     val displayType: RecipeDisplayType = RecipeDisplayType.CRAFTING,
     val locked: Boolean = false,
-    val cookTime: Int? = null
+    val cookTime: Int? = null,
+    val brewTime: Int? = null
 ) {
     val displayItems: List<ItemStack>
         get() = ingredients.map { it.displayItem.clone() }

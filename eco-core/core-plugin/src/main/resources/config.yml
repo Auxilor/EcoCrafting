@@ -22,6 +22,11 @@ deduplicate-symmetrical: true
 # Useful when renamed items should not show vanilla recipes
 strict-item-matching: false
 
+# ItemFlags applied to every display item in RecipeBook GUIs
+# Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
+#               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
+item-flags: []
+
 fuel-slot:
   item: charcoal name:"&7Fuel"
   lore: []
@@ -573,7 +578,7 @@ stonecutter-gui:
       lore: []
 
 brewing-gui:
-  title: "&8Brewing Recipe"
+  title: "&8Brewing Recipe &7[%brew_time%]"
   quick-craft-enabled: true
   buy-materials-enabled: true
   mask:
