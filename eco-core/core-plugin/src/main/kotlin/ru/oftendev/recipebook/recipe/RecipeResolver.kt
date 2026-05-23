@@ -25,6 +25,7 @@ import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 import ru.oftendev.recipebook.custom.CustomRecipes
+import ru.oftendev.recipebook.custom.RecipeSymmetry
 import ru.oftendev.recipebook.custom.RecipeUnlockStore
 import ru.oftendev.recipebook.integration.VaultPackIntegration
 import ru.oftendev.recipebook.recipeBookPlugin
@@ -32,6 +33,24 @@ import java.lang.reflect.Field
 
 object RecipeResolver {
     private val air = ItemStack(Material.AIR)
+
+    private val SYMMETRY_TRANSFORMS = listOf(
+        intArrayOf(0,1,2,3,4,5,6,7,8),
+        RecipeSymmetry.ROT_90_CW,
+        RecipeSymmetry.ROT_180,
+        RecipeSymmetry.ROT_270_CW,
+        RecipeSymmetry.MIRROR_H,
+        intArrayOf(0,3,6,1,4,7,2,5,8),  // transpose (MIRROR_H · ROT_90_CW)
+        intArrayOf(6,7,8,3,4,5,0,1,2),  // vertical flip (MIRROR_H · ROT_180)
+        intArrayOf(8,5,2,7,4,1,6,3,0),  // anti-diagonal (MIRROR_H · ROT_270_CW)
+    )
+
+    private fun List<RecipeIngredient>.symmetryKey(): String {
+        val types = map { it.displayItem.type.name }
+        return SYMMETRY_TRANSFORMS
+            .map { t -> t.map { types[it] }.joinToString(",") }
+            .min()
+    }
 
     fun canCraft(player: Player, itemStack: ItemStack): Boolean {
         val recipe = resolve(itemStack) ?: return true
@@ -73,7 +92,21 @@ object RecipeResolver {
             if (results.none { it.key == bukkit.key }) results += bukkit
         }
 
-        return results.sortedBy { it.displayType.name }
+        val sorted = results.sortedBy { it.displayType.name }
+
+        if (!recipeBookPlugin.configYml.getBool("deduplicate-symmetrical")) return sorted
+
+        val seen = mutableSetOf<String>()
+        return sorted.filter { recipe ->
+            val isShaped = recipe.displayType == RecipeDisplayType.CRAFTING ||
+                recipe.displayType == RecipeDisplayType.CRAFTER
+            if (!isShaped || recipe.shapeless) {
+                true
+            } else {
+                val key = "${recipe.output.type.name}:${recipe.ingredients.symmetryKey()}"
+                seen.add(key)
+            }
+        }
     }
 
     fun resolveForPlayer(itemStack: ItemStack, player: Player): ResolvedRecipe? {
@@ -216,22 +249,26 @@ object RecipeResolver {
     }
 
     private fun findBukkitRecipe(stack: ItemStack): ResolvedRecipe? {
+        val strict = recipeBookPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).firstNotNullOfOrNull { recipe ->
-            when (recipe) {
+            val resolved = when (recipe) {
                 is ShapedRecipe -> recipe.toResolvedRecipe()
                 is ShapelessRecipe -> recipe.toResolvedRecipe()
                 else -> null
-            }
+            } ?: return@firstNotNullOfOrNull null
+            if (strict && !resolved.output.isSimilar(stack)) null else resolved
         }
     }
 
     private fun findAllBukkitRecipes(stack: ItemStack): List<ResolvedRecipe> {
+        val strict = recipeBookPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).mapNotNull { recipe ->
-            when (recipe) {
+            val resolved = when (recipe) {
                 is ShapedRecipe -> recipe.toResolvedRecipe()
                 is ShapelessRecipe -> recipe.toResolvedRecipe()
                 else -> null
-            }
+            } ?: return@mapNotNull null
+            if (strict && !resolved.output.isSimilar(stack)) null else resolved
         }
     }
 
