@@ -22,6 +22,11 @@ messages:
   recipe-locked: "&cThis recipe is locked."
   recipe-unlocked: "&aRecipe unlocked: &f%recipe%"
   craft-conditions-not-met: "&cYou do not meet the requirements to craft this."
+  shop-auto-buy-disabled: "EcoShop auto-purchase is disabled in RecipeBook config"
+  material-sufficient: "&a  %has%/%needs% &7%item%"
+  material-missing: "&c  %has%/%needs% &7%item%"
+  shop-price-affordable: " &e(%price%)"
+  shop-price-unaffordable: " &c(%price%)"
 
 workstation-names:
   crafting: "Crafting Table"
