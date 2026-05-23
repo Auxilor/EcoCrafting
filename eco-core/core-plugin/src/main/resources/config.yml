@@ -15,6 +15,10 @@
 
 debug: false
 
+fuel-slot:
+  item: charcoal name:"&7Fuel"
+  lore: []
+
 sounds:
   next-page:
     sound: ui.button_click
