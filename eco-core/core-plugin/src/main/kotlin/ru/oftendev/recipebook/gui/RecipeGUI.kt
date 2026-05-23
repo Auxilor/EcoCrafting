@@ -127,19 +127,36 @@ class RecipeGUI(
                 )
             }
 
-        config.getSubsectionOrNull("buttons.crafter-indicator")?.let { indicatorCfg ->
-            val hasCrafter = effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }
-            val state = if (hasCrafter) "active" else "inactive"
-            menu.setSlot(
-                indicatorCfg.getInt("row"),
-                indicatorCfg.getInt("column"),
-                Slot.builder(
-                    ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
-                        .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
-                        .build()
-                ).build()
-            )
-        }
+        config.getSubsectionOrNull("buttons.crafter-indicator")
+            ?.takeIf { it.getBool("enabled") }
+            ?.let { indicatorCfg ->
+                val hasCrafter = effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }
+                val state = if (hasCrafter) "active" else "inactive"
+                menu.setSlot(
+                    indicatorCfg.getInt("row"),
+                    indicatorCfg.getInt("column"),
+                    Slot.builder(
+                        ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
+                            .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
+                            .build()
+                    ).build()
+                )
+            }
+
+        config.getSubsectionOrNull("buttons.shapeless-indicator")
+            ?.takeIf { it.getBool("enabled") }
+            ?.let { indicatorCfg ->
+                val state = if (recipe.shapeless) "active" else "inactive"
+                menu.setSlot(
+                    indicatorCfg.getInt("row"),
+                    indicatorCfg.getInt("column"),
+                    Slot.builder(
+                        ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
+                            .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
+                            .build()
+                    ).build()
+                )
+            }
 
         if (effectiveAlternatives.size > 1) {
             config.getSubsectionOrNull("buttons.prev-variant")?.let {

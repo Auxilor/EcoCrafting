@@ -269,11 +269,22 @@ craft-gui:
         inactive: black_stained_glass_pane name:""
       lore: []
     crafter-indicator:
+      enabled: false
       row: 5
       column: 7
       item:
         active: crafter name:"&aAvailable in Crafter"
         inactive: gray_dye name:"&7Not available in Crafter"
+      lore:
+        active: []
+        inactive: []
+    shapeless-indicator:
+      enabled: false
+      row: 5
+      column: 7
+      item:
+        active: slime_ball name:"&aShapeless Recipe"
+        inactive: gray_dye name:"&7Shaped Recipe"
       lore:
         active: []
         inactive: []
