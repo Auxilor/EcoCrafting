@@ -5,10 +5,10 @@ type: campfire
 
 input: rabbit
 output: cooked_rabbit name:"&6Campfire Rabbit"
-lore: []             # optional — lore lines for the output item
+lore: [] # optional — lore lines for the output item
 
-cook-time: 600           # ticks (campfire is slow, vanilla = 600)
-experience: 0.35
+cook-time: 600 # ticks (campfire is slow, vanilla = 600)
+experience: 0.35 # experience given to the player when the item is taken out of the campfire (vanilla = 0.35 for cooked rabbit)
 
 give-result-item: true
 # give-result-item: false — cancel the cook, fire effects instead of producing the item
