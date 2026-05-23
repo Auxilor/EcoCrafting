@@ -77,6 +77,15 @@ class RecipeGUI(
                     marker.equals('o', true) -> {
                         menu.setSlot(row, col, ingredientSlot(recipe.output, isIngredient = false))
                     }
+                    marker.equals('f', true) -> {
+                        recipeBookPlugin.configYml.getSubsectionOrNull("fuel-slot")?.let { fuelCfg ->
+                            menu.setSlot(row, col, Slot.builder(
+                                ItemStackBuilder(Items.lookup(fuelCfg.getString("item")))
+                                    .addLoreLines(fuelCfg.getFormattedStrings("lore"))
+                                    .build()
+                            ).build())
+                        }
+                    }
                     WORKSTATION_MARKERS.containsKey(marker) -> {
                         menu.setSlot(row, col, workstationSlot(marker, currentType, currentTypes, effectiveAlternatives, parent))
                     }
