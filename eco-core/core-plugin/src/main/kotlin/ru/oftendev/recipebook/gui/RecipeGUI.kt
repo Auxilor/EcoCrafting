@@ -253,10 +253,6 @@ class RecipeGUI(
         if (materialsLoreIndex != -1) {
             loreLines.removeAt(materialsLoreIndex)
             loreLines.addAll(materialsLoreIndex, materialCounts.map { it.toLoreLine(player) })
-            if (ShopIntegration.isAutoBuyEnabled() && !hasAllMaterials) {
-                loreLines.add("")
-                loreLines.add("&eShift-click &7to buy missing materials")
-            }
         }
 
         return Slot.builder(
@@ -307,17 +303,12 @@ class RecipeGUI(
     private fun quickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot {
         val service = QuickCraftService(player, recipe)
         val materialCounts = service.getMaterialCounts()
-        val hasAllMaterials = materialCounts.all { it.has >= it.needs }
         val loreLines = config.getFormattedStrings("buttons.quick-craft.lore").toMutableList()
         val materialsLoreIndex = loreLines.indexOfFirst { it.contains("%materials%") }
 
         if (materialsLoreIndex != -1) {
             loreLines.removeAt(materialsLoreIndex)
             loreLines.addAll(materialsLoreIndex, materialCounts.map { it.toLoreLine(player) })
-            if (ShopIntegration.isAutoBuyEnabled() && !hasAllMaterials) {
-                loreLines.add("")
-                loreLines.add("&eShift-click &7to buy missing materials and craft")
-            }
         }
 
         fun finishQuickCraft(event: InventoryClickEvent, target: Player, result: ru.oftendev.recipebook.craft.CraftAttempt, purchasedMaterials: Boolean) {
@@ -365,7 +356,7 @@ class RecipeGUI(
                     }
                     result = result.copy(reason = purchase.message)
                 } else if (event.isShiftClick && ShopIntegration.isEnabled()) {
-                    result = result.copy(reason = "EcoShop auto-purchase is disabled in RecipeBook config")
+                    result = result.copy(reason = recipeBookPlugin.langYml.getString("messages.shop-auto-buy-disabled"))
                 }
             }
 
@@ -384,18 +375,23 @@ class RecipeGUI(
     }
 
     private fun MaterialCount.toLoreLine(player: Player): String {
-        val color = if (has >= needs) "&a" else "&c"
         val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {
-            item.itemMeta.displayName
+            item.itemMeta.displayName()?.let { net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(it) }
+                ?: item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
         } else {
             item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
         }
-        var line = "$color  $has/$needs &7$itemName"
+        val langKey = if (has >= needs) "messages.material-sufficient" else "messages.material-missing"
+        var line = recipeBookPlugin.langYml.getString(langKey)
+            .replace("%has%", has.toString())
+            .replace("%needs%", needs.toString())
+            .replace("%item%", itemName)
         if (has < needs && ShopIntegration.shouldShowPrices()) {
             val info = ShopIntegration.getMaterialShopInfo(player, item, needs - has)
             if (info != null) {
-                val shopColor = if (info.canBuy) "&e" else "&c"
-                line += " $shopColor(${info.priceDisplay.ifBlank { info.status }})"
+                val priceKey = if (info.canBuy) "messages.shop-price-affordable" else "messages.shop-price-unaffordable"
+                line += recipeBookPlugin.langYml.getString(priceKey)
+                    .replace("%price%", info.priceDisplay.ifBlank { info.status })
             }
         }
         return line
