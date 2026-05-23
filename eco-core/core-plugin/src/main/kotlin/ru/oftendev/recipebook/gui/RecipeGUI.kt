@@ -41,7 +41,7 @@ class RecipeGUI(
     val altIndex: Int = 0
 ) {
     fun open(player: Player, parent: Menu?) {
-        val effectiveAlternatives = if (alternatives.isEmpty()) RecipeResolver.resolveAll(stack) else alternatives
+        val effectiveAlternatives = alternatives.ifEmpty { RecipeResolver.resolveAll(stack) }
         val recipe = effectiveAlternatives.getOrNull(altIndex)
             ?: RecipeResolver.resolveForPlayer(stack, player)
             ?: run {
