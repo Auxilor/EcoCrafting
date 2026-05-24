@@ -107,9 +107,22 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     internal fun parseIngredient(lookup: String): RecipeIngredient {
         if (lookup.isBlank() || lookup == "*")
             return RecipeIngredient(ItemStack(Material.AIR), IngredientMatcher.AnyItem)
-        val item = runCatching { Items.lookup(lookup).item }.getOrNull()
-            ?: error("Cannot resolve item: $lookup")
-        return RecipeIngredient(item.clone(), IngredientMatcher.SimilarItem(item.clone()))
+        val testable = Items.lookup(lookup)
+        if (testable is com.willfp.eco.core.recipe.parts.EmptyTestableItem)
+            error("Cannot resolve item: $lookup")
+        val displayItems = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems)
+            testable.children.map { it.item.clone() }
+        else
+            listOf(testable.item.clone())
+        val matcher = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems)
+            IngredientMatcher.EcoPart(testable)
+        else
+            IngredientMatcher.SimilarItem(displayItems.first())
+        return RecipeIngredient(
+            displayItem = displayItems.first(),
+            matcher = matcher,
+            displayAlternatives = if (displayItems.size > 1) displayItems else emptyList()
+        )
     }
 
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): RecipeBookMeta {
