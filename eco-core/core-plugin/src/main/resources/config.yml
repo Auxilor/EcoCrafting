@@ -237,7 +237,7 @@ craft-gui:
       - "1iii1o1PW"
       - "1iii111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore:
       - ""
@@ -308,7 +308,7 @@ furnace-gui:
       - "11111o1PW"
       - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -355,7 +355,7 @@ blast-furnace-gui:
       - "11111o1PW"
       - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -402,7 +402,7 @@ smoker-gui:
       - "11111o1PW"
       - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -449,7 +449,7 @@ campfire-gui:
       - "11111o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -496,7 +496,7 @@ smithing-gui:
       - "1iii1o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -543,7 +543,7 @@ stonecutter-gui:
       - "11i11o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -590,7 +590,7 @@ brewing-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -637,7 +637,7 @@ cartography-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -684,7 +684,7 @@ grindstone-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -731,7 +731,7 @@ anvil-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -778,7 +778,7 @@ villager-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
