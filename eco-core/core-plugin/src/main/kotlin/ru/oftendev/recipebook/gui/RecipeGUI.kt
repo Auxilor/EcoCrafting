@@ -68,6 +68,7 @@ class RecipeGUI(
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
 
+        var refreshTask: BukkitTask? = null
         var row = 1; var num = 0
         pattern.forEach { line ->
             var col = 1
@@ -135,7 +136,6 @@ class RecipeGUI(
         }
 
         val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
-        var refreshTask: BukkitTask? = null
         menu.onClose { _, _ -> refreshTask?.cancel() }
         val builtMenu = menu.build()
         if (hasAlternatives) {
