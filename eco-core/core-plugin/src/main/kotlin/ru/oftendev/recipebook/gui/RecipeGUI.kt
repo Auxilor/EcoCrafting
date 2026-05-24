@@ -12,7 +12,6 @@ import ru.oftendev.recipebook.gui.utils.buildBackSlot
 import ru.oftendev.recipebook.gui.utils.buildFuelSlot
 import ru.oftendev.recipebook.gui.utils.buildIndicatorSlot
 import ru.oftendev.recipebook.gui.utils.buildIngredientSlot
-import ru.oftendev.recipebook.gui.utils.buildPurchaseSlot
 import ru.oftendev.recipebook.gui.utils.buildQuickCraftSlot
 import ru.oftendev.recipebook.gui.utils.buildVariantSlot
 import ru.oftendev.recipebook.gui.utils.buildWorkstationSlot
@@ -104,11 +103,7 @@ class RecipeGUI(
             ?.takeIf { if (ctx.config.has("quick-craft-enabled")) ctx.config.getBool("quick-craft-enabled") else true }
             ?.let { menu.addComponent(ctx.config.getInt("buttons.quick-craft.row"), ctx.config.getInt("buttons.quick-craft.column"), ctx.buildQuickCraftSlot(player, recipe)) }
 
-        ctx.config.getSubsectionOrNull("buttons.purchase-ingredients")
-            ?.takeIf { if (ctx.config.has("buy-materials-enabled")) ctx.config.getBool("buy-materials-enabled") else true }
-            ?.let { menu.addComponent(ctx.config.getInt("buttons.purchase-ingredients.row"), ctx.config.getInt("buttons.purchase-ingredients.column"), ctx.buildPurchaseSlot(player, recipe)) }
-
-        ctx.config.getSubsectionOrNull("buttons.crafter-indicator")
+ctx.config.getSubsectionOrNull("buttons.crafter-indicator")
             ?.takeIf { it.getBool("enabled") }
             ?.let { indCfg ->
                 val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
