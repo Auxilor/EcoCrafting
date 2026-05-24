@@ -13,7 +13,11 @@ import ru.oftendev.recipebook.gui.RecipeGUI
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipeBookPlugin
 
-fun RecipeGUIContext.buildIngredientSlot(items: List<ItemStack>, isIngredient: Boolean): Slot = with(this) {
+fun RecipeGUIContext.buildIngredientSlot(
+    items: List<ItemStack>,
+    isIngredient: Boolean,
+    cancelRefresh: () -> Unit = {}
+): Slot = with(this) {
     fun buildDisplay(item: ItemStack): ItemStack =
         ItemStackBuilder(item.clone())
             .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
@@ -36,6 +40,7 @@ fun RecipeGUIContext.buildIngredientSlot(items: List<ItemStack>, isIngredient: B
             val clicked = clickItem.clone().apply { amount = 1 }
             val clickedRecipe = RecipeResolver.resolve(clicked)
             if (clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
+                cancelRefresh()
                 RecipeGUI(clicked).open(event.whoClicked as Player, menu)
             }
         }
