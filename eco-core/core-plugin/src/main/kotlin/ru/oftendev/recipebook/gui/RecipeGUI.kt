@@ -81,7 +81,7 @@ class RecipeGUI(
                     }
                     marker.equals('o', true) ->
                         menu.setSlot(row, col, ctx.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
-                    marker.equals('f', true) ->
+                    marker.equals('u', true) ->
                         ctx.buildFuelSlot()?.let { menu.setSlot(row, col, it) }
                     WORKSTATION_MARKERS.containsKey(marker) ->
                         menu.setSlot(row, col, ctx.buildWorkstationSlot(marker, currentType, currentTypes))
