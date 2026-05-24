@@ -6,6 +6,7 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitTask
 import ru.oftendev.recipebook.gui.utils.RecipeGUIContext
 import ru.oftendev.recipebook.gui.utils.buildBackSlot
 import ru.oftendev.recipebook.gui.utils.buildFuelSlot
@@ -64,7 +65,6 @@ class RecipeGUI(
             .replace("%xp%", recipe.villagerXp?.toString() ?: "-")
 
         val menu = Menu.builder(pattern.size).setTitle(title)
-        val items = recipe.displayItems
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
 
@@ -74,12 +74,13 @@ class RecipeGUI(
             line.toCharArray().forEach { marker ->
                 when {
                     marker.equals('i', true) -> {
-                        if (num < items.size && !items[num].type.isAir)
-                            menu.setSlot(row, col, ctx.buildIngredientSlot(items[num], isIngredient = true))
+                        val ing = recipe.ingredients.getOrNull(num)
+                        if (ing != null && !ing.displayItem.type.isAir)
+                            menu.setSlot(row, col, ctx.buildIngredientSlot(ing.allDisplayItems, isIngredient = true))
                         num++
                     }
                     marker.equals('o', true) ->
-                        menu.setSlot(row, col, ctx.buildIngredientSlot(recipe.output, isIngredient = false))
+                        menu.setSlot(row, col, ctx.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
                     marker.equals('f', true) ->
                         ctx.buildFuelSlot()?.let { menu.setSlot(row, col, it) }
                     WORKSTATION_MARKERS.containsKey(marker) ->
@@ -133,6 +134,15 @@ class RecipeGUI(
             menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
         }
 
-        menu.build().open(player)
+        val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
+        var refreshTask: BukkitTask? = null
+        menu.onClose { _, _ -> refreshTask?.cancel() }
+        val builtMenu = menu.build()
+        if (hasAlternatives) {
+            refreshTask = recipeBookPlugin.server.scheduler.runTaskTimer(
+                recipeBookPlugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
+            )
+        }
+        builtMenu.open(player)
     }
 }
