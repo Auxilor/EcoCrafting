@@ -16,11 +16,11 @@
 debug: false
 
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
-deduplicate-symmetrical: true
+deduplicate-symmetrical: false
 
 # When true, recipe lookup matches full item (name/lore/meta), not just base material
 # Useful when renamed items should not show vanilla recipes
-strict-item-matching: false
+strict-item-matching: true
 
 # ItemFlags applied to every display item in RecipeBook GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
@@ -318,8 +318,8 @@ furnace-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -365,8 +365,8 @@ blast-furnace-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -412,8 +412,8 @@ smoker-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -459,8 +459,8 @@ campfire-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -506,8 +506,8 @@ smithing-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -553,8 +553,8 @@ stonecutter-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -600,8 +600,8 @@ brewing-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -647,8 +647,8 @@ cartography-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -694,8 +694,8 @@ grindstone-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -741,8 +741,8 @@ anvil-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
@@ -788,8 +788,8 @@ villager-gui:
       lore: []
     purchase-ingredients:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&6Purchase Ingredients"
       lore:
         - ""
         - "&7Materials:"
