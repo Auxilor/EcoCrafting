@@ -76,7 +76,7 @@ class RecipeGUI(
                     marker.equals('i', true) -> {
                         val ing = recipe.ingredients.getOrNull(num)
                         if (ing != null && !ing.displayItem.type.isAir)
-                            menu.setSlot(row, col, ctx.buildIngredientSlot(ing.allDisplayItems, isIngredient = true))
+                            menu.setSlot(row, col, ctx.buildIngredientSlot(ing.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))
                         num++
                     }
                     marker.equals('o', true) ->
