@@ -348,7 +348,7 @@ object RecipeResolver {
     }
 
     private fun com.willfp.eco.core.items.TestableItem.allDisplayItems(): List<ItemStack> =
-        if (this is GroupedTestableItems) children.map { it.item.clone() }
+        if (this is GroupedTestableItems && children.isNotEmpty()) children.map { it.item.clone() }
         else listOf(item.clone())
 
     private fun RecipeChoice.toIngredient(): RecipeIngredient {
