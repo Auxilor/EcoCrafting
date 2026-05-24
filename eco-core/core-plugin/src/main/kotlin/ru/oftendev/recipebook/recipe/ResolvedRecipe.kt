@@ -51,8 +51,12 @@ enum class RecipeDisplayType {
 data class RecipeIngredient(
     val displayItem: ItemStack,
     val matcher: IngredientMatcher,
-    val empty: Boolean = false
+    val empty: Boolean = false,
+    val displayAlternatives: List<ItemStack> = emptyList()
 ) {
+    val allDisplayItems: List<ItemStack>
+        get() = displayAlternatives.ifEmpty { listOf(displayItem) }
+
     fun matches(stack: ItemStack?): Boolean = !empty && matcher.matches(stack)
 
     companion object {
