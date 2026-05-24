@@ -6,7 +6,7 @@
 #   0 = transparent/empty
 #   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
 #   o = output slot (all types)
-#   f = smelting fuel slot (display only, no interaction)
+#   u = smelting fuel slot (display only, no interaction)
 #   Workstation sidebar markers (configure items in workstation-markers below):
 #   C = crafting table   F = furnace        B = blast furnace
 #   S = smoker           P = campfire       M = smithing table
@@ -306,7 +306,7 @@ furnace-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
       - "11101011V"
   buttons:
@@ -353,7 +353,7 @@ blast-furnace-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
       - "11101011V"
   buttons:
@@ -400,7 +400,7 @@ smoker-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
       - "11101011V"
   buttons:
