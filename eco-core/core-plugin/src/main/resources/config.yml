@@ -89,7 +89,7 @@ sounds:
 
 workstation-markers:
   crafting:
-    active: crafting_table name:"&aCrafting Table"
+    active: crafting_table name:"&aCrafting Table" glint
     inactive: crafting_table name:"&7Crafting Table"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -99,7 +99,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smelting:
-    active: furnace name:"&aFurnace"
+    active: furnace name:"&aFurnace" glint
     inactive: furnace name:"&7Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -109,7 +109,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   blast-furnace:
-    active: blast_furnace name:"&aBlast Furnace"
+    active: blast_furnace name:"&aBlast Furnace" glint
     inactive: blast_furnace name:"&7Blast Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -119,7 +119,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smoker:
-    active: smoker name:"&aSmoker"
+    active: smoker name:"&aSmoker" glint
     inactive: smoker name:"&7Smoker"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -129,7 +129,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   campfire:
-    active: campfire name:"&aCampfire"
+    active: campfire name:"&aCampfire" glint
     inactive: campfire name:"&7Campfire"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -139,7 +139,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smithing:
-    active: smithing_table name:"&aSmithing Table"
+    active: smithing_table name:"&aSmithing Table" glint
     inactive: smithing_table name:"&7Smithing Table"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -149,7 +149,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   stonecutter:
-    active: stonecutter name:"&aStonecutter"
+    active: stonecutter name:"&aStonecutter" glint
     inactive: stonecutter name:"&7Stonecutter"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -159,7 +159,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   brewing:
-    active: brewing_stand name:"&aBrewing Stand"
+    active: brewing_stand name:"&aBrewing Stand" glint
     inactive: brewing_stand name:"&7Brewing Stand"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -169,7 +169,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   grindstone:
-    active: grindstone name:"&aGrindstone"
+    active: grindstone name:"&aGrindstone" glint
     inactive: grindstone name:"&7Grindstone"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -179,7 +179,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   anvil:
-    active: anvil name:"&aAnvil"
+    active: anvil name:"&aAnvil" glint
     inactive: anvil name:"&7Anvil"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -189,7 +189,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   villager:
-    active: villager_spawn_egg name:"&aVillager"
+    active: villager_spawn_egg name:"&aVillager" glint
     inactive: villager_spawn_egg name:"&7Villager"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
