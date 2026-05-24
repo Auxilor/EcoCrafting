@@ -3,6 +3,8 @@ package ru.oftendev.recipebook.gui.utils
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.Slot
+import com.willfp.eco.core.gui.slot.functional.SlotProvider
+import org.bukkit.Bukkit
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import org.bukkit.entity.Player
@@ -11,17 +13,34 @@ import ru.oftendev.recipebook.gui.RecipeGUI
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipeBookPlugin
 
-fun RecipeGUIContext.buildIngredientSlot(item: ItemStack, isIngredient: Boolean): Slot = with(this) {
-    Slot.builder(
+fun RecipeGUIContext.buildIngredientSlot(
+    items: List<ItemStack>,
+    isIngredient: Boolean,
+    cancelRefresh: () -> Unit = {}
+): Slot = with(this) {
+    fun buildDisplay(item: ItemStack): ItemStack =
         ItemStackBuilder(item.clone())
             .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
             .withGlobalFlags()
             .build()
-    ).onLeftClick { event, _, menu ->
+
+    val clickItem = items.first()
+
+    val slotBuilder = if (items.size <= 1) {
+        Slot.builder(buildDisplay(items.first()))
+    } else {
+        Slot.builder(SlotProvider { _, _ ->
+            val idx = (Bukkit.getCurrentTick() / 20) % items.size
+            buildDisplay(items[idx])
+        })
+    }
+
+    slotBuilder.onLeftClick { event, _, menu ->
         if (isIngredient) {
-            val clicked = item.clone().apply { amount = 1 }
+            val clicked = clickItem.clone().apply { amount = 1 }
             val clickedRecipe = RecipeResolver.resolve(clicked)
             if (clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
+                cancelRefresh()
                 RecipeGUI(clicked).open(event.whoClicked as Player, menu)
             }
         }
