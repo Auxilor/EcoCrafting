@@ -316,16 +316,16 @@ furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -363,16 +363,16 @@ blast-furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -410,16 +410,16 @@ smoker-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -457,16 +457,16 @@ campfire-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -504,16 +504,16 @@ smithing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -551,16 +551,16 @@ stonecutter-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -598,16 +598,16 @@ brewing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -645,16 +645,16 @@ cartography-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -692,16 +692,16 @@ grindstone-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -739,16 +739,16 @@ anvil-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -786,15 +786,16 @@ villager-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
       column: 1
-      item: crafting_table name:"&6Purchase Ingredients"
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
+        - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
