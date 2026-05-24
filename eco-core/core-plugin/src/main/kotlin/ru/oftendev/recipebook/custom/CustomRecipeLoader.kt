@@ -110,11 +110,11 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         val testable = Items.lookup(lookup)
         if (testable is com.willfp.eco.core.recipe.parts.EmptyTestableItem)
             error("Cannot resolve item: $lookup")
-        val displayItems = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems)
+        val displayItems = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems && testable.children.isNotEmpty())
             testable.children.map { it.item.clone() }
         else
             listOf(testable.item.clone())
-        val matcher = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems)
+        val matcher = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems && testable.children.isNotEmpty())
             IngredientMatcher.EcoPart(testable)
         else
             IngredientMatcher.SimilarItem(displayItems.first())
