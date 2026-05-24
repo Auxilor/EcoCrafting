@@ -4,6 +4,7 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import org.bukkit.entity.Player
+import org.bukkit.inventory.CreativeCategory
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.gui.CategoryCategoryGUI
 import ru.oftendev.recipebook.gui.ItemCategoryGUI
@@ -15,11 +16,23 @@ class RecipeCategory(val config: Config) {
     val icon = config.getSubsectionOrNull("icon")?.let { CategoryIcon(it) }
     val items = config.getSubsections("items").mapNotNull { CategoryStack.from(this, it) }
     val categories = config.getStrings("categories")
+    val pullVanillaRecipes = runCatching { config.getBool("pull-vanilla-recipes") }.getOrDefault(false)
+    val vanillaCreativeGroups: Set<CreativeCategory> = runCatching {
+        config.getStrings("vanilla-creative-groups")
+            .mapNotNull { runCatching { CreativeCategory.valueOf(it.uppercase()) }.getOrNull() }
+            .toSet()
+    }.getOrDefault(emptySet())
 
     val parsedCategories: List<RecipeCategory>
         get() = categories.mapNotNull { RecipeCategories.getById(it) }
 
     private val runtimeItems = mutableListOf<ItemStack>()
+    private val vanillaItems = mutableListOf<ItemStack>()
+
+    fun setVanillaItems(items: List<ItemStack>) {
+        vanillaItems.clear()
+        vanillaItems.addAll(items)
+    }
 
     fun registerCustomRecipe(item: ItemStack) {
         runtimeItems += item
@@ -49,7 +62,7 @@ class RecipeCategory(val config: Config) {
                 null
             }
         }
-        return configured + runtimeItems
+        return configured + vanillaItems + runtimeItems
     }
 
     private fun lockedFallback(item: ItemStack): ItemStack {
