@@ -6,7 +6,7 @@
 #   0 = transparent/empty
 #   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
 #   o = output slot (all types)
-#   f = smelting fuel slot (display only, no interaction)
+#   u = smelting fuel slot (display only, no interaction)
 #   Workstation sidebar markers (configure items in workstation-markers below):
 #   C = crafting table   F = furnace        B = blast furnace
 #   S = smoker           P = campfire       M = smithing table
@@ -16,11 +16,11 @@
 debug: false
 
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
-deduplicate-symmetrical: true
+deduplicate-symmetrical: false
 
 # When true, recipe lookup matches full item (name/lore/meta), not just base material
 # Useful when renamed items should not show vanilla recipes
-strict-item-matching: false
+strict-item-matching: true
 
 # ItemFlags applied to every display item in RecipeBook GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
@@ -89,7 +89,7 @@ sounds:
 
 workstation-markers:
   crafting:
-    active: crafting_table name:"&aCrafting Table"
+    active: crafting_table name:"&aCrafting Table" glint
     inactive: crafting_table name:"&7Crafting Table"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -99,7 +99,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smelting:
-    active: furnace name:"&aFurnace"
+    active: furnace name:"&aFurnace" glint
     inactive: furnace name:"&7Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -109,7 +109,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   blast-furnace:
-    active: blast_furnace name:"&aBlast Furnace"
+    active: blast_furnace name:"&aBlast Furnace" glint
     inactive: blast_furnace name:"&7Blast Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -119,7 +119,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smoker:
-    active: smoker name:"&aSmoker"
+    active: smoker name:"&aSmoker" glint
     inactive: smoker name:"&7Smoker"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -129,7 +129,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   campfire:
-    active: campfire name:"&aCampfire"
+    active: campfire name:"&aCampfire" glint
     inactive: campfire name:"&7Campfire"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -139,7 +139,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   smithing:
-    active: smithing_table name:"&aSmithing Table"
+    active: smithing_table name:"&aSmithing Table" glint
     inactive: smithing_table name:"&7Smithing Table"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -149,7 +149,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   stonecutter:
-    active: stonecutter name:"&aStonecutter"
+    active: stonecutter name:"&aStonecutter" glint
     inactive: stonecutter name:"&7Stonecutter"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -159,7 +159,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   brewing:
-    active: brewing_stand name:"&aBrewing Stand"
+    active: brewing_stand name:"&aBrewing Stand" glint
     inactive: brewing_stand name:"&7Brewing Stand"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -169,7 +169,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   grindstone:
-    active: grindstone name:"&aGrindstone"
+    active: grindstone name:"&aGrindstone" glint
     inactive: grindstone name:"&7Grindstone"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -179,7 +179,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   anvil:
-    active: anvil name:"&aAnvil"
+    active: anvil name:"&aAnvil" glint
     inactive: anvil name:"&7Anvil"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -189,7 +189,7 @@ workstation-markers:
       not-applicable:
         - "&7No %workstation% recipe available"
   villager:
-    active: villager_spawn_egg name:"&aVillager"
+    active: villager_spawn_egg name:"&aVillager" glint
     inactive: villager_spawn_egg name:"&7Villager"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
@@ -237,7 +237,7 @@ craft-gui:
       - "1iii1o1PW"
       - "1iii111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore:
       - ""
@@ -306,9 +306,9 @@ furnace-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -316,16 +316,16 @@ furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -353,9 +353,9 @@ blast-furnace-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -363,16 +363,16 @@ blast-furnace-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -400,9 +400,9 @@ smoker-gui:
       - "1111111CF"
       - "11i1111BS"
       - "11111o1PW"
-      - "11f1111MT"
+      - "11u1111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -410,16 +410,16 @@ smoker-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -449,7 +449,7 @@ campfire-gui:
       - "11111o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -457,16 +457,16 @@ campfire-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -496,7 +496,7 @@ smithing-gui:
       - "1iii1o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -504,16 +504,16 @@ smithing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -543,7 +543,7 @@ stonecutter-gui:
       - "11i11o1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -551,16 +551,16 @@ stonecutter-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -590,7 +590,7 @@ brewing-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -598,16 +598,16 @@ brewing-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -637,7 +637,7 @@ cartography-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -645,16 +645,16 @@ cartography-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -684,7 +684,7 @@ grindstone-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -692,16 +692,16 @@ grindstone-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -731,7 +731,7 @@ anvil-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -739,16 +739,16 @@ anvil-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
         - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6
@@ -778,7 +778,7 @@ villager-gui:
       - "11i1io1PW"
       - "1111111MT"
       - "1111111GA"
-      - "11101011V"
+      - "11111111V"
   buttons:
     recipe-parts-lore: []
     back:
@@ -786,15 +786,16 @@ villager-gui:
       column: 5
       item: barrier name:"&cBack"
       lore: []
-    purchase-ingredients:
+    quick-craft:
       row: 6
-      column: 3
-      item: gold_ingot name:"&6Purchase Ingredients"
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
         - "&7Materials:"
+        - "%materials%"
         - ""
-        - "&bLeft Click&f to buy missing materials"
+        - "&bLeft Click&f to craft"
         - ""
     prev-variant:
       row: 6

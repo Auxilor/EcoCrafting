@@ -6,12 +6,12 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitTask
 import ru.oftendev.recipebook.gui.utils.RecipeGUIContext
 import ru.oftendev.recipebook.gui.utils.buildBackSlot
 import ru.oftendev.recipebook.gui.utils.buildFuelSlot
 import ru.oftendev.recipebook.gui.utils.buildIndicatorSlot
 import ru.oftendev.recipebook.gui.utils.buildIngredientSlot
-import ru.oftendev.recipebook.gui.utils.buildPurchaseSlot
 import ru.oftendev.recipebook.gui.utils.buildQuickCraftSlot
 import ru.oftendev.recipebook.gui.utils.buildVariantSlot
 import ru.oftendev.recipebook.gui.utils.buildWorkstationSlot
@@ -64,22 +64,23 @@ class RecipeGUI(
             .replace("%xp%", recipe.villagerXp?.toString() ?: "-")
 
         val menu = Menu.builder(pattern.size).setTitle(title)
-        val items = recipe.displayItems
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
 
+        var refreshTask: BukkitTask? = null
         var row = 1; var num = 0
         pattern.forEach { line ->
             var col = 1
             line.toCharArray().forEach { marker ->
                 when {
                     marker.equals('i', true) -> {
-                        if (num < items.size && !items[num].type.isAir)
-                            menu.setSlot(row, col, ctx.buildIngredientSlot(items[num], isIngredient = true))
+                        val ing = recipe.ingredients.getOrNull(num)
+                        if (ing != null && !ing.displayItem.type.isAir)
+                            menu.setSlot(row, col, ctx.buildIngredientSlot(ing.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))
                         num++
                     }
                     marker.equals('o', true) ->
-                        menu.setSlot(row, col, ctx.buildIngredientSlot(recipe.output, isIngredient = false))
+                        menu.setSlot(row, col, ctx.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
                     marker.equals('u', true) ->
                         ctx.buildFuelSlot()?.let { menu.setSlot(row, col, it) }
                     WORKSTATION_MARKERS.containsKey(marker) ->
@@ -102,11 +103,7 @@ class RecipeGUI(
             ?.takeIf { if (ctx.config.has("quick-craft-enabled")) ctx.config.getBool("quick-craft-enabled") else true }
             ?.let { menu.addComponent(ctx.config.getInt("buttons.quick-craft.row"), ctx.config.getInt("buttons.quick-craft.column"), ctx.buildQuickCraftSlot(player, recipe)) }
 
-        ctx.config.getSubsectionOrNull("buttons.purchase-ingredients")
-            ?.takeIf { if (ctx.config.has("buy-materials-enabled")) ctx.config.getBool("buy-materials-enabled") else true }
-            ?.let { menu.addComponent(ctx.config.getInt("buttons.purchase-ingredients.row"), ctx.config.getInt("buttons.purchase-ingredients.column"), ctx.buildPurchaseSlot(player, recipe)) }
-
-        ctx.config.getSubsectionOrNull("buttons.crafter-indicator")
+ctx.config.getSubsectionOrNull("buttons.crafter-indicator")
             ?.takeIf { it.getBool("enabled") }
             ?.let { indCfg ->
                 val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
@@ -133,6 +130,14 @@ class RecipeGUI(
             menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
         }
 
-        menu.build().open(player)
+        val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
+        menu.onClose { _, _ -> refreshTask?.cancel() }
+        val builtMenu = menu.build()
+        if (hasAlternatives) {
+            refreshTask = recipeBookPlugin.server.scheduler.runTaskTimer(
+                recipeBookPlugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
+            )
+        }
+        builtMenu.open(player)
     }
 }
