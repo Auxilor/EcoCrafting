@@ -10,13 +10,16 @@ import ru.oftendev.recipebook.category.RecipeCategory
 
 object VanillaRecipeScanner {
 
+    // Vanilla recipes never change at runtime — collect once and reuse across reloads.
+    private val vanillaOutputs: List<ItemStack> by lazy { collectVanillaOutputs() }
+
     fun populate(categories: List<RecipeCategory>) {
         val wantsVanilla = categories.filter {
             it.pullVanillaRecipes || it.vanillaCreativeGroups.isNotEmpty()
         }
         if (wantsVanilla.isEmpty()) return
 
-        val vanilla = collectVanillaOutputs()
+        val vanilla = vanillaOutputs
 
         for (category in wantsVanilla) {
             val configuredMaterials = category.items.map { it.item.item.type }.toSet()
