@@ -24,7 +24,7 @@ import com.auxilor.ecocrafting.custom.libreforge.TriggerGhostCraft
 import com.auxilor.ecocrafting.custom.libreforge.TriggerRecipeLocked
 import com.auxilor.ecocrafting.custom.libreforge.TriggerRecipeUnlocked
 
-lateinit var EcoCraftingPlugin: EcoCraftingPlugin
+lateinit var ecoCraftingPlugin: EcoCraftingPlugin
     private set
 
 private const val BSTATS_PLUGIN_ID = 31426
@@ -33,7 +33,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private var metrics: Metrics? = null
 
     init {
-        EcoCraftingPlugin = this
+        ecoCraftingPlugin = this
     }
 
     override fun handleEnable() {

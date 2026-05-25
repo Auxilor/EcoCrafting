@@ -8,6 +8,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 /**
  * Optional EcoShop integration boundary.

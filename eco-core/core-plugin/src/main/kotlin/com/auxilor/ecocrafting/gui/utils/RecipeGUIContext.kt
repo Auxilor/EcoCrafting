@@ -7,7 +7,7 @@ import com.willfp.eco.core.sound.PlayableSound
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.recipe.ResolvedRecipe
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 class RecipeGUIContext(
     val config: Config,
@@ -16,12 +16,12 @@ class RecipeGUIContext(
     val altIndex: Int,
     val parent: Menu?
 ) {
-    val globalFlags: Array<ItemFlag> = EcoCraftingPlugin.configYml.getStrings("item-flags")
+    val globalFlags: Array<ItemFlag> = ecoCraftingPlugin.configYml.getStrings("item-flags")
         .mapNotNull { runCatching { ItemFlag.valueOf(it.uppercase()) }.getOrNull() }
         .toTypedArray()
 
     fun sound(key: String): PlayableSound? =
-        EcoCraftingPlugin.configYml.getSubsectionOrNull("sounds.$key")
+        ecoCraftingPlugin.configYml.getSubsectionOrNull("sounds.$key")
             ?.let { PlayableSound.create(it) }
 
     fun ItemStackBuilder.withGlobalFlags(): ItemStackBuilder =

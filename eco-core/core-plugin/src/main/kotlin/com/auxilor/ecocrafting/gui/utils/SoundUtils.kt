@@ -1,8 +1,8 @@
 ﻿package com.auxilor.ecocrafting.gui.utils
 
 import com.willfp.eco.core.sound.PlayableSound
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 internal fun configSound(key: String): PlayableSound? =
-    EcoCraftingPlugin.configYml.getSubsectionOrNull("sounds.$key")
+    ecoCraftingPlugin.configYml.getSubsectionOrNull("sounds.$key")
         ?.let { PlayableSound.create(it) }

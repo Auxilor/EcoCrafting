@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.gui.RecipeGUI
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 fun RecipeGUIContext.buildIngredientSlot(
     items: List<ItemStack>,
@@ -51,7 +51,7 @@ fun RecipeGUIContext.buildIngredientSlot(
 }
 
 fun RecipeGUIContext.buildFuelSlot(): Slot? = with(this) {
-    val fuelCfg = EcoCraftingPlugin.configYml.getSubsectionOrNull("fuel-slot") ?: return null
+    val fuelCfg = ecoCraftingPlugin.configYml.getSubsectionOrNull("fuel-slot") ?: return null
     Slot.builder(
         ItemStackBuilder(Items.lookup(fuelCfg.getString("item")))
             .addLoreLines(fuelCfg.getFormattedStrings("lore"))

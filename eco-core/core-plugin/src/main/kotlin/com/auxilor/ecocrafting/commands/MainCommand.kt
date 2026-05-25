@@ -5,7 +5,7 @@ import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import com.auxilor.ecocrafting.gui.CategoryCategoryGUI
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 class MainCommand(plugin: EcoPlugin) : PluginCommand(plugin, "ecocrafting",
     "EcoCrafting.command.EcoCrafting", false) {
@@ -25,7 +25,7 @@ class MainCommand(plugin: EcoPlugin) : PluginCommand(plugin, "ecocrafting",
 
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.isEmpty() && sender is Player) {
-            CategoryCategoryGUI(EcoCraftingPlugin.configYml.getSubsection("category-browser-gui"))
+            CategoryCategoryGUI(ecoCraftingPlugin.configYml.getSubsection("category-browser-gui"))
                 .open(sender, 1, null)
         } else {
             sender.sendMessage(

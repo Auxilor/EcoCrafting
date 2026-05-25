@@ -12,7 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.persistence.PersistentDataType
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 import java.util.UUID
 
 object BlockOwnerTracker : Listener {
@@ -55,9 +55,9 @@ object BlockOwnerTracker : Listener {
     }
 
     fun getOwner(location: Location): Player? {
-        return when (EcoCraftingPlugin.configYml.getString("owner-mode")) {
+        return when (ecoCraftingPlugin.configYml.getString("owner-mode")) {
             "nearest" -> {
-                val radius = EcoCraftingPlugin.configYml.getInt("owner-nearest-radius")
+                val radius = ecoCraftingPlugin.configYml.getInt("owner-nearest-radius")
                     .takeIf { it > 0 } ?: 32
                 location.world?.players
                     ?.filter { it.location.distanceSquared(location) <= (radius * radius).toDouble() }

@@ -9,6 +9,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 import com.auxilor.ecocrafting.recipe.IngredientMatcher
 import com.auxilor.ecocrafting.recipe.RecipeIngredient
 import com.auxilor.ecocrafting.recipe.RecipeSource

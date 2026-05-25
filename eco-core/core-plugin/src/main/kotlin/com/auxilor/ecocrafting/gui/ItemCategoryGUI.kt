@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.category.RecipeCategory
 import com.auxilor.ecocrafting.gui.utils.configSound
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {

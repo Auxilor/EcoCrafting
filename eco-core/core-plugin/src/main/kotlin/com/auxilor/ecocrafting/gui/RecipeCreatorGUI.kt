@@ -8,7 +8,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 import java.util.UUID
 
 object RecipeCreatorGUI {
@@ -35,7 +35,7 @@ object RecipeCreatorGUI {
             stationTypes.forEachIndexed { index, (typeKey, material) ->
                 val row = (index / 9) + 1
                 val col = (index % 9) + 1
-                val displayName = "&a" + EcoCraftingPlugin.langYml.getString("workstation-names.$typeKey")
+                val displayName = "&a" + ecoCraftingPlugin.langYml.getString("workstation-names.$typeKey")
                 setSlot(row, col, Slot.builder(
                     ItemStackBuilder(material).setDisplayName(displayName).build()
                 ).onLeftClick { _, _ ->
@@ -189,7 +189,7 @@ object RecipeCreatorGUI {
             return
         }
         saveRecipeYaml(pending)
-        EcoCraftingPlugin.reload()
+        ecoCraftingPlugin.reload()
         player.sendMessage("&aRecipe '${pending.id}' saved and loaded.")
     }
 
@@ -200,7 +200,7 @@ object RecipeCreatorGUI {
     }
 
     private fun saveRecipeYaml(pending: PendingRecipe) {
-        val dir = java.io.File(EcoCraftingPlugin.dataFolder, "recipes")
+        val dir = java.io.File(ecoCraftingPlugin.dataFolder, "recipes")
         dir.mkdirs()
         val file = java.io.File(dir, "${pending.id}.yml")
         val yaml = StringBuilder()
