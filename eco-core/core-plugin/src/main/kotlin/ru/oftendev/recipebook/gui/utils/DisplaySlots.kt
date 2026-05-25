@@ -38,10 +38,12 @@ fun RecipeGUIContext.buildIngredientSlot(
     slotBuilder.onLeftClick { event, _, menu ->
         if (isIngredient) {
             val clicked = clickItem.clone().apply { amount = 1 }
-            val clickedRecipe = RecipeResolver.resolve(clicked)
-            if (clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
-                cancelRefresh()
-                RecipeGUI(clicked).open(event.whoClicked as Player, menu)
+            if (clicked.type != stack.type) {
+                val clickedRecipe = RecipeResolver.resolve(clicked)
+                if (clickedRecipe != null && RecipeResolver.canCraft(event.whoClicked as Player, clicked)) {
+                    cancelRefresh()
+                    RecipeGUI(clicked).open(event.whoClicked as Player, menu)
+                }
             }
         }
         sound("slot-click")?.playTo(event.whoClicked as Player)
