@@ -7,6 +7,12 @@ icon:
     - ""
     - "&bLeft Click &fto browse recipes"
     - ""
+
+position:
+  column: 6
+  row: 3
+  page: 1
+
 items:
   - item: "wooden_sword"
     display-no-perm: false
@@ -40,36 +46,32 @@ gui:
       - "1iiiiiii1"
       - "1iiiiiii1"
       - "1iiiiiii1"
-      - "111010111"
+      - "111111111"
   buttons:
     back:
       row: 5
       column: 5
       item: barrier name:"&cBack"
       lore: []
-      click_sound: ui.button_click
     next-page:
       item:
         active: orange_stained_glass_pane name:"&aNext page"
-        inactive: gray_stained_glass_pane name:"&7Next page"
+        inactive: black_stained_glass_pane name:""
       lore:
         active: []
         inactive: []
       row: 5
       column: 6
-      click_sound: ui.button_click
     prev-page:
       item:
         active: orange_stained_glass_pane name:"&aPrevious page"
-        inactive: gray_stained_glass_pane name:"&7Previous page"
+        inactive: black_stained_glass_pane name:""
       lore:
         active: []
         inactive: []
       row: 5
       column: 4
-      click_sound: ui.button_click
     slot:
-      click_sound: ui.button_click
       lore:
         - ""
         - "&bLeft Click&f to see the recipe"

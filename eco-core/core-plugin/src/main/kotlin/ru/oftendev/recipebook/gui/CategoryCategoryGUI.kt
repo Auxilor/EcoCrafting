@@ -9,72 +9,70 @@ import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import net.kyori.adventure.sound.Sound
+import com.willfp.eco.core.sound.PlayableSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.category.RecipeCategory
+import ru.oftendev.recipebook.category.RecipeCategories
+import ru.oftendev.recipebook.recipeBookPlugin
 
-class CategoryCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
+class CategoryCategoryGUI(val config: Config): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
-        val items = parent.getMemberItems()
-        val categories = parent.parsedCategories
+        val positionedCategories = RecipeCategories.REGISTRY
+            .filter { it.guiPosition != null && it.guiPosition!!.page == page }
+
+        val maxPage = RecipeCategories.REGISTRY
+            .mapNotNull { it.guiPosition?.page }
+            .maxOrNull() ?: 1
+
         val pattern = config.getStrings("mask.pattern")
         val menu = Menu.builder(pattern.size)
             .setTitle(config.getFormattedString("title")
                 .replace("%page%", page.toString()))
-        var row = 1
-        var num = ((page-1)*getPerPage())
-        pattern.forEach {
-            var col = 1
-            it.toCharArray().forEach {
-                    character -> kotlin.run {
-                if (character.equals('i', true)) {
-                    if (num < items.size) {
-                        menu.setSlot(row, col, slot(items[num], categories[num], config.getStringOrNull("buttons.slot.click_sound").toAdventureSound()))
-                    }
-                    num++
-                }
-            }
-                col++
-            }
-            row++
-        }
+
         menu.setMask(
             FillerMask(
                 MaskItems.fromItemNames(config.getStrings("mask.items")),
                 *pattern.toTypedArray()
             )
         )
+
+        for (category in positionedCategories) {
+            val pos = category.guiPosition!!
+            val icon = category.icon?.getItemStack() ?: continue
+            menu.setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
+        }
+
         config.getSubsectionOrNull("buttons.back")?.let {
             prevMenu?.let {
                 menu.addComponent(
                     config.getInt("buttons.back.row"),
                     config.getInt("buttons.back.column"),
-                    backSlot(prevMenu, config.getStringOrNull("buttons.back.click_sound").toAdventureSound())
+                    backSlot(prevMenu, configSound("back"))
                 )
             }
         }
         menu.setSlot(
             config.getInt("buttons.next-page.row"),
             config.getInt("buttons.next-page.column"),
-            nextSlot(page, prevMenu, config.getStringOrNull("buttons.next-page.click_sound").toAdventureSound())
+            nextSlot(page, maxPage, prevMenu, configSound("next-page"))
         )
         menu.setSlot(
             config.getInt("buttons.prev-page.row"),
             config.getInt("buttons.prev-page.column"),
-            prevSlot(page, prevMenu, config.getStringOrNull("buttons.prev-page.click_sound").toAdventureSound())
+            prevSlot(page, prevMenu, configSound("prev-page"))
         )
-        for (config in config.getSubsections("custom-slots")) {
+        for (customSlotConfig in config.getSubsections("custom-slots")) {
             menu.setSlot(
-                config.getInt("row"),
-                config.getInt("column"),
-                ConfigSlot(config)
+                customSlotConfig.getInt("row"),
+                customSlotConfig.getInt("column"),
+                ConfigSlot(customSlotConfig)
             )
         }
         menu.build().open(player)
     }
 
-    private fun backSlot(menu: Menu, sound: Sound?): Slot {
+    private fun backSlot(menu: Menu, sound: PlayableSound?): Slot {
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
@@ -82,27 +80,13 @@ class CategoryCategoryGUI(val config: Config, val parent: RecipeCategory): Categ
         )
             .onLeftClick { t, _ ->
                 menu.open(t.whoClicked as Player)
-                if (sound != null) {
-                    t.whoClicked.playSound(sound)
-                }
+                sound?.playTo(t.whoClicked as Player)
             }
             .build()
     }
 
-    private fun getPerPage(): Int {
-        return config.getStrings("mask.pattern")
-            .sumOf {
-                it.toCharArray().filter { it1 -> it1.equals('i', true) }.size
-            }
-    }
-
-    private fun getMaxPages(): Int {
-        val total = parent.getMemberItems().size
-        return total/getPerPage() + if (total % getPerPage() > 0) 1 else 0
-    }
-
-    private fun nextSlot(page: Int, prevMenu: Menu?, sound: Sound?): Slot {
-        val nextActive = page < getMaxPages()
+    private fun nextSlot(page: Int, maxPage: Int, prevMenu: Menu?, sound: PlayableSound?): Slot {
+        val nextActive = page < maxPage
         val builder = Slot.builder(
             ItemStackBuilder(
                 Items.lookup(config.getString("buttons.next-page.item.${getActive(nextActive)}"))
@@ -111,17 +95,15 @@ class CategoryCategoryGUI(val config: Config, val parent: RecipeCategory): Categ
             ).build()
         )
         if (nextActive) {
-            builder.onLeftClick { event, _ -> 
+            builder.onLeftClick { event, _ ->
                 open(event.player, page + 1, prevMenu)
-                if (sound != null) {
-                    event.player.playSound(sound)
-                }
+                sound?.playTo(event.player)
             }
         }
         return builder.build()
     }
 
-    private fun prevSlot(page: Int, prevMenu: Menu?, sound: Sound?): Slot {
+    private fun prevSlot(page: Int, prevMenu: Menu?, sound: PlayableSound?): Slot {
         val prevActive = page > 1
         val builder = Slot.builder(
             ItemStackBuilder(
@@ -131,11 +113,9 @@ class CategoryCategoryGUI(val config: Config, val parent: RecipeCategory): Categ
             ).build()
         )
         if (prevActive) {
-            builder.onLeftClick { event, _ -> 
+            builder.onLeftClick { event, _ ->
                 open(event.player, page - 1, prevMenu)
-                if (sound != null) {
-                    event.player.playSound(sound)
-                }
+                sound?.playTo(event.player)
             }
         }
         return builder.build()
@@ -145,22 +125,19 @@ class CategoryCategoryGUI(val config: Config, val parent: RecipeCategory): Categ
         return if (active) "active" else "inactive"
     }
 
-    private fun slot(item: ItemStack, category: RecipeCategory, sound: Sound?): Slot {
+    private fun slot(item: ItemStack, category: RecipeCategory, sound: PlayableSound?): Slot {
         return Slot.builder(
             ItemStackBuilder(item.clone())
                 .build()
         )
             .onLeftClick { event, _, menu ->
                 category.gui.open(event.player, 1, menu)
-                if (sound != null) {
-                    event.player.playSound(sound)
-                }
+                sound?.playTo(event.player)
             }
             .build()
     }
 }
 
-private fun String?.toAdventureSound(): Sound? =
-    takeIf { !isNullOrBlank() }?.let {
-        runCatching { Sound.sound(net.kyori.adventure.key.Key.key(it), Sound.Source.AMBIENT, 1.0f, 1.0f) }.getOrNull()
-    }
+private fun configSound(key: String): PlayableSound? =
+    recipeBookPlugin.configYml.getSubsectionOrNull("sounds.$key")
+        ?.let { PlayableSound.create(it) }
