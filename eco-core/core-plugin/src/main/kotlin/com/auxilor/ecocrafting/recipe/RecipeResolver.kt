@@ -29,7 +29,7 @@ import com.auxilor.ecocrafting.custom.CustomRecipes
 import com.auxilor.ecocrafting.custom.RecipeSymmetry
 import com.auxilor.ecocrafting.custom.RecipeUnlockStore
 import com.auxilor.ecocrafting.integration.VaultPackIntegration
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 import java.lang.reflect.Field
 
 object RecipeResolver {
@@ -95,7 +95,7 @@ object RecipeResolver {
 
         val sorted = results.sortedBy { it.displayType.name }
 
-        if (!EcoCraftingPlugin.configYml.getBool("deduplicate-symmetrical")) return sorted
+        if (!ecoCraftingPlugin.configYml.getBool("deduplicate-symmetrical")) return sorted
 
         val seen = mutableSetOf<String>()
         return sorted.filter { recipe ->
@@ -257,7 +257,7 @@ object RecipeResolver {
 
     fun getEcoRecipes(): Collection<CraftingRecipe> {
         return runCatching { getRecipesBiMap().values.toList() }
-            .onFailure { EcoCraftingPlugin.logger.warning("[EcoCrafting] Could not read eco recipe registry: ${it.message}") }
+            .onFailure { ecoCraftingPlugin.logger.warning("[EcoCrafting] Could not read eco recipe registry: ${it.message}") }
             .getOrDefault(emptyList())
     }
 
@@ -293,7 +293,7 @@ object RecipeResolver {
     }
 
     private fun findBukkitRecipe(stack: ItemStack): ResolvedRecipe? {
-        val strict = EcoCraftingPlugin.configYml.getBool("strict-item-matching")
+        val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).firstNotNullOfOrNull { recipe ->
             val resolved = when (recipe) {
                 is ShapedRecipe -> recipe.toResolvedRecipe()
@@ -305,7 +305,7 @@ object RecipeResolver {
     }
 
     private fun findAllBukkitRecipes(stack: ItemStack): List<ResolvedRecipe> {
-        val strict = EcoCraftingPlugin.configYml.getBool("strict-item-matching")
+        val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).mapNotNull { recipe ->
             val resolved = when (recipe) {
                 is ShapedRecipe -> recipe.toResolvedRecipe()

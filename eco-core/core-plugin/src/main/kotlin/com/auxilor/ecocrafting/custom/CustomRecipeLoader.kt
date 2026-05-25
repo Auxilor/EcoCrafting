@@ -26,7 +26,7 @@ import com.auxilor.ecocrafting.recipe.IngredientMatcher
 import com.auxilor.ecocrafting.recipe.RecipeDisplayType
 import com.auxilor.ecocrafting.recipe.RecipeIngredient
 import com.auxilor.ecocrafting.recipe.toTestableItem
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
@@ -54,12 +54,12 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 else -> error("Unknown recipe type: $type")
             }
         }.onFailure {
-            EcoCraftingPlugin.logger.warning("[EcoCrafting] Failed to load recipe $id: ${it.message}")
+            ecoCraftingPlugin.logger.warning("[EcoCrafting] Failed to load recipe $id: ${it.message}")
         }
     }
 
     override fun afterReload(plugin: LibreforgePlugin) {
-        if (EcoCraftingPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
+        if (ecoCraftingPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
         CustomRecipes.allKeys().forEach { key ->
             val categoryId = CustomRecipes.getMeta(key)?.categoryId ?: return@forEach
             val output = WorkstationRecipes.getAll().firstOrNull { it.key == key }?.output ?: return@forEach
@@ -67,7 +67,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             if (category != null) {
                 category.registerCustomRecipe(output.clone())
             } else {
-                EcoCraftingPlugin.logger.fine("[EcoCrafting] Unknown category '$categoryId' for recipe '${key.key}', skipping")
+                ecoCraftingPlugin.logger.fine("[EcoCrafting] Unknown category '$categoryId' for recipe '${key.key}', skipping")
             }
         }
     }
@@ -125,7 +125,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     }
 
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): EcoCraftingMeta {
-        val ctx = ViolationContext(EcoCraftingPlugin, "recipe-$id")
+        val ctx = ViolationContext(ecoCraftingPlugin, "recipe-$id")
         val giveResultItem = if (config.has("give-result-item")) config.getBool("give-result-item") else true
         val effectsChain = Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
         return EcoCraftingMeta(
@@ -194,7 +194,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         fun registerEcoVariant(variantKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
             if (shapeless) {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-                    .builder(EcoCraftingPlugin, variantKey.key)
+                    .builder(ecoCraftingPlugin, variantKey.key)
                     .setOutput(output)
                     .setSupportCrafter(meta.supportCrafter)
                 recipeParts
@@ -203,7 +203,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 builder.build().register()
             } else {
                 val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-                    .builder(EcoCraftingPlugin, variantKey.key)
+                    .builder(ecoCraftingPlugin, variantKey.key)
                     .setOutput(output)
                     .setSupportCrafter(meta.supportCrafter)
                 recipeParts.forEachIndexed { idx, part ->
@@ -271,7 +271,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     private fun loadStonecutter(id: String, config: Config) {
         val input = parseIngredient(config.getString("input"))
-        val ctx = ViolationContext(EcoCraftingPlugin, "recipe-$id")
+        val ctx = ViolationContext(ecoCraftingPlugin, "recipe-$id")
         val rawOutputs = config.getSubsections("outputs")
         require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
 

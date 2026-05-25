@@ -32,7 +32,7 @@ import com.auxilor.ecocrafting.custom.event.CustomCraftEvent
 import com.auxilor.ecocrafting.custom.event.CustomSmeltEvent
 import com.auxilor.ecocrafting.custom.event.CustomSmithEvent
 import com.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
-import com.auxilor.ecocrafting.EcoCraftingPlugin
+import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 class CustomRecipeListener : Listener {
 
@@ -104,12 +104,12 @@ class CustomRecipeListener : Listener {
                 it.addition.matches(inv.getItem(2))
             }) as? SmithingRecipe
             ?: run {
-                EcoCraftingPlugin.debug("[Smithing] no recipe for key=$recipeKey")
+                ecoCraftingPlugin.debug("[Smithing] no recipe for key=$recipeKey")
                 return
             }
 
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
-        EcoCraftingPlugin.debug("[Smithing] handleSmithing: key=${recipe.key} giveResultItem=${meta.giveResultItem}")
+        ecoCraftingPlugin.debug("[Smithing] handleSmithing: key=${recipe.key} giveResultItem=${meta.giveResultItem}")
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
@@ -121,22 +121,22 @@ class CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeSmithingSlots(event.view.topInventory)
-            EcoCraftingPlugin.server.scheduler.runTask(EcoCraftingPlugin, Runnable { player.updateInventory() })
+            ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
         }
         fireCraftEffects(player, recipe, meta, item, 1)
-        EcoCraftingPlugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
+        ecoCraftingPlugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
     }
 
     private fun handleStonecutter(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
         val recipe = WorkstationRecipes.getByKey(recipeKey) as? StonecuttingRecipe
             ?: run {
-                EcoCraftingPlugin.debug("[Stonecutter] no recipe for key=$recipeKey")
+                ecoCraftingPlugin.debug("[Stonecutter] no recipe for key=$recipeKey")
                 return
             }
 
         val meta = CustomRecipes.getMeta(recipeKey) ?: return
 
-        EcoCraftingPlugin.debug("[Stonecutter] handleStonecutter: key=$recipeKey giveResultItem=${meta.giveResultItem}")
+        ecoCraftingPlugin.debug("[Stonecutter] handleStonecutter: key=$recipeKey giveResultItem=${meta.giveResultItem}")
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
@@ -149,10 +149,10 @@ class CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeStonecutterSlot(event.view.topInventory)
-            EcoCraftingPlugin.server.scheduler.runTask(EcoCraftingPlugin, Runnable { player.updateInventory() })
+            ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
         }
         fireCraftEffects(player, recipe, meta, item, amount)
-        EcoCraftingPlugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
+        ecoCraftingPlugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
     }
 
     // â”€â”€ Crafter block â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -293,7 +293,7 @@ class CustomRecipeListener : Listener {
         val player = BlockOwnerTracker.getOwner(location) ?: return
         val item = recipe.output?.clone() ?: return
 
-        val ghostPerSlot = EcoCraftingPlugin.configYml.getBool("brewing-stand.ghost-per-slot")
+        val ghostPerSlot = ecoCraftingPlugin.configYml.getBool("brewing-stand.ghost-per-slot")
         if (!meta.giveResultItem && ghostPerSlot) {
             matchedSlots.forEach { _ -> fireCraftEffects(player, recipe, meta, item.clone(), 1) }
         } else {
@@ -316,7 +316,7 @@ class CustomRecipeListener : Listener {
             ?: return
         CustomRecipes.getMeta(recipe.key) ?: return
         event.result = recipe.output?.clone()
-        EcoCraftingPlugin.server.scheduler.runTask(EcoCraftingPlugin, Runnable {
+        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable {
             (event.view.player as? Player)?.updateInventory()
         })
     }
@@ -358,7 +358,7 @@ class CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (meta.giveResultItem) return
 
-        EcoCraftingPlugin.debug("[Smithing] onSmithingResultClick: no-item recipe=${recipe.key}")
+        ecoCraftingPlugin.debug("[Smithing] onSmithingResultClick: no-item recipe=${recipe.key}")
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         event.isCancelled = true
@@ -367,7 +367,7 @@ class CustomRecipeListener : Listener {
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1)
-        EcoCraftingPlugin.server.scheduler.runTask(EcoCraftingPlugin, Runnable { player.updateInventory() })
+        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
     }
 
     // â”€â”€ Stonecutter ghost result-click â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -387,7 +387,7 @@ class CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (meta.giveResultItem) return
 
-        EcoCraftingPlugin.debug("[Stonecutter] onStonecutterResultClick: no-item recipe=${recipe.key}")
+        ecoCraftingPlugin.debug("[Stonecutter] onStonecutterResultClick: no-item recipe=${recipe.key}")
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = resultItem.clone()
@@ -409,7 +409,7 @@ class CustomRecipeListener : Listener {
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
-        EcoCraftingPlugin.server.scheduler.runTask(EcoCraftingPlugin, Runnable { player.updateInventory() })
+        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
     }
 
     // â”€â”€ InventoryClickEvent for grindstone / anvil / villager â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
