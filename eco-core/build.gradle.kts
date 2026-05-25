@@ -1,2 +1,2 @@
-group = "ru.oftendev"
+group = "com.auxilor"
 version = rootProject.version
