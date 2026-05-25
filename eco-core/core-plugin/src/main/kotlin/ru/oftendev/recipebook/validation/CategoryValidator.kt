@@ -12,7 +12,7 @@ object CategoryValidator {
         return report
     }
 
-    fun buildReport(categories: List<RecipeCategory> = RecipeCategories.REGISTRY): ValidationReport {
+    fun buildReport(categories: List<RecipeCategory> = RecipeCategories.values): ValidationReport {
         val warnings = mutableListOf<String>()
         val ids = categories.map { it.id.lowercase() }
         val duplicates = ids.groupingBy { it }.eachCount().filterValues { it > 1 }.keys
