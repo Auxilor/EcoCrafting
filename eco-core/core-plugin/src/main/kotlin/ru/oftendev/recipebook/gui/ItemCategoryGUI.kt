@@ -13,6 +13,7 @@ import com.willfp.eco.core.sound.PlayableSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.oftendev.recipebook.category.RecipeCategory
+import ru.oftendev.recipebook.gui.utils.configSound
 import ru.oftendev.recipebook.recipe.RecipeResolver
 import ru.oftendev.recipebook.recipeBookPlugin
 
@@ -155,7 +156,3 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
             .build()
     }
 }
-
-private fun configSound(key: String): PlayableSound? =
-    recipeBookPlugin.configYml.getSubsectionOrNull("sounds.$key")
-        ?.let { PlayableSound.create(it) }
