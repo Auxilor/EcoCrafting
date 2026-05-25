@@ -1,5 +1,6 @@
 package ru.oftendev.recipebook.gui
 
+import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
@@ -49,7 +50,7 @@ class RecipeGUI(
                 return
             }
 
-        val ctx = RecipeGUIContext(
+        val context = RecipeGUIContext(
             config = recipeBookPlugin.configYml.getSubsection(recipe.displayType.guiSection()),
             stack = stack,
             effectiveAlternatives = effectiveAlternatives,
@@ -57,82 +58,85 @@ class RecipeGUI(
             parent = parent
         )
 
-        val pattern = ctx.config.getStrings("mask.pattern")
-        val title = ctx.config.getFormattedString("title")
+        val pattern = context.config.getStrings("mask.pattern")
+        val formattedTitle = context.config.getFormattedString("title")
             .replace("%cook_time%", recipe.cookTime?.let { "${it / 20}s" } ?: "-")
             .replace("%brew_time%", recipe.brewTime?.let { "${it / 20}s" } ?: "-")
             .replace("%xp%", recipe.villagerXp?.toString() ?: "-")
 
-        val menu = Menu.builder(pattern.size).setTitle(title)
         val currentTypes = effectiveAlternatives.map { it.displayType }.toSet()
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
+        val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
 
         var refreshTask: BukkitTask? = null
-        var row = 1; var num = 0
-        pattern.forEach { line ->
-            var col = 1
-            line.toCharArray().forEach { marker ->
-                when {
-                    marker.equals('i', true) -> {
-                        val ing = recipe.ingredients.getOrNull(num)
-                        if (ing != null && !ing.displayItem.type.isAir)
-                            menu.setSlot(row, col, ctx.buildIngredientSlot(ing.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))
-                        num++
+
+        val builtMenu = menu(pattern.size) {
+            title = formattedTitle
+
+            var num = 0
+            pattern.forEachIndexed { rowIndex, line ->
+                line.toCharArray().forEachIndexed { colIndex, marker ->
+                    val row = rowIndex + 1
+                    val col = colIndex + 1
+                    when {
+                        marker.equals('i', ignoreCase = true) -> {
+                            val ingredient = recipe.ingredients.getOrNull(num)
+                            if (ingredient != null && !ingredient.displayItem.type.isAir)
+                                setSlot(row, col, context.buildIngredientSlot(ingredient.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))
+                            num++
+                        }
+                        marker.equals('o', ignoreCase = true) ->
+                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
+                        marker.equals('u', ignoreCase = true) ->
+                            context.buildFuelSlot()?.let { setSlot(row, col, it) }
+                        WORKSTATION_MARKERS.containsKey(marker) ->
+                            setSlot(row, col, context.buildWorkstationSlot(marker, currentType, currentTypes))
                     }
-                    marker.equals('o', true) ->
-                        menu.setSlot(row, col, ctx.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
-                    marker.equals('u', true) ->
-                        ctx.buildFuelSlot()?.let { menu.setSlot(row, col, it) }
-                    WORKSTATION_MARKERS.containsKey(marker) ->
-                        menu.setSlot(row, col, ctx.buildWorkstationSlot(marker, currentType, currentTypes))
                 }
-                col++
             }
-            row++
+
+            setMask(FillerMask(MaskItems.fromItemNames(context.config.getStrings("mask.items")), *pattern.toTypedArray()))
+
+            context.config.getSubsectionOrNull("buttons.back")?.let {
+                parent?.let {
+                    addComponent(context.config.getInt("buttons.back.row"), context.config.getInt("buttons.back.column"), context.buildBackSlot(parent))
+                }
+            }
+
+            context.config.getSubsectionOrNull("buttons.quick-craft")
+                ?.takeIf { if (context.config.has("quick-craft-enabled")) context.config.getBool("quick-craft-enabled") else true }
+                ?.let { addComponent(context.config.getInt("buttons.quick-craft.row"), context.config.getInt("buttons.quick-craft.column"), context.buildQuickCraftSlot(player, recipe)) }
+
+            context.config.getSubsectionOrNull("buttons.crafter-indicator")
+                ?.takeIf { it.getBool("enabled") }
+                ?.let { indicatorConfig ->
+                    val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
+                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                }
+
+            context.config.getSubsectionOrNull("buttons.shapeless-indicator")
+                ?.takeIf { it.getBool("enabled") }
+                ?.let { indicatorConfig ->
+                    val state = if (recipe.shapeless) "active" else "inactive"
+                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                }
+
+            if (effectiveAlternatives.size > 1) {
+                context.config.getSubsectionOrNull("buttons.prev-variant")?.let {
+                    setSlot(context.config.getInt("buttons.prev-variant.row"), context.config.getInt("buttons.prev-variant.column"), context.buildVariantSlot(-1))
+                }
+                context.config.getSubsectionOrNull("buttons.next-variant")?.let {
+                    setSlot(context.config.getInt("buttons.next-variant.row"), context.config.getInt("buttons.next-variant.column"), context.buildVariantSlot(+1))
+                }
+            }
+
+            for (slotConfig in context.config.getSubsections("custom-slots")) {
+                setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
+            }
+
+            onClose { _, _ -> refreshTask?.cancel() }
         }
 
-        menu.setMask(FillerMask(MaskItems.fromItemNames(ctx.config.getStrings("mask.items")), *pattern.toTypedArray()))
-
-        ctx.config.getSubsectionOrNull("buttons.back")?.let {
-            parent?.let {
-                menu.addComponent(ctx.config.getInt("buttons.back.row"), ctx.config.getInt("buttons.back.column"), ctx.buildBackSlot(parent))
-            }
-        }
-
-        ctx.config.getSubsectionOrNull("buttons.quick-craft")
-            ?.takeIf { if (ctx.config.has("quick-craft-enabled")) ctx.config.getBool("quick-craft-enabled") else true }
-            ?.let { menu.addComponent(ctx.config.getInt("buttons.quick-craft.row"), ctx.config.getInt("buttons.quick-craft.column"), ctx.buildQuickCraftSlot(player, recipe)) }
-
-ctx.config.getSubsectionOrNull("buttons.crafter-indicator")
-            ?.takeIf { it.getBool("enabled") }
-            ?.let { indCfg ->
-                val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
-                menu.setSlot(indCfg.getInt("row"), indCfg.getInt("column"), ctx.buildIndicatorSlot(indCfg, state))
-            }
-
-        ctx.config.getSubsectionOrNull("buttons.shapeless-indicator")
-            ?.takeIf { it.getBool("enabled") }
-            ?.let { indCfg ->
-                val state = if (recipe.shapeless) "active" else "inactive"
-                menu.setSlot(indCfg.getInt("row"), indCfg.getInt("column"), ctx.buildIndicatorSlot(indCfg, state))
-            }
-
-        if (effectiveAlternatives.size > 1) {
-            ctx.config.getSubsectionOrNull("buttons.prev-variant")?.let {
-                menu.setSlot(ctx.config.getInt("buttons.prev-variant.row"), ctx.config.getInt("buttons.prev-variant.column"), ctx.buildVariantSlot(-1))
-            }
-            ctx.config.getSubsectionOrNull("buttons.next-variant")?.let {
-                menu.setSlot(ctx.config.getInt("buttons.next-variant.row"), ctx.config.getInt("buttons.next-variant.column"), ctx.buildVariantSlot(+1))
-            }
-        }
-
-        for (slotConfig in ctx.config.getSubsections("custom-slots")) {
-            menu.setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
-        }
-
-        val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
-        menu.onClose { _, _ -> refreshTask?.cancel() }
-        val builtMenu = menu.build()
         if (hasAlternatives) {
             refreshTask = recipeBookPlugin.server.scheduler.runTaskTimer(
                 recipeBookPlugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
