@@ -4,7 +4,7 @@ import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.libreforge.loader.LibreforgePlugin
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
-import ru.oftendev.recipebook.category.RecipeCategories
+import ru.oftendev.recipebook.category.CategoryLoader
 import ru.oftendev.recipebook.commands.MainCommand
 import ru.oftendev.recipebook.integration.ShopIntegration
 import ru.oftendev.recipebook.integration.VaultPackIntegration
@@ -39,7 +39,6 @@ class RecipeBookPlugin : LibreforgePlugin() {
     override fun handleEnable() {
         VaultPackIntegration.init(this)
         ShopIntegration.init(this)
-        RecipeCategories.reload()
 
         Triggers.register(TriggerGhostCraft)
         Triggers.register(TriggerCustomCraft)
@@ -62,7 +61,7 @@ class RecipeBookPlugin : LibreforgePlugin() {
     }
 
     override fun loadConfigCategories(): List<ConfigCategory> {
-        return listOf(CustomRecipeLoader)
+        return listOf(CategoryLoader, CustomRecipeLoader)
     }
 
     override fun handleDisable() {
