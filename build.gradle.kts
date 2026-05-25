@@ -10,7 +10,7 @@ plugins {
     id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
 }
 
-group = "ru.oftendev"
+group = "com.auxilor"
 version = findProperty("version")!!
 val libreforgeVersion = findProperty("libreforge-version")
 
@@ -63,14 +63,14 @@ allprojects {
 
     tasks {
         shadowJar {
-            archiveFileName.set("RecipeBook.jar")
+            archiveFileName.set("EcoCrafting.jar")
             exclude("META-INF/**")
-            relocate("com.willfp.libreforge.loader", "ru.oftendev.recipebook.libreforge.loader")
+            relocate("com.willfp.libreforge.loader", "com.auxilor.ecocrafting.libreforge.loader")
             relocate("kotlin", "com.willfp.eco.libs.kotlin")
             relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
             relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")
             relocate("kotlin.reflect", "com.willfp.eco.libs.kotlin.reflect")
-            relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
+            relocate("org.bstats", "com.auxilor.ecocrafting.libs.bstats")
         }
 
         withType<KotlinJvmCompile>().configureEach {

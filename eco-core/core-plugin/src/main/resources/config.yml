@@ -1,4 +1,4 @@
-# RecipeBook main configuration
+﻿# EcoCrafting main configuration
 # Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
 #
 debug: false
@@ -11,7 +11,7 @@ deduplicate-symmetrical: false
 # Useful when renamed items should not show vanilla recipes
 strict-item-matching: true
 
-# ItemFlags applied to every display item in RecipeBook GUIs
+# ItemFlags applied to every display item in EcoCrafting GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
 #               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
 item-flags: []
@@ -23,7 +23,7 @@ fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUI
 #*/ The Workstation Markers Section /*#
 
 # Pattern marker key (used in mask.pattern of each GUI section):
-#   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
+#   i = ingredient slot â€” auto-increments leftâ†’right topâ†’bottom (all workstation types)
 #   o = output slot (all types)
 #   u = smelting fuel slot (display only, no interaction)
 #   Workstation sidebar markers (configure items in workstation-markers below):
@@ -161,7 +161,7 @@ villager-scan-on-reload: true
 #*/ The Category Browser GUI Section /*#
 category-browser-gui:
   custom-slots: []
-  title: "&8RecipeBook | Page &6%page%"
+  title: "&8EcoCrafting | Page &6%page%"
   mask:
     items:
       - black_stained_glass_pane
