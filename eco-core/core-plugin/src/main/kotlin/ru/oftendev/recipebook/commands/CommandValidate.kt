@@ -27,7 +27,7 @@ class CommandValidate(plugin: EcoPlugin) : Subcommand(plugin, "validate", "recip
 class CommandList(plugin: EcoPlugin) : Subcommand(plugin, "list", "recipebook.command.list", false) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         sender.sendMessage("&aRecipeBook categories:")
-        for (category in RecipeCategories.REGISTRY.sortedBy { it.id }) {
+        for (category in RecipeCategories.values.sortedBy { it.id }) {
             sender.sendMessage("&7- &f${category.id} &8(${category.type}, ${category.items.size} items, ${category.categories.size} children)")
         }
     }

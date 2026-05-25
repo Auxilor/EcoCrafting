@@ -20,10 +20,10 @@ import ru.oftendev.recipebook.recipeBookPlugin
 
 class CategoryCategoryGUI(val config: Config): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
-        val positionedCategories = RecipeCategories.REGISTRY
+        val positionedCategories = RecipeCategories.values
             .filter { it.guiPosition != null && it.guiPosition!!.page == page }
 
-        val maxPage = RecipeCategories.REGISTRY
+        val maxPage = RecipeCategories.values
             .mapNotNull { it.guiPosition?.page }
             .maxOrNull() ?: 1
 

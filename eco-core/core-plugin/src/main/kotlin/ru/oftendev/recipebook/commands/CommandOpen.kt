@@ -11,7 +11,7 @@ class CommandOpen(plugin: EcoPlugin) : Subcommand(plugin, "open",
     "recipebook.command.open", false) {
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
         return when (args.size) {
-            1 -> RecipeCategories.REGISTRY.map { it.id }
+            1 -> RecipeCategories.values.map { it.id }
             2 -> Bukkit.getOnlinePlayers().map { it.name }
             else -> emptyList()
         }

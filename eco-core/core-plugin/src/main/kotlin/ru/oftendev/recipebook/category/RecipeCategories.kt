@@ -8,21 +8,14 @@ import ru.oftendev.recipebook.validation.CategoryValidator
 import java.io.File
 
 object RecipeCategories {
-    val REGISTRY = mutableListOf<RecipeCategory>()
-
-    private val defaultCategories = listOf("farming.yml", "mining.yml", "combat.yml", "utility.yml")
+    private val _registry: MutableList<RecipeCategory> = mutableListOf()
+    val values: List<RecipeCategory> get() = _registry
 
     fun reload() {
-        REGISTRY.clear()
+        _registry.clear()
 
         val categoriesDir = File(recipeBookPlugin.dataFolder, "categories")
-
-        if (!categoriesDir.exists() || categoriesDir.listFiles()?.isEmpty() != false) {
-            categoriesDir.mkdirs()
-            for (name in defaultCategories) {
-                recipeBookPlugin.saveResource("categories/$name", false)
-            }
-        }
+        categoriesDir.mkdirs()
 
         val files = categoriesDir.listFiles { file -> file.extension == "yml" } ?: return
 
@@ -30,15 +23,15 @@ object RecipeCategories {
             val id = file.nameWithoutExtension
             val config = TransientConfig(file, ConfigType.YAML)
             config.set("id", id)
-            runCatching { REGISTRY.add(RecipeCategory(config)) }
+            runCatching { _registry.add(RecipeCategory(config)) }
                 .onFailure { recipeBookPlugin.logger.warning("[RecipeBook] Failed to load category $id: ${it.message}") }
         }
 
-        CategoryValidator.validate(REGISTRY)
-        VanillaRecipeScanner.populate(REGISTRY)
+        CategoryValidator.validate(_registry)
+        VanillaRecipeScanner.populate(_registry)
     }
 
     fun getById(id: String?): RecipeCategory? {
-        return id?.let { REGISTRY.firstOrNull { it.id.equals(id, true) } }
+        return id?.let { values.firstOrNull { it.id.equals(id, ignoreCase = true) } }
     }
 }
