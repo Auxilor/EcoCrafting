@@ -19,14 +19,14 @@ val WORKSTATION_MARKERS: Map<Char, Set<RecipeDisplayType>> = mapOf(
 )
 
 val MARKER_CONFIG_KEY: Map<Char, String> = mapOf(
-    'C' to "crafting",
-    'F' to "smelting",
-    'B' to "blast-furnace",
+    'C' to "crafting_table",
+    'F' to "furnace",
+    'B' to "blast_furnace",
     'S' to "smoker",
     'P' to "campfire",
-    'M' to "smithing",
+    'M' to "smithing_table",
     'T' to "stonecutter",
-    'W' to "brewing",
+    'W' to "brewing_stand",
     'G' to "grindstone",
     'A' to "anvil",
     'V' to "villager"
