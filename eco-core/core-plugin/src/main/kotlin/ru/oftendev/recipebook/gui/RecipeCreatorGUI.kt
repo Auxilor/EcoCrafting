@@ -1,5 +1,6 @@
 package ru.oftendev.recipebook.gui
 
+import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
@@ -31,72 +32,77 @@ object RecipeCreatorGUI {
     )
 
     fun openTypeSelect(player: Player) {
-        val menu = Menu.builder(2).setTitle("&8New Recipe — Choose Type")
+        val builtMenu = menu(2) {
+            title = "&8New Recipe — Choose Type"
 
-        stationTypes.forEachIndexed { idx, (typeKey, mat, label) ->
-            val row = (idx / 9) + 1
-            val col = (idx % 9) + 1
-            menu.setSlot(row, col, Slot.builder(
-                ItemStackBuilder(mat).setDisplayName(label).build()
-            ).onLeftClick { _, _ ->
-                openIngredientSetup(player, typeKey)
-            }.build())
+            stationTypes.forEachIndexed { index, (typeKey, material, label) ->
+                val row = (index / 9) + 1
+                val col = (index % 9) + 1
+                setSlot(row, col, Slot.builder(
+                    ItemStackBuilder(material).setDisplayName(label).build()
+                ).onLeftClick { _, _ ->
+                    openIngredientSetup(player, typeKey)
+                }.build())
+            }
+
+            setMask(FillerMask(
+                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
+                "000000000", "000000000"
+            ))
         }
-
-        menu.setMask(FillerMask(
-            MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-            "000000000", "000000000"
-        ))
-        menu.build().open(player)
+        builtMenu.open(player)
     }
 
     private fun openIngredientSetup(player: Player, typeKey: String) {
         val slotLayout = ingredientSlotLayout(typeKey)
-        val menu = Menu.builder(4).setTitle("&8New Recipe — Ingredients")
         val collectedParts = mutableMapOf<Int, ItemStack>()
 
-        slotLayout.forEachIndexed { idx, (row, col) ->
-            menu.setSlot(row, col, Slot.builder(
-                ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
-                    .setDisplayName("&7Slot ${idx + 1} — place ingredient").build()
-            ).onLeftClick { event, _ ->
-                val cursor = event.cursor ?: return@onLeftClick
-                if (cursor.type.isAir) return@onLeftClick
-                collectedParts[idx] = cursor.clone().apply { amount = 1 }
-                event.inventory.setItem(event.rawSlot, ItemStackBuilder(cursor.clone()).build())
-            }.onRightClick { event, _ ->
-                collectedParts.remove(idx)
-                event.inventory.setItem(
-                    event.rawSlot,
+        val builtMenu = menu(4) {
+            title = "&8New Recipe — Ingredients"
+
+            slotLayout.forEachIndexed { index, (row, col) ->
+                setSlot(row, col, Slot.builder(
                     ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
-                        .setDisplayName("&7Slot ${idx + 1} — place ingredient").build()
-                )
+                        .setDisplayName("&7Slot ${index + 1} — place ingredient").build()
+                ).onLeftClick { event, _ ->
+                    val cursor = event.cursor ?: return@onLeftClick
+                    if (cursor.type.isAir) return@onLeftClick
+                    collectedParts[index] = cursor.clone().apply { amount = 1 }
+                    event.inventory.setItem(event.rawSlot, ItemStackBuilder(cursor.clone()).build())
+                }.onRightClick { event, _ ->
+                    collectedParts.remove(index)
+                    event.inventory.setItem(
+                        event.rawSlot,
+                        ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
+                            .setDisplayName("&7Slot ${index + 1} — place ingredient").build()
+                    )
+                }.build())
+            }
+
+            if (typeKey == "crafting_table") {
+                var shapeless = false
+                setSlot(4, 9, Slot.builder(
+                    ItemStackBuilder(Material.PAPER).setDisplayName("&eShaped (click to toggle)").build()
+                ).onLeftClick { event, _ ->
+                    shapeless = !shapeless
+                    val label = if (shapeless) "&eShapeless" else "&eShaped"
+                    event.inventory.setItem(event.rawSlot, ItemStackBuilder(Material.PAPER).setDisplayName(label).build())
+                }.build())
+            }
+
+            setSlot(4, 5, Slot.builder(
+                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
+            ).onLeftClick { _, _ ->
+                player.closeInventory()
+                openOutputSetup(player, typeKey, collectedParts)
             }.build())
+
+            setMask(FillerMask(
+                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
+                "111111111", "111111111", "111111111", "111111111"
+            ))
         }
-
-        if (typeKey == "crafting_table") {
-            var shapeless = false
-            menu.setSlot(4, 9, Slot.builder(
-                ItemStackBuilder(Material.PAPER).setDisplayName("&eShaped (click to toggle)").build()
-            ).onLeftClick { event, _ ->
-                shapeless = !shapeless
-                val label = if (shapeless) "&eShapeless" else "&eShaped"
-                event.inventory.setItem(event.rawSlot, ItemStackBuilder(Material.PAPER).setDisplayName(label).build())
-            }.build())
-        }
-
-        menu.setSlot(4, 5, Slot.builder(
-            ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
-        ).onLeftClick { _, _ ->
-            player.closeInventory()
-            openOutputSetup(player, typeKey, collectedParts)
-        }.build())
-
-        menu.setMask(FillerMask(
-            MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-            "111111111", "111111111", "111111111", "111111111"
-        ))
-        menu.build().open(player)
+        builtMenu.open(player)
     }
 
     private fun ingredientSlotLayout(typeKey: String): List<Pair<Int, Int>> = when (typeKey) {
@@ -115,42 +121,45 @@ object RecipeCreatorGUI {
 
     fun openOutputSetup(player: Player, typeKey: String, parts: Map<Int, ItemStack>) {
         var ghost = false
-        val menu = Menu.builder(3).setTitle("&8New Recipe — Output")
 
-        menu.setSlot(2, 5, Slot.builder(
-            ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).setDisplayName("&7Place output item").build()
-        ).onLeftClick { event, _ ->
-            val cursor = event.cursor ?: return@onLeftClick
-            if (cursor.type.isAir) return@onLeftClick
-            event.inventory.setItem(event.rawSlot, cursor.clone())
-        }.build())
+        val builtMenu = menu(3) {
+            title = "&8New Recipe — Output"
 
-        menu.setSlot(2, 7, Slot.builder(
-            ItemStackBuilder(Material.GRAY_DYE).setDisplayName("&7Ghost: OFF").build()
-        ).onLeftClick { event, _ ->
-            ghost = !ghost
-            val label = if (ghost) "&aGhost: ON" else "&7Ghost: OFF"
-            val mat   = if (ghost) Material.LIME_DYE else Material.GRAY_DYE
-            event.inventory.setItem(event.rawSlot, ItemStackBuilder(mat).setDisplayName(label).build())
-        }.build())
+            setSlot(2, 5, Slot.builder(
+                ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).setDisplayName("&7Place output item").build()
+            ).onLeftClick { event, _ ->
+                val cursor = event.cursor ?: return@onLeftClick
+                if (cursor.type.isAir) return@onLeftClick
+                event.inventory.setItem(event.rawSlot, cursor.clone())
+            }.build())
 
-        menu.setSlot(3, 5, Slot.builder(
-            ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
-        ).onLeftClick { event, _ ->
-            val outputItem = event.inventory.getItem(13)
-                ?.takeIf { !it.type.isAir } ?: run {
-                player.sendMessage("&cPlace an output item first.")
-                return@onLeftClick
-            }
-            player.closeInventory()
-            openMetadata(player, typeKey, parts, outputItem, ghost)
-        }.build())
+            setSlot(2, 7, Slot.builder(
+                ItemStackBuilder(Material.GRAY_DYE).setDisplayName("&7Ghost: OFF").build()
+            ).onLeftClick { event, _ ->
+                ghost = !ghost
+                val label = if (ghost) "&aGhost: ON" else "&7Ghost: OFF"
+                val material = if (ghost) Material.LIME_DYE else Material.GRAY_DYE
+                event.inventory.setItem(event.rawSlot, ItemStackBuilder(material).setDisplayName(label).build())
+            }.build())
 
-        menu.setMask(FillerMask(
-            MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-            "111111111", "111111111", "111111111"
-        ))
-        menu.build().open(player)
+            setSlot(3, 5, Slot.builder(
+                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
+            ).onLeftClick { event, _ ->
+                val outputItem = event.inventory.getItem(13)
+                    ?.takeIf { !it.type.isAir } ?: run {
+                    player.sendMessage("&cPlace an output item first.")
+                    return@onLeftClick
+                }
+                player.closeInventory()
+                openMetadata(player, typeKey, parts, outputItem, ghost)
+            }.build())
+
+            setMask(FillerMask(
+                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
+                "111111111", "111111111", "111111111"
+            ))
+        }
+        builtMenu.open(player)
     }
 
     fun openMetadata(
