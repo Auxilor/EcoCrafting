@@ -2,6 +2,7 @@ package ru.oftendev.recipebook.category
 
 import com.willfp.eco.core.config.ConfigType
 import com.willfp.eco.core.config.TransientConfig
+import ru.oftendev.recipebook.recipe.VanillaRecipeScanner
 import ru.oftendev.recipebook.recipeBookPlugin
 import ru.oftendev.recipebook.validation.CategoryValidator
 import java.io.File
@@ -34,6 +35,7 @@ object RecipeCategories {
         }
 
         CategoryValidator.validate(REGISTRY)
+        VanillaRecipeScanner.populate(REGISTRY)
     }
 
     fun getById(id: String?): RecipeCategory? {
