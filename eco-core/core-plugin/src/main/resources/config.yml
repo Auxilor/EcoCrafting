@@ -33,7 +33,7 @@ fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUI
 #   A = anvil            V = villager
 
 workstation-markers:
-  crafting: # The workstation type.
+  crafting_table: # The workstation type.
     active: crafting_table name:"&aCrafting Table" glint # The item shown when viewing this workstation's recipe(s).
     inactive: crafting_table name:"&7Crafting Table" # The item shown when this workstation is available but not currently being viewed.
     not-applicable: gray_dye name:"&8%workstation%" # The item shown when this workstation has no recipe for the current item.
@@ -43,7 +43,7 @@ workstation-markers:
         - "&bClick to view %workstation% recipe"
       not-applicable: # Lore shown when this workstation is not applicable for the current recipe.
         - "&7No %workstation% recipe available"
-  smelting:
+  furnace:
     active: furnace name:"&aFurnace" glint
     inactive: furnace name:"&7Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
@@ -53,7 +53,7 @@ workstation-markers:
         - "&bClick to view %workstation% recipe"
       not-applicable:
         - "&7No %workstation% recipe available"
-  blast-furnace:
+  blast_furnace:
     active: blast_furnace name:"&aBlast Furnace" glint
     inactive: blast_furnace name:"&7Blast Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
@@ -83,7 +83,7 @@ workstation-markers:
         - "&bClick to view %workstation% recipe"
       not-applicable:
         - "&7No %workstation% recipe available"
-  smithing:
+  smithing_table:
     active: smithing_table name:"&aSmithing Table" glint
     inactive: smithing_table name:"&7Smithing Table"
     not-applicable: gray_dye name:"&8%workstation%"
@@ -103,7 +103,7 @@ workstation-markers:
         - "&bClick to view %workstation% recipe"
       not-applicable:
         - "&7No %workstation% recipe available"
-  brewing:
+  brewing_stand:
     active: brewing_stand name:"&aBrewing Stand" glint
     inactive: brewing_stand name:"&7Brewing Stand"
     not-applicable: gray_dye name:"&8%workstation%"

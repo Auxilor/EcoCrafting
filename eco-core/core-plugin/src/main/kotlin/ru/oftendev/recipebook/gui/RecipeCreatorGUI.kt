@@ -14,29 +14,30 @@ import java.util.UUID
 object RecipeCreatorGUI {
 
     private val stationTypes = listOf(
-        Triple("crafting_table",    Material.CRAFTING_TABLE,    "&aCrafting Table"),
-        Triple("furnace",           Material.FURNACE,           "&aFurnace"),
-        Triple("blast_furnace",     Material.BLAST_FURNACE,     "&aBlast Furnace"),
-        Triple("smoker",            Material.SMOKER,            "&aSmoker"),
-        Triple("campfire",          Material.CAMPFIRE,          "&aCampfire"),
-        Triple("smithing_table",    Material.SMITHING_TABLE,    "&aSmithing Table"),
-        Triple("stonecutter",       Material.STONECUTTER,       "&aStonecutter"),
-        Triple("crafter",           Material.CRAFTER,           "&aCrafter"),
-        Triple("brewing_stand",     Material.BREWING_STAND,     "&aBrewing Stand"),
-        Triple("grindstone",        Material.GRINDSTONE,        "&aGrindstone"),
-        Triple("anvil",             Material.ANVIL,             "&aAnvil"),
-        Triple("villager",          Material.EMERALD,           "&aVillager Trade")
+        "crafting_table" to Material.CRAFTING_TABLE,
+        "furnace"        to Material.FURNACE,
+        "blast_furnace"  to Material.BLAST_FURNACE,
+        "smoker"         to Material.SMOKER,
+        "campfire"       to Material.CAMPFIRE,
+        "smithing_table" to Material.SMITHING_TABLE,
+        "stonecutter"    to Material.STONECUTTER,
+        "brewing_stand"  to Material.BREWING_STAND,
+        "grindstone"     to Material.GRINDSTONE,
+        "anvil"          to Material.ANVIL,
+        "villager"       to Material.EMERALD
     )
+
 
     fun openTypeSelect(player: Player) {
         val builtMenu = menu(2) {
             title = "&8New Recipe — Choose Type"
 
-            stationTypes.forEachIndexed { index, (typeKey, material, label) ->
+            stationTypes.forEachIndexed { index, (typeKey, material) ->
                 val row = (index / 9) + 1
                 val col = (index % 9) + 1
+                val displayName = "&a" + recipeBookPlugin.langYml.getString("workstation-names.$typeKey")
                 setSlot(row, col, Slot.builder(
-                    ItemStackBuilder(material).setDisplayName(label).build()
+                    ItemStackBuilder(material).setDisplayName(displayName).build()
                 ).onLeftClick { _, _ ->
                     openIngredientSetup(player, typeKey)
                 }.build())
