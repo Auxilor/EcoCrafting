@@ -60,7 +60,6 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     override fun afterReload(plugin: LibreforgePlugin) {
         if (recipeBookPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
-        RecipeCategories.reload()
         CustomRecipes.allKeys().forEach { key ->
             val categoryId = CustomRecipes.getMeta(key)?.categoryId ?: return@forEach
             val output = WorkstationRecipes.getAll().firstOrNull { it.key == key }?.output ?: return@forEach
