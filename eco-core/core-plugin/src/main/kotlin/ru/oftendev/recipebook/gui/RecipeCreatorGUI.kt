@@ -1,7 +1,6 @@
 package ru.oftendev.recipebook.gui
 
 import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
