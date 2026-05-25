@@ -55,7 +55,9 @@ allprojects {
 
     java {
         withSourcesJar()
-        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
     }
 
     tasks {
@@ -64,12 +66,15 @@ allprojects {
             exclude("META-INF/**")
             relocate("com.willfp.libreforge.loader", "ru.oftendev.recipebook.libreforge.loader")
             relocate("kotlin", "com.willfp.eco.libs.kotlin")
+            relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
+            relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")
+            relocate("kotlin.reflect", "com.willfp.eco.libs.kotlin.reflect")
             relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
         }
 
         compileKotlin {
             compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_21)
+                jvmTarget = JvmTarget.JVM_21
             }
         }
 
@@ -77,6 +82,10 @@ allprojects {
             options.isDeprecation = true
             options.encoding = "UTF-8"
             dependsOn(clean)
+        }
+
+        withType<JavaCompile>().configureEach {
+            options.release = 21
         }
 
         processResources {
