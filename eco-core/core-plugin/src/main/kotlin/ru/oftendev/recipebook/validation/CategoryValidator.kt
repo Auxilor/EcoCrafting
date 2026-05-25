@@ -38,11 +38,6 @@ object CategoryValidator {
             }
         }
 
-        val defaultCategory = recipeBookPlugin.configYml.getString("default-category")
-        if (RecipeCategories.getById(defaultCategory) == null) {
-            warnings += "default-category '$defaultCategory' does not exist"
-        }
-
         return ValidationReport(
             categories = categories.size,
             itemEntries = categories.sumOf { it.items.size },

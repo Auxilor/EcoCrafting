@@ -1,20 +1,9 @@
 # RecipeBook main configuration
 # Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
 #
-# Pattern marker key (used in mask.pattern of each GUI section):
-#   1 = filler (uses mask items list)
-#   0 = transparent/empty
-#   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
-#   o = output slot (all types)
-#   u = smelting fuel slot (display only, no interaction)
-#   Workstation sidebar markers (configure items in workstation-markers below):
-#   C = crafting table   F = furnace        B = blast furnace
-#   S = smoker           P = campfire       M = smithing table
-#   T = stonecutter      W = brewing stand  G = grindstone
-#   A = anvil            V = villager
-
 debug: false
 
+#*/ The Optional Config Section /*#
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
 
@@ -27,76 +16,32 @@ strict-item-matching: true
 #               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
 item-flags: []
 
-fuel-slot:
+fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUIs. Only for display, no interaction.
   item: charcoal name:"&7Fuel"
   lore: []
 
-sounds:
-  next-page:
-    sound: ui.button_click
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  prev-page:
-    sound: ui.button_click
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  workstation-switch:
-    sound: ui.button_click
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  back:
-    sound: ui.button_click
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  slot-click:
-    sound: ui.button_click
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  quick-craft-success:
-    sound: entity.player.levelup
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  quick-craft-fail:
-    sound: entity.villager.no
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  purchase-success:
-    sound: entity.experience_orb.pickup
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  purchase-fail:
-    sound: entity.villager.no
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
+#*/ The Workstation Markers Section /*#
+
+# Pattern marker key (used in mask.pattern of each GUI section):
+#   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
+#   o = output slot (all types)
+#   u = smelting fuel slot (display only, no interaction)
+#   Workstation sidebar markers (configure items in workstation-markers below):
+#   C = crafting table   F = furnace        B = blast furnace
+#   S = smoker           P = campfire       M = smithing table
+#   T = stonecutter      W = brewing stand  G = grindstone
+#   A = anvil            V = villager
 
 workstation-markers:
-  crafting:
-    active: crafting_table name:"&aCrafting Table" glint
-    inactive: crafting_table name:"&7Crafting Table"
-    not-applicable: gray_dye name:"&8%workstation%"
-    lore:
-      active: []
-      inactive:
+  crafting: # The workstation type.
+    active: crafting_table name:"&aCrafting Table" glint # The item shown when viewing this workstation's recipe(s).
+    inactive: crafting_table name:"&7Crafting Table" # The item shown when this workstation is available but not currently being viewed.
+    not-applicable: gray_dye name:"&8%workstation%" # The item shown when this workstation has no recipe for the current item.
+    lore: # The lore for the items above. %workstation% is replaced with the workstation name (Crafting Table, Furnace, etc), from lang.yml.
+      active: [] # Lore shown when this workstation is active.
+      inactive: # Lore shown when this workstation is available but not active.
         - "&bClick to view %workstation% recipe"
-      not-applicable:
+      not-applicable: # Lore shown when this workstation is not applicable for the current recipe.
         - "&7No %workstation% recipe available"
   smelting:
     active: furnace name:"&aFurnace" glint
@@ -213,9 +158,40 @@ brewing-stand:
 # Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
 villager-scan-on-reload: true
 
-default-category: "main"
+#*/ The Category Browser GUI Section /*#
+category-browser-gui:
+  custom-slots: []
+  title: "&8RecipeBook | Page &6%page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "100000001"
+      - "100000001"
+      - "100000001"
+      - "111111111"
+  buttons:
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: []
+        inactive: []
+      row: 5
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: []
+        inactive: []
+      row: 5
+      column: 4
 
-# Shop Integration Settings
+#*/ The EcoShop Integration Section /*#
 shop-integration:
   # Enable integration with EcoShop to allow purchasing missing materials.
   enabled: true
@@ -224,6 +200,7 @@ shop-integration:
   auto-buy-missing-materials: false
   require-shift-click: true
 
+#*/ The Recipe Book GUI Section /*#
 craft-gui:
   title: "&8Crafting Recipe"
   quick-craft-enabled: true
@@ -811,3 +788,60 @@ villager-gui:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
       lore: []
+
+#*/ The Sound Configuration Section /*#
+sounds:
+  next-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  prev-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  workstation-switch:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  back:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  slot-click:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-success:
+    sound: entity.player.levelup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-success:
+    sound: entity.experience_orb.pickup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER

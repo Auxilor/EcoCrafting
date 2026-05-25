@@ -4,7 +4,7 @@ import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import ru.oftendev.recipebook.category.RecipeCategories
+import ru.oftendev.recipebook.gui.CategoryCategoryGUI
 import ru.oftendev.recipebook.recipeBookPlugin
 
 class MainCommand(plugin: EcoPlugin) : PluginCommand(plugin, "recipebook",
@@ -25,8 +25,8 @@ class MainCommand(plugin: EcoPlugin) : PluginCommand(plugin, "recipebook",
 
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.isEmpty() && sender is Player) {
-            RecipeCategories.getById(recipeBookPlugin.configYml.getString("default-category"))?.gui
-                ?.open(sender, 1, null)
+            CategoryCategoryGUI(recipeBookPlugin.configYml.getSubsection("category-browser-gui"))
+                .open(sender, 1, null)
         } else {
             sender.sendMessage(
                 plugin.langYml.getMessage("invalid-command")

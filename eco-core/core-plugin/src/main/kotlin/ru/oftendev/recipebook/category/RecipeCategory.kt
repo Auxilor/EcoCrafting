@@ -10,12 +10,17 @@ import ru.oftendev.recipebook.gui.CategoryCategoryGUI
 import ru.oftendev.recipebook.gui.ItemCategoryGUI
 import ru.oftendev.recipebook.recipe.RecipeResolver
 
+data class CategoryPosition(val column: Int, val row: Int, val page: Int)
+
 class RecipeCategory(val config: Config) {
     val id = config.getString("id")
     val type = config.getString("type").lowercase()
     val icon = config.getSubsectionOrNull("icon")?.let { CategoryIcon(it) }
     val items = config.getSubsections("items").mapNotNull { CategoryStack.from(this, it) }
     val categories = config.getStrings("categories")
+    val guiPosition: CategoryPosition? = config.getSubsectionOrNull("position")?.let {
+        CategoryPosition(it.getInt("column"), it.getInt("row"), it.getInt("page"))
+    }
     val pullVanillaRecipes = runCatching { config.getBool("pull-vanilla-recipes") }.getOrDefault(false)
     val vanillaCreativeGroups: Set<CreativeCategory> = runCatching {
         config.getStrings("vanilla-creative-groups")
@@ -41,7 +46,7 @@ class RecipeCategory(val config: Config) {
     val gui = if (type == "items") {
         ItemCategoryGUI(config.getSubsection("gui"), this)
     } else {
-        CategoryCategoryGUI(config.getSubsection("gui"), this)
+        CategoryCategoryGUI(config.getSubsection("gui"))
     }
 
     fun getMemberItems(): List<ItemStack> {

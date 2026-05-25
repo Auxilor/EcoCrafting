@@ -10,7 +10,7 @@ import java.io.File
 object RecipeCategories {
     val REGISTRY = mutableListOf<RecipeCategory>()
 
-    private val defaultCategories = listOf("main.yml", "farming.yml", "mining.yml", "combat.yml", "utility.yml")
+    private val defaultCategories = listOf("farming.yml", "mining.yml", "combat.yml", "utility.yml")
 
     fun reload() {
         REGISTRY.clear()
