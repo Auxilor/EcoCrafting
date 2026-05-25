@@ -1,8 +1,6 @@
 package ru.oftendev.recipebook.gui
 
 import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import org.bukkit.Material
@@ -44,10 +42,6 @@ object RecipeCreatorGUI {
                 }.build())
             }
 
-            setMask(FillerMask(
-                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-                "000000000", "000000000"
-            ))
         }
         builtMenu.open(player)
     }
@@ -96,10 +90,6 @@ object RecipeCreatorGUI {
                 openOutputSetup(player, typeKey, collectedParts)
             }.build())
 
-            setMask(FillerMask(
-                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-                "111111111", "111111111", "111111111", "111111111"
-            ))
         }
         builtMenu.open(player)
     }
@@ -153,10 +143,6 @@ object RecipeCreatorGUI {
                 openMetadata(player, typeKey, parts, outputItem, ghost)
             }.build())
 
-            setMask(FillerMask(
-                MaskItems.fromItemNames(listOf("black_stained_glass_pane")),
-                "111111111", "111111111", "111111111"
-            ))
         }
         builtMenu.open(player)
     }
