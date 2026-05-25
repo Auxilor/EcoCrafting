@@ -1,6 +1,7 @@
 package ru.oftendev.recipebook.gui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -21,59 +22,59 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         val items = parent.getMemberItemsRecipes(player)
         val pattern = config.getStrings("mask.pattern")
-        val menu = Menu.builder(pattern.size)
-            .setTitle(config.getFormattedString("title")
-                .replace("%page%", page.toString()))
-        var row = 1
-        var num = ((page-1)*getPerPage())
-        pattern.forEach {
-            var col = 1
-            it.toCharArray().forEach {
-                    character -> kotlin.run {
-                if (character.equals('i', true)) {
-                    if (num < items.size) {
-                        menu.setSlot(row, col, slot(items[num], configSound("slot-click")))
+        var num = ((page - 1) * getPerPage())
+
+        val builtMenu = menu(pattern.size) {
+            title = config.getFormattedString("title").replace("%page%", page.toString())
+
+            setMask(
+                FillerMask(
+                    MaskItems.fromItemNames(config.getStrings("mask.items")),
+                    *pattern.toTypedArray()
+                )
+            )
+
+            pattern.forEachIndexed { rowIndex, line ->
+                line.toCharArray().forEachIndexed { colIndex, character ->
+                    if (character.equals('i', ignoreCase = true)) {
+                        if (num < items.size) {
+                            setSlot(rowIndex + 1, colIndex + 1, slot(items[num], configSound("slot-click")))
+                        }
+                        num++
                     }
-                    num++
                 }
             }
-                col++
+
+            config.getSubsectionOrNull("buttons.back")?.let {
+                prevMenu?.let {
+                    addComponent(
+                        config.getInt("buttons.back.row"),
+                        config.getInt("buttons.back.column"),
+                        backSlot(prevMenu, configSound("back"))
+                    )
+                }
             }
-            row++
-        }
-        config.getSubsectionOrNull("buttons.back")?.let {
-            prevMenu?.let {
-                menu.addComponent(
-                    config.getInt("buttons.back.row"),
-                    config.getInt("buttons.back.column"),
-                    backSlot(prevMenu, configSound("back"))
+
+            setSlot(
+                config.getInt("buttons.next-page.row"),
+                config.getInt("buttons.next-page.column"),
+                nextSlot(page, prevMenu, player, configSound("next-page"))
+            )
+            setSlot(
+                config.getInt("buttons.prev-page.row"),
+                config.getInt("buttons.prev-page.column"),
+                prevSlot(page, prevMenu, configSound("prev-page"))
+            )
+
+            for (slotConfig in config.getSubsections("custom-slots")) {
+                setSlot(
+                    slotConfig.getInt("row"),
+                    slotConfig.getInt("column"),
+                    ConfigSlot(slotConfig)
                 )
             }
         }
-        menu.setMask(
-            FillerMask(
-                MaskItems.fromItemNames(config.getStrings("mask.items")),
-                *pattern.toTypedArray()
-            )
-        )
-        menu.setSlot(
-            config.getInt("buttons.next-page.row"),
-            config.getInt("buttons.next-page.column"),
-            nextSlot(page, prevMenu, player, configSound("next-page"))
-        )
-        menu.setSlot(
-            config.getInt("buttons.prev-page.row"),
-            config.getInt("buttons.prev-page.column"),
-            prevSlot(page, prevMenu, configSound("prev-page"))
-        )
-        for (config in config.getSubsections("custom-slots")) {
-            menu.setSlot(
-                config.getInt("row"),
-                config.getInt("column"),
-                ConfigSlot(config)
-            )
-        }
-        menu.build().open(player)
+        builtMenu.open(player)
     }
 
     private fun backSlot(menu: Menu, sound: PlayableSound?): Slot {
@@ -91,8 +92,8 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
 
     private fun getPerPage(): Int {
         return config.getStrings("mask.pattern")
-            .sumOf {
-                it.toCharArray().filter { it1 -> it1.equals('i', true) }.size
+            .sumOf { line ->
+                line.count { it.equals('i', ignoreCase = true) }
             }
     }
 
