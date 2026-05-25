@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -72,7 +73,7 @@ allprojects {
             relocate("org.bstats", "ru.oftendev.recipebook.libs.bstats")
         }
 
-        compileKotlin {
+        withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
                 jvmTarget = JvmTarget.JVM_21
             }
