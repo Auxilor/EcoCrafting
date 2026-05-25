@@ -1,6 +1,7 @@
 package ru.oftendev.recipebook.gui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -27,50 +28,53 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
             .maxOrNull() ?: 1
 
         val pattern = config.getStrings("mask.pattern")
-        val menu = Menu.builder(pattern.size)
-            .setTitle(config.getFormattedString("title")
-                .replace("%page%", page.toString()))
 
-        menu.setMask(
-            FillerMask(
-                MaskItems.fromItemNames(config.getStrings("mask.items")),
-                *pattern.toTypedArray()
+        val builtMenu = menu(pattern.size) {
+            title = config.getFormattedString("title").replace("%page%", page.toString())
+
+            setMask(
+                FillerMask(
+                    MaskItems.fromItemNames(config.getStrings("mask.items")),
+                    *pattern.toTypedArray()
+                )
             )
-        )
 
-        for (category in positionedCategories) {
-            val pos = category.guiPosition!!
-            val icon = category.icon?.getItemStack() ?: continue
-            menu.setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
-        }
+            for (category in positionedCategories) {
+                val pos = category.guiPosition!!
+                val icon = category.icon?.getItemStack() ?: continue
+                setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
+            }
 
-        config.getSubsectionOrNull("buttons.back")?.let {
-            prevMenu?.let {
-                menu.addComponent(
-                    config.getInt("buttons.back.row"),
-                    config.getInt("buttons.back.column"),
-                    backSlot(prevMenu, configSound("back"))
+            config.getSubsectionOrNull("buttons.back")?.let {
+                prevMenu?.let {
+                    addComponent(
+                        config.getInt("buttons.back.row"),
+                        config.getInt("buttons.back.column"),
+                        backSlot(prevMenu, configSound("back"))
+                    )
+                }
+            }
+
+            setSlot(
+                config.getInt("buttons.next-page.row"),
+                config.getInt("buttons.next-page.column"),
+                nextSlot(page, maxPage, prevMenu, configSound("next-page"))
+            )
+            setSlot(
+                config.getInt("buttons.prev-page.row"),
+                config.getInt("buttons.prev-page.column"),
+                prevSlot(page, prevMenu, configSound("prev-page"))
+            )
+
+            for (slotConfig in config.getSubsections("custom-slots")) {
+                setSlot(
+                    slotConfig.getInt("row"),
+                    slotConfig.getInt("column"),
+                    ConfigSlot(slotConfig)
                 )
             }
         }
-        menu.setSlot(
-            config.getInt("buttons.next-page.row"),
-            config.getInt("buttons.next-page.column"),
-            nextSlot(page, maxPage, prevMenu, configSound("next-page"))
-        )
-        menu.setSlot(
-            config.getInt("buttons.prev-page.row"),
-            config.getInt("buttons.prev-page.column"),
-            prevSlot(page, prevMenu, configSound("prev-page"))
-        )
-        for (customSlotConfig in config.getSubsections("custom-slots")) {
-            menu.setSlot(
-                customSlotConfig.getInt("row"),
-                customSlotConfig.getInt("column"),
-                ConfigSlot(customSlotConfig)
-            )
-        }
-        menu.build().open(player)
+        builtMenu.open(player)
     }
 
     private fun backSlot(menu: Menu, sound: PlayableSound?): Slot {
