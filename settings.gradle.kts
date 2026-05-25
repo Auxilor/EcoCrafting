@@ -9,7 +9,7 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
-rootProject.name = "RecipeBook"
+rootProject.name = "EcoCrafting"
 
 include(":eco-core")
 include(":eco-core:core-plugin")

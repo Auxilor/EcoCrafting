@@ -1,9 +1,9 @@
 folia-supported: false
 name: ${pluginName}
 version: ${version}
-main: ru.oftendev.recipebook.RecipeBookPlugin
+main: com.auxilor.ecocrafting.EcoCraftingPlugin
 api-version: 1.21.8
-authors: [ _OfTeN_, joogiebear ]
+authors: [Exanthiax, _OfTeN_, joogiebear, Auxilor ]
 depend:
   - eco
 softdepend:
@@ -11,15 +11,15 @@ softdepend:
   - VaultPack
   - libreforge
 permissions:
-  recipebook.admin.create:
+  ecocrafting.admin.create:
     description: Open the in-game recipe creator GUI
     default: op
-  recipebook.admin:
+  ecocrafting.admin:
     description: Admin commands (unlock/lock recipes)
     default: op
 
 commands:
-  recipebook:
+  ecocrafting:
     description: Base Command
-    permission: recipebook.command.recipebook
+    permission: ecocrafting.command.ecocrafting
     aliases: [ rbook ]
