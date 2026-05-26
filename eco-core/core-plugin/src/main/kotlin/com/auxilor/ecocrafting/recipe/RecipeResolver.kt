@@ -25,6 +25,13 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.RecipeChoice
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
+import org.bukkit.inventory.CookingRecipe
+import org.bukkit.inventory.FurnaceRecipe
+import org.bukkit.inventory.BlastingRecipe
+import org.bukkit.inventory.SmokingRecipe
+import org.bukkit.inventory.CampfireRecipe
+import org.bukkit.inventory.SmithingTransformRecipe
+import org.bukkit.inventory.StonecuttingRecipe as BukkitStonecuttingRecipe
 import com.auxilor.ecocrafting.custom.CustomRecipes
 import com.auxilor.ecocrafting.custom.RecipeSymmetry
 import com.auxilor.ecocrafting.custom.RecipeUnlockStore
@@ -296,9 +303,12 @@ object RecipeResolver {
         val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).firstNotNullOfOrNull { recipe ->
             val resolved = when (recipe) {
-                is ShapedRecipe -> recipe.toResolvedRecipe()
-                is ShapelessRecipe -> recipe.toResolvedRecipe()
-                else -> null
+                is ShapedRecipe             -> recipe.toResolvedRecipe()
+                is ShapelessRecipe          -> recipe.toResolvedRecipe()
+                is CookingRecipe<*>         -> recipe.toResolvedRecipe()
+                is BukkitStonecuttingRecipe -> recipe.toResolvedRecipe()
+                is SmithingTransformRecipe  -> recipe.toResolvedRecipe()
+                else                        -> null
             } ?: return@firstNotNullOfOrNull null
             if (strict && !resolved.output.isSimilar(stack)) null else resolved
         }
@@ -308,9 +318,12 @@ object RecipeResolver {
         val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).mapNotNull { recipe ->
             val resolved = when (recipe) {
-                is ShapedRecipe -> recipe.toResolvedRecipe()
-                is ShapelessRecipe -> recipe.toResolvedRecipe()
-                else -> null
+                is ShapedRecipe             -> recipe.toResolvedRecipe()
+                is ShapelessRecipe          -> recipe.toResolvedRecipe()
+                is CookingRecipe<*>         -> recipe.toResolvedRecipe()
+                is BukkitStonecuttingRecipe -> recipe.toResolvedRecipe()
+                is SmithingTransformRecipe  -> recipe.toResolvedRecipe()
+                else                        -> null
             } ?: return@mapNotNull null
             if (strict && !resolved.output.isSimilar(stack)) null else resolved
         }
@@ -373,6 +386,49 @@ object RecipeResolver {
     private fun List<RecipeIngredient>.normalizeToNine(): List<RecipeIngredient> {
         if (size == 9) return this
         return take(9) + List((9 - size).coerceAtLeast(0)) { RecipeIngredient.empty(air) }
+    }
+
+    private fun CookingRecipe<*>.toResolvedRecipe(): ResolvedRecipe {
+        val displayType = when (this) {
+            is FurnaceRecipe  -> RecipeDisplayType.SMELTING
+            is BlastingRecipe -> RecipeDisplayType.BLAST_FURNACE
+            is SmokingRecipe  -> RecipeDisplayType.SMOKER
+            is CampfireRecipe -> RecipeDisplayType.CAMPFIRE
+            else              -> RecipeDisplayType.SMELTING
+        }
+        val ingredient = inputChoice.toIngredient()
+        return ResolvedRecipe(
+            key = key,
+            output = result.clone(),
+            ingredients = listOf(ingredient) + List(8) { RecipeIngredient.empty(air) },
+            source = RecipeSource.BUKKIT,
+            displayType = displayType,
+            cookTime = cookingTime.takeIf { it > 0 }
+        )
+    }
+
+    private fun BukkitStonecuttingRecipe.toResolvedRecipe(): ResolvedRecipe {
+        val ingredient = inputChoice.toIngredient()
+        return ResolvedRecipe(
+            key = key,
+            output = result.clone(),
+            ingredients = listOf(ingredient) + List(8) { RecipeIngredient.empty(air) },
+            source = RecipeSource.BUKKIT,
+            displayType = RecipeDisplayType.STONECUTTER
+        )
+    }
+
+    private fun SmithingTransformRecipe.toResolvedRecipe(): ResolvedRecipe {
+        val templateIng = template?.toIngredient() ?: RecipeIngredient.empty(air)
+        val baseIng = base.toIngredient()
+        val additionIng = addition.toIngredient()
+        return ResolvedRecipe(
+            key = key,
+            output = result.clone(),
+            ingredients = listOf(templateIng, baseIng, additionIng) + List(6) { RecipeIngredient.empty(air) },
+            source = RecipeSource.BUKKIT,
+            displayType = RecipeDisplayType.SMITHING
+        )
     }
 
 }
