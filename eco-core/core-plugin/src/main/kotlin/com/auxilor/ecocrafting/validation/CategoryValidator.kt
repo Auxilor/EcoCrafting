@@ -8,7 +8,7 @@ import com.auxilor.ecocrafting.ecoCraftingPlugin
 object CategoryValidator {
     fun validate(categories: List<RecipeCategory>): ValidationReport {
         val report = buildReport(categories)
-        report.warnings.forEach { ecoCraftingPlugin.logger.warning("[EcoCrafting] $it") }
+        report.warnings.forEach { ecoCraftingPlugin.logger.warning(it) }
         return report
     }
 

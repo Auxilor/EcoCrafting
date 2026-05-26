@@ -41,6 +41,17 @@ import java.lang.reflect.Field
 
 object RecipeResolver {
     private val air = ItemStack(Material.AIR)
+    private val resolveCache = HashMap<Any, ResolvedRecipe?>()
+
+    fun clearCache() {
+        resolveCache.clear()
+    }
+
+    fun warmCache(items: Collection<ItemStack>) {
+        for (item in items) resolve(item)
+    }
+
+    fun hasAnyRecipe(itemStack: ItemStack): Boolean = resolve(itemStack) != null
 
     private val SYMMETRY_TRANSFORMS = listOf(
         intArrayOf(0,1,2,3,4,5,6,7,8),
@@ -68,6 +79,14 @@ object RecipeResolver {
 
     fun resolve(itemStack: ItemStack): ResolvedRecipe? {
         val clean = itemStack.clone().apply { amount = 1 }
+        val cacheKey = Items.getCustomItem(clean)?.key ?: clean.type
+        if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]
+        val result = resolveUncached(clean)
+        resolveCache[cacheKey] = result
+        return result
+    }
+
+    private fun resolveUncached(clean: ItemStack): ResolvedRecipe? {
         val customItem = Items.getCustomItem(clean)
 
         if (customItem != null) {
@@ -264,7 +283,7 @@ object RecipeResolver {
 
     fun getEcoRecipes(): Collection<CraftingRecipe> {
         return runCatching { getRecipesBiMap().values.toList() }
-            .onFailure { ecoCraftingPlugin.logger.warning("[EcoCrafting] Could not read eco recipe registry: ${it.message}") }
+            .onFailure { ecoCraftingPlugin.logger.warning("Could not read eco recipe registry: ${it.message}") }
             .getOrDefault(emptyList())
     }
 

@@ -16,13 +16,17 @@ import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.category.RecipeCategory
 import com.auxilor.ecocrafting.gui.utils.configSound
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.ecoCraftingPlugin
 
 class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
-        val items = parent.getMemberItemsRecipes(player)
+        open(player, page, prevMenu, parent.getMemberItemsRecipes(player))
+    }
+
+    private fun open(player: Player, page: Int, prevMenu: Menu?, items: List<ItemStack>) {
+        val perPage = getPerPage()
+        val maxPages = getMaxPages(items.size, perPage)
         val pattern = config.getStrings("mask.pattern")
-        var num = ((page - 1) * getPerPage())
+        var num = ((page - 1) * perPage)
 
         val builtMenu = menu(pattern.size) {
             title = config.getFormattedString("title").replace("%page%", page.toString())
@@ -58,12 +62,12 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
             setSlot(
                 config.getInt("buttons.next-page.row"),
                 config.getInt("buttons.next-page.column"),
-                nextSlot(page, prevMenu, player, configSound("next-page"))
+                nextSlot(page, prevMenu, maxPages, items, configSound("next-page"))
             )
             setSlot(
                 config.getInt("buttons.prev-page.row"),
                 config.getInt("buttons.prev-page.column"),
-                prevSlot(page, prevMenu, configSound("prev-page"))
+                prevSlot(page, prevMenu, items, configSound("prev-page"))
             )
 
             for (slotConfig in config.getSubsections("custom-slots")) {
@@ -97,13 +101,12 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
             }
     }
 
-    private fun getMaxPages(player: Player): Int {
-        val total = parent.getMemberItemsRecipes(player).size
-        return total/getPerPage() + if (total % getPerPage() > 0) 1 else 0
+    private fun getMaxPages(itemCount: Int, perPage: Int): Int {
+        return itemCount / perPage + if (itemCount % perPage > 0) 1 else 0
     }
 
-    private fun nextSlot(page: Int, prevMenu: Menu?, player: Player, sound: PlayableSound?): Slot {
-        val nextActive = page < getMaxPages(player)
+    private fun nextSlot(page: Int, prevMenu: Menu?, maxPages: Int, items: List<ItemStack>, sound: PlayableSound?): Slot {
+        val nextActive = page < maxPages
         val builder = Slot.builder(
             ItemStackBuilder(
                 Items.lookup(config.getString("buttons.next-page.item.${getActive(nextActive)}"))
@@ -113,14 +116,14 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         )
         if (nextActive) {
             builder.onLeftClick { event, _ ->
-                open(event.player, page + 1, prevMenu)
+                open(event.player, page + 1, prevMenu, items)
                 sound?.playTo(event.player)
             }
         }
         return builder.build()
     }
 
-    private fun prevSlot(page: Int, prevMenu: Menu?, sound: PlayableSound?): Slot {
+    private fun prevSlot(page: Int, prevMenu: Menu?, items: List<ItemStack>, sound: PlayableSound?): Slot {
         val prevActive = page > 1
         val builder = Slot.builder(
             ItemStackBuilder(
@@ -131,7 +134,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         )
         if (prevActive) {
             builder.onLeftClick { event, _ ->
-                open(event.player, page - 1, prevMenu)
+                open(event.player, page - 1, prevMenu, items)
                 sound?.playTo(event.player)
             }
         }

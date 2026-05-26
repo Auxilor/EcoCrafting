@@ -29,8 +29,8 @@ object ShopIntegration {
         requireShiftClick = plugin.configYml.getBool("shop-integration.require-shift-click")
 
         when {
-            pluginAvailable && configEnabled -> plugin.logger.info("[EcoCrafting] EcoShop integration enabled")
-            pluginAvailable -> plugin.logger.info("[EcoCrafting] EcoShop found but integration disabled in config")
+            pluginAvailable && configEnabled -> plugin.logger.info("EcoShop integration enabled")
+            pluginAvailable -> plugin.logger.info("EcoShop found but integration disabled in config")
         }
     }
 

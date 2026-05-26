@@ -54,7 +54,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 else -> error("Unknown recipe type: $type")
             }
         }.onFailure {
-            ecoCraftingPlugin.logger.warning("[EcoCrafting] Failed to load recipe $id: ${it.message}")
+            ecoCraftingPlugin.logger.warning("Failed to load recipe $id: ${it.message}")
         }
     }
 

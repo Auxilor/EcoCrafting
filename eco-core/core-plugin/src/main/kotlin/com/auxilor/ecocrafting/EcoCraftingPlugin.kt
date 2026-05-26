@@ -75,7 +75,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private fun setupMetrics() {
         val pluginId = BSTATS_PLUGIN_ID
         if (pluginId <= 0) {
-            logger.info("[EcoCrafting] bStats is bundled but disabled until a real plugin ID is set.")
+            logger.info("bStats is bundled but disabled until a real plugin ID is set.")
             return
         }
 
@@ -93,9 +93,9 @@ class EcoCraftingPlugin : LibreforgePlugin() {
                 )
                 this.metrics = metrics
             }
-            logger.info("[EcoCrafting] bStats metrics enabled for plugin ID $pluginId.")
+            logger.info("bStats metrics enabled for plugin ID $pluginId.")
         }.onFailure {
-            logger.warning("[EcoCrafting] Failed to initialize bStats: ${it.message}")
+            logger.warning("Failed to initialize bStats: ${it.message}")
         }
     }
 
