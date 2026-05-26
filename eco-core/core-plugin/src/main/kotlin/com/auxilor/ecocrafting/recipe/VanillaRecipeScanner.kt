@@ -1,35 +1,28 @@
-﻿package com.auxilor.ecocrafting.recipe
+package com.auxilor.ecocrafting.recipe
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Material
-import org.bukkit.inventory.CreativeCategory
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.category.RecipeCategory
 
 object VanillaRecipeScanner {
 
-    // Vanilla recipes never change at runtime â€” collect once and reuse across reloads.
+    // Vanilla recipes never change at runtime — collect once and reuse across reloads.
     private val vanillaOutputs: List<ItemStack> by lazy { collectVanillaOutputs() }
 
     fun populate(categories: List<RecipeCategory>) {
-        val wantsVanilla = categories.filter {
-            it.pullVanillaRecipes || it.vanillaCreativeGroups.isNotEmpty()
-        }
+        val wantsVanilla = categories.filter { it.pullVanillaRecipes }
         if (wantsVanilla.isEmpty()) return
 
         val vanilla = vanillaOutputs
 
         for (category in wantsVanilla) {
             val configuredMaterials = category.items.map { it.item.item.type }.toSet()
-            val items = buildCategoryItems(
-                configuredMaterials = configuredMaterials,
-                pullAll = category.pullVanillaRecipes,
-                creativeGroups = category.vanillaCreativeGroups,
-                candidates = vanilla
+            category.setVanillaItems(
+                vanilla.filter { it.type !in configuredMaterials }
             )
-            category.setVanillaItems(items)
         }
     }
 
@@ -58,26 +51,6 @@ object VanillaRecipeScanner {
         }
 
         return results
-    }
-
-    internal fun buildCategoryItems(
-        configuredMaterials: Set<Material>,
-        pullAll: Boolean,
-        creativeGroups: Set<CreativeCategory>,
-        candidates: List<ItemStack>,
-        nameFor: (ItemStack) -> String = ::displayNameFor
-    ): List<ItemStack> {
-        val seen = mutableSetOf<Material>()
-        return candidates
-            .filter { item ->
-                val includeByBool = pullAll
-                val includeByGroup = creativeGroups.isNotEmpty() &&
-                    item.type.creativeCategory?.let { it in creativeGroups } == true
-                (includeByBool || includeByGroup) &&
-                    item.type !in configuredMaterials &&
-                    seen.add(item.type)
-            }
-            .sortedBy { nameFor(it) }
     }
 
     internal fun displayNameFor(item: ItemStack): String {

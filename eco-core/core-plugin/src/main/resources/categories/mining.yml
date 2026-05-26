@@ -1,4 +1,5 @@
 type: "items"
+
 icon:
   item: iron_pickaxe name:"&bMining"
   lore:
@@ -14,6 +15,24 @@ position:
   page: 1
 
 items:
+  - item: "#minecraft:pickaxes"
+    display-no-perm: false
+  - item: "#minecraft:axes"
+    display-no-perm: false
+  - item: "#minecraft:shovels"
+    display-no-perm: false
+  - item: "#minecraft:hoes"
+    display-no-perm: false
+  - item: "shears"
+    display-no-perm: false
+  - item: "flint_and_steel"
+    display-no-perm: false
+  - item: "fishing_rod"
+    display-no-perm: false
+  - item: "carrot_on_a_stick"
+    display-no-perm: false
+  - item: "warped_fungus_on_a_stick"
+    display-no-perm: false
   - item: "coal_block"
     display-no-perm: false
   - item: "iron_block"
