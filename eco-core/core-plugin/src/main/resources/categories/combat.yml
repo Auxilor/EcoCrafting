@@ -50,7 +50,7 @@ gui:
       - "111111111"
   buttons:
     back:
-      row: 5
+      row: 6
       column: 5
       item: barrier name:"&cBack"
       lore: []
@@ -61,7 +61,7 @@ gui:
       lore:
         active: []
         inactive: []
-      row: 5
+      row: 6
       column: 6
     prev-page:
       item:
@@ -70,7 +70,7 @@ gui:
       lore:
         active: []
         inactive: []
-      row: 5
+      row: 6
       column: 4
     slot:
       lore:
