@@ -7,6 +7,9 @@ debug: false
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
 
+# When true, items with no recipe are still shown in categories
+show-items-without-recipes: false
+
 # When true, recipe lookup matches full item (name/lore/meta), not just base material
 # Useful when renamed items should not show vanilla recipes
 strict-item-matching: true

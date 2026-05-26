@@ -1,4 +1,5 @@
 type: "items"
+
 icon:
   item: wheat name:"&aFarming"
   lore:
@@ -14,19 +15,23 @@ position:
   page: 1
 
 items:
+  - item: "#minecraft:cooked_meat"
+    display-no-perm: false
   - item: "bread"
     display-no-perm: false
   - item: "cake"
     display-no-perm: false
   - item: "cookie"
     display-no-perm: false
-  - item: "hay_block"
-    display-no-perm: false
   - item: "pumpkin_pie"
+    display-no-perm: false
+  - item: "mushroom_stew"
     display-no-perm: false
   - item: "beetroot_soup"
     display-no-perm: false
-  - item: "mushroom_stew"
+  - item: "rabbit_stew"
+    display-no-perm: false
+  - item: "hay_block"
     display-no-perm: false
   - item: "composter"
     display-no-perm: false

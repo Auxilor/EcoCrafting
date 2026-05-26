@@ -1,4 +1,5 @@
 type: "items"
+
 icon:
   item: diamond_sword name:"&cCombat"
   lore:
@@ -14,25 +15,27 @@ position:
   page: 1
 
 items:
-  - item: "wooden_sword"
+  - item: "#minecraft:swords"
     display-no-perm: false
-  - item: "stone_sword"
+  - item: "#minecraft:head_armor"
     display-no-perm: false
-  - item: "iron_sword"
+  - item: "#minecraft:chest_armor"
     display-no-perm: false
-  - item: "diamond_sword"
+  - item: "#minecraft:leg_armor"
+    display-no-perm: false
+  - item: "#minecraft:foot_armor"
+    display-no-perm: false
+  - item: "#minecraft:arrows"
     display-no-perm: false
   - item: "bow"
     display-no-perm: false
   - item: "crossbow"
     display-no-perm: false
-  - item: "arrow"
-    display-no-perm: false
   - item: "shield"
     display-no-perm: false
-  - item: "iron_chestplate"
+  - item: "trident"
     display-no-perm: false
-  - item: "diamond_chestplate"
+  - item: "mace"
     display-no-perm: false
 
 gui:

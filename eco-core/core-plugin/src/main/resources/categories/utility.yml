@@ -1,4 +1,5 @@
 type: "items"
+
 icon:
   item: crafting_table name:"&eUtility"
   lore:
