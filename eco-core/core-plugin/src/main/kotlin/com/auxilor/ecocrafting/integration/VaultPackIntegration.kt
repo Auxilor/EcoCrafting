@@ -44,9 +44,9 @@ object VaultPackIntegration {
 
             EcoCraftingService = service
             Items.registerItemProvider(VaultPackItemProvider())
-            plugin.logger.info("[EcoCrafting] VaultPack integration enabled through Bukkit service")
+            plugin.logger.info("VaultPack integration enabled through Bukkit service")
         }.onFailure {
-            plugin.logger.warning("[EcoCrafting] VaultPack integration disabled: ${it.message}")
+            plugin.logger.warning("VaultPack integration disabled: ${it.message}")
             pluginAvailable = false
             EcoCraftingService = null
         }

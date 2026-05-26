@@ -58,11 +58,15 @@ class RecipeCategory(val config: Config) {
         }
     }
 
+    fun allItemStacks(): List<ItemStack> {
+        return items.map { it.item.item } + vanillaItems + runtimeItems
+    }
+
     fun getMemberItemsRecipes(player: Player): List<ItemStack> {
         val filterNoRecipe = !ecoCraftingPlugin.configYml.getBool("show-items-without-recipes")
         val configured = items.mapNotNull {
             val itemStack = it.item.item
-            if (filterNoRecipe && RecipeResolver.resolveAll(itemStack).isEmpty()) return@mapNotNull null
+            if (filterNoRecipe && !RecipeResolver.hasAnyRecipe(itemStack)) return@mapNotNull null
             if (canCraft(player, itemStack)) {
                 itemStack
             } else if (it.displayNoPerm) {
