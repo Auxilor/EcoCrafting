@@ -1,5 +1,7 @@
 ﻿package com.auxilor.ecocrafting.integration
 
+import org.bukkit.plugin.ServicesManager
+import org.bukkit.plugin.RegisteredServiceProvider
 import com.willfp.eco.core.items.CustomItem
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
@@ -9,7 +11,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.EcoCraftingPlugin
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 import com.auxilor.ecocrafting.recipe.IngredientMatcher
 import com.auxilor.ecocrafting.recipe.RecipeIngredient
 import com.auxilor.ecocrafting.recipe.RecipeSource
@@ -32,7 +34,7 @@ object VaultPackIntegration {
         pluginAvailable = Bukkit.getPluginManager().isPluginEnabled("VaultPack")
         if (!pluginAvailable) return
 
-        runCatching {
+        try {
             val serviceClass = Class.forName(SERVICE_CLASS_NAME)
             val registration = Bukkit.getServicesManager().getRegistrationUnchecked(serviceClass)
                 ?: error("VaultPack EcoCrafting service is not registered")
@@ -45,8 +47,8 @@ object VaultPackIntegration {
             EcoCraftingService = service
             Items.registerItemProvider(VaultPackItemProvider())
             plugin.logger.info("VaultPack integration enabled through Bukkit service")
-        }.onFailure {
-            plugin.logger.warning("VaultPack integration disabled: ${it.message}")
+        } catch (e: Exception) {
+            plugin.logger.warning("VaultPack integration disabled: ${e.message}")
             pluginAvailable = false
             EcoCraftingService = null
         }
@@ -99,7 +101,7 @@ object VaultPackIntegration {
         val materialName = parts[0]
         val amount = parts.getOrNull(1)?.toIntOrNull()?.coerceAtLeast(1) ?: 1
         val stack = Material.matchMaterial(materialName)?.let { ItemStack(it, amount) }
-            ?: runCatching { Items.lookup(materialName).item.apply { this.amount = amount } }.getOrDefault(ItemStack(Material.AIR))
+            ?: Items.lookup(materialName).item.apply { this.amount = amount }
 
         return RecipeIngredient(stack, IngredientMatcher.SimilarItem(stack))
     }
@@ -123,7 +125,7 @@ class VaultPackCustomItem(
 )
 
 @Suppress("UNCHECKED_CAST")
-private fun org.bukkit.plugin.ServicesManager.getRegistrationUnchecked(serviceClass: Class<*>): org.bukkit.plugin.RegisteredServiceProvider<Any>? {
+private fun ServicesManager.getRegistrationUnchecked(serviceClass: Class<*>): RegisteredServiceProvider<Any>? {
     return getRegistration(serviceClass as Class<Any>)
 }
 

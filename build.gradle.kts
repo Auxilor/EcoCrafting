@@ -48,8 +48,6 @@ allprojects {
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
 
-        implementation("org.bstats:bstats-bukkit:3.1.0")
-
         testImplementation(kotlin("test"))
         testImplementation(kotlin("reflect"))
     }
@@ -70,7 +68,6 @@ allprojects {
             relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
             relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")
             relocate("kotlin.reflect", "com.willfp.eco.libs.kotlin.reflect")
-            relocate("org.bstats", "com.auxilor.ecocrafting.libs.bstats")
         }
 
         withType<KotlinJvmCompile>().configureEach {

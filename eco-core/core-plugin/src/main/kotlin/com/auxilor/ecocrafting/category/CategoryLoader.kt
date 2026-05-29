@@ -18,8 +18,7 @@ object CategoryLoader : ConfigCategory("category", "categories") {
 
     override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
         config.set("id", id)
-        runCatching { RecipeCategories.register(RecipeCategory(config)) }
-            .onFailure { plugin.logger.warning("Failed to load category $id: ${it.message}") }
+        RecipeCategories.register(RecipeCategory(config))
     }
 
     override fun afterReload(plugin: LibreforgePlugin) {

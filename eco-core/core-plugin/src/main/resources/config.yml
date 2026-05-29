@@ -26,7 +26,7 @@ fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUI
 #*/ The Workstation Markers Section /*#
 
 # Pattern marker key (used in mask.pattern of each GUI section):
-#   i = ingredient slot â€” auto-increments leftâ†’right topâ†’bottom (all workstation types)
+#   i = ingredient slot — auto-increments left→right top→bottom (all workstation types)
 #   o = output slot (all types)
 #   u = smelting fuel slot (display only, no interaction)
 #   Workstation sidebar markers (configure items in workstation-markers below):

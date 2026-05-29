@@ -3,12 +3,12 @@
 import com.auxilor.ecocrafting.category.RecipeCategory
 import com.auxilor.ecocrafting.category.RecipeCategories
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 object CategoryValidator {
     fun validate(categories: List<RecipeCategory>): ValidationReport {
         val report = buildReport(categories)
-        report.warnings.forEach { ecoCraftingPlugin.logger.warning(it) }
+        report.warnings.forEach { plugin.logger.warning(it) }
         return report
     }
 

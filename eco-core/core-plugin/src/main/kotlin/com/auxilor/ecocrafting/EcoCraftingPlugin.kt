@@ -1,21 +1,11 @@
-﻿package com.auxilor.ecocrafting
+package com.auxilor.ecocrafting
 
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.libreforge.loader.LibreforgePlugin
-import org.bstats.bukkit.Metrics
-import org.bstats.charts.SimplePie
 import com.auxilor.ecocrafting.category.CategoryLoader
 import com.auxilor.ecocrafting.commands.MainCommand
-import com.auxilor.ecocrafting.integration.ShopIntegration
-import com.auxilor.ecocrafting.integration.VaultPackIntegration
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.triggers.Triggers
 import com.auxilor.ecocrafting.custom.BlockOwnerTracker
 import com.auxilor.ecocrafting.custom.CustomRecipeListener
 import com.auxilor.ecocrafting.custom.CustomRecipeLoader
 import com.auxilor.ecocrafting.custom.RecipeUnlockStore
-import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.auxilor.ecocrafting.custom.libreforge.ConditionHasUnlockedRecipe
 import com.auxilor.ecocrafting.custom.libreforge.EffectLockRecipe
 import com.auxilor.ecocrafting.custom.libreforge.EffectUnlockRecipe
@@ -23,17 +13,22 @@ import com.auxilor.ecocrafting.custom.libreforge.TriggerCustomCraft
 import com.auxilor.ecocrafting.custom.libreforge.TriggerGhostCraft
 import com.auxilor.ecocrafting.custom.libreforge.TriggerRecipeLocked
 import com.auxilor.ecocrafting.custom.libreforge.TriggerRecipeUnlocked
+import com.auxilor.ecocrafting.integration.ShopIntegration
+import com.auxilor.ecocrafting.integration.VaultPackIntegration
+import com.willfp.eco.core.bstats.EcoMetricsChart
+import com.willfp.eco.core.command.impl.PluginCommand
+import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.loader.LibreforgePlugin
+import com.willfp.libreforge.loader.configs.ConfigCategory
+import com.willfp.libreforge.triggers.Triggers
 
-lateinit var ecoCraftingPlugin: EcoCraftingPlugin
+internal lateinit var plugin: EcoCraftingPlugin
     private set
 
-private const val BSTATS_PLUGIN_ID = 31426
-
 class EcoCraftingPlugin : LibreforgePlugin() {
-    private var metrics: Metrics? = null
-
     init {
-        ecoCraftingPlugin = this
+        plugin = this
     }
 
     override fun handleEnable() {
@@ -52,8 +47,6 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         eventManager.registerListener(BlockOwnerTracker)
         eventManager.registerListener(RecipeUnlockStore)
         eventManager.registerListener(CustomRecipeListener())
-
-        setupMetrics()
     }
 
     override fun handleReload() {
@@ -72,32 +65,14 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         return mutableListOf(MainCommand(this))
     }
 
-    private fun setupMetrics() {
-        val pluginId = BSTATS_PLUGIN_ID
-        if (pluginId <= 0) {
-            logger.info("bStats is bundled but disabled until a real plugin ID is set.")
-            return
+    override fun getCustomCharts() = listOf(
+        EcoMetricsChart.SimplePie("ecoshop_integration_enabled") {
+            ShopIntegration.isEnabled().toString()
+        },
+        EcoMetricsChart.SimplePie("ecoshop_auto_buy_enabled") {
+            ShopIntegration.isAutoBuyEnabled().toString()
         }
-
-        runCatching {
-            Metrics(this, pluginId).also { metrics ->
-                metrics.addCustomChart(
-                    SimplePie("ecoshop_integration_enabled") {
-                        ShopIntegration.isEnabled().toString()
-                    }
-                )
-                metrics.addCustomChart(
-                    SimplePie("ecoshop_auto_buy_enabled") {
-                        ShopIntegration.isAutoBuyEnabled().toString()
-                    }
-                )
-                this.metrics = metrics
-            }
-            logger.info("bStats metrics enabled for plugin ID $pluginId.")
-        }.onFailure {
-            logger.warning("Failed to initialize bStats: ${it.message}")
-        }
-    }
+    )
 
     fun debug(message: String) {
         if (configYml.getBool("debug")) {

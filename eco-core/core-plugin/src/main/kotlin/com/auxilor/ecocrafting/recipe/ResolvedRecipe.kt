@@ -1,5 +1,7 @@
 ﻿package com.auxilor.ecocrafting.recipe
 
+import com.willfp.eco.core.recipe.parts.MaterialTestableItem
+import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.items.TestableItem
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -104,9 +106,9 @@ sealed interface IngredientMatcher {
 }
 
 fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
-    is IngredientMatcher.Empty        -> com.willfp.eco.core.recipe.parts.EmptyTestableItem()
+    is IngredientMatcher.Empty        -> EmptyTestableItem()
     is IngredientMatcher.EcoPart      -> part
-    is IngredientMatcher.SimilarItem  -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
-    is IngredientMatcher.MaterialOnly -> com.willfp.eco.core.recipe.parts.MaterialTestableItem(item.type)
-    is IngredientMatcher.AnyItem      -> com.willfp.eco.core.recipe.parts.EmptyTestableItem()
+    is IngredientMatcher.SimilarItem  -> MaterialTestableItem(item.type)
+    is IngredientMatcher.MaterialOnly -> MaterialTestableItem(item.type)
+    is IngredientMatcher.AnyItem      -> EmptyTestableItem()
 }

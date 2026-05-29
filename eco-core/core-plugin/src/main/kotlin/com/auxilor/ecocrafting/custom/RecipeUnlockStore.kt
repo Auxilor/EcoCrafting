@@ -1,5 +1,6 @@
 ﻿package com.auxilor.ecocrafting.custom
 
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import org.bukkit.NamespacedKey
@@ -10,7 +11,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 import java.io.File
 import java.util.UUID
 
@@ -18,7 +19,7 @@ object RecipeUnlockStore : Listener {
     private val cache = mutableMapOf<UUID, MutableSet<String>>()
 
     private fun dataFile(uuid: UUID): File {
-        val dir = File(ecoCraftingPlugin.dataFolder, "data/players")
+        val dir = File(plugin.dataFolder, "data/players")
         dir.mkdirs()
         return File(dir, "$uuid.yml")
     }
@@ -66,7 +67,7 @@ object RecipeUnlockStore : Listener {
     fun onJoin(event: PlayerJoinEvent) {
         loadPlayer(event.player.uniqueId)
         val player = event.player
-        for (recipe in com.willfp.eco.core.recipe.workstation.WorkstationRecipes.getAll()) {
+        for (recipe in WorkstationRecipes.getAll()) {
             val meta = CustomRecipes.getMeta(recipe.key) ?: continue
             if (!meta.lockedByDefault) continue
             if (!isLocked(player, recipe.key, meta)) continue

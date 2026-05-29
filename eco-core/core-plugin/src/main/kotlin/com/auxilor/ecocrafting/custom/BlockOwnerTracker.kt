@@ -1,5 +1,6 @@
 ﻿package com.auxilor.ecocrafting.custom
 
+import org.bukkit.block.Block
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -12,7 +13,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.persistence.PersistentDataType
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 import java.util.UUID
 
 object BlockOwnerTracker : Listener {
@@ -37,27 +38,27 @@ object BlockOwnerTracker : Listener {
         InventoryType.CRAFTER
     )
 
-    fun setOwner(block: org.bukkit.block.Block, player: Player) {
+    fun setOwner(block: Block, player: Player) {
         val state = block.state as? TileState ?: return
         state.persistentDataContainer.set(PDC_KEY, PersistentDataType.STRING, player.uniqueId.toString())
         state.update()
     }
 
-    fun hasOwner(block: org.bukkit.block.Block): Boolean {
+    fun hasOwner(block: Block): Boolean {
         val state = block.state as? TileState ?: return false
         return state.persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)
     }
 
-    private fun getStoredUUID(block: org.bukkit.block.Block): UUID? {
+    private fun getStoredUUID(block: Block): UUID? {
         val state = block.state as? TileState ?: return null
         val raw = state.persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING) ?: return null
         return runCatching { UUID.fromString(raw) }.getOrNull()
     }
 
     fun getOwner(location: Location): Player? {
-        return when (ecoCraftingPlugin.configYml.getString("owner-mode")) {
+        return when (plugin.configYml.getString("owner-mode")) {
             "nearest" -> {
-                val radius = ecoCraftingPlugin.configYml.getInt("owner-nearest-radius")
+                val radius = plugin.configYml.getInt("owner-nearest-radius")
                     .takeIf { it > 0 } ?: 32
                 location.world?.players
                     ?.filter { it.location.distanceSquared(location) <= (radius * radius).toDouble() }

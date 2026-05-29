@@ -1,5 +1,6 @@
 ﻿package com.auxilor.ecocrafting.recipe
 
+import com.willfp.eco.core.items.TestableItem
 import com.google.common.collect.BiMap
 import com.willfp.eco.core.items.CustomItem
 import com.willfp.eco.core.items.Items
@@ -36,7 +37,7 @@ import com.auxilor.ecocrafting.custom.CustomRecipes
 import com.auxilor.ecocrafting.custom.RecipeSymmetry
 import com.auxilor.ecocrafting.custom.RecipeUnlockStore
 import com.auxilor.ecocrafting.integration.VaultPackIntegration
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 import java.lang.reflect.Field
 
 object RecipeResolver {
@@ -121,7 +122,7 @@ object RecipeResolver {
 
         val sorted = results.sortedBy { it.displayType.name }
 
-        if (!ecoCraftingPlugin.configYml.getBool("deduplicate-symmetrical")) return sorted
+        if (!plugin.configYml.getBool("deduplicate-symmetrical")) return sorted
 
         val seen = mutableSetOf<String>()
         return sorted.filter { recipe ->
@@ -282,9 +283,12 @@ object RecipeResolver {
     }
 
     fun getEcoRecipes(): Collection<CraftingRecipe> {
-        return runCatching { getRecipesBiMap().values.toList() }
-            .onFailure { ecoCraftingPlugin.logger.warning("Could not read eco recipe registry: ${it.message}") }
-            .getOrDefault(emptyList())
+        return try {
+            getRecipesBiMap().values.toList()
+        } catch (e: Exception) {
+            plugin.logger.warning("Could not read eco recipe registry: ${e.message}")
+            emptyList()
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -319,7 +323,7 @@ object RecipeResolver {
     }
 
     private fun findBukkitRecipe(stack: ItemStack): ResolvedRecipe? {
-        val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
+        val strict = plugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).firstNotNullOfOrNull { recipe ->
             val resolved = when (recipe) {
                 is ShapedRecipe             -> recipe.toResolvedRecipe()
@@ -334,7 +338,7 @@ object RecipeResolver {
     }
 
     private fun findAllBukkitRecipes(stack: ItemStack): List<ResolvedRecipe> {
-        val strict = ecoCraftingPlugin.configYml.getBool("strict-item-matching")
+        val strict = plugin.configYml.getBool("strict-item-matching")
         return Bukkit.getRecipesFor(stack).mapNotNull { recipe ->
             val resolved = when (recipe) {
                 is ShapedRecipe             -> recipe.toResolvedRecipe()
@@ -379,7 +383,7 @@ object RecipeResolver {
         )
     }
 
-    private fun com.willfp.eco.core.items.TestableItem.allDisplayItems(): List<ItemStack> =
+    private fun TestableItem.allDisplayItems(): List<ItemStack> =
         if (this is GroupedTestableItems && children.isNotEmpty()) children.map { it.item.clone() }
         else listOf(item.clone())
 
