@@ -19,7 +19,7 @@ import com.auxilor.ecocrafting.gui.utils.buildWorkstationSlot
 import com.auxilor.ecocrafting.recipe.RecipeDisplayType
 import com.auxilor.ecocrafting.recipe.RecipeResolver
 import com.auxilor.ecocrafting.recipe.ResolvedRecipe
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 private fun RecipeDisplayType.guiSection() = when (this) {
     RecipeDisplayType.CRAFTING      -> "craft-gui"
@@ -46,12 +46,12 @@ class RecipeGUI(
         val recipe = effectiveAlternatives.getOrNull(altIndex)
             ?: RecipeResolver.resolveForPlayer(stack, player)
             ?: run {
-                player.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.no-recipe"))
+                player.sendMessage(plugin.langYml.getFormattedString("messages.no-recipe"))
                 return
             }
 
         val context = RecipeGUIContext(
-            config = ecoCraftingPlugin.configYml.getSubsection(recipe.displayType.guiSection()),
+            config = plugin.configYml.getSubsection(recipe.displayType.guiSection()),
             stack = stack,
             effectiveAlternatives = effectiveAlternatives,
             altIndex = altIndex,
@@ -138,8 +138,8 @@ class RecipeGUI(
         }
 
         if (hasAlternatives) {
-            refreshTask = ecoCraftingPlugin.server.scheduler.runTaskTimer(
-                ecoCraftingPlugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
+            refreshTask = plugin.server.scheduler.runTaskTimer(
+                plugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
             )
         }
         builtMenu.open(player)

@@ -8,7 +8,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 import java.util.UUID
 
 object RecipeCreatorGUI {
@@ -30,12 +30,12 @@ object RecipeCreatorGUI {
 
     fun openTypeSelect(player: Player) {
         val builtMenu = menu(2) {
-            title = "&8New Recipe â€” Choose Type"
+            title = "&8New Recipe — Choose Type"
 
             stationTypes.forEachIndexed { index, (typeKey, material) ->
                 val row = (index / 9) + 1
                 val col = (index % 9) + 1
-                val displayName = "&a" + ecoCraftingPlugin.langYml.getString("workstation-names.$typeKey")
+                val displayName = "&a" + plugin.langYml.getString("workstation-names.$typeKey")
                 setSlot(row, col, Slot.builder(
                     ItemStackBuilder(material).setDisplayName(displayName).build()
                 ).onLeftClick { _, _ ->
@@ -52,12 +52,12 @@ object RecipeCreatorGUI {
         val collectedParts = mutableMapOf<Int, ItemStack>()
 
         val builtMenu = menu(4) {
-            title = "&8New Recipe â€” Ingredients"
+            title = "&8New Recipe — Ingredients"
 
             slotLayout.forEachIndexed { index, (row, col) ->
                 setSlot(row, col, Slot.builder(
                     ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
-                        .setDisplayName("&7Slot ${index + 1} â€” place ingredient").build()
+                        .setDisplayName("&7Slot ${index + 1} — place ingredient").build()
                 ).onLeftClick { event, _ ->
                     val cursor = event.cursor ?: return@onLeftClick
                     if (cursor.type.isAir) return@onLeftClick
@@ -68,7 +68,7 @@ object RecipeCreatorGUI {
                     event.inventory.setItem(
                         event.rawSlot,
                         ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
-                            .setDisplayName("&7Slot ${index + 1} â€” place ingredient").build()
+                            .setDisplayName("&7Slot ${index + 1} — place ingredient").build()
                     )
                 }.build())
             }
@@ -85,7 +85,7 @@ object RecipeCreatorGUI {
             }
 
             setSlot(4, 5, Slot.builder(
-                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext â†’").build()
+                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
             ).onLeftClick { _, _ ->
                 player.closeInventory()
                 openOutputSetup(player, typeKey, collectedParts)
@@ -113,7 +113,7 @@ object RecipeCreatorGUI {
         var ghost = false
 
         val builtMenu = menu(3) {
-            title = "&8New Recipe â€” Output"
+            title = "&8New Recipe — Output"
 
             setSlot(2, 5, Slot.builder(
                 ItemStackBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).setDisplayName("&7Place output item").build()
@@ -133,7 +133,7 @@ object RecipeCreatorGUI {
             }.build())
 
             setSlot(3, 5, Slot.builder(
-                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext â†’").build()
+                ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →").build()
             ).onLeftClick { event, _ ->
                 val outputItem = event.inventory.getItem(13)
                     ?.takeIf { !it.type.isAir } ?: run {
@@ -189,7 +189,7 @@ object RecipeCreatorGUI {
             return
         }
         saveRecipeYaml(pending)
-        ecoCraftingPlugin.reload()
+        plugin.reload()
         player.sendMessage("&aRecipe '${pending.id}' saved and loaded.")
     }
 
@@ -200,7 +200,7 @@ object RecipeCreatorGUI {
     }
 
     private fun saveRecipeYaml(pending: PendingRecipe) {
-        val dir = java.io.File(ecoCraftingPlugin.dataFolder, "recipes")
+        val dir = java.io.File(plugin.dataFolder, "recipes")
         dir.mkdirs()
         val file = java.io.File(dir, "${pending.id}.yml")
         val yaml = StringBuilder()

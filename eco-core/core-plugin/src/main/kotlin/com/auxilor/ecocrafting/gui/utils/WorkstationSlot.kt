@@ -10,7 +10,7 @@ import com.auxilor.ecocrafting.gui.WORKSTATION_MARKERS
 import com.auxilor.ecocrafting.gui.WorkstationMarkerState
 import com.auxilor.ecocrafting.gui.workstationMarkerState
 import com.auxilor.ecocrafting.recipe.RecipeDisplayType
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 fun RecipeGUIContext.buildWorkstationSlot(
     marker: Char,
@@ -19,12 +19,12 @@ fun RecipeGUIContext.buildWorkstationSlot(
 ): Slot = with(this) {
     val markerTypes = WORKSTATION_MARKERS[marker]!!
     val configKey = MARKER_CONFIG_KEY[marker]!!
-    val wsName = ecoCraftingPlugin.langYml.getString("workstation-names.$configKey")
+    val wsName = plugin.langYml.getString("workstation-names.$configKey")
     val state = workstationMarkerState(markerTypes, currentType, currentTypes)
     val stateKey = state.name.lowercase().replace("_", "-")
 
-    val rawItem = ecoCraftingPlugin.configYml.getString("workstation-markers.$configKey.$stateKey")
-    val lore = ecoCraftingPlugin.configYml.getFormattedStrings("workstation-markers.$configKey.lore.$stateKey")
+    val rawItem = plugin.configYml.getString("workstation-markers.$configKey.$stateKey")
+    val lore = plugin.configYml.getFormattedStrings("workstation-markers.$configKey.lore.$stateKey")
         .map { it.replace("%workstation%", wsName) }
     val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", wsName)))
         .addLoreLines(lore)

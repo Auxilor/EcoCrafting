@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.gui.CategoryCategoryGUI
 import com.auxilor.ecocrafting.gui.ItemCategoryGUI
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 data class CategoryPosition(val column: Int, val row: Int, val page: Int)
 
@@ -27,7 +27,7 @@ class RecipeCategory(val config: Config) {
     val guiPosition: CategoryPosition? = config.getSubsectionOrNull("position")?.let {
         CategoryPosition(it.getInt("column"), it.getInt("row"), it.getInt("page"))
     }
-    val pullVanillaRecipes = runCatching { config.getBool("pull-vanilla-recipes") }.getOrDefault(false)
+    val pullVanillaRecipes = config.getBool("pull-vanilla-recipes")
 
     val parsedCategories: List<RecipeCategory>
         get() = categories.mapNotNull { RecipeCategories.getById(it) }
@@ -63,7 +63,7 @@ class RecipeCategory(val config: Config) {
     }
 
     fun getMemberItemsRecipes(player: Player): List<ItemStack> {
-        val filterNoRecipe = !ecoCraftingPlugin.configYml.getBool("show-items-without-recipes")
+        val filterNoRecipe = !plugin.configYml.getBool("show-items-without-recipes")
         val configured = items.mapNotNull {
             val itemStack = it.item.item
             if (filterNoRecipe && !RecipeResolver.hasAnyRecipe(itemStack)) return@mapNotNull null
@@ -87,7 +87,7 @@ fun canCraft(player: Player, itemStack: ItemStack): Boolean = RecipeResolver.can
 
 class CategoryStack private constructor(
     private val parent: RecipeCategory,
-    val item: com.willfp.eco.core.items.TestableItem,
+    val item: TestableItem,
     val displayNoPerm: Boolean,
     private val configuredNoPermItem: ItemStack?
 ) {
@@ -127,7 +127,7 @@ class CategoryStack private constructor(
             }
 
             // Eco custom tag fallback — enumerate via matches()
-            val lookup = runCatching { Items.lookup(itemString) }.getOrNull() ?: return emptyList()
+            val lookup = Items.lookup(itemString)
             if (lookup is GroupedTestableItems) return lookup.children.toList()
             return Material.entries
                 .filter { !it.isAir && it.isItem && lookup.matches(ItemStack(it)) }
@@ -139,10 +139,8 @@ class CategoryStack private constructor(
 class CategoryIcon(private val config: Config) {
     fun getItemStack(): ItemStack? {
         val itemString = config.getString("item").replace("\\\"", "\"")
-        return runCatching {
-            ItemStackBuilder(Items.lookup(itemString))
-                .addLoreLines(config.getFormattedStrings("lore"))
-                .build()
-        }.getOrNull()
+        return ItemStackBuilder(Items.lookup(itemString))
+            .addLoreLines(config.getFormattedStrings("lore"))
+            .build()
     }
 }

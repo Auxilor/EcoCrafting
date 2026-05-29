@@ -10,21 +10,35 @@ import com.willfp.eco.core.recipe.workstation.SmeltingType
 import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import org.bukkit.Bukkit
+import org.bukkit.Keyed
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.block.BrewingStand
+import org.bukkit.block.Campfire
+import org.bukkit.block.Crafter
+import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.event.Listener
 import com.willfp.eco.util.formatEco
+import org.bukkit.event.block.BlockCookEvent
+import org.bukkit.event.block.CrafterCraftEvent
+import org.bukkit.event.inventory.BrewEvent
 import org.bukkit.event.inventory.CraftItemEvent
+import org.bukkit.event.inventory.FurnaceSmeltEvent
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.MerchantInventory
 import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
 import com.auxilor.ecocrafting.custom.event.CustomBrewEvent
@@ -32,7 +46,7 @@ import com.auxilor.ecocrafting.custom.event.CustomCraftEvent
 import com.auxilor.ecocrafting.custom.event.CustomSmeltEvent
 import com.auxilor.ecocrafting.custom.event.CustomSmithEvent
 import com.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 class CustomRecipeListener : Listener {
 
@@ -42,8 +56,7 @@ class CustomRecipeListener : Listener {
         }
     }
 
-    // â”€â”€ Crafting table + smithing table + stonecutter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Crafting table + smithing table + stonecutter
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareCraft(event: PrepareItemCraftEvent) {
         val recipe = findCraftingTableRecipe(event.inventory.matrix) ?: return
@@ -53,7 +66,7 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onCraft(event: CraftItemEvent) {
         val player = event.whoClicked as? Player ?: return
-        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
+        val recipeKey = (event.recipe as? Keyed)?.key ?: return
 
         if (event.view.topInventory is StonecutterInventory) {
             handleStonecutter(event, player, recipeKey)
@@ -104,12 +117,12 @@ class CustomRecipeListener : Listener {
                 it.addition.matches(inv.getItem(2))
             }) as? SmithingRecipe
             ?: run {
-                ecoCraftingPlugin.debug("[Smithing] no recipe for key=$recipeKey")
+                plugin.debug("[Smithing] no recipe for key=$recipeKey")
                 return
             }
 
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
-        ecoCraftingPlugin.debug("[Smithing] handleSmithing: key=${recipe.key} giveResultItem=${meta.giveResultItem}")
+        plugin.debug("[Smithing] handleSmithing: key=${recipe.key} giveResultItem=${meta.giveResultItem}")
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
@@ -121,22 +134,22 @@ class CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeSmithingSlots(event.view.topInventory)
-            ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
         }
         fireCraftEffects(player, recipe, meta, item, 1)
-        ecoCraftingPlugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
+        plugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
     }
 
     private fun handleStonecutter(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
         val recipe = WorkstationRecipes.getByKey(recipeKey) as? StonecuttingRecipe
             ?: run {
-                ecoCraftingPlugin.debug("[Stonecutter] no recipe for key=$recipeKey")
+                plugin.debug("[Stonecutter] no recipe for key=$recipeKey")
                 return
             }
 
         val meta = CustomRecipes.getMeta(recipeKey) ?: return
 
-        ecoCraftingPlugin.debug("[Stonecutter] handleStonecutter: key=$recipeKey giveResultItem=${meta.giveResultItem}")
+        plugin.debug("[Stonecutter] handleStonecutter: key=$recipeKey giveResultItem=${meta.giveResultItem}")
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
@@ -149,17 +162,16 @@ class CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeStonecutterSlot(event.view.topInventory)
-            ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
         }
         fireCraftEffects(player, recipe, meta, item, amount)
-        ecoCraftingPlugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
+        plugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
     }
 
-    // â”€â”€ Crafter block â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Crafter block
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onCrafterCraft(event: org.bukkit.event.block.CrafterCraftEvent) {
-        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
+    fun onCrafterCraft(event: CrafterCraftEvent) {
+        val recipeKey = (event.recipe as? Keyed)?.key ?: return
         val baseKey = if (recipeKey.namespace == "ecocrafting" && recipeKey.key.endsWith("_crafter"))
             NamespacedKey("ecocrafting", recipeKey.key.removeSuffix("_crafter"))
         else recipeKey
@@ -174,7 +186,7 @@ class CustomRecipeListener : Listener {
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            val crafterInv = (event.block.state as? org.bukkit.block.Crafter)?.inventory ?: return
+            val crafterInv = (event.block.state as? Crafter)?.inventory ?: return
             for (slot in 0 until 9) consume(crafterInv, slot)
             val player = BlockOwnerTracker.getOwner(event.block.location) ?: return
             val item = recipe.output?.clone() ?: return
@@ -190,10 +202,9 @@ class CustomRecipeListener : Listener {
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
-    // â”€â”€ Furnace + campfire â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Furnace + campfire
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onSmelt(event: org.bukkit.event.inventory.FurnaceSmeltEvent) {
+    fun onSmelt(event: FurnaceSmeltEvent) {
         val location = event.block.location
         val player = BlockOwnerTracker.getOwner(location)
 
@@ -222,13 +233,13 @@ class CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             val furnaceState = event.block.state
-            if (furnaceState is org.bukkit.block.Furnace) consume(furnaceState.inventory, 0)
+            if (furnaceState is Furnace) consume(furnaceState.inventory, 0)
         }
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    fun onCampfire(event: org.bukkit.event.block.BlockCookEvent) {
+    fun onCampfire(event: BlockCookEvent) {
         val location = event.block.location
         val player = BlockOwnerTracker.getOwner(location)
 
@@ -256,7 +267,7 @@ class CustomRecipeListener : Listener {
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            val campfire = event.block.state as? org.bukkit.block.Campfire
+            val campfire = event.block.state as? Campfire
             if (campfire != null) {
                 for (slot in 0 until 4) {
                     val slotItem = campfire.getItem(slot) ?: continue
@@ -272,19 +283,19 @@ class CustomRecipeListener : Listener {
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
-    // â”€â”€ Brewing stand â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Brewing stand
     // Eco's BrewingPacketHandler intercepts ingredient placement and fires the brew
     // directly (no BrewEvent). Logic is handled via WorkstationRecipes.brewCompletedHook
     // registered in init. This handler only cancels stale timers if BrewEvent fires anyway.
 
     @EventHandler(priority = EventPriority.LOWEST)
-    fun onBrew(event: org.bukkit.event.inventory.BrewEvent) {
+    fun onBrew(event: BrewEvent) {
         WorkstationRecipes.cancelPendingBrew(event.block.location)
     }
 
     private fun handleBrewCompleted(location: Location, recipe: BrewingRecipe, matchedSlots: List<Int>) {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
-        val brewer = (location.block.state as? org.bukkit.block.BrewingStand)?.inventory ?: return
+        val brewer = (location.block.state as? BrewingStand)?.inventory ?: return
 
         if (!meta.giveResultItem) {
             matchedSlots.forEach { brewer.setItem(it, null) }
@@ -293,7 +304,7 @@ class CustomRecipeListener : Listener {
         val player = BlockOwnerTracker.getOwner(location) ?: return
         val item = recipe.output?.clone() ?: return
 
-        val ghostPerSlot = ecoCraftingPlugin.configYml.getBool("brewing-stand.ghost-per-slot")
+        val ghostPerSlot = plugin.configYml.getBool("brewing-stand.ghost-per-slot")
         if (!meta.giveResultItem && ghostPerSlot) {
             matchedSlots.forEach { _ -> fireCraftEffects(player, recipe, meta, item.clone(), 1) }
         } else {
@@ -301,8 +312,7 @@ class CustomRecipeListener : Listener {
         }
     }
 
-    // â”€â”€ Grindstone + Anvil prepare (override eco's HIGH firstOrNull) â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Grindstone + Anvil prepare (override eco's HIGH firstOrNull)
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareGrindstone(event: PrepareGrindstoneEvent) {
         val inv = event.inventory
@@ -316,7 +326,7 @@ class CustomRecipeListener : Listener {
             ?: return
         CustomRecipes.getMeta(recipe.key) ?: return
         event.result = recipe.output?.clone()
-        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable {
+        plugin.server.scheduler.runTask(plugin, Runnable {
             (event.view.player as? Player)?.updateInventory()
         })
     }
@@ -340,11 +350,10 @@ class CustomRecipeListener : Listener {
         event.inventory.repairCost = recipe.repairCost
     }
 
-    // â”€â”€ Smithing ghost result-click â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Smithing ghost result-click
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onSmithingResultClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
-        if (event.inventory.type != org.bukkit.event.inventory.InventoryType.SMITHING) return
+    fun onSmithingResultClick(event: InventoryClickEvent) {
+        if (event.inventory.type != InventoryType.SMITHING) return
         if (event.rawSlot != 3) return
         val player = event.whoClicked as? Player ?: return
 
@@ -358,7 +367,7 @@ class CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (meta.giveResultItem) return
 
-        ecoCraftingPlugin.debug("[Smithing] onSmithingResultClick: no-item recipe=${recipe.key}")
+        plugin.debug("[Smithing] onSmithingResultClick: no-item recipe=${recipe.key}")
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         event.isCancelled = true
@@ -367,14 +376,13 @@ class CustomRecipeListener : Listener {
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1)
-        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
+        plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 
-    // â”€â”€ Stonecutter ghost result-click â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Stonecutter ghost result-click
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onStonecutterResultClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
-        if (event.inventory.type != org.bukkit.event.inventory.InventoryType.STONECUTTER) return
+    fun onStonecutterResultClick(event: InventoryClickEvent) {
+        if (event.inventory.type != InventoryType.STONECUTTER) return
         if (event.rawSlot != 1) return
         val player = event.whoClicked as? Player ?: return
 
@@ -387,7 +395,7 @@ class CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (meta.giveResultItem) return
 
-        ecoCraftingPlugin.debug("[Stonecutter] onStonecutterResultClick: no-item recipe=${recipe.key}")
+        plugin.debug("[Stonecutter] onStonecutterResultClick: no-item recipe=${recipe.key}")
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = resultItem.clone()
@@ -409,27 +417,26 @@ class CustomRecipeListener : Listener {
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
-        ecoCraftingPlugin.server.scheduler.runTask(ecoCraftingPlugin, Runnable { player.updateInventory() })
+        plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 
-    // â”€â”€ InventoryClickEvent for grindstone / anvil / villager â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // InventoryClickEvent for grindstone / anvil / villager
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onInventoryClick(event: org.bukkit.event.inventory.InventoryClickEvent) {
+    fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
         val inv = event.inventory
 
         if (event.rawSlot != 2) return
 
         val workstationRecipe = when (inv.type) {
-            org.bukkit.event.inventory.InventoryType.ANVIL ->
+            InventoryType.ANVIL ->
                 WorkstationRecipes.getAll(AnvilRecipe::class.java)
                     .firstOrNull {
                         it.base.matches(inv.getItem(0)) &&
                         (it.material == null || it.material!!.matches(inv.getItem(1)))
                     } ?: return
 
-            org.bukkit.event.inventory.InventoryType.GRINDSTONE ->
+            InventoryType.GRINDSTONE ->
                 WorkstationRecipes.getAll(GrindstoneRecipe::class.java)
                     .filter {
                         it.item1.matches(inv.getItem(0)) &&
@@ -438,10 +445,10 @@ class CustomRecipeListener : Listener {
                     .maxByOrNull { if (it.item2 != null) 1 else 0 }
                     ?: return
 
-            org.bukkit.event.inventory.InventoryType.MERCHANT -> {
-                val merchant = inv as? org.bukkit.inventory.MerchantInventory ?: return
+            InventoryType.MERCHANT -> {
+                val merchant = inv as? MerchantInventory ?: return
                 val selected = merchant.selectedRecipe ?: return
-                val tradeNsKey = org.bukkit.NamespacedKey("ecocrafting", "trade_key")
+                val tradeNsKey = NamespacedKey("ecocrafting", "trade_key")
                 val tradeKey = selected.result.itemMeta
                     ?.persistentDataContainer
                     ?.get(tradeNsKey, PersistentDataType.STRING)
@@ -471,9 +478,8 @@ class CustomRecipeListener : Listener {
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
     }
 
-    // â”€â”€ Grid consumption helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    private fun consume(inv: org.bukkit.inventory.Inventory, slot: Int) {
+    // Grid consumption helpers
+    private fun consume(inv: Inventory, slot: Int) {
         val stack = inv.getItem(slot) ?: return
         if (stack.amount <= 1) inv.setItem(slot, null)
         else { stack.amount--; inv.setItem(slot, stack) }
@@ -490,15 +496,15 @@ class CustomRecipeListener : Listener {
         event.inventory.matrix = matrix
     }
 
-    private fun consumeSmithingSlots(inv: org.bukkit.inventory.Inventory) {
+    private fun consumeSmithingSlots(inv: Inventory) {
         for (slot in 0..2) consume(inv, slot)
     }
 
-    private fun consumeStonecutterSlot(inv: org.bukkit.inventory.Inventory) {
+    private fun consumeStonecutterSlot(inv: Inventory) {
         consume(inv, 0)
     }
 
-    private fun consumeWorkbenchInputs(inv: org.bukkit.inventory.Inventory, recipe: com.willfp.eco.core.recipe.workstation.WorkstationRecipe) {
+    private fun consumeWorkbenchInputs(inv: Inventory, recipe: WorkstationRecipe) {
         when (recipe) {
             is GrindstoneRecipe -> { consume(inv, 0); if (recipe.item2 != null) consume(inv, 1) }
             is AnvilRecipe      -> { consume(inv, 0); if (recipe.material != null) consume(inv, 1) }
@@ -507,8 +513,7 @@ class CustomRecipeListener : Listener {
         }
     }
 
-    // â”€â”€ Key helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Key helpers
     private fun findCraftingTableRecipe(matrix: Array<out ItemStack?>): CrafterRecipe? {
         return WorkstationRecipes.getAll(CrafterRecipe::class.java)
             .firstOrNull { recipe ->

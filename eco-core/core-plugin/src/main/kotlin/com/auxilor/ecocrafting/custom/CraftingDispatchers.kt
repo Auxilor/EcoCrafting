@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.custom.libreforge.TriggerCustomCraft
 import com.auxilor.ecocrafting.custom.libreforge.TriggerGhostCraft
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 fun fireCraftEffects(player: Player, recipe: WorkstationRecipe, meta: EcoCraftingMeta, item: ItemStack, amount: Int) {
     val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString())
@@ -19,7 +19,7 @@ fun fireCraftEffects(player: Player, recipe: WorkstationRecipe, meta: EcoCraftin
 
 fun checkCraftingConditions(player: Player, recipe: WorkstationRecipe, meta: EcoCraftingMeta): Boolean {
     if (RecipeUnlockStore.isLocked(player, recipe.key, meta)) {
-        player.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.recipe-locked"))
+        player.sendMessage(plugin.langYml.getFormattedString("messages.recipe-locked"))
         return false
     }
     val dispatcher = player.toDispatcher()

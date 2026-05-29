@@ -1,5 +1,6 @@
 ﻿package com.auxilor.ecocrafting.integration
 
+import com.willfp.ecoshop.shop.ShopItem
 import com.willfp.ecoshop.shop.BuyStatus
 import com.willfp.ecoshop.shop.BuyType
 import com.willfp.ecoshop.shop.getDisplay
@@ -8,7 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import com.auxilor.ecocrafting.EcoCraftingPlugin
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 /**
  * Optional EcoShop integration boundary.
@@ -66,7 +67,7 @@ object ShopIntegration {
             return PurchaseResult(false, "EcoShop auto-purchase is disabled")
         }
 
-        val purchases = mutableListOf<Pair<com.willfp.ecoshop.shop.ShopItem, Int>>()
+        val purchases = mutableListOf<Pair<ShopItem, Int>>()
         val unavailable = mutableListOf<String>()
         val unaffordable = mutableListOf<String>()
 
@@ -88,15 +89,17 @@ object ShopIntegration {
         if (unavailable.isNotEmpty()) return PurchaseResult(false, "Unavailable: ${unavailable.joinToString(", ")}")
         if (unaffordable.isNotEmpty()) return PurchaseResult(false, "Cannot afford: ${unaffordable.joinToString(", ")}")
 
-        return runCatching {
+        return try {
             for ((shopItem, purchaseTimes) in purchases) {
                 shopItem.buy(player, purchaseTimes, BuyType.NORMAL)
             }
             PurchaseResult(true, "Purchased missing materials")
-        }.getOrElse { PurchaseResult(false, it.message ?: "Purchase failed") }
+        } catch (e: Exception) {
+            PurchaseResult(false, e.message ?: "Purchase failed")
+        }
     }
 
-    private fun com.willfp.ecoshop.shop.ShopItem.getPurchaseTimesFor(amountNeeded: Int): Int {
+    private fun ShopItem.getPurchaseTimesFor(amountNeeded: Int): Int {
         val buyAmount = this.buyAmount.coerceAtLeast(1)
         return ((amountNeeded + buyAmount - 1) / buyAmount).coerceAtLeast(1)
     }

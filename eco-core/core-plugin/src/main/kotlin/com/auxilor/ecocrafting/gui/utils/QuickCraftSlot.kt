@@ -11,7 +11,7 @@ import com.auxilor.ecocrafting.craft.CraftAttempt
 import com.auxilor.ecocrafting.craft.QuickCraftService
 import com.auxilor.ecocrafting.integration.ShopIntegration
 import com.auxilor.ecocrafting.recipe.ResolvedRecipe
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
     val service = QuickCraftService(player, recipe)
@@ -26,13 +26,13 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
     fun finish(event: InventoryClickEvent, target: Player, result: CraftAttempt, purchased: Boolean) {
         if (result.success) {
             val key = if (purchased) "messages.craft-purchased" else "messages.craft-success"
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString(key)
+            target.sendMessage(plugin.langYml.getFormattedString(key)
                 .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
             sound("quick-craft-success")?.playTo(target)
             target.closeInventory()
         } else {
             val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString(key)
+            target.sendMessage(plugin.langYml.getFormattedString(key)
                 .replace("%reason%", result.reason)
                 .formatEco(target))
             sound("quick-craft-fail")?.playTo(target)
@@ -40,7 +40,7 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
     }
 
     fun retryAfterPurchase(event: InventoryClickEvent, target: Player, attempts: Int = 0) {
-        Bukkit.getScheduler().runTaskLater(ecoCraftingPlugin, Runnable {
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             val result = QuickCraftService(target, recipe).craft()
             if (result.success || result.reason != "Missing materials" || attempts >= 20)
                 finish(event, target, result, true)
@@ -59,7 +59,7 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
                 if (purchase.success) { retryAfterPurchase(event, target); return }
                 result = result.copy(reason = purchase.message)
             } else if (event.isShiftClick && ShopIntegration.isEnabled()) {
-                result = result.copy(reason = ecoCraftingPlugin.langYml.getString("messages.shop-auto-buy-disabled"))
+                result = result.copy(reason = plugin.langYml.getString("messages.shop-auto-buy-disabled"))
             }
         }
         finish(event, target, result, false)

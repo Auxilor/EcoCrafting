@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
 import com.auxilor.ecocrafting.craft.QuickCraftService
 import com.auxilor.ecocrafting.integration.ShopIntegration
 import com.auxilor.ecocrafting.recipe.ResolvedRecipe
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
     val service = QuickCraftService(player, recipe)
@@ -22,11 +22,11 @@ fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): 
 
     fun sendPurchaseResult(target: Player, success: Boolean, message: String) {
         if (success) {
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.craft-purchased")
+            target.sendMessage(plugin.langYml.getFormattedString("messages.craft-purchased")
                 .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
             sound("purchase-success")?.playTo(target)
         } else {
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.craft-failed")
+            target.sendMessage(plugin.langYml.getFormattedString("messages.craft-failed")
                 .replace("%reason%", message))
             sound("purchase-fail")?.playTo(target)
         }
@@ -40,12 +40,12 @@ fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): 
     ).onLeftClick { event, _ ->
         val target = event.whoClicked as Player
         if (hasAllMaterials) {
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.craft-sufficient"))
+            target.sendMessage(plugin.langYml.getFormattedString("messages.craft-sufficient"))
             sound("purchase-success")?.playTo(target)
             return@onLeftClick
         }
         if (!ShopIntegration.isEnabled()) {
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.shop-disabled"))
+            target.sendMessage(plugin.langYml.getFormattedString("messages.shop-disabled"))
             sound("purchase-fail")?.playTo(target)
             return@onLeftClick
         }
@@ -54,7 +54,7 @@ fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): 
     }.onShiftLeftClick { event, _ ->
         val target = event.whoClicked as Player
         if (!ShopIntegration.canAutoBuy(true)) {
-            target.sendMessage(ecoCraftingPlugin.langYml.getFormattedString("messages.shop-disabled"))
+            target.sendMessage(plugin.langYml.getFormattedString("messages.shop-disabled"))
             return@onShiftLeftClick
         }
         val result = ShopIntegration.purchaseMaterials(target, QuickCraftService(target, recipe).getMissingMaterials())

@@ -4,7 +4,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.entity.Player
 import com.auxilor.ecocrafting.craft.MaterialCount
 import com.auxilor.ecocrafting.integration.ShopIntegration
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 fun MaterialCount.toLoreLine(player: Player): String {
     val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {
@@ -15,7 +15,7 @@ fun MaterialCount.toLoreLine(player: Player): String {
         item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
     }
     val langKey = if (has >= needs) "messages.material-sufficient" else "messages.material-missing"
-    var line = ecoCraftingPlugin.langYml.getString(langKey)
+    var line = plugin.langYml.getString(langKey)
         .replace("%has%", has.toString())
         .replace("%needs%", needs.toString())
         .replace("%item%", itemName)
@@ -23,7 +23,7 @@ fun MaterialCount.toLoreLine(player: Player): String {
         val info = ShopIntegration.getMaterialShopInfo(player, item, needs - has)
         if (info != null) {
             val priceKey = if (info.canBuy) "messages.shop-price-affordable" else "messages.shop-price-unaffordable"
-            line += ecoCraftingPlugin.langYml.getString(priceKey)
+            line += plugin.langYml.getString(priceKey)
                 .replace("%price%", info.priceDisplay.ifBlank { info.status })
         }
     }

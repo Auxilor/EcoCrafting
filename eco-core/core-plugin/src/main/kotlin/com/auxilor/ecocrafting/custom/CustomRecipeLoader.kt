@@ -1,5 +1,14 @@
 ﻿package com.auxilor.ecocrafting.custom
 
+import org.bukkit.Registry
+import org.bukkit.entity.AbstractVillager
+import org.bukkit.Bukkit
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
+import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
+import com.willfp.eco.core.recipe.parts.GroupedTestableItems
+import com.willfp.eco.core.recipe.parts.EmptyTestableItem
+import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.recipe.workstation.AnvilRecipe
@@ -26,7 +35,7 @@ import com.auxilor.ecocrafting.recipe.IngredientMatcher
 import com.auxilor.ecocrafting.recipe.RecipeDisplayType
 import com.auxilor.ecocrafting.recipe.RecipeIngredient
 import com.auxilor.ecocrafting.recipe.toTestableItem
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
@@ -38,7 +47,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
-        runCatching {
+        try {
             when (type) {
                 "crafting_table"  -> loadCraftingTable(id, config)
                 "furnace"         -> loadSmelting(id, config, WSmeltingType.FURNACE)
@@ -53,13 +62,13 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 "villager"        -> loadVillager(id, config)
                 else -> error("Unknown recipe type: $type")
             }
-        }.onFailure {
-            ecoCraftingPlugin.logger.warning("Failed to load recipe $id: ${it.message}")
+        } catch (e: Exception) {
+            plugin.logger.warning("Failed to load recipe $id: ${e.message}")
         }
     }
 
     override fun afterReload(plugin: LibreforgePlugin) {
-        if (ecoCraftingPlugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
+        if (plugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
         CustomRecipes.allKeys().forEach { key ->
             val categoryId = CustomRecipes.getMeta(key)?.categoryId ?: return@forEach
             val output = WorkstationRecipes.getAll().firstOrNull { it.key == key }?.output ?: return@forEach
@@ -67,7 +76,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             if (category != null) {
                 category.registerCustomRecipe(output.clone())
             } else {
-                ecoCraftingPlugin.logger.fine("[EcoCrafting] Unknown category '$categoryId' for recipe '${key.key}', skipping")
+                plugin.logger.fine("[EcoCrafting] Unknown category '$categoryId' for recipe '${key.key}', skipping")
             }
         }
     }
@@ -75,8 +84,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     private fun scanVillagers() {
         val validKeyNames = WorkstationRecipes.getAll(VillagerRecipe::class.java)
             .map { "vr_${it.key.key}" }.toSet()
-        org.bukkit.Bukkit.getWorlds().flatMap { it.entities }
-            .filterIsInstance<org.bukkit.entity.AbstractVillager>()
+        Bukkit.getWorlds().flatMap { it.entities }
+            .filterIsInstance<AbstractVillager>()
             .forEach { villager ->
                 val pdc = villager.persistentDataContainer
                 pdc.keys.filter { it.namespace == "ecocrafting" && it.key.startsWith("vr_") }
@@ -85,18 +94,16 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             }
     }
 
-    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Helpers
     internal fun key(id: String) = NamespacedKey("ecocrafting", id.lowercase())
 
     internal fun parseOutputItem(config: Config): ItemStack {
-        val item = runCatching { Items.lookup(config.getString("output")).item }.getOrNull()
-            ?: error("Cannot resolve output: ${config.getString("output")}")
+        val item = Items.lookup(config.getString("output")).item
         val lore = config.getFormattedStrings("lore")
         if (lore.isNotEmpty()) {
             val meta = item.itemMeta ?: return item
             meta.lore(lore.map {
-                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
+                LegacyComponentSerializer.legacySection().deserialize(it)
             })
             item.itemMeta = meta
         }
@@ -107,13 +114,13 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         if (lookup.isBlank() || lookup == "*")
             return RecipeIngredient(ItemStack(Material.AIR), IngredientMatcher.AnyItem)
         val testable = Items.lookup(lookup)
-        if (testable is com.willfp.eco.core.recipe.parts.EmptyTestableItem)
+        if (testable is EmptyTestableItem)
             error("Cannot resolve item: $lookup")
-        val displayItems = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems && testable.children.isNotEmpty())
+        val displayItems = if (testable is GroupedTestableItems && testable.children.isNotEmpty())
             testable.children.map { it.item.clone() }
         else
             listOf(testable.item.clone())
-        val matcher = if (testable is com.willfp.eco.core.recipe.parts.GroupedTestableItems && testable.children.isNotEmpty())
+        val matcher = if (testable is GroupedTestableItems && testable.children.isNotEmpty())
             IngredientMatcher.EcoPart(testable)
         else
             IngredientMatcher.SimilarItem(displayItems.first())
@@ -125,7 +132,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     }
 
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): EcoCraftingMeta {
-        val ctx = ViolationContext(ecoCraftingPlugin, "recipe-$id")
+        val ctx = ViolationContext(plugin, "recipe-$id")
         val giveResultItem = if (config.has("give-result-item")) config.getBool("give-result-item") else true
         val effectsChain = Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
         return EcoCraftingMeta(
@@ -168,17 +175,16 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         return variants
     }
 
-    // â”€â”€ Type-specific loaders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // Type-specific loaders
     @Suppress("UNCHECKED_CAST")
     private fun crafterParts(ingredients: List<RecipeIngredient>) =
         ingredients.map { if (it.matcher == IngredientMatcher.AnyItem) null else it.matcher.toTestableItem() }
-            as List<com.willfp.eco.core.items.TestableItem>
+            as List<TestableItem>
 
     @Suppress("UNCHECKED_CAST")
     private fun crafterDisplays(ingredients: List<RecipeIngredient>) =
         ingredients.map { if (it.matcher == IngredientMatcher.AnyItem) null else it.displayItem }
-            as List<org.bukkit.inventory.ItemStack>
+            as List<ItemStack>
 
     private fun loadCraftingTable(id: String, config: Config) {
         val rawParts = config.getStrings("recipe")
@@ -193,8 +199,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
         fun registerEcoVariant(variantKey: NamespacedKey, recipeParts: List<RecipeIngredient>) {
             if (shapeless) {
-                val builder = com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-                    .builder(ecoCraftingPlugin, variantKey.key)
+                val builder = ShapelessCraftingRecipe
+                    .builder(plugin, variantKey.key)
                     .setOutput(output)
                     .setSupportCrafter(meta.supportCrafter)
                 recipeParts
@@ -202,8 +208,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                     .forEach { builder.addRecipePart(it.matcher.toTestableItem()) }
                 builder.build().register()
             } else {
-                val builder = com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-                    .builder(ecoCraftingPlugin, variantKey.key)
+                val builder = ShapedCraftingRecipe
+                    .builder(plugin, variantKey.key)
                     .setOutput(output)
                     .setSupportCrafter(meta.supportCrafter)
                 recipeParts.forEachIndexed { idx, part ->
@@ -251,7 +257,6 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             WSmeltingType.BLAST_FURNACE -> RecipeDisplayType.BLAST_FURNACE
             WSmeltingType.SMOKER        -> RecipeDisplayType.SMOKER
             WSmeltingType.CAMPFIRE      -> RecipeDisplayType.CAMPFIRE
-            else                        -> RecipeDisplayType.SMELTING
         }
         registerWithMeta(recipe, parseMeta(id, config, displayType))
     }
@@ -271,20 +276,19 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     private fun loadStonecutter(id: String, config: Config) {
         val input = parseIngredient(config.getString("input"))
-        val ctx = ViolationContext(ecoCraftingPlugin, "recipe-$id")
+        val ctx = ViolationContext(plugin, "recipe-$id")
         val rawOutputs = config.getSubsections("outputs")
         require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
 
         rawOutputs.forEachIndexed { idx, outCfg ->
             val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_$idx")
             val outItem = run {
-                val base = runCatching { Items.lookup(outCfg.getString("item")).item }.getOrNull()
-                    ?: error("Cannot resolve stonecutter output: ${outCfg.getString("item")}")
+                val base = Items.lookup(outCfg.getString("item")).item
                 val lore = outCfg.getFormattedStrings("lore")
                 if (lore.isNotEmpty()) {
                     val itemMeta = base.itemMeta ?: return@run base
                     itemMeta.lore(lore.map {
-                        net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(it)
+                        LegacyComponentSerializer.legacySection().deserialize(it)
                     })
                     base.itemMeta = itemMeta
                 }
@@ -346,9 +350,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
     private fun loadVillager(id: String, config: Config) {
         val input1 = parseIngredient(config.getString("input1"))
         val input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) }
-        val profession = config.getStringOrNull("profession")?.let {
-            runCatching { org.bukkit.entity.Villager.Profession.valueOf(it.uppercase()) }.getOrNull()
-        }
+        val profession = config.getStringOrNull("profession")
+            ?.let { Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(it.lowercase())) }
         val recipe = VillagerRecipe.builder(key(id), parseOutputItem(config), input1.matcher.toTestableItem())
             .input1Display(input1.displayItem)
             .input2(input2?.matcher?.toTestableItem())

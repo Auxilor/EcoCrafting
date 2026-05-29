@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 import com.auxilor.ecocrafting.custom.CustomRecipes
 import com.auxilor.ecocrafting.gui.RecipeGUI
 import com.auxilor.ecocrafting.recipe.RecipeResolver
-import com.auxilor.ecocrafting.ecoCraftingPlugin
+import com.auxilor.ecocrafting.plugin
 
 class CommandLookup(plugin: EcoPlugin) : Subcommand(plugin, "lookup", "EcoCrafting.command.lookup", true) {
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
