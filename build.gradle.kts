@@ -10,7 +10,7 @@ plugins {
     id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
 }
 
-group = "com.auxilor"
+group = "io.auxilor"
 version = findProperty("version")!!
 val libreforgeVersion = findProperty("libreforge-version")
 
@@ -63,7 +63,7 @@ allprojects {
         shadowJar {
             archiveFileName.set("EcoCrafting.jar")
             exclude("META-INF/**")
-            relocate("com.willfp.libreforge.loader", "com.auxilor.ecocrafting.libreforge.loader")
+            relocate("com.willfp.libreforge.loader", "io.auxilor.ecocrafting.libreforge.loader")
             relocate("kotlin", "com.willfp.eco.libs.kotlin")
             relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
             relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")

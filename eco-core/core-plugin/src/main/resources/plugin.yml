@@ -1,7 +1,7 @@
 folia-supported: false
 name: ${pluginName}
 version: ${version}
-main: com.auxilor.ecocrafting.EcoCraftingPlugin
+main: io.auxilor.ecocrafting.EcoCraftingPlugin
 api-version: 1.21.8
 authors: [Exanthiax, _OfTeN_, joogiebear, Auxilor ]
 depend:

@@ -1,2 +1,2 @@
-group = "com.auxilor"
+group = "io.auxilor"
 version = rootProject.version
