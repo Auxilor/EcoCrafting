@@ -164,7 +164,7 @@ villager-scan-on-reload: true
 #*/ The Category Browser GUI Section /*#
 category-browser-gui:
   custom-slots: []
-  title: "&8EcoCrafting | Page &6%page%"
+  title: "&8EcoCrafting | Page &6%page%&8/&6%max_page%"
   mask:
     items:
       - black_stained_glass_pane
