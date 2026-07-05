@@ -14,7 +14,6 @@ import io.auxilor.ecocrafting.custom.libreforge.TriggerGhostCraft
 import io.auxilor.ecocrafting.custom.libreforge.TriggerRecipeLocked
 import io.auxilor.ecocrafting.custom.libreforge.TriggerRecipeUnlocked
 import io.auxilor.ecocrafting.integration.ShopIntegration
-import io.auxilor.ecocrafting.integration.VaultPackIntegration
 import com.willfp.eco.core.bstats.EcoMetricsChart
 import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.libreforge.conditions.Conditions
@@ -32,7 +31,6 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     }
 
     override fun handleEnable() {
-        VaultPackIntegration.init(this)
         ShopIntegration.init(this)
 
         Triggers.register(TriggerGhostCraft)

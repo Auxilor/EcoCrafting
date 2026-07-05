@@ -8,7 +8,6 @@ depend:
   - eco
 softdepend:
   - EcoShop
-  - VaultPack
   - libreforge
 permissions:
   ecocrafting.admin.create:

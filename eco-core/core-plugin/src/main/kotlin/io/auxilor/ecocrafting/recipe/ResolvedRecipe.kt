@@ -30,7 +30,6 @@ data class ResolvedRecipe(
 enum class RecipeSource {
     ECO,
     BUKKIT,
-    VAULTPACK,
     CUSTOM,
     UNKNOWN
 }
