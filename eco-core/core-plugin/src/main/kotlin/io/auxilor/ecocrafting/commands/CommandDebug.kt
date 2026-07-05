@@ -1,12 +1,17 @@
-﻿package io.auxilor.ecocrafting.commands
+package io.auxilor.ecocrafting.commands
 
-import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.items.Items
-import org.bukkit.entity.Player
+import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeResolver
+import org.bukkit.entity.Player
 
-class CommandDebug(plugin: EcoPlugin) : Subcommand(plugin, "debug", "EcoCrafting.command.debug", true) {
+object CommandDebug : Subcommand(
+    plugin,
+    "debug",
+    "ecocrafting.command.debug",
+    true
+) {
     override fun onExecute(sender: Player, args: List<String>) {
         val item = sender.inventory.itemInMainHand
         val custom = Items.getCustomItem(item)

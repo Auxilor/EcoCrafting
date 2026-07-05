@@ -1,23 +1,20 @@
-﻿package io.auxilor.ecocrafting.commands
+package io.auxilor.ecocrafting.commands
 
-import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
+import io.auxilor.ecocrafting.custom.CustomRecipes
+import io.auxilor.ecocrafting.custom.RecipeUnlockStore
+import io.auxilor.ecocrafting.plugin
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
-import io.auxilor.ecocrafting.custom.CustomRecipes
-import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 
-class CommandUnlock(plugin: EcoPlugin) : Subcommand(plugin, "unlock", "EcoCrafting.admin", true) {
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return when (args.size) {
-            1 -> Bukkit.getOnlinePlayers().map { it.name }
-            2 -> CustomRecipes.allKeys().map { it.key }
-            else -> emptyList()
-        }
-    }
-
+object CommandUnlock : Subcommand(
+    plugin,
+    "unlock",
+    "ecocrafting.admin",
+    true
+) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.size < 2) { sender.sendMessage("Usage: /EcoCrafting unlock <player> <recipe-id>"); return }
         val target = Bukkit.getPlayer(args[0]) ?: run { sender.sendMessage("Player not found or offline."); return }
@@ -26,5 +23,13 @@ class CommandUnlock(plugin: EcoPlugin) : Subcommand(plugin, "unlock", "EcoCrafti
         val meta = CustomRecipes.getMeta(key) ?: run { sender.sendMessage("Unknown recipe: ${args[1]}"); return }
         RecipeUnlockStore.unlock(target, key, meta)
         sender.sendMessage("Unlocked '${args[1]}' for ${target.name}.")
+    }
+
+    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
+        return when (args.size) {
+            1 -> Bukkit.getOnlinePlayers().map { it.name }
+            2 -> CustomRecipes.allKeys().map { it.key }
+            else -> emptyList()
+        }
     }
 }
