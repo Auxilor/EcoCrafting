@@ -1,11 +1,12 @@
 package io.auxilor.ecocrafting
 
 import io.auxilor.ecocrafting.category.CategoryLoader
-import io.auxilor.ecocrafting.commands.MainCommand
+import io.auxilor.ecocrafting.commands.CommandEcoCrafting
 import io.auxilor.ecocrafting.custom.BlockOwnerTracker
 import io.auxilor.ecocrafting.custom.CustomRecipeListener
 import io.auxilor.ecocrafting.custom.CustomRecipeLoader
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
+import io.auxilor.ecocrafting.gui.RecipeCreatorChatListener
 import io.auxilor.ecocrafting.custom.libreforge.ConditionHasUnlockedRecipe
 import io.auxilor.ecocrafting.custom.libreforge.EffectLockRecipe
 import io.auxilor.ecocrafting.custom.libreforge.EffectUnlockRecipe
@@ -45,6 +46,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         eventManager.registerListener(BlockOwnerTracker)
         eventManager.registerListener(RecipeUnlockStore)
         eventManager.registerListener(CustomRecipeListener())
+        eventManager.registerListener(RecipeCreatorChatListener)
     }
 
     override fun handleReload() {
@@ -60,7 +62,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     }
 
     override fun loadPluginCommands(): MutableList<PluginCommand> {
-        return mutableListOf(MainCommand(this))
+        return mutableListOf(CommandEcoCrafting)
     }
 
     override fun getCustomCharts() = listOf(
