@@ -21,4 +21,4 @@ commands:
   ecocrafting:
     description: Base Command
     permission: ecocrafting.command.ecocrafting
-    aliases: [ rbook ]
+    aliases: [ rbook, recipebook ]

@@ -14,6 +14,10 @@ object CommandCreate : Subcommand(
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         val player = sender as? Player ?: run { sender.sendMessage("Players only."); return }
-        RecipeCreatorGUI.openTypeSelect(player)
+        RecipeCreatorGUI.startWizard(player, args.getOrNull(0))
+    }
+
+    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
+        return RecipeCreatorGUI.stationTypeKeys
     }
 }

@@ -5,7 +5,7 @@
   invalid-command: "&cUnknown subcommand!"
   invalid-item: "&cInvalid item!"
   no-recipe: "&cNo recipe found for specified item!"
-  reloaded: "&aEcoCrafting reloaded!"
+  reloaded: "&aEcoCrafting reloaded! Took %time%ms, loaded %count% recipes."
   craft-success: "&aSuccessfully crafted &f%item%&a!"
   craft-insufficient: "&cYou don't have enough materials to craft this item!"
   craft-no-space: "&cYou don't have enough inventory space to craft this item!"
