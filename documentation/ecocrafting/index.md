@@ -18,7 +18,6 @@ stonecutter, brewing stand, grindstone, anvil, and villager trades.
 - **In-game recipe creator** — create custom recipes without editing files using the admin GUI
 - **EcoShop integration** — buy missing materials and craft in one click
 - **libreforge conditions** — restrict recipe visibility and crafting with conditions
-- **VaultPack support** — optional VaultPack integration
 
 ## How does it work?
 

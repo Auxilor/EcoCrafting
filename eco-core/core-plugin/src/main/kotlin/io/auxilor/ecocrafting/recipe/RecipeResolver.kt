@@ -36,7 +36,6 @@ import org.bukkit.inventory.StonecuttingRecipe as BukkitStonecuttingRecipe
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeSymmetry
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
-import io.auxilor.ecocrafting.integration.VaultPackIntegration
 import io.auxilor.ecocrafting.plugin
 import java.lang.reflect.Field
 
@@ -91,7 +90,6 @@ object RecipeResolver {
         val customItem = Items.getCustomItem(clean)
 
         if (customItem != null) {
-            VaultPackIntegration.resolveRecipe(customItem)?.let { return it }
             findEcoRecipe(customItem)?.let { return it }
         }
 
@@ -110,7 +108,6 @@ object RecipeResolver {
         val results = mutableListOf<ResolvedRecipe>()
 
         if (customItem != null) {
-            VaultPackIntegration.resolveRecipe(customItem)?.let { results += it }
             findEcoRecipe(customItem)?.let { results += it }
         }
 
