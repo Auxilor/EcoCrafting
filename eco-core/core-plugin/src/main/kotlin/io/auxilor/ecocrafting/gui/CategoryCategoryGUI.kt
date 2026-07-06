@@ -1,9 +1,12 @@
 ﻿package io.auxilor.ecocrafting.gui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.addPage
+import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.player
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
@@ -19,17 +22,17 @@ import io.auxilor.ecocrafting.gui.utils.configSound
 
 class CategoryCategoryGUI(val config: Config): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
-        val positionedCategories = RecipeCategories.values
-            .filter { it.guiPosition != null && it.guiPosition!!.page == page }
-
-        val maxPage = RecipeCategories.values
+        val maxPage = (RecipeCategories.values
             .mapNotNull { it.guiPosition?.page }
-            .maxOrNull() ?: 1
+            .maxOrNull() ?: 1).coerceAtLeast(1)
 
         val pattern = config.getStrings("mask.pattern")
 
         val builtMenu = menu(pattern.size) {
-            title = config.getFormattedString("title").replace("%page%", page.toString())
+            title = config.getFormattedString("title")
+
+            maxPages(maxPage)
+            defaultPage(page)
 
             setMask(
                 FillerMask(
@@ -37,12 +40,6 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                     *pattern.toTypedArray()
                 )
             )
-
-            for (category in positionedCategories) {
-                val pos = category.guiPosition!!
-                val icon = category.icon?.getItemStack() ?: continue
-                setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
-            }
 
             config.getSubsectionOrNull("buttons.back")?.let {
                 prevMenu?.let {
@@ -54,15 +51,21 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                 }
             }
 
-            setSlot(
+            addPageChanger(
+                PageChanger.Direction.FORWARDS,
+                pageChangerItem("next-page", true),
+                pageChangerItem("next-page", false),
+                configSound("next-page"),
                 config.getInt("buttons.next-page.row"),
-                config.getInt("buttons.next-page.column"),
-                nextSlot(page, maxPage, prevMenu, configSound("next-page"))
+                config.getInt("buttons.next-page.column")
             )
-            setSlot(
+            addPageChanger(
+                PageChanger.Direction.BACKWARDS,
+                pageChangerItem("prev-page", true),
+                pageChangerItem("prev-page", false),
+                configSound("prev-page"),
                 config.getInt("buttons.prev-page.row"),
-                config.getInt("buttons.prev-page.column"),
-                prevSlot(page, prevMenu, configSound("prev-page"))
+                config.getInt("buttons.prev-page.column")
             )
 
             for (slotConfig in config.getSubsections("custom-slots")) {
@@ -71,6 +74,19 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                     slotConfig.getInt("column"),
                     ConfigSlot(slotConfig)
                 )
+            }
+
+            for (pageNum in 1..maxPage) {
+                addPage(pageNum) {
+                    val positionedCategories = RecipeCategories.values
+                        .filter { it.guiPosition?.page == pageNum }
+
+                    for (category in positionedCategories) {
+                        val pos = category.guiPosition!!
+                        val icon = category.icon?.getItemStack() ?: continue
+                        setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
+                    }
+                }
             }
         }
         builtMenu.open(player)
@@ -89,40 +105,13 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
             .build()
     }
 
-    private fun nextSlot(page: Int, maxPage: Int, prevMenu: Menu?, sound: PlayableSound?): Slot {
-        val nextActive = page < maxPage
-        val builder = Slot.builder(
-            ItemStackBuilder(
-                Items.lookup(config.getString("buttons.next-page.item.${getActive(nextActive)}"))
-            ).addLoreLines(
-                config.getFormattedStrings("buttons.next-page.lore.${getActive(nextActive)}")
-            ).build()
-        )
-        if (nextActive) {
-            builder.onLeftClick { event, _ ->
-                open(event.player, page + 1, prevMenu)
-                sound?.playTo(event.player)
-            }
-        }
-        return builder.build()
-    }
-
-    private fun prevSlot(page: Int, prevMenu: Menu?, sound: PlayableSound?): Slot {
-        val prevActive = page > 1
-        val builder = Slot.builder(
-            ItemStackBuilder(
-                Items.lookup(config.getString("buttons.prev-page.item.${getActive(prevActive)}"))
-            ).addLoreLines(
-                config.getFormattedStrings("buttons.prev-page.lore.${getActive(prevActive)}")
-            ).build()
-        )
-        if (prevActive) {
-            builder.onLeftClick { event, _ ->
-                open(event.player, page - 1, prevMenu)
-                sound?.playTo(event.player)
-            }
-        }
-        return builder.build()
+    private fun pageChangerItem(base: String, active: Boolean): ItemStack {
+        val state = getActive(active)
+        return ItemStackBuilder(
+            Items.lookup(config.getString("buttons.$base.item.$state"))
+        ).addLoreLines(
+            config.getFormattedStrings("buttons.$base.lore.$state")
+        ).build()
     }
 
     private fun getActive(active: Boolean): String {

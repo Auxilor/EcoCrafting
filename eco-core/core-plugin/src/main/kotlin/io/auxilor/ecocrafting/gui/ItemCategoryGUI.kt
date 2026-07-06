@@ -1,9 +1,12 @@
 ﻿package io.auxilor.ecocrafting.gui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.addPage
+import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.player
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
@@ -23,13 +26,15 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
     }
 
     private fun open(player: Player, page: Int, prevMenu: Menu?, items: List<ItemStack>) {
-        val perPage = getPerPage()
-        val maxPages = getMaxPages(items.size, perPage)
         val pattern = config.getStrings("mask.pattern")
-        var num = ((page - 1) * perPage)
+        val perPage = getPerPage()
+        val maxPages = getMaxPages(items.size, perPage).coerceAtLeast(1)
 
         val builtMenu = menu(pattern.size) {
-            title = config.getFormattedString("title").replace("%page%", page.toString())
+            title = config.getFormattedString("title")
+
+            maxPages(maxPages)
+            defaultPage(page)
 
             setMask(
                 FillerMask(
@@ -37,17 +42,6 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                     *pattern.toTypedArray()
                 )
             )
-
-            pattern.forEachIndexed { rowIndex, line ->
-                line.toCharArray().forEachIndexed { colIndex, character ->
-                    if (character.equals('i', ignoreCase = true)) {
-                        if (num < items.size) {
-                            setSlot(rowIndex + 1, colIndex + 1, slot(items[num], configSound("slot-click")))
-                        }
-                        num++
-                    }
-                }
-            }
 
             config.getSubsectionOrNull("buttons.back")?.let {
                 prevMenu?.let {
@@ -59,15 +53,21 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 }
             }
 
-            setSlot(
+            addPageChanger(
+                PageChanger.Direction.FORWARDS,
+                pageChangerItem("next-page", true),
+                pageChangerItem("next-page", false),
+                configSound("next-page"),
                 config.getInt("buttons.next-page.row"),
-                config.getInt("buttons.next-page.column"),
-                nextSlot(page, prevMenu, maxPages, items, configSound("next-page"))
+                config.getInt("buttons.next-page.column")
             )
-            setSlot(
+            addPageChanger(
+                PageChanger.Direction.BACKWARDS,
+                pageChangerItem("prev-page", true),
+                pageChangerItem("prev-page", false),
+                configSound("prev-page"),
                 config.getInt("buttons.prev-page.row"),
-                config.getInt("buttons.prev-page.column"),
-                prevSlot(page, prevMenu, items, configSound("prev-page"))
+                config.getInt("buttons.prev-page.column")
             )
 
             for (slotConfig in config.getSubsections("custom-slots")) {
@@ -76,6 +76,22 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                     slotConfig.getInt("column"),
                     ConfigSlot(slotConfig)
                 )
+            }
+
+            for (pageNum in 1..maxPages) {
+                addPage(pageNum) {
+                    var num = (pageNum - 1) * perPage
+                    pattern.forEachIndexed { rowIndex, line ->
+                        line.toCharArray().forEachIndexed { colIndex, character ->
+                            if (character.equals('i', ignoreCase = true)) {
+                                if (num < items.size) {
+                                    setSlot(rowIndex + 1, colIndex + 1, slot(items[num], configSound("slot-click")))
+                                }
+                                num++
+                            }
+                        }
+                    }
+                }
             }
         }
         builtMenu.open(player)
@@ -105,40 +121,13 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         return itemCount / perPage + if (itemCount % perPage > 0) 1 else 0
     }
 
-    private fun nextSlot(page: Int, prevMenu: Menu?, maxPages: Int, items: List<ItemStack>, sound: PlayableSound?): Slot {
-        val nextActive = page < maxPages
-        val builder = Slot.builder(
-            ItemStackBuilder(
-                Items.lookup(config.getString("buttons.next-page.item.${getActive(nextActive)}"))
-            ).addLoreLines(
-                config.getFormattedStrings("buttons.next-page.lore.${getActive(nextActive)}")
-            ).build()
-        )
-        if (nextActive) {
-            builder.onLeftClick { event, _ ->
-                open(event.player, page + 1, prevMenu, items)
-                sound?.playTo(event.player)
-            }
-        }
-        return builder.build()
-    }
-
-    private fun prevSlot(page: Int, prevMenu: Menu?, items: List<ItemStack>, sound: PlayableSound?): Slot {
-        val prevActive = page > 1
-        val builder = Slot.builder(
-            ItemStackBuilder(
-                Items.lookup(config.getString("buttons.prev-page.item.${getActive(prevActive)}"))
-            ).addLoreLines(
-                config.getFormattedStrings("buttons.prev-page.lore.${getActive(prevActive)}")
-            ).build()
-        )
-        if (prevActive) {
-            builder.onLeftClick { event, _ ->
-                open(event.player, page - 1, prevMenu, items)
-                sound?.playTo(event.player)
-            }
-        }
-        return builder.build()
+    private fun pageChangerItem(base: String, active: Boolean): ItemStack {
+        val state = getActive(active)
+        return ItemStackBuilder(
+            Items.lookup(config.getString("buttons.$base.item.$state"))
+        ).addLoreLines(
+            config.getFormattedStrings("buttons.$base.lore.$state")
+        ).build()
     }
 
     private fun getActive(active: Boolean): String {
