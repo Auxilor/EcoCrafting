@@ -48,6 +48,15 @@ import io.auxilor.ecocrafting.custom.event.CustomSmithEvent
 import io.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
 import io.auxilor.ecocrafting.plugin
 
+internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
+    val present = matrix.filter { it != null && !it.type.isAir }
+    if (present.isEmpty()) return Int.MAX_VALUE
+    return present.minOf { it!!.amount }
+}
+
+internal fun maxCraftsFromInput(inputStack: ItemStack?): Int =
+    inputStack?.amount ?: 0
+
 class CustomRecipeListener : Listener {
 
     init {
@@ -86,26 +95,28 @@ class CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
-        val amount = calculateCraftAmount(event)
+        val amount = calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
 
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
+        val tookOver = needsTakeover && meta.giveResultItem
         when {
             !meta.giveResultItem -> {
                 event.isCancelled = true
-                consumeCraftingGrid(event)
+                consumeCraftingGrid(event, amount)
             }
-            needsTakeover -> {
-                // Vanilla recipe won at Bukkit level; defer to eco's shared takeover
-                // utility (cancel event, decrement grid by 1, deliver via cursor or
-                // inventory.addItem). Used by other eco plugins too for collisions.
-                Recipes.takeOverCraftItem(event, item)
+            tookOver -> {
+                Recipes.takeOverCraftItem(event, item.clone().apply { this.amount = 1 })
             }
         }
-        fireCraftEffects(player, recipe, meta, item, amount)
+        if (tookOver) {
+            fireCraftEffects(player, recipe, meta, item.clone().apply { this.amount = 1 }, 1)
+        } else {
+            fireCraftEffects(player, recipe, meta, item, amount)
+        }
     }
 
     private fun handleSmithing(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
@@ -153,7 +164,7 @@ class CustomRecipeListener : Listener {
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
-        val amount = calculateCraftAmount(event)
+        val amount = calculateCraftAmount(event, maxCraftsFromInput(event.view.topInventory.getItem(0)))
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
@@ -161,7 +172,7 @@ class CustomRecipeListener : Listener {
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            consumeStonecutterSlot(event.view.topInventory)
+            consumeStonecutterSlot(event.view.topInventory, amount)
             plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
         }
         fireCraftEffects(player, recipe, meta, item, amount)
@@ -400,20 +411,12 @@ class CustomRecipeListener : Listener {
 
         val item = resultItem.clone()
         val amount = if (event.isShiftClick) {
-            val playerInv = player.inventory
-            val freeSpace = playerInv.storageContents.sumOf { slot ->
-                when {
-                    slot == null || slot.type.isAir -> item.maxStackSize
-                    slot.isSimilar(item) -> item.maxStackSize - slot.amount
-                    else -> 0
-                }
-            }
-            (freeSpace / item.amount.coerceAtLeast(1)).coerceAtLeast(1)
+            minOf(spaceBasedAmount(player, item), maxCraftsFromInput(inputItem)).coerceAtLeast(1)
         } else 1
 
         val craftItem = item.clone().apply { this.amount = amount }
         event.isCancelled = true
-        consumeStonecutterSlot(inv)
+        consumeStonecutterSlot(inv, amount)
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
@@ -479,19 +482,20 @@ class CustomRecipeListener : Listener {
     }
 
     // Grid consumption helpers
-    private fun consume(inv: Inventory, slot: Int) {
+    private fun consume(inv: Inventory, slot: Int, amount: Int = 1) {
         val stack = inv.getItem(slot) ?: return
-        if (stack.amount <= 1) inv.setItem(slot, null)
-        else { stack.amount--; inv.setItem(slot, stack) }
+        val remaining = stack.amount - amount
+        if (remaining <= 0) inv.setItem(slot, null)
+        else { stack.amount = remaining; inv.setItem(slot, stack) }
     }
 
-    private fun consumeCraftingGrid(event: CraftItemEvent) {
+    private fun consumeCraftingGrid(event: CraftItemEvent, amount: Int) {
         val matrix = event.inventory.matrix
         for (slot in matrix.indices) {
             val stack = matrix[slot] ?: continue
             if (stack.type.isAir) continue
-            if (stack.amount <= 1) matrix[slot] = null
-            else stack.amount--
+            val remaining = stack.amount - amount
+            matrix[slot] = if (remaining <= 0) null else stack.apply { this.amount = remaining }
         }
         event.inventory.matrix = matrix
     }
@@ -500,8 +504,8 @@ class CustomRecipeListener : Listener {
         for (slot in 0..2) consume(inv, slot)
     }
 
-    private fun consumeStonecutterSlot(inv: Inventory) {
-        consume(inv, 0)
+    private fun consumeStonecutterSlot(inv: Inventory, amount: Int) {
+        consume(inv, 0, amount)
     }
 
     private fun consumeWorkbenchInputs(inv: Inventory, recipe: WorkstationRecipe) {
@@ -550,18 +554,27 @@ class CustomRecipeListener : Listener {
         return NamespacedKey("ecocrafting", stripped)
     }
 
-    private fun calculateCraftAmount(event: CraftItemEvent): Int {
+    private fun spaceBasedAmount(player: Player, result: ItemStack): Int {
+        val freeSpace = player.inventory.storageContents.sumOf { slot ->
+            when {
+                slot == null || slot.type.isAir -> result.maxStackSize
+                slot.isSimilar(result) -> result.maxStackSize - slot.amount
+                else -> 0
+            }
+        }
+        return (freeSpace / result.amount.coerceAtLeast(1)).coerceAtLeast(1)
+    }
+
+    private fun calculateCraftAmount(event: CraftItemEvent, ingredientBasedAmount: Int): Int {
         return if (event.isShiftClick) {
             val result = event.recipe.result
-            val playerInv = (event.whoClicked as Player).inventory
-            val freeSpace = playerInv.storageContents.sumOf { slot ->
-                when {
-                    slot == null || slot.type.isAir -> result.maxStackSize
-                    slot.isSimilar(result) -> result.maxStackSize - slot.amount
-                    else -> 0
-                }
+            val player = event.whoClicked as Player
+            val spaceBased = spaceBasedAmount(player, result)
+            val amount = minOf(spaceBased, ingredientBasedAmount).coerceAtLeast(1)
+            if (ingredientBasedAmount < spaceBased) {
+                plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -> $amount")
             }
-            (freeSpace / result.amount).coerceAtLeast(1)
+            amount
         } else 1
     }
 }
