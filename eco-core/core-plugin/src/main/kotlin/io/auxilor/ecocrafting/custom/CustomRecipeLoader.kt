@@ -36,17 +36,27 @@ import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.toTestableItem
 import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.BuildConfig
 
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
     override fun clear(plugin: LibreforgePlugin) {
         WorkstationRecipes.clear()
         CustomRecipes.clear()
+        RecipeCapEnforcer.clear()
     }
 
     override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
+
+        if (!RecipeCapEnforcer.tryRegister(BuildConfig.FREE_VERSION, type, id)) {
+            val cap = RecipeCapEnforcer.capFor(type)
+            plugin.logger.warning("The free version of EcoCrafting only supports $cap recipes for type '$type'.")
+            plugin.logger.warning("Purchase the full version of EcoCrafting to remove this restriction!")
+            return
+        }
+
         try {
             when (type) {
                 "crafting_table"  -> loadCraftingTable(id, config)

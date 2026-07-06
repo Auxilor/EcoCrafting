@@ -16,7 +16,7 @@ val libreforgeVersion = findProperty("libreforge-version")
 val ecoVersion = findProperty("eco-version")
 
 base {
-    archivesName.set(project.name)
+    archivesName.set(if (rootProject.hasProperty("free")) "${project.name}-Free" else project.name)
 }
 
 dependencies {
@@ -33,11 +33,11 @@ publishing {
     publications {
         // maven-private: only the shaded jar
         create<MavenPublication>("private") {
-            artifactId = rootProject.name
+            artifactId = if (rootProject.hasProperty("free")) "${rootProject.name}-Free" else rootProject.name
         }
         // maven-releases + GitHub: full set (none, all, sources, javadoc)
         create<MavenPublication>("release") {
-            artifactId = rootProject.name
+            artifactId = if (rootProject.hasProperty("free")) "${rootProject.name}-Free" else rootProject.name
             from(components["java"])
         }
     }
@@ -111,7 +111,7 @@ allprojects {
 
     tasks {
         shadowJar {
-            archiveFileName.set("EcoCrafting.jar")
+            archiveFileName.set(if (rootProject.hasProperty("free")) "EcoCrafting-Free.jar" else "EcoCrafting.jar")
             exclude("META-INF/**")
             relocate("com.willfp.libreforge.loader", "io.auxilor.ecocrafting.libreforge.loader")
             relocate("kotlin", "com.willfp.eco.libs.kotlin")

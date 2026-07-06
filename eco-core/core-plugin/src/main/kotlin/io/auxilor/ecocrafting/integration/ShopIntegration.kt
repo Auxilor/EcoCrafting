@@ -8,6 +8,7 @@ import com.willfp.ecoshop.shop.shopItem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import io.auxilor.ecocrafting.BuildConfig
 import io.auxilor.ecocrafting.EcoCraftingPlugin
 import io.auxilor.ecocrafting.plugin
 
@@ -24,6 +25,17 @@ object ShopIntegration {
 
     fun init(plugin: EcoCraftingPlugin) {
         pluginAvailable = Bukkit.getPluginManager().isPluginEnabled("EcoShop")
+
+        if (ShopIntegrationPolicy.shouldLogUpsell(BuildConfig.FREE_VERSION, pluginAvailable)) {
+            plugin.logger.warning("EcoShop was found, but shop integration is a premium-only feature.")
+            plugin.logger.warning("Purchase the full version of EcoCrafting to enable it!")
+        }
+
+        if (!ShopIntegrationPolicy.isIntegrationAllowed(BuildConfig.FREE_VERSION)) {
+            configEnabled = false
+            return
+        }
+
         configEnabled = plugin.configYml.getBool("shop-integration.enabled")
         showPrices = plugin.configYml.getBool("shop-integration.show-prices")
         autoBuy = plugin.configYml.getBool("shop-integration.auto-buy-missing-materials")
