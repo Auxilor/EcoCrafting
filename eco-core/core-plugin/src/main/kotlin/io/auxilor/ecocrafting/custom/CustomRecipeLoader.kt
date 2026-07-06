@@ -229,7 +229,9 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         registerEcoVariant(baseKey, ingredients)
         if (symmetry && !shapeless) {
             generateSymmetryVariants(ingredients).forEach { (suffix, variantParts) ->
-                registerEcoVariant(NamespacedKey("ecocrafting", "${baseKey.key}$suffix"), variantParts)
+                val variantKey = NamespacedKey("ecocrafting", "${baseKey.key}$suffix")
+                registerEcoVariant(variantKey, variantParts)
+                CustomRecipes.registerVariant(variantKey, baseKey)
             }
         }
 

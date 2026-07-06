@@ -6,9 +6,9 @@ import com.willfp.libreforge.effects.Effect
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import com.willfp.libreforge.triggers.TriggerParameter
-import org.bukkit.NamespacedKey
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
+import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
 
 object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
     override val parameters = setOf(TriggerParameter.PLAYER)
@@ -20,7 +20,7 @@ object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
     ): Boolean {
         val player = data.player ?: return false
         val recipeId = config.getString("args.recipe")
-        val key = NamespacedKey("ecocrafting", recipeId)
+        val key = invalidRecipeIdKeyOrWarn(recipeId) ?: return false
         val meta = CustomRecipes.getMeta(key) ?: return false
         RecipeUnlockStore.lock(player, key, meta)
         TriggerRecipeLocked.dispatch(

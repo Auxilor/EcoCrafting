@@ -4,9 +4,9 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
 import org.bukkit.scheduler.BukkitTask
+import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.VanillaRecipeScanner
-import io.auxilor.ecocrafting.validation.CategoryValidator
 
 object CategoryLoader : ConfigCategory("category", "categories") {
     private var pendingPostReload: BukkitTask? = null
@@ -26,8 +26,18 @@ object CategoryLoader : ConfigCategory("category", "categories") {
         pendingPostReload?.cancel()
         pendingPostReload = plugin.server.scheduler.runTask(plugin, Runnable {
             pendingPostReload = null
-            CategoryValidator.validate(RecipeCategories.values)
+            validateCategories(RecipeCategories.values)
             RecipeResolver.warmCache(RecipeCategories.values.flatMap { it.allItemStacks() })
         })
+    }
+
+    private fun validateCategories(categories: List<RecipeCategory>) {
+        for (category in categories) {
+            for (stack in category.items) {
+                if (RecipeResolver.resolve(stack.item.item) == null) {
+                    plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
+                }
+            }
+        }
     }
 }
