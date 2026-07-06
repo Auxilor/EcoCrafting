@@ -32,24 +32,10 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
             title = config.getFormattedString("title")
 
             maxPages(maxPage)
-            defaultPage(page)
-
-            setMask(
-                FillerMask(
-                    MaskItems.fromItemNames(config.getStrings("mask.items")),
-                    *pattern.toTypedArray()
-                )
-            )
-
-            config.getSubsectionOrNull("buttons.back")?.let {
-                prevMenu?.let {
-                    addComponent(
-                        config.getInt("buttons.back.row"),
-                        config.getInt("buttons.back.column"),
-                        backSlot(prevMenu, configSound("back"))
-                    )
-                }
-            }
+            // eco's defaultPage(Int) delegates to maxPages(...) instead of setting the
+            // page state (upstream bug in MenuBuilder), which clobbers max-page back
+            // down to whatever page we opened on. The Function overload isn't bugged.
+            defaultPage { page }
 
             addPageChanger(
                 PageChanger.Direction.FORWARDS,
@@ -68,16 +54,41 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                 config.getInt("buttons.prev-page.column")
             )
 
-            for (slotConfig in config.getSubsections("custom-slots")) {
-                setSlot(
-                    slotConfig.getInt("row"),
-                    slotConfig.getInt("column"),
-                    ConfigSlot(slotConfig)
-                )
-            }
-
             for (pageNum in 1..maxPage) {
                 addPage(pageNum) {
+                    setMask(
+                        FillerMask(
+                            MaskItems.fromItemNames(config.getStrings("mask.items")),
+                            *pattern.toTypedArray()
+                        )
+                    )
+
+                    config.getSubsectionOrNull("buttons.back")?.let {
+                        prevMenu?.let {
+                            addComponent(
+                                config.getInt("buttons.back.row"),
+                                config.getInt("buttons.back.column"),
+                                backSlot(prevMenu, configSound("back"))
+                            )
+                        }
+                    }
+
+                    config.getSubsectionOrNull("buttons.close")?.let {
+                        addComponent(
+                            config.getInt("buttons.close.row"),
+                            config.getInt("buttons.close.column"),
+                            closeSlot(configSound("close"))
+                        )
+                    }
+
+                    for (slotConfig in config.getSubsections("custom-slots")) {
+                        setSlot(
+                            slotConfig.getInt("row"),
+                            slotConfig.getInt("column"),
+                            ConfigSlot(slotConfig)
+                        )
+                    }
+
                     val positionedCategories = RecipeCategories.values
                         .filter { it.guiPosition?.page == pageNum }
 
@@ -101,6 +112,19 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
             .onLeftClick { t, _ ->
                 menu.open(t.whoClicked as Player)
                 sound?.playTo(t.whoClicked as Player)
+            }
+            .build()
+    }
+
+    private fun closeSlot(sound: PlayableSound?): Slot {
+        return Slot.builder(
+            ItemStackBuilder(Items.lookup(config.getString("buttons.close.item")))
+                .addLoreLines(config.getFormattedStrings("buttons.close.lore"))
+                .build()
+        )
+            .onLeftClick { event, _, _ ->
+                event.player.closeInventory()
+                sound?.playTo(event.player)
             }
             .build()
     }

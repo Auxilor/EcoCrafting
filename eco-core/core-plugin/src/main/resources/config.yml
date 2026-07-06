@@ -193,6 +193,11 @@ category-browser-gui:
         inactive: []
       row: 5
       column: 4
+    close:
+      item: barrier name:"&cClose"
+      lore: []
+      row: 5
+      column: 5
 
 #*/ The EcoShop Integration Section /*#
 shop-integration:
@@ -813,6 +818,12 @@ sounds:
     enabled: true
     category: MASTER
   back:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  close:
     sound: ui.button_click
     pitch: 1.0
     volume: 1.0

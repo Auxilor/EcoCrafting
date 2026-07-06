@@ -34,24 +34,10 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
             title = config.getFormattedString("title")
 
             maxPages(maxPages)
-            defaultPage(page)
-
-            setMask(
-                FillerMask(
-                    MaskItems.fromItemNames(config.getStrings("mask.items")),
-                    *pattern.toTypedArray()
-                )
-            )
-
-            config.getSubsectionOrNull("buttons.back")?.let {
-                prevMenu?.let {
-                    addComponent(
-                        config.getInt("buttons.back.row"),
-                        config.getInt("buttons.back.column"),
-                        backSlot(prevMenu, configSound("back"))
-                    )
-                }
-            }
+            // eco's defaultPage(Int) delegates to maxPages(...) instead of setting the
+            // page state (upstream bug in MenuBuilder), which clobbers max-page back
+            // down to whatever page we opened on. The Function overload isn't bugged.
+            defaultPage { page }
 
             addPageChanger(
                 PageChanger.Direction.FORWARDS,
@@ -70,16 +56,33 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 config.getInt("buttons.prev-page.column")
             )
 
-            for (slotConfig in config.getSubsections("custom-slots")) {
-                setSlot(
-                    slotConfig.getInt("row"),
-                    slotConfig.getInt("column"),
-                    ConfigSlot(slotConfig)
-                )
-            }
-
             for (pageNum in 1..maxPages) {
                 addPage(pageNum) {
+                    setMask(
+                        FillerMask(
+                            MaskItems.fromItemNames(config.getStrings("mask.items")),
+                            *pattern.toTypedArray()
+                        )
+                    )
+
+                    config.getSubsectionOrNull("buttons.back")?.let {
+                        prevMenu?.let {
+                            addComponent(
+                                config.getInt("buttons.back.row"),
+                                config.getInt("buttons.back.column"),
+                                backSlot(prevMenu, configSound("back"))
+                            )
+                        }
+                    }
+
+                    for (slotConfig in config.getSubsections("custom-slots")) {
+                        setSlot(
+                            slotConfig.getInt("row"),
+                            slotConfig.getInt("column"),
+                            ConfigSlot(slotConfig)
+                        )
+                    }
+
                     var num = (pageNum - 1) * perPage
                     pattern.forEachIndexed { rowIndex, line ->
                         line.toCharArray().forEachIndexed { colIndex, character ->
