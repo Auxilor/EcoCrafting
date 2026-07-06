@@ -100,9 +100,6 @@ allprojects {
         compileOnly("com.willfp:EcoShop:2.5.0")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
-
-        testImplementation(kotlin("test"))
-        testImplementation(kotlin("reflect"))
     }
 
     java {
@@ -151,10 +148,6 @@ allprojects {
 
         build {
             dependsOn(shadowJar)
-        }
-
-        test {
-            useJUnitPlatform()
         }
     }
 }
