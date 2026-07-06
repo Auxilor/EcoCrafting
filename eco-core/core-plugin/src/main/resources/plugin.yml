@@ -16,6 +16,9 @@ permissions:
   ecocrafting.admin:
     description: Admin commands (unlock/lock recipes)
     default: op
+  ecocrafting.recipe.*:
+    description: Access to every recipe-specific permission node (ecocrafting.recipe.<id>)
+    default: true
 
 commands:
   ecocrafting:

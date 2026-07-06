@@ -126,7 +126,7 @@ class CategoryStack private constructor(
                 return bukkitTag.values.map { Items.lookup(it.name.lowercase()) }
             }
 
-            // Eco custom tag fallback — enumerate via matches()
+            // Eco custom tag fallback - enumerate via matches()
             val lookup = Items.lookup(itemString)
             if (lookup is GroupedTestableItems) return lookup.children.toList()
             return Material.entries

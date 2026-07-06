@@ -87,7 +87,7 @@ gui:
 ### The Category Type
 
 ```yaml
-type: "items"       # Flat list of items — most common type
+type: "items" # Flat list of items - most common type
 # type: "categories" # A group of sub-categories (nested browser)
 ```
 
@@ -95,7 +95,7 @@ type: "items"       # Flat list of items — most common type
 
 ```yaml
 icon:
-  item: diamond_sword name:"&cCombat"  # Icon shown in the category browser GUI
+  item: diamond_sword name:"&cCombat" # Icon shown in the category browser GUI
   lore:
     - "&7Description shown to players"
 ```
@@ -106,20 +106,20 @@ Uses [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system)
 
 ```yaml
 position:
-  column: 6  # Column in the category browser GUI (1-9)
-  row: 3     # Row in the category browser GUI (1-5)
-  page: 1    # Page in the category browser GUI
+  column: 6 # Column in the category browser GUI (1-9)
+  row: 3 # Row in the category browser GUI (1-5)
+  page: 1 # Page in the category browser GUI
 ```
 
 ### The Items Section (type: items)
 
 ```yaml
 items:
-  - item: "diamond_sword"          # Exact item
-    display-no-perm: false         # If true, show item in GUI even if player lacks recipe permission
-  - item: "#minecraft:swords"      # Item tag — expands to all matching items
+  - item: "diamond_sword" # Exact item
+    display-no-perm: false # If true, show item in GUI even if player lacks recipe permission
+  - item: "#minecraft:swords" # Item tag - expands to all matching items
     display-no-perm: false
-  - item: "ecoitems:my_item"       # Custom eco item
+  - item: "ecoitems:my_item" # Custom eco item
     display-no-perm: false
 ```
 
@@ -132,9 +132,9 @@ gui:
   title: "&8My Category | Page &6%page%"
   mask:
     items:
-      - black_stained_glass_pane    # Material list (indexed 1, 2, 3...)
+      - black_stained_glass_pane # Material list (indexed 1, 2, 3...)
     pattern:
-      - "111111111"                 # 9 chars per row, number = material index, i = item slot
+      - "111111111" # 9 chars per row, number = material index, i = item slot
       - "1iiiiiii1"
       - "1iiiiiii1"
       - "1iiiiiii1"

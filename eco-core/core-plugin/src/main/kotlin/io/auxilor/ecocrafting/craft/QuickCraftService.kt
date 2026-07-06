@@ -8,6 +8,7 @@ import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.checkCraftingConditions
 import io.auxilor.ecocrafting.custom.fireCraftEffects
 import io.auxilor.ecocrafting.recipe.RecipeIngredient
+import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 
@@ -31,7 +32,7 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
     }
 
     fun craft(): CraftAttempt {
-        if (recipe.permission != null && !player.hasPermission(recipe.permission)) {
+        if (!RecipeResolver.canCraft(player, recipe)) {
             return CraftAttempt(false, "No permission")
         }
 

@@ -7,7 +7,7 @@ input: salmon
 output: cooked_salmon name:"&fcampfire_ghost"
 lore:
   - "&8campfire | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 cook-time: 600
 experience: 0.0

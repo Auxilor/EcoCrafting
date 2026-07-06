@@ -72,10 +72,31 @@ object RecipeResolver {
             .min()
     }
 
+    private const val RECIPE_WILDCARD_PERMISSION = "ecocrafting.recipe.*"
+
+    /**
+     * Explicit `permission:` in the recipe config wins outright. Otherwise custom recipes
+     * (ones with a stable id from CustomRecipeLoader) fall back to a per-id node so server
+     * owners can gate individual recipes without setting `permission:` on each one; that
+     * node is covered by ecocrafting.recipe.* (default: true in plugin.yml) unless revoked.
+     */
+    private fun effectivePermission(recipe: ResolvedRecipe): String? {
+        recipe.permission?.let { return it }
+        if (recipe.source != RecipeSource.CUSTOM) return null
+        val id = recipe.key?.key ?: return null
+        return "ecocrafting.recipe.$id"
+    }
+
+    fun canCraft(player: Player, recipe: ResolvedRecipe): Boolean {
+        val explicit = recipe.permission
+        if (explicit != null) return player.hasPermission(explicit)
+        val derived = effectivePermission(recipe) ?: return true
+        return player.hasPermission(derived) || player.hasPermission(RECIPE_WILDCARD_PERMISSION)
+    }
+
     fun canCraft(player: Player, itemStack: ItemStack): Boolean {
         val recipe = resolve(itemStack) ?: return true
-        val permission = recipe.permission ?: return true
-        return player.hasPermission(permission)
+        return canCraft(player, recipe)
     }
 
     fun resolve(itemStack: ItemStack): ResolvedRecipe? {

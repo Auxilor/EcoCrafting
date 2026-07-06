@@ -8,7 +8,7 @@ input1: emerald
 output: diamond name:"&fvillager_ghost"
 lore:
   - "&8villager | single input | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 give-result-item: false
 effects:

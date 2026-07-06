@@ -42,7 +42,7 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
             target.closeInventory()
         } else {
             // Empty reason means checkCraftingConditions already messaged the
-            // player (locked/conditions-not-met) — avoid a redundant generic message.
+            // player (locked/conditions-not-met) - avoid a redundant generic message.
             if (result.reason.isNotEmpty()) {
                 val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
                 target.sendMessage(plugin.langYml.getFormattedString(key)
