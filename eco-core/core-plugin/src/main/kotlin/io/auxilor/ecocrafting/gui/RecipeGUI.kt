@@ -16,9 +16,12 @@ import io.auxilor.ecocrafting.gui.utils.buildIngredientSlot
 import io.auxilor.ecocrafting.gui.utils.buildQuickCraftSlot
 import io.auxilor.ecocrafting.gui.utils.buildVariantSlot
 import io.auxilor.ecocrafting.gui.utils.buildWorkstationSlot
+import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.RecipeResolver
+import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
+import io.auxilor.ecocrafting.recipe.withLockState
 import io.auxilor.ecocrafting.plugin
 
 private fun RecipeDisplayType.guiSection() = when (this) {
@@ -43,12 +46,17 @@ class RecipeGUI(
 ) {
     fun open(player: Player, parent: Menu?) {
         val effectiveAlternatives = alternatives.ifEmpty { RecipeResolver.resolveAll(stack) }
-        val recipe = effectiveAlternatives.getOrNull(altIndex)
+        val recipe = (effectiveAlternatives.getOrNull(altIndex)
             ?: RecipeResolver.resolveForPlayer(stack, player)
             ?: run {
                 player.sendMessage(plugin.langYml.getFormattedString("messages.no-recipe"))
                 return
-            }
+            }).withLockState(player)
+
+        val meta = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
+            CustomRecipes.getMeta(recipe.key)
+        } else null
+        val outputLockedLore = if (recipe.locked && meta != null && meta.showWhenLocked) meta.lockedLore else emptyList()
 
         val context = RecipeGUIContext(
             config = plugin.configYml.getSubsection(recipe.displayType.guiSection()),
@@ -86,7 +94,7 @@ class RecipeGUI(
                             num++
                         }
                         marker.equals('o', ignoreCase = true) ->
-                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false))
+                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore))
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->

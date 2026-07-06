@@ -4,7 +4,10 @@ import com.willfp.eco.core.recipe.parts.MaterialTestableItem
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.items.TestableItem
 import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import io.auxilor.ecocrafting.custom.CustomRecipes
+import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 
 /**
  * A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.
@@ -25,6 +28,12 @@ data class ResolvedRecipe(
 ) {
     val displayItems: List<ItemStack>
         get() = ingredients.map { it.displayItem.clone() }
+}
+
+fun ResolvedRecipe.withLockState(player: Player): ResolvedRecipe {
+    if (source != RecipeSource.CUSTOM || key == null) return this
+    val meta = CustomRecipes.getMeta(key) ?: return this
+    return copy(locked = RecipeUnlockStore.isLocked(player, key, meta))
 }
 
 enum class RecipeSource {

@@ -1,9 +1,14 @@
 ﻿package io.auxilor.ecocrafting.craft
 
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import io.auxilor.ecocrafting.custom.CustomRecipes
+import io.auxilor.ecocrafting.custom.checkCraftingConditions
+import io.auxilor.ecocrafting.custom.fireCraftEffects
 import io.auxilor.ecocrafting.recipe.RecipeIngredient
+import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 
 class QuickCraftService(private val player: Player, private val recipe: ResolvedRecipe) {
@@ -30,9 +35,23 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
             return CraftAttempt(false, "No permission")
         }
 
+        val meta = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
+            CustomRecipes.getMeta(recipe.key)
+        } else null
+        val workstationRecipe = meta?.let { recipe.key?.let(WorkstationRecipes::getByKey) }
+
+        // meta-gated recipes reuse the real crafting path's lock/condition check
+        // (and its player-facing messages) so quick-craft can't bypass them.
+        if (meta != null && workstationRecipe != null) {
+            if (!checkCraftingConditions(player, workstationRecipe, meta)) {
+                return CraftAttempt(false, "")
+            }
+        }
+
         val plan = buildConsumptionPlan() ?: return CraftAttempt(false, "Missing materials")
         val output = recipe.output.clone()
-        if (!canFitAfterPlan(plan, output)) {
+        val giveResultItem = meta?.giveResultItem ?: true
+        if (giveResultItem && !canFitAfterPlan(plan, output)) {
             return CraftAttempt(false, "No inventory space")
         }
 
@@ -47,10 +66,16 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
             }
         }
 
-        val leftovers = player.inventory.addItem(output)
-        if (leftovers.isNotEmpty()) {
-            // This should not happen because canFit checked a simulated inventory.
-            leftovers.values.forEach { player.world.dropItemNaturally(player.location, it) }
+        if (giveResultItem) {
+            val leftovers = player.inventory.addItem(output)
+            if (leftovers.isNotEmpty()) {
+                // This should not happen because canFit checked a simulated inventory.
+                leftovers.values.forEach { player.world.dropItemNaturally(player.location, it) }
+            }
+        }
+
+        if (meta != null && workstationRecipe != null) {
+            fireCraftEffects(player, workstationRecipe, meta, output, 1)
         }
 
         return CraftAttempt(true)
