@@ -60,7 +60,7 @@ items:
 
 gui:
   custom-slots: []
-  title: "&8Mining Recipes | Page &6%page%"
+  title: "&8Mining Recipes | Page &6%page%&8/&6%max_page%"
   mask:
     items:
       - black_stained_glass_pane
