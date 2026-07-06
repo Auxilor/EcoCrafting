@@ -42,6 +42,7 @@ import java.lang.reflect.Field
 object RecipeResolver {
     private val air = ItemStack(Material.AIR)
     private val resolveCache = HashMap<Any, ResolvedRecipe?>()
+    private val ECO_KEY_SUFFIXES = listOf("_displayed", "_crafter")
 
     fun clearCache() {
         resolveCache.clear()
@@ -111,10 +112,28 @@ object RecipeResolver {
             findEcoRecipe(customItem)?.let { results += it }
         }
 
-        results += findAllWorkstationRecipesByOutput(clean)
+        findAllWorkstationRecipesByOutput(clean).forEach { workstation ->
+            val existingIndex = results.indexOfFirst { it.key == workstation.key }
+            if (existingIndex == -1) {
+                results += workstation
+            } else if (results[existingIndex].source != RecipeSource.CUSTOM) {
+                // Same recipe registered under both eco's CraftingRecipe system and
+                // WorkstationRecipes (e.g. crafting-table recipes). Prefer the CUSTOM
+                // copy since only it carries lock-state via withLockState().
+                results[existingIndex] = workstation
+            }
+        }
 
         findAllBukkitRecipes(clean).forEach { bukkit ->
-            if (results.none { it.key == bukkit.key }) results += bukkit
+            val bukkitKey = bukkit.key
+            // Eco registers extra Bukkit-only recipes under <key>_displayed (vanilla grid
+            // display with grouped-ingredient lore) and <key>_crafter (Crafter block support).
+            // These are ghosts of an existing entry, not distinct recipes - skip them.
+            val isKnownVariant = bukkitKey != null && ECO_KEY_SUFFIXES.any { suffix ->
+                bukkitKey.key.endsWith(suffix) &&
+                    results.any { it.key == NamespacedKey(bukkitKey.namespace, bukkitKey.key.removeSuffix(suffix)) }
+            }
+            if (!isKnownVariant && results.none { it.key == bukkitKey }) results += bukkit
         }
 
         val sorted = results.sortedBy { it.displayType.name }
@@ -136,11 +155,7 @@ object RecipeResolver {
 
     fun resolveForPlayer(itemStack: ItemStack, player: Player): ResolvedRecipe? {
         val recipe = resolve(itemStack) ?: return null
-        val locked = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
-            val meta = CustomRecipes.getMeta(recipe.key)
-            if (meta != null) RecipeUnlockStore.isLocked(player, recipe.key, meta) else false
-        } else false
-        return recipe.copy(locked = locked)
+        return recipe.withLockState(player)
     }
 
     private fun findWorkstationRecipeByOutput(clean: ItemStack): ResolvedRecipe? {

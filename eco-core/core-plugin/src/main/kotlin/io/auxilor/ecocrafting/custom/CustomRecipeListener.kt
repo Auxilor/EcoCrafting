@@ -69,7 +69,17 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareCraft(event: PrepareItemCraftEvent) {
         val recipe = findCraftingTableRecipe(event.inventory.matrix) ?: return
-        event.inventory.result = recipe.output?.clone()
+        val output = recipe.output?.clone() ?: return
+        val player = event.view.player as? Player
+
+        val meta = CustomRecipes.getMeta(recipe.key)
+        if (player != null && meta != null && meta.showWhenLocked && RecipeUnlockStore.isLocked(player, recipe.key, meta)) {
+            output.itemMeta = output.itemMeta?.apply {
+                lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) }
+            }
+        }
+
+        event.inventory.result = output
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -93,7 +103,19 @@ class CustomRecipeListener : Listener {
         val recipe = directMatch ?: findCraftingTableRecipe(event.inventory.matrix) ?: return
         val needsTakeover = directMatch == null
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
-        if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
+        if (!checkCraftingConditions(player, recipe, meta)) {
+            event.isCancelled = true
+            if (meta.showWhenLocked && RecipeUnlockStore.isLocked(player, recipe.key, meta)) {
+                recipe.output?.clone()?.let { lockedOutput ->
+                    lockedOutput.itemMeta = lockedOutput.itemMeta?.apply {
+                        lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) }
+                    }
+                    event.inventory.result = lockedOutput
+                }
+            }
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            return
+        }
 
         val amount = calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return

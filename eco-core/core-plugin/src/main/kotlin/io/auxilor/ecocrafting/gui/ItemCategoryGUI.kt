@@ -17,8 +17,11 @@ import com.willfp.eco.core.sound.PlayableSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import io.auxilor.ecocrafting.category.RecipeCategory
+import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.gui.utils.configSound
 import io.auxilor.ecocrafting.recipe.RecipeResolver
+import io.auxilor.ecocrafting.recipe.RecipeSource
+import io.auxilor.ecocrafting.recipe.withLockState
 
 class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
@@ -88,7 +91,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                         line.toCharArray().forEachIndexed { colIndex, character ->
                             if (character.equals('i', ignoreCase = true)) {
                                 if (num < items.size) {
-                                    setSlot(rowIndex + 1, colIndex + 1, slot(items[num], configSound("slot-click")))
+                                    setSlot(rowIndex + 1, colIndex + 1, slot(player, items[num], configSound("slot-click")))
                                 }
                                 num++
                             }
@@ -137,10 +140,22 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
         return if (active) "active" else "inactive"
     }
 
-    private fun slot(item: ItemStack, sound: PlayableSound?): Slot {
+    private fun slot(player: Player, item: ItemStack, sound: PlayableSound?): Slot {
+        val resolved = RecipeResolver.resolveAll(item).firstOrNull()?.withLockState(player)
+        val meta = if (resolved?.source == RecipeSource.CUSTOM && resolved.key != null) {
+            CustomRecipes.getMeta(resolved.key)
+        } else null
+        val loreLines = config.getFormattedStrings("buttons.slot.lore").let { base ->
+            if (resolved?.locked == true && meta != null && meta.showWhenLocked && meta.lockedLore.isNotEmpty()) {
+                base + meta.lockedLore
+            } else {
+                base
+            }
+        }
+
         return Slot.builder(
             ItemStackBuilder(item.clone())
-                .addLoreLines(config.getFormattedStrings("buttons.slot.lore"))
+                .addLoreLines(loreLines)
                 .build()
         )
             .onLeftClick { event, _, menu ->

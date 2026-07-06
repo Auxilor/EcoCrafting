@@ -9,18 +9,28 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import io.auxilor.ecocrafting.craft.CraftAttempt
 import io.auxilor.ecocrafting.craft.QuickCraftService
+import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.integration.ShopIntegration
+import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 import io.auxilor.ecocrafting.plugin
 
 fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
+    val meta = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
+        CustomRecipes.getMeta(recipe.key)
+    } else null
     val service = QuickCraftService(player, recipe)
     val materialCounts = service.getMaterialCounts()
-    val loreLines = config.getFormattedStrings("buttons.quick-craft.lore").toMutableList()
-    val materialsIdx = loreLines.indexOfFirst { it.contains("%materials%") }
-    if (materialsIdx != -1) {
-        loreLines.removeAt(materialsIdx)
-        loreLines.addAll(materialsIdx, materialCounts.map { it.toLoreLine(player) })
+    val loreLines = if (recipe.locked && meta != null && meta.showWhenLocked && meta.lockedLore.isNotEmpty()) {
+        meta.lockedLore.toMutableList()
+    } else {
+        config.getFormattedStrings("buttons.quick-craft.lore").toMutableList().also { lines ->
+            val materialsIdx = lines.indexOfFirst { it.contains("%materials%") }
+            if (materialsIdx != -1) {
+                lines.removeAt(materialsIdx)
+                lines.addAll(materialsIdx, materialCounts.map { it.toLoreLine(player) })
+            }
+        }
     }
 
     fun finish(event: InventoryClickEvent, target: Player, result: CraftAttempt, purchased: Boolean) {
@@ -31,10 +41,14 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
             sound("quick-craft-success")?.playTo(target)
             target.closeInventory()
         } else {
-            val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
-            target.sendMessage(plugin.langYml.getFormattedString(key)
-                .replace("%reason%", result.reason)
-                .formatEco(target))
+            // Empty reason means checkCraftingConditions already messaged the
+            // player (locked/conditions-not-met) — avoid a redundant generic message.
+            if (result.reason.isNotEmpty()) {
+                val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
+                target.sendMessage(plugin.langYml.getFormattedString(key)
+                    .replace("%reason%", result.reason)
+                    .formatEco(target))
+            }
             sound("quick-craft-fail")?.playTo(target)
         }
     }
@@ -51,6 +65,11 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
 
     fun handle(event: InventoryClickEvent) {
         val target = event.whoClicked as Player
+        if (recipe.locked) {
+            target.sendMessage(plugin.langYml.getFormattedString("messages.recipe-locked"))
+            sound("quick-craft-fail")?.playTo(target)
+            return
+        }
         val liveService = QuickCraftService(target, recipe)
         var result = liveService.craft()
         if (!result.success && result.reason == "Missing materials") {

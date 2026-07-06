@@ -16,11 +16,15 @@ import io.auxilor.ecocrafting.plugin
 fun RecipeGUIContext.buildIngredientSlot(
     items: List<ItemStack>,
     isIngredient: Boolean,
+    lockedLore: List<String> = emptyList(),
     cancelRefresh: () -> Unit = {}
 ): Slot = with(this) {
     fun buildDisplay(item: ItemStack): ItemStack =
         ItemStackBuilder(item.clone())
-            .addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
+            .apply {
+                if (isIngredient) addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore"))
+                if (lockedLore.isNotEmpty()) addLoreLines(lockedLore)
+            }
             .withGlobalFlags()
             .build()
 
