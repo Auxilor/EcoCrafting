@@ -124,6 +124,7 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
     }
 
     private fun getMaxPages(itemCount: Int, perPage: Int): Int {
+        if (perPage <= 0) return 0
         return itemCount / perPage + if (itemCount % perPage > 0) 1 else 0
     }
 

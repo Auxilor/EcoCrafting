@@ -7,10 +7,10 @@ import com.willfp.libreforge.NoCompileData
 import com.willfp.libreforge.ProvidedHolder
 import com.willfp.libreforge.conditions.Condition
 import com.willfp.libreforge.get
-import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
+import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
 
 object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recipe") {
     override fun isMet(
@@ -21,7 +21,7 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
     ): Boolean {
         val player = dispatcher.get<Player>() ?: return false
         val recipeId = config.getString("args.recipe")
-        val key = NamespacedKey("ecocrafting", recipeId)
+        val key = invalidRecipeIdKeyOrWarn(recipeId) ?: return false
         WorkstationRecipes.getByKey(key) ?: return false
         val meta = CustomRecipes.getMeta(key) ?: return false
         return RecipeUnlockStore.isUnlocked(player, key, meta)

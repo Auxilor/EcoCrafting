@@ -80,7 +80,11 @@ object RecipeResolver {
 
     fun resolve(itemStack: ItemStack): ResolvedRecipe? {
         val clean = itemStack.clone().apply { amount = 1 }
-        val cacheKey = Items.getCustomItem(clean)?.key ?: clean.type
+        // Registered eco custom items cache by their stable key; everything else caches by
+        // (Material, meta-hash) so NBT/meta-variants of the same Material (potions, renamed
+        // items, enchanted books, ...) don't collapse onto one shared cache entry.
+        val cacheKey: Any = Items.getCustomItem(clean)?.key
+            ?: (clean.type to (if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0))
         if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]
         val result = resolveUncached(clean)
         resolveCache[cacheKey] = result

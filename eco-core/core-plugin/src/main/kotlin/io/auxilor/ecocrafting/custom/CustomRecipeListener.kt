@@ -97,7 +97,7 @@ class CustomRecipeListener : Listener {
             return
         }
 
-        val baseKey = stripSymmetrySuffix(recipeKey)
+        val baseKey = CustomRecipes.baseKeyForVariant(recipeKey)
         val directMatch = WorkstationRecipes.getByKey(baseKey) as? CrafterRecipe
         // Fall back to matrix match when vanilla recipe fires first (same shape/material)
         val recipe = directMatch ?: findCraftingTableRecipe(event.inventory.matrix) ?: return
@@ -566,14 +566,6 @@ class CustomRecipeListener : Listener {
             required.removeAt(idx)
         }
         return required.isEmpty()
-    }
-
-    private val symmetrySuffixes = listOf("_rot90", "_rot180", "_rot270", "_mir", "_mir90", "_mir180", "_mir270", "_displayed")
-
-    private fun stripSymmetrySuffix(key: NamespacedKey): NamespacedKey {
-        if (key.namespace != "ecocrafting") return key
-        val stripped = symmetrySuffixes.fold(key.key) { acc, suffix -> acc.removeSuffix(suffix) }
-        return NamespacedKey("ecocrafting", stripped)
     }
 
     private fun spaceBasedAmount(player: Player, result: ItemStack): Int {

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
+import io.auxilor.ecocrafting.plugin
 
 /**
  * A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.
@@ -34,6 +35,24 @@ fun ResolvedRecipe.withLockState(player: Player): ResolvedRecipe {
     if (source != RecipeSource.CUSTOM || key == null) return this
     val meta = CustomRecipes.getMeta(key) ?: return this
     return copy(locked = RecipeUnlockStore.isLocked(player, key, meta))
+}
+
+private val warnedInvalidRecipeIds = mutableSetOf<String>()
+
+/**
+ * Builds an "ecocrafting"-namespaced [NamespacedKey] from a config-supplied recipe id,
+ * lowercasing it first since NamespacedKey rejects uppercase. Returns null (and logs a
+ * one-time warning per offending value) instead of throwing on an invalid id.
+ */
+fun invalidRecipeIdKeyOrWarn(recipeId: String): NamespacedKey? {
+    return try {
+        NamespacedKey("ecocrafting", recipeId.lowercase())
+    } catch (e: IllegalArgumentException) {
+        if (warnedInvalidRecipeIds.add(recipeId)) {
+            plugin.logger.warning("Invalid recipe id in config: '$recipeId'")
+        }
+        null
+    }
 }
 
 enum class RecipeSource {
