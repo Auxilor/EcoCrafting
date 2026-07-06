@@ -7,7 +7,7 @@ input: chicken
 output: cooked_chicken name:"&fsmoker_ghost"
 lore:
   - "&8smoker | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 cook-time: 100
 experience: 0.0

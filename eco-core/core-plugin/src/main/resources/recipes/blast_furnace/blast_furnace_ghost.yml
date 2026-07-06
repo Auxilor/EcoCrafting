@@ -7,7 +7,7 @@ input: raw_gold
 output: gold_ingot name:"&fblast_furnace_ghost"
 lore:
   - "&8blast_furnace | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 cook-time: 100
 experience: 0.0

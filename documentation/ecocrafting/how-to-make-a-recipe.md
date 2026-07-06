@@ -5,7 +5,7 @@ sidebar_position: 1
 
 ## Recipes
 
-Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID — lowercase letters, numbers, and underscores only. An `_example.yml` is provided in each folder.
+Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID - lowercase letters, numbers, and underscores only. An `_example.yml` is provided in each folder.
 
 | Folder | Workstation |
 |---|---|
@@ -29,7 +29,7 @@ These fields exist on **every** recipe type.
 
 ```yaml
 enabled: true
-# category: main # optional — category ID to assign this recipe to in the GUI
+# category: main # optional - category ID to assign this recipe to in the GUI
 
 type: crafting_table # workstation type (see table above)
 
@@ -43,19 +43,30 @@ give-result-item: true # false = no item given; fire libreforge effects instead
 #       xp: 100
 # conditions: []
 
-permission: "" # permission node required to craft; blank = no restriction
+permission: "" # optional - see Permissions section below
 
 locked-by-default: false # hide recipe until unlocked per-player
 show-when-locked: false # if true, show recipe in GUI even when locked
 locked-lore:
   - "&cUnlock this recipe to craft it."
 
-visibility-conditions: [] # libreforge — hide from GUI if not met
-crafting-conditions: [] # libreforge — block crafting if not met
+visibility-conditions: [] # libreforge - hide from GUI if not met
+crafting-conditions: [] # libreforge - block crafting if not met
 unlock-conditions: [] # auto-unlock on join if met
 ```
 
 Items use [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system). Conditions use [libreforge conditions](https://plugins.auxilor.io/effects/configuring-a-condition).
+
+---
+
+## Permissions
+
+Every recipe is gated by a permission node, whether or not you set one.
+
+- **`permission: ""` (blank/default)** - the recipe auto-gets its own node, `ecocrafting.recipe.<id>` (`<id>` = the yml file name). Plugin ships `ecocrafting.recipe.*` at `default: true`, so every player has every recipe's node out of the box. To lock one recipe down, revoke its specific node (e.g. `ecocrafting.recipe.netherite_sword`) from a group in your permissions plugin - no yml edit needed.
+- **`permission: "some.custom.node"`** - overrides the auto node entirely for this recipe. Use this to put several recipes behind one shared node (e.g. `myserver.tier.netherite` on 5 different recipes) so ops grant/revoke the whole tier in one go instead of per-recipe. Not covered by the `ecocrafting.recipe.*` default - you grant it yourself.
+
+A player failing the active node never sees the recipe in the GUI and can't craft it via quick-craft - it behaves as if it doesn't exist (independent of `locked-by-default`/`visibility-conditions`/etc., which only apply once permission passes).
 
 ---
 
@@ -142,7 +153,7 @@ type: stonecutter
 
 input: stone
 
-# Multiple outputs supported — each appears as a separate option in the UI.
+# Multiple outputs supported - each appears as a separate option in the UI.
 outputs:
   - item: stone_slab
     lore: []
@@ -180,7 +191,7 @@ brew-time: 20 # ticks to brew (20 = 1 second)
 type: grindstone
 
 item1: enchanted_book # left slot (required)
-item2: enchanted_book # right slot (optional — omit for single-item recipes)
+item2: enchanted_book # right slot (optional - omit for single-item recipes)
 ```
 
 ### Anvil
@@ -189,8 +200,8 @@ item2: enchanted_book # right slot (optional — omit for single-item recipes)
 type: anvil
 
 base: iron_sword # item in the left slot (required)
-material: diamond # item in the right slot (optional — omit for rename-only)
-result-name: "&bDiamond-Edged Sword" # optional — renames the result
+material: diamond # item in the right slot (optional - omit for rename-only)
+result-name: "&bDiamond-Edged Sword" # optional - renames the result
 repair-cost: 3 # levels shown and consumed
 ```
 
@@ -202,9 +213,9 @@ type: villager
 input1: emerald # first trade ingredient (required)
 input2: book # second trade ingredient (optional)
 
-profession: FARMER # optional — restrict to this profession
-min-level: 1 # optional — minimum villager level (1–5; 0 = any)
-chance: 1.0 # probability this trade appears on a villager (0.0–1.0)
+profession: FARMER # optional - restrict to this profession
+min-level: 1 # optional - minimum villager level (1-5; 0 = any)
+chance: 1.0 # probability this trade appears on a villager (0.0-1.0)
 wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
 ```

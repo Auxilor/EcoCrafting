@@ -10,7 +10,7 @@ addition: netherite_ingot
 output: netherite_chestplate name:"&fsmithing_table_ghost"
 lore:
   - "&8smithing_table | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 give-result-item: false
 effects:

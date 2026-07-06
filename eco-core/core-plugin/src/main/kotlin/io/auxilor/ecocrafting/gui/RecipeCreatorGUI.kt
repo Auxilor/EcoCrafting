@@ -87,7 +87,7 @@ object RecipeCreatorGUI {
 
     fun openTypeSelect(player: Player) {
         val builtMenu = menu(2) {
-            title = "&8New Recipe — Choose Type"
+            title = "&8New Recipe - Choose Type"
 
             stationTypes.forEachIndexed { index, (typeKey, material) ->
                 val row = (index / 9) + 1
@@ -110,7 +110,7 @@ object RecipeCreatorGUI {
         val shapelessSlot = 6 to 8
 
         val builtMenu = menu(6) {
-            title = "&8New Recipe — Ingredients"
+            title = "&8New Recipe - Ingredients"
 
             slotLayout.forEach { (row, col) ->
                 setSlot(row, col, Slot.builder().setCaptive().build())
@@ -177,7 +177,7 @@ object RecipeCreatorGUI {
         val ghostSlot = 3 to 6
 
         val builtMenu = menu(6) {
-            title = "&8New Recipe — Output"
+            title = "&8New Recipe - Output"
 
             setSlot(outputSlot.first, outputSlot.second, Slot.builder().setCaptive().build())
 

@@ -1,5 +1,5 @@
 ﻿enabled: true
-# category: main   # optional — assigns this recipe to a GUI category (must match a category id in categories/)
+# category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: smithing_table
 
@@ -9,7 +9,7 @@ base: diamond_sword
 addition: netherite_ingot
 
 output: netherite_sword name:"&5Example Netherite Sword"
-lore: [] # optional — lore lines for the output item
+lore: [] # optional - lore lines for the output item
 
 give-result-item: true
 # give-result-item: false

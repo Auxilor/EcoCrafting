@@ -88,8 +88,8 @@ category-browser-gui:
 
 #*/ EcoShop Integration /*#
 shop-integration:
-  enabled: true           # Enable EcoShop buy-missing-materials feature
-  show-prices: true       # Show shop prices in QuickCraft lore for missing materials
+  enabled: true # Enable EcoShop buy-missing-materials feature
+  show-prices: true # Show shop prices in QuickCraft lore for missing materials
   auto-buy-missing-materials: false
   require-shift-click: true
 
@@ -141,14 +141,14 @@ craft-gui:
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-    crafter-indicator:       # Shows whether recipe is available in the Crafter block
+    crafter-indicator: # Shows whether recipe is available in the Crafter block
       enabled: false
       row: 5
       column: 7
       item:
         active: crafter name:"&aAvailable in Crafter"
         inactive: gray_dye name:"&7Not available in Crafter"
-    shapeless-indicator:     # Shows whether recipe is shaped or shapeless
+    shapeless-indicator: # Shows whether recipe is shaped or shapeless
       enabled: false
       row: 5
       column: 7

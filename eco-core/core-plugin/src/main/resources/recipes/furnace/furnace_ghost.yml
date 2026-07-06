@@ -7,7 +7,7 @@ input: ancient_debris
 output: netherite_scrap name:"&ffurnace_ghost"
 lore:
   - "&8furnace | ghost"
-  - "&cNo item given — effects fire instead"
+  - "&cNo item given - effects fire instead"
 
 cook-time: 200
 experience: 0.0
