@@ -70,7 +70,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         return listOf(
             BlockOwnerTracker,
             RecipeUnlockStore,
-            CustomRecipeListener(),
+            CustomRecipeListener,
             RecipeCreatorChatListener
         )
     }

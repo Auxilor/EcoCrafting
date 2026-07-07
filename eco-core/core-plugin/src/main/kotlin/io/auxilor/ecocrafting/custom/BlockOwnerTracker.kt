@@ -51,8 +51,8 @@ object BlockOwnerTracker : Listener {
 
     private fun getStoredUUID(block: Block): UUID? {
         val state = block.state as? TileState ?: return null
-        val raw = state.persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING) ?: return null
-        return runCatching { UUID.fromString(raw) }.getOrNull()
+        val rawUuid = state.persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING) ?: return null
+        return runCatching { UUID.fromString(rawUuid) }.getOrNull()
     }
 
     fun getOwner(location: Location): Player? {
@@ -80,8 +80,8 @@ object BlockOwnerTracker : Listener {
     @EventHandler
     fun onOpen(event: InventoryOpenEvent) {
         if (event.inventory.type !in TRACKED_INVENTORY_TYPES) return
-        val loc = event.inventory.location ?: return
-        val block = loc.block
+        val location = event.inventory.location ?: return
+        val block = location.block
         if (hasOwner(block)) return
         setOwner(block, event.player as? Player ?: return)
     }

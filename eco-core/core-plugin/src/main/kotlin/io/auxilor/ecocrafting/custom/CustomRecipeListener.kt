@@ -57,7 +57,7 @@ internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
 internal fun maxCraftsFromInput(inputStack: ItemStack?): Int =
     inputStack?.amount ?: 0
 
-class CustomRecipeListener : Listener {
+object CustomRecipeListener : Listener {
 
     init {
         WorkstationRecipes.registerBrewCompletedHook { location, recipe, matchedSlots ->
@@ -142,12 +142,12 @@ class CustomRecipeListener : Listener {
     }
 
     private fun handleSmithing(event: CraftItemEvent, player: Player, recipeKey: NamespacedKey) {
-        val inv = event.view.topInventory
+        val inventory = event.view.topInventory
         val recipe = (WorkstationRecipes.getByKey(recipeKey)
             ?: WorkstationRecipes.getAll(SmithingRecipe::class.java).firstOrNull {
-                it.template.matches(inv.getItem(0)) &&
-                it.base.matches(inv.getItem(1)) &&
-                it.addition.matches(inv.getItem(2))
+                it.template.matches(inventory.getItem(0)) &&
+                it.base.matches(inventory.getItem(1)) &&
+                it.addition.matches(inventory.getItem(2))
             }) as? SmithingRecipe
             ?: run {
                 plugin.debug("[Smithing] no recipe for key=$recipeKey")
@@ -219,8 +219,8 @@ class CustomRecipeListener : Listener {
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            val crafterInv = (event.block.state as? Crafter)?.inventory ?: return
-            for (slot in 0 until 9) consume(crafterInv, slot)
+            val crafterInventory = (event.block.state as? Crafter)?.inventory ?: return
+            for (slot in 0 until 9) consume(crafterInventory, slot)
             val player = BlockOwnerTracker.getOwner(event.block.location) ?: return
             val item = recipe.output?.clone() ?: return
             fireCraftEffects(player, recipe, meta, item, 1)
@@ -348,11 +348,11 @@ class CustomRecipeListener : Listener {
     // Grindstone + Anvil prepare (override eco's HIGH firstOrNull)
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareGrindstone(event: PrepareGrindstoneEvent) {
-        val inv = event.inventory
+        val inventory = event.inventory
         val recipe = WorkstationRecipes.getAll(GrindstoneRecipe::class.java)
             .filter {
-                it.item1.matches(inv.getItem(0)) &&
-                (it.item2 == null || it.item2!!.matches(inv.getItem(1)))
+                it.item1.matches(inventory.getItem(0)) &&
+                (it.item2 == null || it.item2!!.matches(inventory.getItem(1)))
             }
             // Prefer more specific (two-item) recipes over one-item recipes
             .maxByOrNull { if (it.item2 != null) 1 else 0 }
@@ -366,11 +366,11 @@ class CustomRecipeListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPrepareAnvil(event: PrepareAnvilEvent) {
-        val inv = event.inventory
+        val inventory = event.inventory
         val recipe = WorkstationRecipes.getAll(AnvilRecipe::class.java)
             .firstOrNull {
-                it.base.matches(inv.getItem(0)) &&
-                (it.material == null || it.material!!.matches(inv.getItem(1)))
+                it.base.matches(inventory.getItem(0)) &&
+                (it.material == null || it.material!!.matches(inventory.getItem(1)))
             } ?: return
         CustomRecipes.getMeta(recipe.key) ?: return
         val result = recipe.output?.clone() ?: return
@@ -390,12 +390,12 @@ class CustomRecipeListener : Listener {
         if (event.rawSlot != 3) return
         val player = event.whoClicked as? Player ?: return
 
-        val inv = event.inventory
+        val inventory = event.inventory
         val recipe = WorkstationRecipes.getAll(SmithingRecipe::class.java)
             .firstOrNull {
-                it.template.matches(inv.getItem(0)) &&
-                it.base.matches(inv.getItem(1)) &&
-                it.addition.matches(inv.getItem(2))
+                it.template.matches(inventory.getItem(0)) &&
+                it.base.matches(inventory.getItem(1)) &&
+                it.addition.matches(inventory.getItem(2))
             } ?: return
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         if (meta.giveResultItem) return
@@ -404,7 +404,7 @@ class CustomRecipeListener : Listener {
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
         event.isCancelled = true
-        consumeSmithingSlots(inv)
+        consumeSmithingSlots(inventory)
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
@@ -419,9 +419,9 @@ class CustomRecipeListener : Listener {
         if (event.rawSlot != 1) return
         val player = event.whoClicked as? Player ?: return
 
-        val inv = event.inventory
-        val inputItem = inv.getItem(0) ?: return
-        val resultItem = inv.getItem(1) ?: return
+        val inventory = event.inventory
+        val inputItem = inventory.getItem(0) ?: return
+        val resultItem = inventory.getItem(1) ?: return
 
         val recipe = WorkstationRecipes.getAll(StonecuttingRecipe::class.java)
             .firstOrNull { it.input.matches(inputItem) && it.output?.isSimilar(resultItem) == true } ?: return
@@ -438,7 +438,7 @@ class CustomRecipeListener : Listener {
 
         val craftItem = item.clone().apply { this.amount = amount }
         event.isCancelled = true
-        consumeStonecutterSlot(inv, amount)
+        consumeStonecutterSlot(inventory, amount)
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
@@ -449,34 +449,34 @@ class CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
-        val inv = event.inventory
+        val inventory = event.inventory
 
         if (event.rawSlot != 2) return
 
-        val workstationRecipe = when (inv.type) {
+        val workstationRecipe = when (inventory.type) {
             InventoryType.ANVIL ->
                 WorkstationRecipes.getAll(AnvilRecipe::class.java)
                     .firstOrNull {
-                        it.base.matches(inv.getItem(0)) &&
-                        (it.material == null || it.material!!.matches(inv.getItem(1)))
+                        it.base.matches(inventory.getItem(0)) &&
+                        (it.material == null || it.material!!.matches(inventory.getItem(1)))
                     } ?: return
 
             InventoryType.GRINDSTONE ->
                 WorkstationRecipes.getAll(GrindstoneRecipe::class.java)
                     .filter {
-                        it.item1.matches(inv.getItem(0)) &&
-                        (it.item2 == null || it.item2!!.matches(inv.getItem(1)))
+                        it.item1.matches(inventory.getItem(0)) &&
+                        (it.item2 == null || it.item2!!.matches(inventory.getItem(1)))
                     }
                     .maxByOrNull { if (it.item2 != null) 1 else 0 }
                     ?: return
 
             InventoryType.MERCHANT -> {
-                val merchant = inv as? MerchantInventory ?: return
+                val merchant = inventory as? MerchantInventory ?: return
                 val selected = merchant.selectedRecipe ?: return
-                val tradeNsKey = NamespacedKey("ecocrafting", "trade_key")
+                val tradeNamespacedKey = NamespacedKey("ecocrafting", "trade_key")
                 val tradeKey = selected.result.itemMeta
                     ?.persistentDataContainer
-                    ?.get(tradeNsKey, PersistentDataType.STRING)
+                    ?.get(tradeNamespacedKey, PersistentDataType.STRING)
                 WorkstationRecipes.getAll(VillagerRecipe::class.java)
                     .firstOrNull { if (tradeKey != null) it.key.key == tradeKey else selected.result.isSimilar(it.output) }
                     ?: return
@@ -497,18 +497,18 @@ class CustomRecipeListener : Listener {
 
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            consumeWorkbenchInputs(inv, workstationRecipe)
+            consumeWorkbenchInputs(inventory, workstationRecipe)
         }
         fireCraftEffects(player, workstationRecipe, meta, item, 1)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
     }
 
     // Grid consumption helpers
-    private fun consume(inv: Inventory, slot: Int, amount: Int = 1) {
-        val stack = inv.getItem(slot) ?: return
+    private fun consume(inventory: Inventory, slot: Int, amount: Int = 1) {
+        val stack = inventory.getItem(slot) ?: return
         val remaining = stack.amount - amount
-        if (remaining <= 0) inv.setItem(slot, null)
-        else { stack.amount = remaining; inv.setItem(slot, stack) }
+        if (remaining <= 0) inventory.setItem(slot, null)
+        else { stack.amount = remaining; inventory.setItem(slot, stack) }
     }
 
     private fun consumeCraftingGrid(event: CraftItemEvent, amount: Int) {
@@ -522,19 +522,19 @@ class CustomRecipeListener : Listener {
         event.inventory.matrix = matrix
     }
 
-    private fun consumeSmithingSlots(inv: Inventory) {
-        for (slot in 0..2) consume(inv, slot)
+    private fun consumeSmithingSlots(inventory: Inventory) {
+        for (slot in 0..2) consume(inventory, slot)
     }
 
-    private fun consumeStonecutterSlot(inv: Inventory, amount: Int) {
-        consume(inv, 0, amount)
+    private fun consumeStonecutterSlot(inventory: Inventory, amount: Int) {
+        consume(inventory, 0, amount)
     }
 
-    private fun consumeWorkbenchInputs(inv: Inventory, recipe: WorkstationRecipe) {
+    private fun consumeWorkbenchInputs(inventory: Inventory, recipe: WorkstationRecipe) {
         when (recipe) {
-            is GrindstoneRecipe -> { consume(inv, 0); if (recipe.item2 != null) consume(inv, 1) }
-            is AnvilRecipe      -> { consume(inv, 0); if (recipe.material != null) consume(inv, 1) }
-            is VillagerRecipe   -> { consume(inv, 0); if (recipe.input2 != null) consume(inv, 1) }
+            is GrindstoneRecipe -> { consume(inventory, 0); if (recipe.item2 != null) consume(inventory, 1) }
+            is AnvilRecipe      -> { consume(inventory, 0); if (recipe.material != null) consume(inventory, 1) }
+            is VillagerRecipe   -> { consume(inventory, 0); if (recipe.input2 != null) consume(inventory, 1) }
             else -> {}
         }
     }
@@ -561,9 +561,9 @@ class CustomRecipeListener : Listener {
         val present = matrix.filter { it != null && !it.type.isAir }
         if (required.size != present.size) return false
         for (slot in present) {
-            val idx = required.indexOfFirst { it.matches(slot) }
-            if (idx < 0) return false
-            required.removeAt(idx)
+            val index = required.indexOfFirst { it.matches(slot) }
+            if (index < 0) return false
+            required.removeAt(index)
         }
         return required.isEmpty()
     }

@@ -97,10 +97,10 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         Bukkit.getWorlds().flatMap { it.entities }
             .filterIsInstance<AbstractVillager>()
             .forEach { villager ->
-                val pdc = villager.persistentDataContainer
-                pdc.keys.filter { it.namespace == "ecocrafting" && it.key.startsWith("vr_") }
+                val persistentDataContainer = villager.persistentDataContainer
+                persistentDataContainer.keys.filter { it.namespace == "ecocrafting" && it.key.startsWith("vr_") }
                     .filter { it.key !in validKeyNames }
-                    .forEach { pdc.remove(it) }
+                    .forEach { persistentDataContainer.remove(it) }
             }
     }
 
@@ -222,8 +222,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                     .builder(plugin, variantKey.key)
                     .setOutput(output)
                     .setSupportCrafter(meta.supportCrafter)
-                recipeParts.forEachIndexed { idx, part ->
-                    if (!part.empty) builder.setRecipePart(idx, part.matcher.toTestableItem())
+                recipeParts.forEachIndexed { index, part ->
+                    if (!part.empty) builder.setRecipePart(index, part.matcher.toTestableItem())
                 }
                 builder.build().register()
             }
@@ -292,11 +292,11 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         val rawOutputs = config.getSubsections("outputs")
         require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
 
-        rawOutputs.forEachIndexed { idx, outCfg ->
-            val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_$idx")
+        rawOutputs.forEachIndexed { index, outputConfig ->
+            val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_$index")
             val outItem = run {
-                val base = Items.lookup(outCfg.getString("item")).item
-                val lore = outCfg.getFormattedStrings("lore")
+                val base = Items.lookup(outputConfig.getString("item")).item
+                val lore = outputConfig.getFormattedStrings("lore")
                 if (lore.isNotEmpty()) {
                     val itemMeta = base.itemMeta ?: return@run base
                     itemMeta.lore(lore.map {
@@ -310,8 +310,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 .inputDisplay(input.displayItem)
                 .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
                 .build()
-            val giveResultItem = if (outCfg.has("give-result-item")) outCfg.getBool("give-result-item") else true
-            val effectsChain = Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
+            val giveResultItem = if (outputConfig.has("give-result-item")) outputConfig.getBool("give-result-item") else true
+            val effectsChain = Effects.compileChain(outputConfig.getSubsections("effects"), ctx.with("effects-$index"))
             val outMeta = EcoCraftingMeta(
                 giveResultItem = giveResultItem,
                 effectsChain = effectsChain,
