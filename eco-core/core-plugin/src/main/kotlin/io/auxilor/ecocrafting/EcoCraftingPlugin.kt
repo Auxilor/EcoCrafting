@@ -50,7 +50,6 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     }
 
     override fun handleDisable() {
-        RecipeUnlockStore.saveAll()
     }
 
     override fun loadConfigCategories(): List<ConfigCategory> {
