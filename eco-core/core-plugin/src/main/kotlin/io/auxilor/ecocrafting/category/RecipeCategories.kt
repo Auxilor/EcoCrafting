@@ -17,6 +17,10 @@ object RecipeCategories : RegistrableCategory<RecipeCategory>("category", "categ
     }
 
     override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+        if (getByID(id) != null) {
+            plugin.logger.severe("Duplicate category id '$id' - ignoring the duplicate; category ids must be unique.")
+            return
+        }
         registry.register(RecipeCategory(id, config))
     }
 
