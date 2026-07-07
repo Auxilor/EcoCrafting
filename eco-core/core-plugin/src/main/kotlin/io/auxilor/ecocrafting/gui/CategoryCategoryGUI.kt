@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 
 class CategoryCategoryGUI(val config: Config) : CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
-        val maxPage = (RecipeCategories.values
+        val maxPage = (RecipeCategories.values()
             .mapNotNull { it.guiPosition?.page }
             .maxOrNull() ?: 1).coerceAtLeast(1)
 
@@ -89,7 +89,7 @@ class CategoryCategoryGUI(val config: Config) : CategoryGUI {
                         )
                     }
 
-                    val positionedCategories = RecipeCategories.values
+                    val positionedCategories = RecipeCategories.values()
                         .filter { it.guiPosition?.page == pageNum }
 
                     for (category in positionedCategories) {

@@ -1,18 +1,42 @@
-﻿package io.auxilor.ecocrafting.category
+package io.auxilor.ecocrafting.category
 
-object RecipeCategories {
-    private val _registry: MutableList<RecipeCategory> = mutableListOf()
-    val values: List<RecipeCategory> get() = _registry
+import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.libreforge.loader.LibreforgePlugin
+import com.willfp.libreforge.loader.configs.RegistrableCategory
+import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.RecipeResolver
+import io.auxilor.ecocrafting.recipe.VanillaRecipeScanner
+import org.bukkit.scheduler.BukkitTask
 
-    internal fun clear() {
-        _registry.clear()
+object RecipeCategories : RegistrableCategory<RecipeCategory>("category", "categories") {
+    private var pendingPostReload: BukkitTask? = null
+
+    override fun clear(plugin: LibreforgePlugin) {
+        registry.clear()
+        RecipeResolver.clearCache()
     }
 
-    internal fun register(category: RecipeCategory) {
-        _registry.add(category)
+    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+        registry.register(RecipeCategory(id, config))
     }
 
-    fun getById(id: String?): RecipeCategory? {
-        return id?.let { values.firstOrNull { it.id.equals(id, ignoreCase = true) } }
+    override fun afterReload(plugin: LibreforgePlugin) {
+        VanillaRecipeScanner.populate(values().toList())
+        pendingPostReload?.cancel()
+        pendingPostReload = plugin.server.scheduler.runTask(plugin, Runnable {
+            pendingPostReload = null
+            validateCategories(values().toList())
+            RecipeResolver.warmCache(values().flatMap { it.allItemStacks() })
+        })
+    }
+
+    private fun validateCategories(categories: List<RecipeCategory>) {
+        for (category in categories) {
+            for (stack in category.items) {
+                if (RecipeResolver.resolve(stack.item.item) == null) {
+                    plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
+                }
+            }
+        }
     }
 }
