@@ -27,7 +27,9 @@ import org.bukkit.block.BrewingStand
 import org.bukkit.block.Campfire
 import org.bukkit.block.Crafter
 import org.bukkit.block.Furnace
+import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
+import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -498,9 +500,35 @@ object CustomRecipeListener : Listener {
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeWorkbenchInputs(inventory, workstationRecipe)
+            if (inventory.type == InventoryType.MERCHANT) {
+                awardVillagerTrade(inventory as MerchantInventory, workstationRecipe as? VillagerRecipe)
+            }
         }
         fireCraftEffects(player, workstationRecipe, meta, item, 1)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
+    }
+
+    // Cancelling the MERCHANT click for no-item recipes stops vanilla's trade-completion
+    // logic (recipe uses, villager career XP, player XP orb) from running, so we replicate
+    // it manually. giveResultItem = true recipes go through uncancelled and get this for
+    // free from vanilla (eco's WorkstationRecipeListener now carries villagerXp onto the
+    // real MerchantRecipe it registers on the entity).
+    private fun awardVillagerTrade(inventory: MerchantInventory, recipe: VillagerRecipe?) {
+        val index = inventory.selectedRecipeIndex
+        if (index < 0) return
+        val merchant = inventory.merchant ?: return
+
+        val merchantRecipe = merchant.getRecipe(index)
+        merchantRecipe.uses += 1
+        merchant.setRecipe(index, merchantRecipe)
+
+        val xp = recipe?.villagerXp ?: return
+        if (xp <= 0) return
+        val villager = merchant as? Villager ?: return
+        villager.villagerExperience += xp
+        villager.world.spawn(villager.location, ExperienceOrb::class.java) {
+            it.experience = xp
+        }
     }
 
     // Grid consumption helpers
