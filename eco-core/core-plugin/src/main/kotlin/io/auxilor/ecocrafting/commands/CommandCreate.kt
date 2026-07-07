@@ -28,6 +28,10 @@ object CommandCreate : Subcommand(
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
+        if (args.size > 1) {
+            return emptyList()
+        }
+
         return RecipeCreatorGUI.stationTypeKeys
     }
 }
