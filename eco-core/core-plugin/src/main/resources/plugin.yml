@@ -19,11 +19,49 @@ commands:
     permission: ecocrafting.command.ecocrafting
 
 permissions:
+  ecocrafting.*:
+    description: All ecocrafting permissions
+    default: op
+    children:
+      ecocrafting.command.*: true
+      ecocrafting.admin: true
+      ecocrafting.admin.create: true
+      ecocrafting.open.others: true
+      ecocrafting.recipe.*: true
+  ecocrafting.command.*:
+    description: All commands
+    default: op
+    children:
+      ecocrafting.command.ecocrafting: true
+      ecocrafting.command.reload: true
+      ecocrafting.command.open: true
+      ecocrafting.command.lookup: true
+      ecocrafting.command.debug: true
+
+  ecocrafting.command.ecocrafting:
+    description: Allows the use of /ecocrafting (base recipe book command)
+    default: true
+  ecocrafting.command.reload:
+    description: Allows reloading the config
+    default: op
+  ecocrafting.command.open:
+    description: Allows opening a recipe category browser with /ecocrafting open
+    default: true
+  ecocrafting.command.lookup:
+    description: Allows looking up an item's recipe with /ecocrafting lookup
+    default: true
+  ecocrafting.command.debug:
+    description: Allows inspecting the held item's recipe with /ecocrafting debug
+    default: op
+
+  ecocrafting.admin:
+    description: Admin commands (unlock/lock recipes)
+    default: op
   ecocrafting.admin.create:
     description: Open the in-game recipe creator GUI
     default: op
-  ecocrafting.admin:
-    description: Admin commands (unlock/lock recipes)
+  ecocrafting.open.others:
+    description: Allows opening a recipe category browser for other players
     default: op
   ecocrafting.recipe.*:
     description: Access to every recipe-specific permission node (ecocrafting.recipe.<id>)
