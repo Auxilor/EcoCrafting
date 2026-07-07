@@ -5,14 +5,14 @@ import com.willfp.eco.core.gui.menu.MenuBuilder
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.eco.util.formatEco
 import io.auxilor.ecocrafting.plugin
 import java.util.UUID
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 object RecipeCreatorGUI {
 
@@ -164,10 +164,23 @@ object RecipeCreatorGUI {
             4 to 3, 4 to 4, 4 to 5
         )
         "furnace", "blast_furnace", "smoker", "campfire", "stonecutter" -> listOf(3 to 4)
-        "smithing_table" -> listOf(3 to 2, 3 to 4, 3 to 6)
-        "brewing_stand"  -> listOf(3 to 3, 3 to 5)
-        "grindstone", "villager" -> listOf(3 to 3, 3 to 5)
-        "anvil" -> listOf(3 to 3, 3 to 5)
+        "smithing_table" -> listOf(
+            3 to 2,
+            3 to 4,
+            3 to 6
+        )
+        "brewing_stand" -> listOf(
+            3 to 3,
+            3 to 5
+        )
+        "grindstone", "villager" -> listOf(
+            3 to 3,
+            3 to 5
+        )
+        "anvil" -> listOf(
+            3 to 3,
+            3 to 5
+        )
         else -> emptyList()
     }
 
@@ -204,8 +217,11 @@ object RecipeCreatorGUI {
             }.build())
 
             addWorkstationIcons(typeKey)
-            val used = setOf(outputSlot, ghostSlot, 6 to 5) +
-                workstationIconPositions.map { it.first to it.second }.toSet()
+            val used = setOf(
+                outputSlot,
+                ghostSlot,
+                6 to 5
+            ) + workstationIconPositions.map { it.first to it.second }.toSet()
             fillBorder(6, used)
         }
         builtMenu.open(player)

@@ -7,10 +7,10 @@ import com.willfp.libreforge.NoCompileData
 import com.willfp.libreforge.ProvidedHolder
 import com.willfp.libreforge.conditions.Condition
 import com.willfp.libreforge.get
-import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
+import org.bukkit.entity.Player
 
 object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recipe") {
     override fun isMet(

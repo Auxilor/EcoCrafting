@@ -1,10 +1,10 @@
 ﻿package io.auxilor.ecocrafting.gui.utils
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.craft.MaterialCount
 import io.auxilor.ecocrafting.integration.ShopIntegration
 import io.auxilor.ecocrafting.plugin
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.entity.Player
 
 fun MaterialCount.toLoreLine(player: Player): String {
     val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {

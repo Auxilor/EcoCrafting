@@ -4,16 +4,16 @@ import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.util.formatEco
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import io.auxilor.ecocrafting.craft.CraftAttempt
 import io.auxilor.ecocrafting.craft.QuickCraftService
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.integration.ShopIntegration
+import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
-import io.auxilor.ecocrafting.plugin
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 
 fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
     val meta = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {

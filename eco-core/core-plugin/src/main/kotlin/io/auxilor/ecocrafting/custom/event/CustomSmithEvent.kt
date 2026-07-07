@@ -1,10 +1,10 @@
 ﻿package io.auxilor.ecocrafting.custom.event
 
+import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
-import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import org.bukkit.inventory.ItemStack
 
 class CustomSmithEvent(

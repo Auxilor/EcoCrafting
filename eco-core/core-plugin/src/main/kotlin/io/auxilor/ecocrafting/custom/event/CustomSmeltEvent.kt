@@ -1,11 +1,11 @@
 ﻿package io.auxilor.ecocrafting.custom.event
 
+import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
-import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
 import org.bukkit.inventory.ItemStack
 
 class CustomSmeltEvent(

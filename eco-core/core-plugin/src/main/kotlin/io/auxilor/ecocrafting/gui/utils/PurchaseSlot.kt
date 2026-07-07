@@ -3,11 +3,11 @@
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.craft.QuickCraftService
 import io.auxilor.ecocrafting.integration.ShopIntegration
-import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.ResolvedRecipe
+import org.bukkit.entity.Player
 
 fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
     val service = QuickCraftService(player, recipe)

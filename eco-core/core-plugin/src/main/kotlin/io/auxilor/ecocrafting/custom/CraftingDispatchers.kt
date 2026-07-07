@@ -4,11 +4,11 @@ import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import io.auxilor.ecocrafting.custom.libreforge.TriggerCustomCraft
 import io.auxilor.ecocrafting.custom.libreforge.TriggerGhostCraft
 import io.auxilor.ecocrafting.plugin
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 fun fireCraftEffects(player: Player, recipe: WorkstationRecipe, meta: EcoCraftingMeta, item: ItemStack, amount: Int) {
     val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString())

@@ -5,9 +5,7 @@ import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitTask
+import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.gui.utils.RecipeGUIContext
 import io.auxilor.ecocrafting.gui.utils.buildBackSlot
 import io.auxilor.ecocrafting.gui.utils.buildFuelSlot
@@ -16,13 +14,15 @@ import io.auxilor.ecocrafting.gui.utils.buildIngredientSlot
 import io.auxilor.ecocrafting.gui.utils.buildQuickCraftSlot
 import io.auxilor.ecocrafting.gui.utils.buildVariantSlot
 import io.auxilor.ecocrafting.gui.utils.buildWorkstationSlot
-import io.auxilor.ecocrafting.custom.CustomRecipes
+import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 import io.auxilor.ecocrafting.recipe.withLockState
-import io.auxilor.ecocrafting.plugin
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitTask
 
 private fun RecipeDisplayType.guiSection() = when (this) {
     RecipeDisplayType.CRAFTING      -> "craft-gui"

@@ -1,14 +1,14 @@
 ﻿package io.auxilor.ecocrafting.recipe
 
-import com.willfp.eco.core.recipe.parts.MaterialTestableItem
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.items.TestableItem
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.recipe.parts.EmptyTestableItem
+import com.willfp.eco.core.recipe.parts.MaterialTestableItem
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.plugin
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 /**
  * A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.

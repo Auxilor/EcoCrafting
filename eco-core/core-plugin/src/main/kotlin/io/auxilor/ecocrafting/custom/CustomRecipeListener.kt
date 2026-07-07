@@ -12,6 +12,13 @@ import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
+import com.willfp.eco.util.formatEco
+import io.auxilor.ecocrafting.custom.event.CustomBrewEvent
+import io.auxilor.ecocrafting.custom.event.CustomCraftEvent
+import io.auxilor.ecocrafting.custom.event.CustomSmeltEvent
+import io.auxilor.ecocrafting.custom.event.CustomSmithEvent
+import io.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
+import io.auxilor.ecocrafting.plugin
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
@@ -23,9 +30,7 @@ import org.bukkit.block.Furnace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.event.Listener
-import com.willfp.eco.util.formatEco
 import org.bukkit.event.block.BlockCookEvent
 import org.bukkit.event.block.CrafterCraftEvent
 import org.bukkit.event.inventory.BrewEvent
@@ -41,12 +46,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantInventory
 import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
-import io.auxilor.ecocrafting.custom.event.CustomBrewEvent
-import io.auxilor.ecocrafting.custom.event.CustomCraftEvent
-import io.auxilor.ecocrafting.custom.event.CustomSmeltEvent
-import io.auxilor.ecocrafting.custom.event.CustomSmithEvent
-import io.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
-import io.auxilor.ecocrafting.plugin
+import org.bukkit.persistence.PersistentDataType
 
 internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
     val present = matrix.filter { it != null && !it.type.isAir }

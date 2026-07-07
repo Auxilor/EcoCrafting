@@ -1,42 +1,42 @@
 ﻿package io.auxilor.ecocrafting.custom
 
-import org.bukkit.Registry
-import org.bukkit.entity.AbstractVillager
-import org.bukkit.Bukkit
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-import com.willfp.eco.core.recipe.parts.GroupedTestableItems
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.recipe.parts.EmptyTestableItem
+import com.willfp.eco.core.recipe.parts.GroupedTestableItems
+import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
+import com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
 import com.willfp.eco.core.recipe.workstation.AnvilRecipe
 import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import com.willfp.eco.core.recipe.workstation.CrafterRecipe
 import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
 import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
+import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.inventory.ItemStack
+import io.auxilor.ecocrafting.BuildConfig
 import io.auxilor.ecocrafting.category.RecipeCategories
+import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.IngredientMatcher
 import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.toTestableItem
-import io.auxilor.ecocrafting.plugin
-import io.auxilor.ecocrafting.BuildConfig
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.Registry
+import org.bukkit.entity.AbstractVillager
+import org.bukkit.inventory.ItemStack
 
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
@@ -313,7 +313,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             val giveResultItem = if (outCfg.has("give-result-item")) outCfg.getBool("give-result-item") else true
             val effectsChain = Effects.compileChain(outCfg.getSubsections("effects"), ctx.with("effects-$idx"))
             val outMeta = EcoCraftingMeta(
-                giveResultItem = giveResultItem, effectsChain = effectsChain,
+                giveResultItem = giveResultItem,
+                effectsChain = effectsChain,
                 visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
                 craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
                 lockedByDefault = config.getBool("locked-by-default"),

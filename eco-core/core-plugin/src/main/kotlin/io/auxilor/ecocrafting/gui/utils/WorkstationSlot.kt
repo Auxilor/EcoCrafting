@@ -3,14 +3,14 @@
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.gui.MARKER_CONFIG_KEY
 import io.auxilor.ecocrafting.gui.RecipeGUI
 import io.auxilor.ecocrafting.gui.WORKSTATION_MARKERS
 import io.auxilor.ecocrafting.gui.WorkstationMarkerState
 import io.auxilor.ecocrafting.gui.workstationMarkerState
-import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.RecipeDisplayType
+import org.bukkit.entity.Player
 
 fun RecipeGUIContext.buildWorkstationSlot(
     marker: Char,

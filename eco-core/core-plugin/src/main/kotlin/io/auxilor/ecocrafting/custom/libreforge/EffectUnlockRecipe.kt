@@ -6,10 +6,10 @@ import com.willfp.libreforge.effects.Effect
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import com.willfp.libreforge.triggers.TriggerParameter
-import org.bukkit.entity.Player
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
+import org.bukkit.entity.Player
 
 object EffectUnlockRecipe : Effect<NoCompileData>("unlock_recipe") {
     override val parameters = setOf(TriggerParameter.PLAYER)

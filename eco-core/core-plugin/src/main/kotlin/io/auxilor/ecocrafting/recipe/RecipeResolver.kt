@@ -1,9 +1,9 @@
 ﻿package io.auxilor.ecocrafting.recipe
 
-import com.willfp.eco.core.items.TestableItem
 import com.google.common.collect.BiMap
 import com.willfp.eco.core.items.CustomItem
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.recipe.Recipes
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.parts.GroupedTestableItems
@@ -18,31 +18,34 @@ import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.RecipeChoice
-import org.bukkit.inventory.ShapedRecipe
-import org.bukkit.inventory.ShapelessRecipe
-import org.bukkit.inventory.CookingRecipe
-import org.bukkit.inventory.FurnaceRecipe
-import org.bukkit.inventory.BlastingRecipe
-import org.bukkit.inventory.SmokingRecipe
-import org.bukkit.inventory.CampfireRecipe
-import org.bukkit.inventory.SmithingTransformRecipe
-import org.bukkit.inventory.StonecuttingRecipe as BukkitStonecuttingRecipe
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeSymmetry
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.plugin
 import java.lang.reflect.Field
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.inventory.BlastingRecipe
+import org.bukkit.inventory.CampfireRecipe
+import org.bukkit.inventory.CookingRecipe
+import org.bukkit.inventory.FurnaceRecipe
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.RecipeChoice
+import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.inventory.ShapelessRecipe
+import org.bukkit.inventory.SmithingTransformRecipe
+import org.bukkit.inventory.SmokingRecipe
+import org.bukkit.inventory.StonecuttingRecipe as BukkitStonecuttingRecipe
 
 object RecipeResolver {
     private val air = ItemStack(Material.AIR)
     private val resolveCache = HashMap<Any, ResolvedRecipe?>()
-    private val ECO_KEY_SUFFIXES = listOf("_displayed", "_crafter")
+    private val ECO_KEY_SUFFIXES = listOf(
+        "_displayed",
+        "_crafter"
+    )
 
     fun clearCache() {
         resolveCache.clear()
@@ -485,7 +488,11 @@ object RecipeResolver {
         return ResolvedRecipe(
             key = key,
             output = result.clone(),
-            ingredients = listOf(templateIng, baseIng, additionIng) + List(6) { RecipeIngredient.empty(air) },
+            ingredients = listOf(
+                templateIng,
+                baseIng,
+                additionIng
+            ) + List(6) { RecipeIngredient.empty(air) },
             source = RecipeSource.BUKKIT,
             displayType = RecipeDisplayType.SMITHING
         )

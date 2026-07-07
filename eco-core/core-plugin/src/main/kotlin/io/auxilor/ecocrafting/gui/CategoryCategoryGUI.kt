@@ -5,8 +5,8 @@ import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
@@ -14,11 +14,11 @@ import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
+import io.auxilor.ecocrafting.category.RecipeCategories
+import io.auxilor.ecocrafting.category.RecipeCategory
+import io.auxilor.ecocrafting.gui.utils.configSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.category.RecipeCategory
-import io.auxilor.ecocrafting.category.RecipeCategories
-import io.auxilor.ecocrafting.gui.utils.configSound
 
 class CategoryCategoryGUI(val config: Config): CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {

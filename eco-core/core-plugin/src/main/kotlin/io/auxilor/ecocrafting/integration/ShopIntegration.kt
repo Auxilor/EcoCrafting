@@ -1,16 +1,16 @@
 ﻿package io.auxilor.ecocrafting.integration
 
-import com.willfp.ecoshop.shop.ShopItem
 import com.willfp.ecoshop.shop.BuyStatus
 import com.willfp.ecoshop.shop.BuyType
+import com.willfp.ecoshop.shop.ShopItem
 import com.willfp.ecoshop.shop.getDisplay
 import com.willfp.ecoshop.shop.shopItem
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import io.auxilor.ecocrafting.BuildConfig
 import io.auxilor.ecocrafting.EcoCraftingPlugin
 import io.auxilor.ecocrafting.plugin
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 /**
  * Optional EcoShop integration boundary.

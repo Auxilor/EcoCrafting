@@ -5,16 +5,16 @@ import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.recipe.parts.GroupedTestableItems
+import io.auxilor.ecocrafting.gui.CategoryCategoryGUI
+import io.auxilor.ecocrafting.gui.ItemCategoryGUI
+import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.RecipeResolver
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Tag
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.gui.CategoryCategoryGUI
-import io.auxilor.ecocrafting.gui.ItemCategoryGUI
-import io.auxilor.ecocrafting.recipe.RecipeResolver
-import io.auxilor.ecocrafting.plugin
 
 data class CategoryPosition(val column: Int, val row: Int, val page: Int)
 

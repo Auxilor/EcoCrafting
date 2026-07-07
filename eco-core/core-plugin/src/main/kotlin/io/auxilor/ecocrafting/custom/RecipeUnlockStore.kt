@@ -3,6 +3,9 @@
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
+import io.auxilor.ecocrafting.plugin
+import java.io.File
+import java.util.UUID
 import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.file.YamlConfiguration
@@ -11,9 +14,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import io.auxilor.ecocrafting.plugin
-import java.io.File
-import java.util.UUID
 
 object RecipeUnlockStore : Listener {
     private val cache = mutableMapOf<UUID, MutableSet<String>>()

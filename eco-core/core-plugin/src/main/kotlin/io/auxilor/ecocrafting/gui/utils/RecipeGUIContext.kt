@@ -4,10 +4,10 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
+import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.recipe.ResolvedRecipe
-import io.auxilor.ecocrafting.plugin
 
 class RecipeGUIContext(
     val config: Config,
