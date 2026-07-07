@@ -12,7 +12,13 @@ import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
 import org.bukkit.entity.Player
 
 object EffectUnlockRecipe : Effect<NoCompileData>("unlock_recipe") {
-    override val parameters = setOf(TriggerParameter.PLAYER)
+    override val description = "Unlocks a custom recipe for the player, allowing them to craft it."
+
+    override val categories = setOf("crafting")
+
+    override val parameters = setOf(
+        TriggerParameter.PLAYER
+    )
 
     override fun onTrigger(
         config: Config,

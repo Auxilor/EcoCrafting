@@ -11,7 +11,13 @@ import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
 
 object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
-    override val parameters = setOf(TriggerParameter.PLAYER)
+    override val description = "Locks a custom recipe for the player, preventing them from crafting it."
+
+    override val categories = setOf("crafting")
+
+    override val parameters = setOf(
+        TriggerParameter.PLAYER
+    )
 
     override fun onTrigger(
         config: Config,
