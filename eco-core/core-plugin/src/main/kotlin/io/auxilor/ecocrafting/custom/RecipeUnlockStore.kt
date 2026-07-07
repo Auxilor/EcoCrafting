@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 object RecipeUnlockStore : Listener {
     private val cache = mutableMapOf<UUID, MutableSet<String>>()
+    private val lockedOverrides = mutableMapOf<UUID, MutableSet<String>>()
 
     private fun dataFile(uuid: UUID): File {
         val directory = File(plugin.dataFolder, "data/players")
@@ -27,12 +28,14 @@ object RecipeUnlockStore : Listener {
     fun loadPlayer(uuid: UUID) {
         val config = YamlConfiguration.loadConfiguration(dataFile(uuid))
         cache[uuid] = config.getStringList("unlocked").toMutableSet()
+        lockedOverrides[uuid] = config.getStringList("locked").toMutableSet()
     }
 
     fun savePlayer(uuid: UUID) {
         val file = dataFile(uuid)
         val config = YamlConfiguration()
         config.set("unlocked", cache[uuid]?.toList() ?: emptyList<String>())
+        config.set("locked", lockedOverrides[uuid]?.toList() ?: emptyList<String>())
         config.save(file)
     }
 
@@ -41,26 +44,29 @@ object RecipeUnlockStore : Listener {
     }
 
     fun isUnlocked(player: OfflinePlayer, key: NamespacedKey, meta: EcoCraftingMeta): Boolean {
-        if (!meta.lockedByDefault) return true
-        return key.key in (cache[player.uniqueId] ?: emptySet())
+        val uid = player.uniqueId
+        if (key.key in (lockedOverrides[uid] ?: emptySet())) return false
+        if (key.key in (cache[uid] ?: emptySet())) return true
+        return !meta.lockedByDefault
     }
 
     fun isLocked(player: OfflinePlayer, key: NamespacedKey, meta: EcoCraftingMeta): Boolean =
         !isUnlocked(player, key, meta)
 
     fun unlock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta) {
-        if (!meta.lockedByDefault) return
-        val set = cache.getOrPut(player.uniqueId) { mutableSetOf() }
-        if (key.key in set) return
-        set.add(key.key)
-        savePlayer(player.uniqueId)
+        val uid = player.uniqueId
+        lockedOverrides[uid]?.remove(key.key)
+        val set = cache.getOrPut(uid) { mutableSetOf() }
+        if (!set.add(key.key)) return
+        savePlayer(uid)
     }
 
     fun lock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta) {
-        val set = cache[player.uniqueId] ?: return
-        if (key.key !in set) return
-        set.remove(key.key)
-        savePlayer(player.uniqueId)
+        val uid = player.uniqueId
+        cache[uid]?.remove(key.key)
+        val overrides = lockedOverrides.getOrPut(uid) { mutableSetOf() }
+        if (!overrides.add(key.key)) return
+        savePlayer(uid)
     }
 
     @EventHandler
@@ -81,5 +87,6 @@ object RecipeUnlockStore : Listener {
     fun onQuit(event: PlayerQuitEvent) {
         savePlayer(event.player.uniqueId)
         cache.remove(event.player.uniqueId)
+        lockedOverrides.remove(event.player.uniqueId)
     }
 }
