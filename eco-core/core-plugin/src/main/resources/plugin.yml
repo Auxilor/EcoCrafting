@@ -35,8 +35,6 @@ permissions:
       ecocrafting.command.ecocrafting: true
       ecocrafting.command.reload: true
       ecocrafting.command.open: true
-      ecocrafting.command.lookup: true
-      ecocrafting.command.debug: true
 
   ecocrafting.command.ecocrafting:
     description: Allows the use of /ecocrafting (base recipe book command)
@@ -47,13 +45,6 @@ permissions:
   ecocrafting.command.open:
     description: Allows opening a recipe category browser with /ecocrafting open
     default: true
-  ecocrafting.command.lookup:
-    description: Allows looking up an item's recipe with /ecocrafting lookup
-    default: true
-  ecocrafting.command.debug:
-    description: Allows inspecting the held item's recipe with /ecocrafting debug
-    default: op
-
   ecocrafting.admin:
     description: Admin commands (unlock/lock recipes)
     default: op

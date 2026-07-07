@@ -14,9 +14,7 @@ object CommandEcoCrafting : PluginCommand(
 ) {
     init {
         this.addSubcommand(CommandReload)
-            .addSubcommand(CommandLookup)
             .addSubcommand(CommandOpen)
-            .addSubcommand(CommandDebug)
             .addSubcommand(CommandCreate)
             .addSubcommand(CommandUnlock)
             .addSubcommand(CommandLock)
