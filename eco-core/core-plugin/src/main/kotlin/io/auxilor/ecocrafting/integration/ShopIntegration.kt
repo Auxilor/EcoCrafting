@@ -12,10 +12,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/**
- * Optional EcoShop integration boundary.
- * Keep all direct EcoShop calls here so weekly EcoShop API changes are isolated.
- */
+// Optional EcoShop integration boundary. Keep all direct EcoShop calls here so
+// weekly EcoShop API changes are isolated.
 object ShopIntegration {
     private var pluginAvailable = false
     private var configEnabled = false
