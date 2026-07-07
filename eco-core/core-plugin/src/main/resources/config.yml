@@ -6,6 +6,9 @@
 # Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
 debug: false
 
+# Force local storage even when eco uses a database; disables cross-server sync
+use-local-storage: false
+
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
 
