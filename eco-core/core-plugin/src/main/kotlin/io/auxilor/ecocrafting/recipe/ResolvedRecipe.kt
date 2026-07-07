@@ -10,10 +10,8 @@ import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/**
- * A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.
- * Ingredients are always normalized to a 3x3 grid for GUI display.
- */
+// A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.
+// Ingredients are always normalized to a 3x3 grid for GUI display.
 data class ResolvedRecipe(
     val key: NamespacedKey?,
     val output: ItemStack,
@@ -39,11 +37,9 @@ fun ResolvedRecipe.withLockState(player: Player): ResolvedRecipe {
 
 private val warnedInvalidRecipeIds = mutableSetOf<String>()
 
-/**
- * Builds an "ecocrafting"-namespaced [NamespacedKey] from a config-supplied recipe id,
- * lowercasing it first since NamespacedKey rejects uppercase. Returns null (and logs a
- * one-time warning per offending value) instead of throwing on an invalid id.
- */
+// Builds an "ecocrafting"-namespaced NamespacedKey from a config-supplied recipe id,
+// lowercasing it first since NamespacedKey rejects uppercase. Returns null (and logs a
+// one-time warning per offending value) instead of throwing on an invalid id.
 fun invalidRecipeIdKeyOrWarn(recipeId: String): NamespacedKey? {
     return try {
         NamespacedKey("ecocrafting", recipeId.lowercase())

@@ -58,31 +58,29 @@ object RecipeResolver {
     fun hasAnyRecipe(itemStack: ItemStack): Boolean = resolve(itemStack) != null
 
     private val SYMMETRY_TRANSFORMS = listOf(
-        intArrayOf(0,1,2,3,4,5,6,7,8),
+        intArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8),
         RecipeSymmetry.ROT_90_CW,
         RecipeSymmetry.ROT_180,
         RecipeSymmetry.ROT_270_CW,
         RecipeSymmetry.MIRROR_H,
-        intArrayOf(0,3,6,1,4,7,2,5,8),  // transpose (MIRROR_H Â· ROT_90_CW)
-        intArrayOf(6,7,8,3,4,5,0,1,2),  // vertical flip (MIRROR_H Â· ROT_180)
-        intArrayOf(8,5,2,7,4,1,6,3,0),  // anti-diagonal (MIRROR_H Â· ROT_270_CW)
+        intArrayOf(0, 3, 6, 1, 4, 7, 2, 5, 8), // transpose (MIRROR_H . ROT_90_CW)
+        intArrayOf(6, 7, 8, 3, 4, 5, 0, 1, 2), // vertical flip (MIRROR_H . ROT_180)
+        intArrayOf(8, 5, 2, 7, 4, 1, 6, 3, 0)  // anti-diagonal (MIRROR_H . ROT_270_CW)
     )
 
     private fun List<RecipeIngredient>.symmetryKey(): String {
         val types = map { it.displayItem.type.name }
         return SYMMETRY_TRANSFORMS
-            .map { t -> t.map { types[it] }.joinToString(",") }
+            .map { transform -> transform.map { types[it] }.joinToString(",") }
             .min()
     }
 
     private const val RECIPE_WILDCARD_PERMISSION = "ecocrafting.recipe.*"
 
-    /**
-     * Explicit `permission:` in the recipe config wins outright. Otherwise custom recipes
-     * (ones with a stable id from CustomRecipeLoader) fall back to a per-id node so server
-     * owners can gate individual recipes without setting `permission:` on each one; that
-     * node is covered by ecocrafting.recipe.* (default: true in plugin.yml) unless revoked.
-     */
+    // Explicit `permission:` in the recipe config wins outright. Otherwise custom recipes
+    // (ones with a stable id from CustomRecipeLoader) fall back to a per-id node so server
+    // owners can gate individual recipes without setting `permission:` on each one; that
+    // node is covered by ecocrafting.recipe.* (default: true in plugin.yml) unless revoked.
     private fun effectivePermission(recipe: ResolvedRecipe): String? {
         recipe.permission?.let { return it }
         if (recipe.source != RecipeSource.CUSTOM) return null
@@ -199,103 +197,103 @@ object RecipeResolver {
     }
 
     private fun WorkstationRecipe.workstationToResolvedRecipe(): ResolvedRecipe {
-        fun emptyIng() = RecipeIngredient.empty(air)
+        fun emptyIngredient() = RecipeIngredient.empty(air)
         fun displayOrAir(display: ItemStack?) = display?.clone() ?: air.clone()
 
         val ingredients: List<RecipeIngredient> = when (this) {
             is CrafterRecipe -> {
                 val displays = partDisplays
-                parts.mapIndexed { idx, testable ->
-                    if (testable == null) emptyIng()
+                parts.mapIndexed { index, testable ->
+                    if (testable == null) emptyIngredient()
                     else {
-                        val alts = testable.allDisplayItems()
+                        val alternatives = testable.allDisplayItems()
                         RecipeIngredient(
-                            displayItem = displays.getOrNull(idx)?.clone() ?: air.clone(),
+                            displayItem = displays.getOrNull(index)?.clone() ?: air.clone(),
                             matcher = IngredientMatcher.EcoPart(testable),
-                            displayAlternatives = if (alts.size > 1) alts else emptyList()
+                            displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
                         )
                     }
                 }
             }
             is SmeltingRecipe -> {
-                val alts = input.allDisplayItems()
+                val alternatives = input.allDisplayItems()
                 listOf(RecipeIngredient(
                     displayItem = displayOrAir(inputDisplay),
                     matcher = IngredientMatcher.EcoPart(input),
-                    displayAlternatives = if (alts.size > 1) alts else emptyList()
-                )) + List(8) { emptyIng() }
+                    displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
+                )) + List(8) { emptyIngredient() }
             }
             is SmithingRecipe -> {
-                val templateAlts = template.allDisplayItems()
-                val baseAlts = base.allDisplayItems()
-                val additionAlts = addition.allDisplayItems()
+                val templateAlternatives = template.allDisplayItems()
+                val baseAlternatives = base.allDisplayItems()
+                val additionAlternatives = addition.allDisplayItems()
                 listOf(
                     RecipeIngredient(displayOrAir(templateDisplay), IngredientMatcher.EcoPart(template),
-                        displayAlternatives = if (templateAlts.size > 1) templateAlts else emptyList()),
+                        displayAlternatives = if (templateAlternatives.size > 1) templateAlternatives else emptyList()),
                     RecipeIngredient(displayOrAir(baseDisplay), IngredientMatcher.EcoPart(base),
-                        displayAlternatives = if (baseAlts.size > 1) baseAlts else emptyList()),
+                        displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
                     RecipeIngredient(displayOrAir(additionDisplay), IngredientMatcher.EcoPart(addition),
-                        displayAlternatives = if (additionAlts.size > 1) additionAlts else emptyList())
-                ) + List(6) { emptyIng() }
+                        displayAlternatives = if (additionAlternatives.size > 1) additionAlternatives else emptyList())
+                ) + List(6) { emptyIngredient() }
             }
             is StonecuttingRecipe -> {
-                val alts = input.allDisplayItems()
+                val alternatives = input.allDisplayItems()
                 listOf(RecipeIngredient(
                     displayItem = displayOrAir(inputDisplay),
                     matcher = IngredientMatcher.EcoPart(input),
-                    displayAlternatives = if (alts.size > 1) alts else emptyList()
-                )) + List(8) { emptyIng() }
+                    displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
+                )) + List(8) { emptyIngredient() }
             }
             is BrewingRecipe -> {
-                val baseAlts = base.allDisplayItems()
-                val ingAlts = ingredient.allDisplayItems()
+                val baseAlternatives = base.allDisplayItems()
+                val ingredientAlternatives = ingredient.allDisplayItems()
                 listOf(
                     RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
-                        displayAlternatives = if (baseAlts.size > 1) baseAlts else emptyList()),
+                        displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
                     RecipeIngredient(ingredient.item.clone(), IngredientMatcher.EcoPart(ingredient),
-                        displayAlternatives = if (ingAlts.size > 1) ingAlts else emptyList())
-                ) + List(7) { emptyIng() }
+                        displayAlternatives = if (ingredientAlternatives.size > 1) ingredientAlternatives else emptyList())
+                ) + List(7) { emptyIngredient() }
             }
             is GrindstoneRecipe -> {
                 val secondItem = item2
-                val item1Alts = item1.allDisplayItems()
+                val item1Alternatives = item1.allDisplayItems()
                 listOfNotNull(
                     RecipeIngredient(item1.item.clone(), IngredientMatcher.EcoPart(item1),
-                        displayAlternatives = if (item1Alts.size > 1) item1Alts else emptyList()),
+                        displayAlternatives = if (item1Alternatives.size > 1) item1Alternatives else emptyList()),
                     if (secondItem != null) {
-                        val item2Alts = secondItem.allDisplayItems()
+                        val item2Alternatives = secondItem.allDisplayItems()
                         RecipeIngredient(secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem),
-                            displayAlternatives = if (item2Alts.size > 1) item2Alts else emptyList())
+                            displayAlternatives = if (item2Alternatives.size > 1) item2Alternatives else emptyList())
                     } else null
-                ) + List(7) { emptyIng() }
+                ) + List(7) { emptyIngredient() }
             }
             is AnvilRecipe -> {
                 val materialItem = material
-                val baseAlts = base.allDisplayItems()
+                val baseAlternatives = base.allDisplayItems()
                 listOfNotNull(
                     RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
-                        displayAlternatives = if (baseAlts.size > 1) baseAlts else emptyList()),
+                        displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
                     if (materialItem != null) {
-                        val matAlts = materialItem.allDisplayItems()
+                        val materialAlternatives = materialItem.allDisplayItems()
                         RecipeIngredient(materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem),
-                            displayAlternatives = if (matAlts.size > 1) matAlts else emptyList())
+                            displayAlternatives = if (materialAlternatives.size > 1) materialAlternatives else emptyList())
                     } else null
-                ) + List(7) { emptyIng() }
+                ) + List(7) { emptyIngredient() }
             }
             is VillagerRecipe -> {
-                val i2 = input2
-                val input1Alts = input1.allDisplayItems()
+                val secondInput = input2
+                val input1Alternatives = input1.allDisplayItems()
                 listOfNotNull(
                     RecipeIngredient(displayOrAir(input1Display), IngredientMatcher.EcoPart(input1),
-                        displayAlternatives = if (input1Alts.size > 1) input1Alts else emptyList()),
-                    if (i2 != null) {
-                        val i2Alts = i2.allDisplayItems()
-                        RecipeIngredient(displayOrAir(input2Display), IngredientMatcher.EcoPart(i2),
-                            displayAlternatives = if (i2Alts.size > 1) i2Alts else emptyList())
+                        displayAlternatives = if (input1Alternatives.size > 1) input1Alternatives else emptyList()),
+                    if (secondInput != null) {
+                        val secondInputAlternatives = secondInput.allDisplayItems()
+                        RecipeIngredient(displayOrAir(input2Display), IngredientMatcher.EcoPart(secondInput),
+                            displayAlternatives = if (secondInputAlternatives.size > 1) secondInputAlternatives else emptyList())
                     } else null
-                ) + List(7) { emptyIng() }
+                ) + List(7) { emptyIngredient() }
             }
-            else -> List(9) { emptyIng() }
+            else -> List(9) { emptyIngredient() }
         }
 
         val meta = CustomRecipes.getMeta(key)

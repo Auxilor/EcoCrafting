@@ -23,8 +23,8 @@ object CustomRecipes {
     private val meta = mutableMapOf<NamespacedKey, EcoCraftingMeta>()
     private val variantToBase = mutableMapOf<NamespacedKey, NamespacedKey>()
 
-    fun register(key: NamespacedKey, m: EcoCraftingMeta) {
-        meta[key] = m
+    fun register(key: NamespacedKey, meta: EcoCraftingMeta) {
+        this.meta[key] = meta
     }
 
     fun getMeta(key: NamespacedKey): EcoCraftingMeta? = meta[key]

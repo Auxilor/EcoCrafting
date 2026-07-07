@@ -19,21 +19,21 @@ object RecipeUnlockStore : Listener {
     private val cache = mutableMapOf<UUID, MutableSet<String>>()
 
     private fun dataFile(uuid: UUID): File {
-        val dir = File(plugin.dataFolder, "data/players")
-        dir.mkdirs()
-        return File(dir, "$uuid.yml")
+        val directory = File(plugin.dataFolder, "data/players")
+        directory.mkdirs()
+        return File(directory, "$uuid.yml")
     }
 
     fun loadPlayer(uuid: UUID) {
-        val cfg = YamlConfiguration.loadConfiguration(dataFile(uuid))
-        cache[uuid] = cfg.getStringList("unlocked").toMutableSet()
+        val config = YamlConfiguration.loadConfiguration(dataFile(uuid))
+        cache[uuid] = config.getStringList("unlocked").toMutableSet()
     }
 
     fun savePlayer(uuid: UUID) {
         val file = dataFile(uuid)
-        val cfg = YamlConfiguration()
-        cfg.set("unlocked", cache[uuid]?.toList() ?: emptyList<String>())
-        cfg.save(file)
+        val config = YamlConfiguration()
+        config.set("unlocked", cache[uuid]?.toList() ?: emptyList<String>())
+        config.save(file)
     }
 
     fun saveAll() {
