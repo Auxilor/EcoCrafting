@@ -18,7 +18,12 @@ object CommandCreate : Subcommand(
             sender.sendMessage(it)
             return
         }
-        val player = sender as? Player ?: run { sender.sendMessage("Players only."); return }
+
+        val player = sender as? Player ?: run {
+            sender.sendMessage("Players only.")
+            return
+        }
+
         RecipeCreatorGUI.startWizard(player, args.getOrNull(0))
     }
 

@@ -12,16 +12,16 @@ object CommandDebug : Subcommand(
     "ecocrafting.command.debug",
     true
 ) {
-    override fun onExecute(sender: Player, args: List<String>) {
-        val item = sender.inventory.itemInMainHand
+    override fun onExecute(player: Player, args: List<String>) {
+        val item = player.inventory.itemInMainHand
         val custom = Items.getCustomItem(item)
         val recipe = RecipeResolver.resolve(item)
 
-        sender.sendMessage(plugin.langYml.getFormattedString("messages.debug-header"))
-        sender.sendMessage("&7Material: &f${item.type.name}")
-        sender.sendMessage("&7Custom item: &f${custom?.key ?: "none"}")
-        sender.sendMessage("&7Recipe key: &f${recipe?.key ?: "none"}")
-        sender.sendMessage("&7Recipe source: &f${recipe?.source ?: "none"}")
-        sender.sendMessage("&7Ingredients: &f${recipe?.ingredients?.count { !it.empty } ?: 0}")
+        player.sendMessage(plugin.langYml.getFormattedString("messages.debug-header"))
+        player.sendMessage("&7Material: &f${item.type.name}")
+        player.sendMessage("&7Custom item: &f${custom?.key ?: "none"}")
+        player.sendMessage("&7Recipe key: &f${recipe?.key ?: "none"}")
+        player.sendMessage("&7Recipe source: &f${recipe?.source ?: "none"}")
+        player.sendMessage("&7Ingredients: &f${recipe?.ingredients?.count { !it.empty } ?: 0}")
     }
 }

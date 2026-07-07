@@ -29,9 +29,7 @@ object CommandEcoCrafting : PluginCommand(
             CategoryCategoryGUI(plugin.configYml.getSubsection("category-browser-gui"))
                 .open(sender, 1, null)
         } else {
-            sender.sendMessage(
-                plugin.langYml.getMessage("invalid-command")
-            )
+            sender.sendMessage(plugin.langYml.getMessage("invalid-command"))
         }
     }
 }
