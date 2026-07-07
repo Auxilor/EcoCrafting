@@ -329,6 +329,9 @@ object RecipeResolver {
         }
     }
 
+    // Reflects into eco's private Recipes.RECIPES field (verified against eco
+    // 2026.27.1). If eco renames it, getAllEcoRecipes logs a warning and returns
+    // empty. Remove once eco exposes a public recipe-registry accessor.
     @Suppress("UNCHECKED_CAST")
     private fun getRecipesBiMap(): BiMap<NamespacedKey, CraftingRecipe> {
         val field: Field = Recipes::class.java.getDeclaredField("RECIPES")

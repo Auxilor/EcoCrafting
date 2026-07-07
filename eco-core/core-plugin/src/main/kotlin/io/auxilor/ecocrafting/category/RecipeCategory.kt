@@ -67,18 +67,23 @@ class RecipeCategory(
 
     fun getMemberItemsRecipes(player: Player): List<ItemStack> {
         val filterNoRecipe = !plugin.configYml.getBool("show-items-without-recipes")
-        val configured = items.mapNotNull {
-            val itemStack = it.item.item
-            if (filterNoRecipe && !RecipeResolver.hasAnyRecipe(itemStack)) return@mapNotNull null
-            if (canCraft(player, itemStack)) {
-                itemStack
-            } else if (it.displayNoPerm) {
-                it.noPermItem ?: lockedFallback(itemStack)
-            } else {
-                null
-            }
+        val configured = items.mapNotNull { filterConfiguredItem(player, it, filterNoRecipe) }
+        val extra = (vanillaItems + runtimeItems).filter { itemStack ->
+            (!filterNoRecipe || RecipeResolver.hasAnyRecipe(itemStack)) && canCraft(player, itemStack)
         }
-        return configured + vanillaItems + runtimeItems
+        return configured + extra
+    }
+
+    private fun filterConfiguredItem(player: Player, stack: CategoryStack, filterNoRecipe: Boolean): ItemStack? {
+        val itemStack = stack.item.item
+        if (filterNoRecipe && !RecipeResolver.hasAnyRecipe(itemStack)) return null
+        return if (canCraft(player, itemStack)) {
+            itemStack
+        } else if (stack.displayNoPerm) {
+            stack.noPermItem ?: lockedFallback(itemStack)
+        } else {
+            null
+        }
     }
 
     private fun lockedFallback(item: ItemStack): ItemStack {

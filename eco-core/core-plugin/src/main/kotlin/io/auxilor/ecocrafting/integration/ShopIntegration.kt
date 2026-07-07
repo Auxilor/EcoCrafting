@@ -77,7 +77,7 @@ object ShopIntegration {
             return PurchaseResult(false, "EcoShop auto-purchase is disabled")
         }
 
-        val purchases = mutableListOf<Pair<ShopItem, Int>>()
+        val purchases = mutableListOf<Triple<ShopItem, Int, String>>()
         val unavailable = mutableListOf<String>()
         val unaffordable = mutableListOf<String>()
 
@@ -90,7 +90,7 @@ object ShopIntegration {
                 continue
             }
             when (val status = shopItem.getBuyStatus(player, shopItem.getPurchaseTimesFor(amount), BuyType.NORMAL)) {
-                BuyStatus.ALLOW -> purchases += shopItem to shopItem.getPurchaseTimesFor(amount)
+                BuyStatus.ALLOW -> purchases += Triple(shopItem, shopItem.getPurchaseTimesFor(amount), material.type.name)
                 BuyStatus.CANNOT_AFFORD -> unaffordable += "${material.type.name} x$amount"
                 else -> unavailable += "${material.type.name} (${status.name})"
             }
@@ -99,13 +99,29 @@ object ShopIntegration {
         if (unavailable.isNotEmpty()) return PurchaseResult(false, "Unavailable: ${unavailable.joinToString(", ")}")
         if (unaffordable.isNotEmpty()) return PurchaseResult(false, "Cannot afford: ${unaffordable.joinToString(", ")}")
 
-        return try {
-            for ((shopItem, purchaseTimes) in purchases) {
+        // EcoShop's buy() has no transactional rollback, so buy each item
+        // independently and report which succeeded.
+        val purchased = mutableListOf<String>()
+        val failed = mutableListOf<String>()
+        for ((shopItem, purchaseTimes, name) in purchases) {
+            try {
                 shopItem.buy(player, purchaseTimes, BuyType.NORMAL)
+                purchased += name
+            } catch (e: Exception) {
+                failed += name
+                plugin.logger.warning("Failed to buy '$name' for ${player.name}: ${e.message}")
             }
-            PurchaseResult(true, "Purchased missing materials")
-        } catch (e: Exception) {
-            PurchaseResult(false, e.message ?: "Purchase failed")
+        }
+
+        return when {
+            failed.isEmpty() -> PurchaseResult(true, "Purchased missing materials", purchased = purchased)
+            purchased.isEmpty() -> PurchaseResult(false, "Purchase failed: ${failed.joinToString(", ")}")
+            else -> PurchaseResult(
+                false,
+                "Only purchased ${purchased.joinToString(", ")}; failed: ${failed.joinToString(", ")}",
+                partial = true,
+                purchased = purchased
+            )
         }
     }
 
@@ -125,5 +141,7 @@ data class MaterialShopInfo(
 
 data class PurchaseResult(
     val success: Boolean,
-    val message: String
+    val message: String,
+    val partial: Boolean = false,
+    val purchased: List<String> = emptyList()
 )
