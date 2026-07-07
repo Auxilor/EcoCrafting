@@ -74,7 +74,7 @@ object ShopIntegration {
 
     fun purchaseMaterials(player: Player, materials: List<Pair<ItemStack, Int>>): PurchaseResult {
         if (!isEnabled() || !autoBuy) {
-            return PurchaseResult(false, "EcoShop auto-purchase is disabled")
+            return PurchaseResult(false, plugin.langYml.getString("messages.failed-reason.shop-auto-buy-disabled"))
         }
 
         val purchases = mutableListOf<Triple<ShopItem, Int, String>>()
@@ -96,8 +96,10 @@ object ShopIntegration {
             }
         }
 
-        if (unavailable.isNotEmpty()) return PurchaseResult(false, "Unavailable: ${unavailable.joinToString(", ")}")
-        if (unaffordable.isNotEmpty()) return PurchaseResult(false, "Cannot afford: ${unaffordable.joinToString(", ")}")
+        if (unavailable.isNotEmpty()) return PurchaseResult(false, plugin.langYml.getFormattedString("messages.failed-reason.shop-unavailable")
+            .replace("%items%", unavailable.joinToString(", ")))
+        if (unaffordable.isNotEmpty()) return PurchaseResult(false, plugin.langYml.getFormattedString("messages.failed-reason.shop-cannot-afford")
+            .replace("%items%", unaffordable.joinToString(", ")))
 
         // EcoShop's buy() has no transactional rollback, so buy each item
         // independently and report which succeeded.
@@ -114,11 +116,14 @@ object ShopIntegration {
         }
 
         return when {
-            failed.isEmpty() -> PurchaseResult(true, "Purchased missing materials", purchased = purchased)
-            purchased.isEmpty() -> PurchaseResult(false, "Purchase failed: ${failed.joinToString(", ")}")
+            failed.isEmpty() -> PurchaseResult(true, "", purchased = purchased)
+            purchased.isEmpty() -> PurchaseResult(false, plugin.langYml.getFormattedString("messages.failed-reason.shop-purchase-failed")
+                .replace("%items%", failed.joinToString(", ")))
             else -> PurchaseResult(
                 false,
-                "Only purchased ${purchased.joinToString(", ")}; failed: ${failed.joinToString(", ")}",
+                plugin.langYml.getFormattedString("messages.failed-reason.shop-purchase-partial")
+                    .replace("%purchased%", purchased.joinToString(", "))
+                    .replace("%failed%", failed.joinToString(", ")),
                 partial = true,
                 purchased = purchased
             )

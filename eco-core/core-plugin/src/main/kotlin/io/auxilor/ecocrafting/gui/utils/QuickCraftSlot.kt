@@ -5,6 +5,7 @@ import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.util.formatEco
 import io.auxilor.ecocrafting.craft.CraftAttempt
+import io.auxilor.ecocrafting.craft.CraftFailure
 import io.auxilor.ecocrafting.craft.QuickCraftService
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.integration.ShopIntegration
@@ -41,13 +42,11 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
             sound("quick-craft-success")?.playTo(target)
             target.closeInventory()
         } else {
-            // Empty reason means checkCraftingConditions already messaged the
+            // CraftFailure.None means checkCraftingConditions already messaged the
             // player (locked/conditions-not-met) - avoid a redundant generic message.
-            if (result.reason.isNotEmpty()) {
-                val key = if (result.reason == "No inventory space") "messages.craft-no-space" else "messages.craft-failed"
-                target.sendMessage(plugin.langYml.getFormattedString(key)
-                    .replace("%reason%", result.reason)
-                    .formatEco(target))
+            val message = resolveFailureMessage(result.failure)
+            if (message != null) {
+                target.sendMessage(message.formatEco(target))
             }
             sound("quick-craft-fail")?.playTo(target)
         }
@@ -56,7 +55,7 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
     fun retryAfterPurchase(event: InventoryClickEvent, target: Player, attempts: Int = 0) {
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             val result = QuickCraftService(target, recipe).craft()
-            if (result.success || result.reason != "Missing materials" || attempts >= 20)
+            if (result.success || result.failure !is CraftFailure.MissingMaterials || attempts >= 20)
                 finish(event, target, result, true)
             else
                 retryAfterPurchase(event, target, attempts + 1)
@@ -72,13 +71,13 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
         }
         val liveService = QuickCraftService(target, recipe)
         var result = liveService.craft()
-        if (!result.success && result.reason == "Missing materials") {
+        if (!result.success && result.failure is CraftFailure.MissingMaterials) {
             if (ShopIntegration.canAutoBuy(event.isShiftClick)) {
                 val purchase = ShopIntegration.purchaseMaterials(target, liveService.getMissingMaterials())
                 if (purchase.success) { retryAfterPurchase(event, target); return }
-                result = result.copy(reason = purchase.message)
+                result = result.copy(failure = CraftFailure.Custom(purchase.message))
             } else if (event.isShiftClick && ShopIntegration.isEnabled()) {
-                result = result.copy(reason = plugin.langYml.getString("messages.shop-auto-buy-disabled"))
+                result = result.copy(failure = CraftFailure.Custom(plugin.langYml.getFormattedString("messages.failed-reason.shop-auto-buy-disabled")))
             }
         }
         finish(event, target, result, false)
@@ -92,4 +91,12 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
     ).onLeftClick { event, _ -> handle(event) }
      .onShiftLeftClick { event, _ -> handle(event) }
      .build()
+}
+
+fun resolveFailureMessage(failure: CraftFailure): String? = when (failure) {
+    is CraftFailure.None -> null
+    is CraftFailure.NoPermission -> plugin.langYml.getFormattedString("messages.failed-reason.no-permission")
+    is CraftFailure.MissingMaterials -> plugin.langYml.getFormattedString("messages.failed-reason.missing-materials")
+    is CraftFailure.NoSpace -> plugin.langYml.getFormattedString("messages.failed-reason.no-space")
+    is CraftFailure.Custom -> failure.text
 }

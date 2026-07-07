@@ -33,7 +33,7 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
 
     fun craft(): CraftAttempt {
         if (!RecipeResolver.canCraft(player, recipe)) {
-            return CraftAttempt(false, "No permission")
+            return CraftAttempt(false, CraftFailure.NoPermission)
         }
 
         val meta = if (recipe.source == RecipeSource.CUSTOM && recipe.key != null) {
@@ -45,15 +45,15 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
         // (and its player-facing messages) so quick-craft can't bypass them.
         if (meta != null && workstationRecipe != null) {
             if (!checkCraftingConditions(player, workstationRecipe, meta)) {
-                return CraftAttempt(false, "")
+                return CraftAttempt(false, CraftFailure.None)
             }
         }
 
-        val plan = buildConsumptionPlan() ?: return CraftAttempt(false, "Missing materials")
+        val plan = buildConsumptionPlan() ?: return CraftAttempt(false, CraftFailure.MissingMaterials)
         val output = recipe.output.clone()
         val giveResultItem = meta?.giveResultItem ?: true
         if (giveResultItem && !canFitAfterPlan(plan, output)) {
-            return CraftAttempt(false, "No inventory space")
+            return CraftAttempt(false, CraftFailure.NoSpace)
         }
 
         for ((slot, amount) in plan) {
@@ -165,5 +165,13 @@ data class MaterialCount(
 
 data class CraftAttempt(
     val success: Boolean,
-    val reason: String = ""
+    val failure: CraftFailure = CraftFailure.None
 )
+
+sealed class CraftFailure {
+    object None : CraftFailure()
+    object NoPermission : CraftFailure()
+    object MissingMaterials : CraftFailure()
+    object NoSpace : CraftFailure()
+    data class Custom(val text: String) : CraftFailure()
+}
