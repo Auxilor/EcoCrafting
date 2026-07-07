@@ -7,7 +7,7 @@ import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.willfp.libreforge.triggers.Triggers
-import io.auxilor.ecocrafting.category.CategoryLoader
+import io.auxilor.ecocrafting.category.RecipeCategories
 import io.auxilor.ecocrafting.commands.CommandEcoCrafting
 import io.auxilor.ecocrafting.custom.BlockOwnerTracker
 import io.auxilor.ecocrafting.custom.CustomRecipeListener
@@ -55,7 +55,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
     override fun loadConfigCategories(): List<ConfigCategory> {
         return listOf(
-            CategoryLoader,
+            RecipeCategories,
             CustomRecipeLoader
         )
     }

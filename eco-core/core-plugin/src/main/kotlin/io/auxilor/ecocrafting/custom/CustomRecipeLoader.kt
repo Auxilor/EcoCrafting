@@ -82,7 +82,7 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         CustomRecipes.allKeys().forEach { key ->
             val categoryId = CustomRecipes.getMeta(key)?.categoryId ?: return@forEach
             val output = WorkstationRecipes.getAll().firstOrNull { it.key == key }?.output ?: return@forEach
-            val category = RecipeCategories.getById(categoryId)
+            val category = RecipeCategories.getByID(categoryId)
             if (category != null) {
                 category.registerCustomRecipe(output.clone())
             } else {

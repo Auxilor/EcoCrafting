@@ -29,7 +29,7 @@ object CommandOpen : Subcommand(
             return
         }
 
-        val menu = RecipeCategories.getById(menuString) ?: run {
+        val menu = RecipeCategories.getByID(menuString) ?: run {
             sender.sendMessage(plugin.langYml.getMessage("invalid-category"))
             return
         }
@@ -46,7 +46,7 @@ object CommandOpen : Subcommand(
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
         return when (args.size) {
-            1 -> RecipeCategories.values.map { it.id }
+            1 -> RecipeCategories.values().map { it.id }
             2 -> Bukkit.getOnlinePlayers().map { it.name }
             else -> emptyList()
         }

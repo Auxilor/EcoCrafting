@@ -5,6 +5,7 @@ import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.recipe.parts.GroupedTestableItems
+import com.willfp.eco.core.registry.KRegistrable
 import io.auxilor.ecocrafting.gui.CategoryCategoryGUI
 import io.auxilor.ecocrafting.gui.ItemCategoryGUI
 import io.auxilor.ecocrafting.plugin
@@ -18,8 +19,10 @@ import org.bukkit.inventory.ItemStack
 
 data class CategoryPosition(val column: Int, val row: Int, val page: Int)
 
-class RecipeCategory(val config: Config) {
-    val id = config.getString("id")
+class RecipeCategory(
+    override val id: String,
+    val config: Config
+) : KRegistrable {
     val type = config.getString("type").lowercase()
     val icon = config.getSubsectionOrNull("icon")?.let { CategoryIcon(it) }
     val items = config.getSubsections("items").flatMap { CategoryStack.fromAll(this, it) }
@@ -30,7 +33,7 @@ class RecipeCategory(val config: Config) {
     val pullVanillaRecipes = config.getBool("pull-vanilla-recipes")
 
     val parsedCategories: List<RecipeCategory>
-        get() = categories.mapNotNull { RecipeCategories.getById(it) }
+        get() = categories.mapNotNull { RecipeCategories.getByID(it) }
 
     private val runtimeItems = mutableListOf<ItemStack>()
     private val vanillaItems = mutableListOf<ItemStack>()
@@ -80,6 +83,10 @@ class RecipeCategory(val config: Config) {
 
     private fun lockedFallback(item: ItemStack): ItemStack {
         return item.clone().apply { amount = 1 }
+    }
+
+    override fun getID(): String {
+        return id
     }
 }
 
