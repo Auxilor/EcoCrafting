@@ -1,16 +1,20 @@
-﻿package io.auxilor.ecocrafting.gui
+package io.auxilor.ecocrafting.gui
 
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.MenuBuilder
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
+import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.eco.util.formatEco
 import io.auxilor.ecocrafting.plugin
+import java.io.File
 import java.util.UUID
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.Registry
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -76,6 +80,10 @@ object RecipeCreatorGUI {
 
     val stationTypeKeys: List<String> = stationTypes.map { it.first }
 
+    private val villagerProfessionKeys: List<String> by lazy {
+        Registry.VILLAGER_PROFESSION.mapNotNull { it.key.key }.sorted()
+    }
+
     fun startWizard(player: Player, typeKey: String?) {
         if (typeKey != null && typeKey in stationTypeKeys) {
             openIngredientSetup(player, typeKey)
@@ -84,6 +92,101 @@ object RecipeCreatorGUI {
         }
     }
 
+    fun existingRecipeIds(): List<String> {
+        val dir = File(plugin.dataFolder, "recipes")
+        if (!dir.exists()) return emptyList()
+        return dir.walkTopDown()
+            .filter { it.isFile && it.extension.equals("yml", ignoreCase = true) }
+            .map { it.nameWithoutExtension }
+            .toList()
+    }
+
+    private fun findRecipeFile(id: String): File? {
+        val dir = File(plugin.dataFolder, "recipes")
+        if (!dir.exists()) return null
+        return dir.walkTopDown()
+            .firstOrNull { it.isFile && it.extension.equals("yml", ignoreCase = true) && it.nameWithoutExtension.equals(id, ignoreCase = true) }
+    }
+
+    fun startEditWizard(player: Player, id: String) {
+        val file = findRecipeFile(id) ?: run {
+            player.sendMessage("&cNo recipe found with ID '$id'.".formatEco())
+            return
+        }
+        val yaml = YamlConfiguration.loadConfiguration(file)
+        val typeKey = yaml.getString("type")?.lowercase() ?: run {
+            player.sendMessage("&cRecipe '$id' has no type set.".formatEco())
+            return
+        }
+
+        fun lookupOrNull(raw: String?): ItemStack? {
+            if (raw.isNullOrBlank() || raw == "air" || raw == "\"\"") return null
+            val testable = Items.lookup(raw)
+            return if (testable is EmptyTestableItem) null else testable.item.clone()
+        }
+
+        val parts = mutableMapOf<Int, ItemStack>()
+        var output: ItemStack? = null
+        var shapeless = false
+        var symmetry = false
+
+        when (typeKey) {
+            "crafting_table", "crafter" -> {
+                shapeless = yaml.getBoolean("shapeless")
+                symmetry = yaml.getBoolean("symmetry")
+                yaml.getStringList("recipe").forEachIndexed { index, raw ->
+                    lookupOrNull(raw)?.let { parts[index] = it }
+                }
+            }
+            "furnace", "blast_furnace", "smoker", "campfire" -> {
+                lookupOrNull(yaml.getString("input"))?.let { parts[0] = it }
+            }
+            "smithing_table" -> {
+                lookupOrNull(yaml.getString("template"))?.let { parts[0] = it }
+                lookupOrNull(yaml.getString("base"))?.let { parts[1] = it }
+                lookupOrNull(yaml.getString("addition"))?.let { parts[2] = it }
+            }
+            "stonecutter" -> {
+                lookupOrNull(yaml.getString("input"))?.let { parts[0] = it }
+                output = lookupOrNull(yaml.getConfigurationSection("outputs.0")?.getString("item"))
+            }
+            "brewing_stand" -> {
+                lookupOrNull(yaml.getString("base"))?.let { parts[0] = it }
+                lookupOrNull(yaml.getString("ingredient"))?.let { parts[1] = it }
+            }
+            "grindstone" -> {
+                lookupOrNull(yaml.getString("item1"))?.let { parts[0] = it }
+                lookupOrNull(yaml.getString("item2"))?.let { parts[1] = it }
+            }
+            "villager" -> {
+                lookupOrNull(yaml.getString("input1"))?.let { parts[0] = it }
+                lookupOrNull(yaml.getString("input2"))?.let { parts[1] = it }
+            }
+            "anvil" -> {
+                lookupOrNull(yaml.getString("base"))?.let { parts[0] = it }
+                lookupOrNull(yaml.getString("material"))?.let { parts[1] = it }
+            }
+        }
+
+        if (typeKey != "stonecutter") {
+            output = lookupOrNull(yaml.getString("output"))
+        }
+
+        val supportCrafter = yaml.getBoolean("support-crafter")
+        val permission = yaml.getString("permission")
+
+        openIngredientSetup(
+            player,
+            typeKey,
+            initialParts = parts,
+            initialShapeless = shapeless,
+            initialSymmetry = symmetry,
+            initialSupportCrafter = supportCrafter,
+            initialOutput = output,
+            editingId = id,
+            editingPermission = permission
+        )
+    }
 
     fun openTypeSelect(player: Player) {
         val builtMenu = menu(2) {
@@ -104,27 +207,64 @@ object RecipeCreatorGUI {
         builtMenu.open(player)
     }
 
-    private fun openIngredientSetup(player: Player, typeKey: String) {
+    private fun openIngredientSetup(
+        player: Player,
+        typeKey: String,
+        initialParts: Map<Int, ItemStack> = emptyMap(),
+        initialShapeless: Boolean = false,
+        initialSymmetry: Boolean = false,
+        initialSupportCrafter: Boolean = false,
+        initialOutput: ItemStack? = null,
+        editingId: String? = null,
+        editingPermission: String? = null
+    ) {
         val slotLayout = ingredientSlotLayout(typeKey)
-        var shapeless = false
+        var shapeless = initialShapeless
+        var symmetry = initialSymmetry
+        var supportCrafter = initialSupportCrafter
         val shapelessSlot = 6 to 8
+        val symmetrySlot = 1 to 3
+        val supportCrafterSlot = 1 to 5
 
         val builtMenu = menu(6) {
             title = "&8New Recipe - Ingredients"
 
             allowChangingHeldItem()
 
-            slotLayout.forEach { (row, col) ->
-                setSlot(row, col, Slot.builder().setCaptive().build())
+            slotLayout.forEachIndexed { index, (row, col) ->
+                val slotBuilder = initialParts[index]?.let { Slot.builder(it) } ?: Slot.builder()
+                setSlot(row, col, slotBuilder.setCaptive().build())
             }
 
             if (typeKey == "crafting_table") {
                 setSlot(shapelessSlot.first, shapelessSlot.second, Slot.builder(
-                    ItemStackBuilder(Material.PAPER).setDisplayName("&eShaped (click to toggle)".formatEco()).build()
+                    ItemStackBuilder(Material.PAPER).setDisplayName(
+                        ("&e" + (if (shapeless) "Shapeless" else "Shaped") + " (click to toggle)").formatEco()
+                    ).build()
                 ).onLeftClick { event, _ ->
                     shapeless = !shapeless
                     val label = (if (shapeless) "&eShapeless" else "&eShaped").formatEco()
                     event.inventory.setItem(event.rawSlot, ItemStackBuilder(Material.PAPER).setDisplayName(label).build())
+                }.build())
+
+                setSlot(symmetrySlot.first, symmetrySlot.second, Slot.builder(
+                    ItemStackBuilder(Material.COMPASS).setDisplayName(
+                        ("&e" + (if (symmetry) "Symmetry: ON" else "Symmetry: OFF") + " (click to toggle)").formatEco()
+                    ).build()
+                ).onLeftClick { event, _ ->
+                    symmetry = !symmetry
+                    val label = ("&e" + (if (symmetry) "Symmetry: ON" else "Symmetry: OFF")).formatEco()
+                    event.inventory.setItem(event.rawSlot, ItemStackBuilder(Material.COMPASS).setDisplayName(label).build())
+                }.build())
+
+                setSlot(supportCrafterSlot.first, supportCrafterSlot.second, Slot.builder(
+                    ItemStackBuilder(Material.CRAFTER).setDisplayName(
+                        ("&e" + (if (supportCrafter) "Crafter Support: ON" else "Crafter Support: OFF") + " (click to toggle)").formatEco()
+                    ).build()
+                ).onLeftClick { event, _ ->
+                    supportCrafter = !supportCrafter
+                    val label = ("&e" + (if (supportCrafter) "Crafter Support: ON" else "Crafter Support: OFF")).formatEco()
+                    event.inventory.setItem(event.rawSlot, ItemStackBuilder(Material.CRAFTER).setDisplayName(label).build())
                 }.build())
             }
 
@@ -138,12 +278,15 @@ object RecipeCreatorGUI {
                         collectedParts[index] = it.clone()
                     }
                 }
-                openOutputSetup(player, typeKey, collectedParts, shapeless)
+                openOutputSetup(
+                    player, typeKey, collectedParts, shapeless, symmetry, supportCrafter,
+                    initialOutput, editingId, editingPermission
+                )
             }.build())
 
             addWorkstationIcons(typeKey)
             val used = slotLayout.toSet() + setOf(6 to 5) +
-                (if (typeKey == "crafting_table") setOf(shapelessSlot) else emptySet()) +
+                (if (typeKey == "crafting_table") setOf(shapelessSlot, symmetrySlot, supportCrafterSlot) else emptySet()) +
                 workstationIconPositions.map { it.first to it.second }.toSet()
             fillBorder(6, used)
         }
@@ -186,26 +329,28 @@ object RecipeCreatorGUI {
         else -> emptyList()
     }
 
-    fun openOutputSetup(player: Player, typeKey: String, parts: Map<Int, ItemStack>, shapeless: Boolean) {
-        var ghost = false
+    private fun openOutputSetup(
+        player: Player,
+        typeKey: String,
+        parts: Map<Int, ItemStack>,
+        shapeless: Boolean,
+        symmetry: Boolean,
+        supportCrafter: Boolean,
+        initialOutput: ItemStack?,
+        editingId: String?,
+        editingPermission: String?
+    ) {
         val outputSlot = 3 to 4
-        val ghostSlot = 3 to 6
 
         val builtMenu = menu(6) {
             title = "&8New Recipe - Output"
 
             allowChangingHeldItem()
 
-            setSlot(outputSlot.first, outputSlot.second, Slot.builder().setCaptive().build())
-
-            setSlot(ghostSlot.first, ghostSlot.second, Slot.builder(
-                ItemStackBuilder(Material.GRAY_DYE).setDisplayName("&7Ghost: OFF".formatEco()).build()
-            ).onLeftClick { event, _ ->
-                ghost = !ghost
-                val label = (if (ghost) "&aGhost: ON" else "&7Ghost: OFF").formatEco()
-                val material = if (ghost) Material.LIME_DYE else Material.GRAY_DYE
-                event.inventory.setItem(event.rawSlot, ItemStackBuilder(material).setDisplayName(label).build())
-            }.build())
+            setSlot(
+                outputSlot.first, outputSlot.second,
+                (initialOutput?.let { Slot.builder(it) } ?: Slot.builder()).setCaptive().build()
+            )
 
             setSlot(6, 5, Slot.builder(
                 ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →".formatEco()).build()
@@ -217,13 +362,15 @@ object RecipeCreatorGUI {
                     return@onLeftClick
                 }
                 player.closeInventory()
-                openMetadata(player, typeKey, parts, outputItem, ghost, shapeless)
+                openMetadata(
+                    player,
+                    WizardState(typeKey, parts, outputItem, shapeless, symmetry, supportCrafter, editingId, editingPermission)
+                )
             }.build())
 
             addWorkstationIcons(typeKey)
             val used = setOf(
                 outputSlot,
-                ghostSlot,
                 6 to 5
             ) + workstationIconPositions.map { it.first to it.second }.toSet()
             fillBorder(6, used)
@@ -231,33 +378,174 @@ object RecipeCreatorGUI {
         builtMenu.open(player)
     }
 
-    fun openMetadata(
-        player: Player,
-        typeKey: String,
-        parts: Map<Int, ItemStack>,
-        output: ItemStack,
-        ghost: Boolean,
-        shapeless: Boolean
-    ) {
-        // Prompt for recipe ID via chat
+    private fun openMetadata(player: Player, state: WizardState) {
+        when (state.typeKey) {
+            "furnace", "blast_furnace", "smoker", "campfire" -> promptCookTime(player, state)
+            "villager" -> promptProfession(player, state)
+            else -> promptId(player, state)
+        }
+    }
+
+    private fun promptCookTime(player: Player, state: WizardState) {
+        player.sendMessage("&aType the cook time in ticks (e.g. 200), or &enone &afor the default:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (!trimmed.equals("none", ignoreCase = true)) {
+                val ticks = trimmed.toIntOrNull()
+                if (ticks == null || ticks <= 0) {
+                    player.sendMessage("&cInvalid cook time, try again.".formatEco())
+                    promptCookTime(player, state)
+                    return@handler
+                }
+                state.cookTime = ticks
+            }
+            promptExperience(player, state)
+        }
+    }
+
+    private fun promptExperience(player: Player, state: WizardState) {
+        player.sendMessage("&aType the XP given per craft (e.g. 0.35), or &enone &afor 0:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (!trimmed.equals("none", ignoreCase = true)) {
+                val xp = trimmed.toDoubleOrNull()
+                if (xp == null || xp < 0) {
+                    player.sendMessage("&cInvalid XP value, try again.".formatEco())
+                    promptExperience(player, state)
+                    return@handler
+                }
+                state.experience = xp
+            }
+            promptId(player, state)
+        }
+    }
+
+    private fun promptProfession(player: Player, state: WizardState) {
+        player.sendMessage(
+            "&aType a villager profession (${villagerProfessionKeys.joinToString(", ")}), or &enone &afor any:".formatEco()
+        )
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim().lowercase()
+            if (trimmed != "none") {
+                if (trimmed !in villagerProfessionKeys) {
+                    player.sendMessage("&cUnknown profession, try again.".formatEco())
+                    promptProfession(player, state)
+                    return@handler
+                }
+                state.profession = trimmed
+            }
+            promptMinLevel(player, state)
+        }
+    }
+
+    private fun promptMinLevel(player: Player, state: WizardState) {
+        player.sendMessage("&aType the minimum villager level required (1-5), or &enone &afor 0:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (!trimmed.equals("none", ignoreCase = true)) {
+                val level = trimmed.toIntOrNull()
+                if (level == null || level < 0) {
+                    player.sendMessage("&cInvalid level, try again.".formatEco())
+                    promptMinLevel(player, state)
+                    return@handler
+                }
+                state.minLevel = level
+            }
+            promptChance(player, state)
+        }
+    }
+
+    private fun promptChance(player: Player, state: WizardState) {
+        player.sendMessage("&aType the trade chance (0.0-1.0), or &enone &afor 1.0:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (!trimmed.equals("none", ignoreCase = true)) {
+                val chance = trimmed.toDoubleOrNull()
+                if (chance == null || chance < 0.0 || chance > 1.0) {
+                    player.sendMessage("&cInvalid chance, try again.".formatEco())
+                    promptChance(player, state)
+                    return@handler
+                }
+                state.chance = chance
+            }
+            promptWanderingTrader(player, state)
+        }
+    }
+
+    private fun promptWanderingTrader(player: Player, state: WizardState) {
+        player.sendMessage("&aShould this trade apply to wandering traders? Type &eyes &aor &eno:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            when (input.trim().lowercase()) {
+                "yes", "y", "true" -> state.wanderingTrader = true
+                "no", "n", "false" -> state.wanderingTrader = false
+                else -> {
+                    player.sendMessage("&cType 'yes' or 'no'.".formatEco())
+                    promptWanderingTrader(player, state)
+                    return@handler
+                }
+            }
+            promptVillagerXp(player, state)
+        }
+    }
+
+    private fun promptVillagerXp(player: Player, state: WizardState) {
+        player.sendMessage("&aType the XP given to the villager per trade, or &enone &afor 0:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (!trimmed.equals("none", ignoreCase = true)) {
+                val xp = trimmed.toIntOrNull()
+                if (xp == null || xp < 0) {
+                    player.sendMessage("&cInvalid XP value, try again.".formatEco())
+                    promptVillagerXp(player, state)
+                    return@handler
+                }
+                state.villagerXp = xp
+            }
+            promptId(player, state)
+        }
+    }
+
+    private fun promptId(player: Player, state: WizardState) {
+        val existingId = state.editingId
+        if (existingId != null) {
+            promptPermission(player, state, existingId)
+            return
+        }
         player.sendMessage("&aType the recipe ID (lowercase, no spaces) in chat, or &ccancel &ato abort.".formatEco())
         awaitingInput[player.uniqueId] = handler@{ id ->
             val cleanId = id.lowercase().replace(" ", "_").replace(Regex("[^a-z0-9_]"), "")
             if (cleanId.isBlank()) {
                 player.sendMessage("&cID cannot be blank.".formatEco())
+                promptId(player, state)
                 return@handler
             }
             if (WorkstationRecipes.getByKey(NamespacedKey("ecocrafting", cleanId)) != null) {
                 player.sendMessage("&cRecipe '$cleanId' already exists.".formatEco())
+                promptId(player, state)
                 return@handler
             }
-            // A blank chat message never reaches the server (the client doesn't send an
-            // empty packet), so "none" is the actual way to skip the permission prompt.
-            player.sendMessage("&aType a permission node, or &enone &ato skip:".formatEco())
-            awaitingInput[player.uniqueId] = { perm ->
-                val cleanPerm = perm.trim().takeUnless { it.equals("none", ignoreCase = true) } ?: ""
-                openPreview(player, PendingRecipe(typeKey, parts, output, ghost, shapeless, cleanId, cleanPerm))
+            promptPermission(player, state, cleanId)
+        }
+    }
+
+    private fun promptPermission(player: Player, state: WizardState, id: String) {
+        val currentPermission = state.editingPermission?.takeIf { it.isNotBlank() }
+        player.sendMessage(
+            (
+                if (currentPermission != null)
+                    "&aType a permission node, &ekeep &ato retain '$currentPermission', or &enone &ato clear it:"
+                else
+                    "&aType a permission node, or &enone &ato skip:"
+                ).formatEco()
+        )
+        awaitingInput[player.uniqueId] = { perm ->
+            val trimmed = perm.trim()
+            val cleanPerm = when {
+                trimmed.equals("none", ignoreCase = true) -> ""
+                trimmed.equals("keep", ignoreCase = true) -> currentPermission ?: ""
+                else -> trimmed
             }
+            openPreview(player, state.toPendingRecipe(id, cleanPerm))
         }
     }
 
@@ -287,15 +575,17 @@ object RecipeCreatorGUI {
     }
 
     private fun saveRecipeYaml(pending: PendingRecipe) {
-        val dir = java.io.File(plugin.dataFolder, "recipes")
+        val dir = File(plugin.dataFolder, "recipes")
         dir.mkdirs()
-        val file = java.io.File(dir, "${pending.id}.yml")
+        val file = findRecipeFile(pending.id) ?: File(dir, "${pending.id}.yml")
         val yaml = StringBuilder()
         yaml.appendLine("type: ${pending.typeKey}")
 
         when (pending.typeKey) {
             "crafting_table", "crafter" -> {
                 yaml.appendLine("shapeless: ${pending.shapeless}")
+                yaml.appendLine("symmetry: ${pending.symmetry}")
+                yaml.appendLine("support-crafter: ${pending.supportCrafter}")
                 yaml.appendLine("recipe:")
                 for (slot in 0..8) {
                     val item = pending.parts[slot]
@@ -305,8 +595,8 @@ object RecipeCreatorGUI {
             }
             "furnace", "blast_furnace", "smoker", "campfire" -> {
                 yaml.appendLine("input: ${itemLookup(pending.parts[0])}")
-                yaml.appendLine("cook-time: 200")
-                yaml.appendLine("experience: 0.0")
+                pending.cookTime?.let { yaml.appendLine("cook-time: $it") }
+                yaml.appendLine("experience: ${pending.experience}")
             }
             "smithing_table" -> {
                 yaml.appendLine("template: ${itemLookup(pending.parts[0])}")
@@ -318,16 +608,23 @@ object RecipeCreatorGUI {
                 yaml.appendLine("outputs:")
                 yaml.appendLine("  - item: ${itemLookup(pending.output)}")
                 yaml.appendLine("    lore: []")
-                yaml.appendLine("    give-result-item: ${!pending.ghost}")
-                if (pending.ghost) { yaml.appendLine("    effects: []"); yaml.appendLine("    conditions: []") }
             }
             "brewing_stand" -> {
                 yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
                 yaml.appendLine("ingredient: ${itemLookup(pending.parts[1])}")
             }
-            "grindstone", "villager" -> {
+            "grindstone" -> {
+                yaml.appendLine("item1: ${itemLookup(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("item2: ${itemLookup(it)}") }
+            }
+            "villager" -> {
                 yaml.appendLine("input1: ${itemLookup(pending.parts[0])}")
                 pending.parts[1]?.let { yaml.appendLine("input2: ${itemLookup(it)}") }
+                if (pending.profession.isNotBlank()) yaml.appendLine("profession: ${pending.profession}")
+                yaml.appendLine("min-level: ${pending.minLevel}")
+                yaml.appendLine("chance: ${pending.chance}")
+                yaml.appendLine("wandering-trader: ${pending.wanderingTrader}")
+                yaml.appendLine("villager-xp: ${pending.villagerXp}")
             }
             "anvil" -> {
                 yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
@@ -339,11 +636,6 @@ object RecipeCreatorGUI {
         if (pending.typeKey != "stonecutter") {
             yaml.appendLine("output: ${itemLookup(pending.output)}")
             yaml.appendLine("lore: []")
-            yaml.appendLine("give-result-item: ${!pending.ghost}")
-            if (pending.ghost) {
-                yaml.appendLine("effects: []")
-                yaml.appendLine("conditions: []")
-            }
         }
 
         if (pending.permission.isNotBlank()) yaml.appendLine("permission: \"${pending.permission}\"")
@@ -356,12 +648,57 @@ object RecipeCreatorGUI {
     }
 }
 
+private class WizardState(
+    val typeKey: String,
+    val parts: Map<Int, ItemStack>,
+    val output: ItemStack,
+    val shapeless: Boolean,
+    val symmetry: Boolean,
+    val supportCrafter: Boolean,
+    val editingId: String?,
+    val editingPermission: String?
+) {
+    var cookTime: Int? = null
+    var experience: Double = 0.0
+    var profession: String = ""
+    var minLevel: Int = 0
+    var chance: Double = 1.0
+    var wanderingTrader: Boolean = false
+    var villagerXp: Int = 0
+
+    fun toPendingRecipe(id: String, permission: String) = PendingRecipe(
+        typeKey = typeKey,
+        parts = parts,
+        output = output,
+        shapeless = shapeless,
+        symmetry = symmetry,
+        supportCrafter = supportCrafter,
+        cookTime = cookTime,
+        experience = experience,
+        profession = profession,
+        minLevel = minLevel,
+        chance = chance,
+        wanderingTrader = wanderingTrader,
+        villagerXp = villagerXp,
+        id = id,
+        permission = permission
+    )
+}
+
 data class PendingRecipe(
     val typeKey: String,
     val parts: Map<Int, ItemStack>,
     val output: ItemStack,
-    val ghost: Boolean,
     val shapeless: Boolean,
+    val symmetry: Boolean,
+    val supportCrafter: Boolean,
+    val cookTime: Int?,
+    val experience: Double,
+    val profession: String,
+    val minLevel: Int,
+    val chance: Double,
+    val wanderingTrader: Boolean,
+    val villagerXp: Int,
     val id: String,
     val permission: String
 )
