@@ -86,6 +86,7 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.auxilor.io/repository/maven-public/")
         maven("https://jitpack.io")
@@ -97,16 +98,9 @@ allprojects {
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
         compileOnly("com.willfp:eco:$ecoVersion")
-        compileOnly("com.willfp:EcoShop:2.5.0")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
-    }
-
-    java {
-        withSourcesJar()
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(25)
-        }
+        compileOnly("com.willfp:EcoShop:2.5.0")
     }
 
     tasks {
@@ -131,10 +125,6 @@ allprojects {
             dependsOn(clean)
         }
 
-        withType<JavaCompile>().configureEach {
-            options.release = 21
-        }
-
         processResources {
             filesMatching(listOf("**plugin.yml", "**eco.yml")) {
                 expand(
@@ -147,6 +137,17 @@ allprojects {
 
         build {
             dependsOn(shadowJar)
+        }
+
+        withType<JavaCompile>().configureEach {
+            options.release = 21
+        }
+    }
+
+    java {
+        withSourcesJar()
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
 }
