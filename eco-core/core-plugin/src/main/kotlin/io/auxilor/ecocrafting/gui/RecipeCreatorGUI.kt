@@ -112,6 +112,8 @@ object RecipeCreatorGUI {
         val builtMenu = menu(6) {
             title = "&8New Recipe - Ingredients"
 
+            allowChangingHeldItem()
+
             slotLayout.forEach { (row, col) ->
                 setSlot(row, col, Slot.builder().setCaptive().build())
             }
@@ -191,6 +193,8 @@ object RecipeCreatorGUI {
 
         val builtMenu = menu(6) {
             title = "&8New Recipe - Output"
+
+            allowChangingHeldItem()
 
             setSlot(outputSlot.first, outputSlot.second, Slot.builder().setCaptive().build())
 
