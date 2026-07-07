@@ -3,10 +3,10 @@ package io.auxilor.ecocrafting.category
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
-import org.bukkit.scheduler.BukkitTask
 import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.VanillaRecipeScanner
+import org.bukkit.scheduler.BukkitTask
 
 object CategoryLoader : ConfigCategory("category", "categories") {
     private var pendingPostReload: BukkitTask? = null

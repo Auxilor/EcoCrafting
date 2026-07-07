@@ -2,8 +2,8 @@
 
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.effects.Chain
-import org.bukkit.NamespacedKey
 import io.auxilor.ecocrafting.recipe.RecipeDisplayType
+import org.bukkit.NamespacedKey
 
 data class EcoCraftingMeta(
     val giveResultItem: Boolean,

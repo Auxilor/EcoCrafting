@@ -1,9 +1,6 @@
 ﻿package io.auxilor.ecocrafting.craft
 
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.checkCraftingConditions
 import io.auxilor.ecocrafting.custom.fireCraftEffects
@@ -11,6 +8,9 @@ import io.auxilor.ecocrafting.recipe.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class QuickCraftService(private val player: Player, private val recipe: ResolvedRecipe) {
     fun getMaterialCounts(): List<MaterialCount> {

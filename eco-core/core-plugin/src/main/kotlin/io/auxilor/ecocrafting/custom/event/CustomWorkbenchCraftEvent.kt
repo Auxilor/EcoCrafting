@@ -1,12 +1,12 @@
 ﻿package io.auxilor.ecocrafting.custom.event
 
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
+import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.recipe.RecipeDisplayType
 
 /** Fired for cartography, grindstone, anvil, and villager recipes. */
 class CustomWorkbenchCraftEvent(

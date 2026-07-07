@@ -1,11 +1,11 @@
 package io.auxilor.ecocrafting.recipe
 
+import io.auxilor.ecocrafting.category.RecipeCategory
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.category.RecipeCategory
 
 object VanillaRecipeScanner {
 

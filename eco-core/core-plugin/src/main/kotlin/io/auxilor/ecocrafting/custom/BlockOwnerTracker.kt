@@ -1,9 +1,11 @@
 ﻿package io.auxilor.ecocrafting.custom
 
-import org.bukkit.block.Block
+import io.auxilor.ecocrafting.plugin
+import java.util.UUID
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.block.Block
 import org.bukkit.block.TileState
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -13,8 +15,6 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.persistence.PersistentDataType
-import io.auxilor.ecocrafting.plugin
-import java.util.UUID
 
 object BlockOwnerTracker : Listener {
 

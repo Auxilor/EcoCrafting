@@ -1,11 +1,11 @@
 package io.auxilor.ecocrafting.gui
 
+import io.auxilor.ecocrafting.plugin
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
-import io.auxilor.ecocrafting.plugin
 
 object RecipeCreatorChatListener : Listener {
 

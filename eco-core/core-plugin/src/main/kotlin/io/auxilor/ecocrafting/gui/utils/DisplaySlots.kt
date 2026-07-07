@@ -4,14 +4,14 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.gui.slot.functional.SlotProvider
-import org.bukkit.Bukkit
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
+import io.auxilor.ecocrafting.gui.RecipeGUI
+import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.RecipeResolver
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import io.auxilor.ecocrafting.gui.RecipeGUI
-import io.auxilor.ecocrafting.recipe.RecipeResolver
-import io.auxilor.ecocrafting.plugin
 
 fun RecipeGUIContext.buildIngredientSlot(
     items: List<ItemStack>,
