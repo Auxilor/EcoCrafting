@@ -3,12 +3,21 @@ name: ${pluginName}
 version: ${version}
 main: io.auxilor.ecocrafting.EcoCraftingPlugin
 api-version: 1.21.8
-authors: [Exanthiax, _OfTeN_, joogiebear, Auxilor ]
+authors: [ Exanthiax, _OfTeN_, joogiebear, Auxilor ]
 depend:
   - eco
 softdepend:
   - EcoShop
   - libreforge
+
+commands:
+  ecocrafting:
+    aliases:
+      - rbook
+      - recipebook
+    description: Base Command
+    permission: ecocrafting.command.ecocrafting
+
 permissions:
   ecocrafting.admin.create:
     description: Open the in-game recipe creator GUI
@@ -19,9 +28,3 @@ permissions:
   ecocrafting.recipe.*:
     description: Access to every recipe-specific permission node (ecocrafting.recipe.<id>)
     default: true
-
-commands:
-  ecocrafting:
-    description: Base Command
-    permission: ecocrafting.command.ecocrafting
-    aliases: [ rbook, recipebook ]
