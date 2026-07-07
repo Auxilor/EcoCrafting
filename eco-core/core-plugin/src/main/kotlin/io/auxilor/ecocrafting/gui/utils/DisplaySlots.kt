@@ -34,8 +34,8 @@ fun RecipeGUIContext.buildIngredientSlot(
         Slot.builder(buildDisplay(items.first()))
     } else {
         Slot.builder(SlotProvider { _, _ ->
-            val idx = (Bukkit.getCurrentTick() / 20) % items.size
-            buildDisplay(items[idx])
+            val index = (Bukkit.getCurrentTick() / 20) % items.size
+            buildDisplay(items[index])
         })
     }
 
@@ -76,10 +76,10 @@ fun RecipeGUIContext.buildBackSlot(parentMenu: Menu): Slot = with(this) {
     }.build()
 }
 
-fun RecipeGUIContext.buildIndicatorSlot(indicatorCfg: Config, state: String): Slot = with(this) {
+fun RecipeGUIContext.buildIndicatorSlot(indicatorConfig: Config, state: String): Slot = with(this) {
     Slot.builder(
-        ItemStackBuilder(Items.lookup(indicatorCfg.getString("item.$state")))
-            .addLoreLines(indicatorCfg.getFormattedStrings("lore.$state"))
+        ItemStackBuilder(Items.lookup(indicatorConfig.getString("item.$state")))
+            .addLoreLines(indicatorConfig.getFormattedStrings("lore.$state"))
             .withGlobalFlags()
             .build()
     ).build()

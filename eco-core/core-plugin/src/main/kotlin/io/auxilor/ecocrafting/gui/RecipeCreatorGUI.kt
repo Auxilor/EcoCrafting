@@ -30,12 +30,12 @@ object RecipeCreatorGUI {
 
     private fun MenuBuilder.addWorkstationIcons(currentTypeKey: String) {
         workstationIconPositions.forEach { (row, col, key) ->
-            val wsName = plugin.langYml.getString("workstation-names.$key")
+            val workstationName = plugin.langYml.getString("workstation-names.$key")
             val state = if (key == currentTypeKey) "active" else "inactive"
             val rawItem = plugin.configYml.getString("workstation-markers.$key.$state")
             val lore = plugin.configYml.getFormattedStrings("workstation-markers.$key.lore.$state")
-                .map { it.replace("%workstation%", wsName) }
-            val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", wsName)))
+                .map { it.replace("%workstation%", workstationName) }
+            val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", workstationName)))
                 .addLoreLines(lore).build()
             val slotBuilder = Slot.builder(item)
             if (state == "inactive") {

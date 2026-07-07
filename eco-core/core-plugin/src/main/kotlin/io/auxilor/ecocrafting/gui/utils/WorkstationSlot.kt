@@ -19,14 +19,14 @@ fun RecipeGUIContext.buildWorkstationSlot(
 ): Slot = with(this) {
     val markerTypes = WORKSTATION_MARKERS[marker]!!
     val configKey = MARKER_CONFIG_KEY[marker]!!
-    val wsName = plugin.langYml.getString("workstation-names.$configKey")
+    val workstationName = plugin.langYml.getString("workstation-names.$configKey")
     val state = workstationMarkerState(markerTypes, currentType, currentTypes)
     val stateKey = state.name.lowercase().replace("_", "-")
 
     val rawItem = plugin.configYml.getString("workstation-markers.$configKey.$stateKey")
     val lore = plugin.configYml.getFormattedStrings("workstation-markers.$configKey.lore.$stateKey")
-        .map { it.replace("%workstation%", wsName) }
-    val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", wsName)))
+        .map { it.replace("%workstation%", workstationName) }
+    val item = ItemStackBuilder(Items.lookup(rawItem.replace("%workstation%", workstationName)))
         .addLoreLines(lore)
         .withGlobalFlags()
         .build()

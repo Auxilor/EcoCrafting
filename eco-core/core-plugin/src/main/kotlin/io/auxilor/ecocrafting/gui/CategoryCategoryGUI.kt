@@ -20,7 +20,7 @@ import io.auxilor.ecocrafting.gui.utils.configSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class CategoryCategoryGUI(val config: Config): CategoryGUI {
+class CategoryCategoryGUI(val config: Config) : CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         val maxPage = (RecipeCategories.values
             .mapNotNull { it.guiPosition?.page }
@@ -93,9 +93,9 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                         .filter { it.guiPosition?.page == pageNum }
 
                     for (category in positionedCategories) {
-                        val pos = category.guiPosition!!
+                        val position = category.guiPosition!!
                         val icon = category.icon?.getItemStack() ?: continue
-                        setSlot(pos.row, pos.column, slot(icon, category, configSound("slot-click")))
+                        setSlot(position.row, position.column, slot(icon, category, configSound("slot-click")))
                     }
                 }
             }
@@ -109,9 +109,9 @@ class CategoryCategoryGUI(val config: Config): CategoryGUI {
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
                 .build()
         )
-            .onLeftClick { t, _ ->
-                menu.open(t.whoClicked as Player)
-                sound?.playTo(t.whoClicked as Player)
+            .onLeftClick { event, _ ->
+                menu.open(event.whoClicked as Player)
+                sound?.playTo(event.whoClicked as Player)
             }
             .build()
     }

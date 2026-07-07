@@ -23,7 +23,7 @@ import io.auxilor.ecocrafting.recipe.withLockState
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryGUI {
+class ItemCategoryGUI(val config: Config, val parent: RecipeCategory) : CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         open(player, page, prevMenu, parent.getMemberItemsRecipes(player))
     }
@@ -86,14 +86,14 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                         )
                     }
 
-                    var num = (pageNum - 1) * perPage
+                    var itemIndex = (pageNum - 1) * perPage
                     pattern.forEachIndexed { rowIndex, line ->
                         line.toCharArray().forEachIndexed { colIndex, character ->
                             if (character.equals('i', ignoreCase = true)) {
-                                if (num < items.size) {
-                                    setSlot(rowIndex + 1, colIndex + 1, slot(player, items[num], configSound("slot-click")))
+                                if (itemIndex < items.size) {
+                                    setSlot(rowIndex + 1, colIndex + 1, slot(player, items[itemIndex], configSound("slot-click")))
                                 }
-                                num++
+                                itemIndex++
                             }
                         }
                     }
@@ -109,9 +109,9 @@ class ItemCategoryGUI(val config: Config, val parent: RecipeCategory): CategoryG
                 .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
                 .build()
         )
-            .onLeftClick { t, _ ->
-                menu.open(t.whoClicked as Player)
-                sound?.playTo(t.whoClicked as Player)
+            .onLeftClick { event, _ ->
+                menu.open(event.whoClicked as Player)
+                sound?.playTo(event.whoClicked as Player)
             }
             .build()
     }
