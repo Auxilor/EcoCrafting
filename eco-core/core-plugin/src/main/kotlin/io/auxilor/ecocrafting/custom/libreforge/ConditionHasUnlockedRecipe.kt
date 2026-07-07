@@ -13,6 +13,10 @@ import io.auxilor.ecocrafting.recipe.invalidRecipeIdKeyOrWarn
 import org.bukkit.entity.Player
 
 object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recipe") {
+    override val description = "Passes when the player has unlocked the given custom recipe."
+
+    override val categories = setOf("crafting")
+
     override fun isMet(
         dispatcher: Dispatcher<*>,
         config: Config,
