@@ -26,8 +26,7 @@ fun RecipeGUIContext.buildPurchaseSlot(player: Player, recipe: ResolvedRecipe): 
                 .replace("%item%", recipe.output.type.name.lowercase().replace("_", " ")))
             sound("purchase-success")?.playTo(target)
         } else {
-            target.sendMessage(plugin.langYml.getFormattedString("messages.craft-failed")
-                .replace("%reason%", message))
+            target.sendMessage(message)
             sound("purchase-fail")?.playTo(target)
         }
     }
