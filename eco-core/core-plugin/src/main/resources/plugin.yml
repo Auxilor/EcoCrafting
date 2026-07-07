@@ -26,6 +26,7 @@ permissions:
       ecocrafting.command.*: true
       ecocrafting.admin: true
       ecocrafting.admin.create: true
+      ecocrafting.admin.edit: true
       ecocrafting.open.others: true
       ecocrafting.recipe.*: true
   ecocrafting.command.*:
@@ -50,6 +51,9 @@ permissions:
     default: op
   ecocrafting.admin.create:
     description: Open the in-game recipe creator GUI
+    default: op
+  ecocrafting.admin.edit:
+    description: Open the in-game recipe editor GUI
     default: op
   ecocrafting.open.others:
     description: Allows opening a recipe category browser for other players
