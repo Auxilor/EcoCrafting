@@ -1,9 +1,11 @@
-﻿# EcoCrafting main configuration
-# Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
 #
+# EcoCrafting
+# by Auxilor
+#
+
+# Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
 debug: false
 
-#*/ The Optional Config Section /*#
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
 
@@ -17,14 +19,13 @@ strict-item-matching: true
 # ItemFlags applied to every display item in EcoCrafting GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
 #               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
-item-flags: []
+item-flags: [ ]
 
 fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUIs. Only for display, no interaction.
   item: charcoal name:"&7Fuel"
-  lore: []
+  lore: [ ]
 
-#*/ The Workstation Markers Section /*#
-
+# Workstation Markers
 # Pattern marker key (used in mask.pattern of each GUI section):
 #   i = ingredient slot - auto-increments left→right top→bottom (all workstation types)
 #   o = output slot (all types)
@@ -41,7 +42,7 @@ workstation-markers:
     inactive: crafting_table name:"&7Crafting Table" # The item shown when this workstation is available but not currently being viewed.
     not-applicable: gray_dye name:"&8%workstation%" # The item shown when this workstation has no recipe for the current item.
     lore: # The lore for the items above. %workstation% is replaced with the workstation name (Crafting Table, Furnace, etc), from lang.yml.
-      active: [] # Lore shown when this workstation is active.
+      active: [ ] # Lore shown when this workstation is active.
       inactive: # Lore shown when this workstation is available but not active.
         - "&bClick to view %workstation% recipe"
       not-applicable: # Lore shown when this workstation is not applicable for the current recipe.
@@ -51,7 +52,7 @@ workstation-markers:
     inactive: furnace name:"&7Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -61,7 +62,7 @@ workstation-markers:
     inactive: blast_furnace name:"&7Blast Furnace"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -71,7 +72,7 @@ workstation-markers:
     inactive: smoker name:"&7Smoker"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -81,7 +82,7 @@ workstation-markers:
     inactive: campfire name:"&7Campfire"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -91,7 +92,7 @@ workstation-markers:
     inactive: smithing_table name:"&7Smithing Table"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -101,7 +102,7 @@ workstation-markers:
     inactive: stonecutter name:"&7Stonecutter"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -111,7 +112,7 @@ workstation-markers:
     inactive: brewing_stand name:"&7Brewing Stand"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -121,7 +122,7 @@ workstation-markers:
     inactive: grindstone name:"&7Grindstone"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -131,7 +132,7 @@ workstation-markers:
     inactive: anvil name:"&7Anvil"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -141,7 +142,7 @@ workstation-markers:
     inactive: villager_spawn_egg name:"&7Villager"
     not-applicable: gray_dye name:"&8%workstation%"
     lore:
-      active: []
+      active: [ ]
       inactive:
         - "&bClick to view %workstation% recipe"
       not-applicable:
@@ -161,9 +162,9 @@ brewing-stand:
 # Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
 villager-scan-on-reload: true
 
-#*/ The Category Browser GUI Section /*#
+# Category Browser GUI
 category-browser-gui:
-  custom-slots: []
+  custom-slots: [ ]
   title: "&8EcoCrafting | Page &6%page%&8/&6%max_page%"
   mask:
     items:
@@ -180,8 +181,8 @@ category-browser-gui:
         active: orange_stained_glass_pane name:"&aNext page"
         inactive: black_stained_glass_pane name:""
       lore:
-        active: []
-        inactive: []
+        active: [ ]
+        inactive: [ ]
       row: 5
       column: 6
     prev-page:
@@ -189,17 +190,17 @@ category-browser-gui:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: black_stained_glass_pane name:""
       lore:
-        active: []
-        inactive: []
+        active: [ ]
+        inactive: [ ]
       row: 5
       column: 4
     close:
       item: barrier name:"&cClose"
-      lore: []
+      lore: [ ]
       row: 5
       column: 5
 
-#*/ The EcoShop Integration Section /*#
+# EcoShop Integration
 shop-integration:
   # Enable integration with EcoShop to allow purchasing missing materials.
   enabled: true
@@ -208,7 +209,7 @@ shop-integration:
   auto-buy-missing-materials: false
   require-shift-click: true
 
-#*/ The Recipe Book GUI Section /*#
+# Recipe Book GUI
 craft-gui:
   title: "&8Crafting Recipe"
   quick-craft-enabled: true
@@ -232,7 +233,7 @@ craft-gui:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -250,14 +251,14 @@ craft-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     crafter-indicator:
       enabled: false
       row: 5
@@ -266,8 +267,8 @@ craft-gui:
         active: crafter name:"&aAvailable in Crafter"
         inactive: gray_dye name:"&7Not available in Crafter"
       lore:
-        active: []
-        inactive: []
+        active: [ ]
+        inactive: [ ]
     shapeless-indicator:
       enabled: false
       row: 5
@@ -276,9 +277,9 @@ craft-gui:
         active: slime_ball name:"&aShapeless Recipe"
         inactive: gray_dye name:"&7Shaped Recipe"
       lore:
-        active: []
-        inactive: []
-  custom-slots: []
+        active: [ ]
+        inactive: [ ]
+  custom-slots: [ ]
 
 furnace-gui:
   title: "&8Smelting Recipe &7[%cook_time%]"
@@ -295,12 +296,12 @@ furnace-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -318,14 +319,14 @@ furnace-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 blast-furnace-gui:
   title: "&8Blast Furnace Recipe &7[%cook_time%]"
@@ -342,12 +343,12 @@ blast-furnace-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -365,14 +366,14 @@ blast-furnace-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 smoker-gui:
   title: "&8Smoker Recipe &7[%cook_time%]"
@@ -389,12 +390,12 @@ smoker-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -412,14 +413,14 @@ smoker-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 campfire-gui:
   title: "&8Campfire Recipe &7[%cook_time%]"
@@ -436,12 +437,12 @@ campfire-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -459,14 +460,14 @@ campfire-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 smithing-gui:
   title: "&8Smithing Recipe"
@@ -483,12 +484,12 @@ smithing-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -506,14 +507,14 @@ smithing-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
@@ -530,12 +531,12 @@ stonecutter-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -553,14 +554,14 @@ stonecutter-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 brewing-gui:
   title: "&8Brewing Recipe &7[%brew_time%]"
@@ -577,12 +578,12 @@ brewing-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -600,14 +601,14 @@ brewing-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 cartography-gui:
   title: "&8Cartography Recipe"
@@ -624,12 +625,12 @@ cartography-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -647,14 +648,14 @@ cartography-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 grindstone-gui:
   title: "&8Grindstone Recipe"
@@ -671,12 +672,12 @@ grindstone-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -694,14 +695,14 @@ grindstone-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 anvil-gui:
   title: "&8Anvil Recipe"
@@ -718,12 +719,12 @@ anvil-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -741,14 +742,14 @@ anvil-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
 villager-gui:
   title: "&8Villager Trade &7[&6%xp% XP&7]"
@@ -765,12 +766,12 @@ villager-gui:
       - "1111111GA"
       - "11111111V"
   buttons:
-    recipe-parts-lore: []
+    recipe-parts-lore: [ ]
     back:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     quick-craft:
       row: 6
       column: 1
@@ -788,16 +789,16 @@ villager-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
-      lore: []
+      lore: [ ]
 
-#*/ The Sound Configuration Section /*#
+# Sound Configuration
 sounds:
   next-page:
     sound: ui.button_click

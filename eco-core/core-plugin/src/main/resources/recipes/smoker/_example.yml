@@ -1,11 +1,11 @@
-﻿enabled: true
+enabled: true
 # category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: smoker
 
 input: potato
 output: baked_potato name:"&ePerfect Baked Potato"
-lore: [] # optional - lore lines for the output item
+lore: [ ] # optional - lore lines for the output item
 
 cook-time: 100 # ticks (smoker is 2x faster than furnace for food)
 experience: 0.35 # experience given to the player when the item is taken out of the smoker (vanilla = 0.35 for baked potato)
@@ -16,12 +16,12 @@ give-result-item: true
 #   - id: give_xp
 #     args:
 #       xp: 50
-# conditions: []
+# conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

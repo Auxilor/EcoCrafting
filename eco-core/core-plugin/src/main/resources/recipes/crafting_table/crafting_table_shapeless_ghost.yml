@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 category: combat
 
 type: crafting_table
@@ -27,12 +27,12 @@ effects:
   - id: send_message
     args:
       message: "&aGhost craft triggered: crafting_table"
-conditions: []
+conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

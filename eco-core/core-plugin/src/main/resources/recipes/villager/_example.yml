@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 # category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: villager
@@ -13,7 +13,7 @@ wandering-trader: false # true = inject into WanderingTrader instead of regular 
 villager-xp: 0 # XP awarded to the villager on trade completion (0 = none)
 
 output: enchanted_book name:"&5Villager Enchanted Book"
-lore: [] # optional - lore lines for the output item
+lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
 # give-result-item: false - consume trade inputs, fire effects, give no item
@@ -21,12 +21,12 @@ give-result-item: true
 #   - id: give_xp
 #     args:
 #       xp: 100
-# conditions: []
+# conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

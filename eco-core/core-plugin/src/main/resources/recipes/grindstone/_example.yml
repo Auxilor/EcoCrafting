@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 # category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: grindstone
@@ -7,7 +7,7 @@ item1: enchanted_book # required - left slot
 item2: enchanted_book # optional - right slot (omit for single-item recipes)
 
 output: experience_bottle name:"&aDisenchanted XP"
-lore: [] # optional - lore lines for the output item
+lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
 # give-result-item: false - cancel result, fire effects instead (e.g. give XP to player)
@@ -15,12 +15,12 @@ give-result-item: true
 #   - id: give_xp
 #     args:
 #       xp: 50
-# conditions: []
+# conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

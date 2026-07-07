@@ -59,7 +59,7 @@ items:
     display-no-perm: false
 
 gui:
-  custom-slots: []
+  custom-slots: [ ]
   title: "&8Mining Recipes | Page &6%page%&8/&6%max_page%"
   mask:
     items:
@@ -76,14 +76,14 @@ gui:
       row: 6
       column: 5
       item: barrier name:"&cBack"
-      lore: []
+      lore: [ ]
     next-page:
       item:
         active: orange_stained_glass_pane name:"&aNext page"
         inactive: black_stained_glass_pane name:""
       lore:
-        active: []
-        inactive: []
+        active: [ ]
+        inactive: [ ]
       row: 6
       column: 6
     prev-page:
@@ -91,8 +91,8 @@ gui:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: black_stained_glass_pane name:""
       lore:
-        active: []
-        inactive: []
+        active: [ ]
+        inactive: [ ]
       row: 6
       column: 4
     slot:
