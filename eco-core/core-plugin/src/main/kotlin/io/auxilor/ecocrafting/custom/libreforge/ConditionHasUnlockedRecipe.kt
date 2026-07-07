@@ -2,9 +2,11 @@
 
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
+import com.willfp.libreforge.ArgType
 import com.willfp.libreforge.Dispatcher
 import com.willfp.libreforge.NoCompileData
 import com.willfp.libreforge.ProvidedHolder
+import com.willfp.libreforge.arguments
 import com.willfp.libreforge.conditions.Condition
 import com.willfp.libreforge.get
 import io.auxilor.ecocrafting.custom.CustomRecipes
@@ -17,6 +19,15 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
 
     override val categories = setOf("crafting")
 
+    override val arguments = arguments {
+        require(
+            "recipe",
+            "You must specify the recipe!",
+            description = "The ID of the custom recipe to check.",
+            type = ArgType.STRING
+        )
+    }
+
     override fun isMet(
         dispatcher: Dispatcher<*>,
         config: Config,
@@ -24,7 +35,7 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
         compileData: NoCompileData
     ): Boolean {
         val player = dispatcher.get<Player>() ?: return false
-        val recipeId = config.getString("args.recipe")
+        val recipeId = config.getString("recipe")
         val key = invalidRecipeIdKeyOrWarn(recipeId) ?: return false
         WorkstationRecipes.getByKey(key) ?: return false
         val meta = CustomRecipes.getMeta(key) ?: return false
