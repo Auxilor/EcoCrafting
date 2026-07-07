@@ -81,17 +81,17 @@ class RecipeGUI(
         val builtMenu = menu(pattern.size) {
             title = formattedTitle
 
-            var num = 0
+            var ingredientIndex = 0
             pattern.forEachIndexed { rowIndex, line ->
                 line.toCharArray().forEachIndexed { colIndex, marker ->
                     val row = rowIndex + 1
                     val col = colIndex + 1
                     when {
                         marker.equals('i', ignoreCase = true) -> {
-                            val ingredient = recipe.ingredients.getOrNull(num)
+                            val ingredient = recipe.ingredients.getOrNull(ingredientIndex)
                             if (ingredient != null && !ingredient.displayItem.type.isAir)
                                 setSlot(row, col, context.buildIngredientSlot(ingredient.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))
-                            num++
+                            ingredientIndex++
                         }
                         marker.equals('o', ignoreCase = true) ->
                             setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore))
@@ -107,13 +107,23 @@ class RecipeGUI(
 
             context.config.getSubsectionOrNull("buttons.back")?.let {
                 parent?.let {
-                    addComponent(context.config.getInt("buttons.back.row"), context.config.getInt("buttons.back.column"), context.buildBackSlot(parent))
+                    addComponent(
+                        context.config.getInt("buttons.back.row"),
+                        context.config.getInt("buttons.back.column"),
+                        context.buildBackSlot(parent)
+                    )
                 }
             }
 
             context.config.getSubsectionOrNull("buttons.quick-craft")
                 ?.takeIf { if (context.config.has("quick-craft-enabled")) context.config.getBool("quick-craft-enabled") else true }
-                ?.let { addComponent(context.config.getInt("buttons.quick-craft.row"), context.config.getInt("buttons.quick-craft.column"), context.buildQuickCraftSlot(player, recipe)) }
+                ?.let {
+                    addComponent(
+                        context.config.getInt("buttons.quick-craft.row"),
+                        context.config.getInt("buttons.quick-craft.column"),
+                        context.buildQuickCraftSlot(player, recipe)
+                    )
+                }
 
             context.config.getSubsectionOrNull("buttons.crafter-indicator")
                 ?.takeIf { it.getBool("enabled") }
