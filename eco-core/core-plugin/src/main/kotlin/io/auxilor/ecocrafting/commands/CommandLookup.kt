@@ -3,7 +3,6 @@ package io.auxilor.ecocrafting.commands
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.gui.RecipeGUI
 import io.auxilor.ecocrafting.plugin
 import io.auxilor.ecocrafting.recipe.RecipeResolver
@@ -30,6 +29,8 @@ object CommandLookup : Subcommand(
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return CustomRecipes.allKeys().map { it.key }
+        return RecipeResolver.getEcoRecipes()
+            .map { Items.toLookupString(it.output) }
+            .distinct()
     }
 }
