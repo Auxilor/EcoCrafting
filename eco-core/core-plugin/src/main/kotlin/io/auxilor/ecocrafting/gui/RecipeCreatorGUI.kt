@@ -135,7 +135,7 @@ object RecipeCreatorGUI {
                 slotLayout.forEachIndexed { index, (row, col) ->
                     val rawSlot = (row - 1) * 9 + (col - 1)
                     event.inventory.getItem(rawSlot)?.takeIf { !it.type.isAir }?.let {
-                        collectedParts[index] = it.clone().apply { amount = 1 }
+                        collectedParts[index] = it.clone()
                     }
                 }
                 openOutputSetup(player, typeKey, collectedParts, shapeless)
