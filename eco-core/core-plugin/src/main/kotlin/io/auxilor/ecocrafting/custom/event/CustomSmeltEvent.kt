@@ -14,12 +14,24 @@ class CustomSmeltEvent(
     val item: ItemStack,
     val furnaceLocation: Location
 ) : PlayerEvent(player), Cancellable {
-    private var cancelled = false
-    override fun isCancelled() = cancelled
-    override fun setCancelled(cancel: Boolean) { cancelled = cancel }
-    override fun getHandlers() = HANDLER_LIST
+    private var _cancelled = false
+
+    override fun isCancelled() = _cancelled
+
+    override fun setCancelled(cancel: Boolean) {
+        _cancelled = cancel
+    }
+
+    override fun getHandlers(): HandlerList {
+        return handlerList
+    }
+
     companion object {
-        private val HANDLER_LIST = HandlerList()
-        @JvmStatic fun getHandlerList() = HANDLER_LIST
+        private val handlerList = HandlerList()
+
+        @JvmStatic
+        fun getHandlerList(): HandlerList {
+            return handlerList
+        }
     }
 }
