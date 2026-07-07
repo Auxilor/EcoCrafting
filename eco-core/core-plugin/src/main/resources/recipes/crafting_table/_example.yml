@@ -26,14 +26,14 @@ symmetry: false # true = register all rotations/mirrors automatically
 support-crafter: false
 
 output: netherite_sword name:"&6Example Sword"
-lore: [] # optional - lore lines for the output item
+lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true # false = no item given; triggers libreforge effects instead
 # effects:
 #   - id: give_xp
 #     args:
 #       xp: 100
-# conditions: []
+# conditions: [ ]
 
 permission: "" # optional - permission required to craft this recipe, checked before conditions. If not met, the recipe is hidden from the GUI and crafting is blocked.
 locked-by-default: false # true = recipe hidden until unlocked
@@ -41,6 +41,6 @@ show-when-locked: false # show recipe in GUI even when locked (with locked-lore)
 locked-lore:
   - "&cUnlock this recipe to craft it."
 
-visibility-conditions: [] # libreforge conditions - hide recipe from GUI if not met
-crafting-conditions: [] # libreforge conditions - block crafting if not met
-unlock-conditions: [] # auto-unlock on join if these are met
+visibility-conditions: [ ] # libreforge conditions - hide recipe from GUI if not met
+crafting-conditions: [ ] # libreforge conditions - block crafting if not met
+unlock-conditions: [ ] # auto-unlock on join if these are met

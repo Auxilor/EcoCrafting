@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 category: combat
 
 type: brewing_stand
@@ -16,12 +16,12 @@ effects:
   - id: send_message
     args:
       message: "&aGhost craft triggered: brewing_stand"
-conditions: []
+conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

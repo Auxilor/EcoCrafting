@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 # category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: stonecutter
@@ -9,7 +9,7 @@ input: stone
 # give-result-item: false on an output means no item is given; libreforge effects fire instead.
 outputs:
   - item: stone_slab
-    lore: []
+    lore: [ ]
     give-result-item: true
 
   - item: stone_stairs
@@ -26,12 +26,12 @@ outputs:
       - id: give_xp
         args:
           xp: 25
-    conditions: []
+    conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

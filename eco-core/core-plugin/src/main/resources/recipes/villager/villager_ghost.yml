@@ -1,4 +1,4 @@
-﻿enabled: true
+enabled: true
 category: combat
 
 type: villager
@@ -15,12 +15,12 @@ effects:
   - id: send_message
     args:
       message: "&aGhost craft triggered: villager"
-conditions: []
+conditions: [ ]
 
 permission: ""
 locked-by-default: false
 show-when-locked: false
-locked-lore: []
-visibility-conditions: []
-crafting-conditions: []
-unlock-conditions: []
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]
