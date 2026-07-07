@@ -16,16 +16,35 @@ object CommandUnlock : Subcommand(
     true
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
-        if (args.size < 2) { sender.sendMessage("Usage: /EcoCrafting unlock <player> <recipe-id>"); return }
-        val target = Bukkit.getPlayer(args[0]) ?: run { sender.sendMessage("Player not found or offline."); return }
+        if (args.size < 2) {
+            sender.sendMessage("Usage: /EcoCrafting unlock <player> <recipe-id>")
+            return
+        }
+
+        val target = Bukkit.getPlayer(args[0]) ?: run {
+            sender.sendMessage("Player not found or offline.")
+            return
+        }
+
         val key = try {
             NamespacedKey("ecocrafting", args[1].lowercase())
         } catch (e: IllegalArgumentException) {
-            sender.sendMessage("Invalid recipe id: ${args[1]}"); return
+            sender.sendMessage("Invalid recipe id: ${args[1]}")
+            return
         }
-        WorkstationRecipes.getByKey(key) ?: run { sender.sendMessage("Unknown recipe: ${args[1]}"); return }
-        val meta = CustomRecipes.getMeta(key) ?: run { sender.sendMessage("Unknown recipe: ${args[1]}"); return }
+
+        WorkstationRecipes.getByKey(key) ?: run {
+            sender.sendMessage("Unknown recipe: ${args[1]}")
+            return
+        }
+
+        val meta = CustomRecipes.getMeta(key) ?: run {
+            sender.sendMessage("Unknown recipe: ${args[1]}")
+            return
+        }
+
         RecipeUnlockStore.unlock(target, key, meta)
+
         sender.sendMessage("Unlocked '${args[1]}' for ${target.name}.")
     }
 

@@ -16,17 +16,17 @@ object CommandLookup : Subcommand(
     "ecocrafting.command.lookup",
     true
 ) {
-    override fun onExecute(sender: Player, args: List<String>) {
+    override fun onExecute(player: Player, args: List<String>) {
         val item = Items.lookup(args.joinToString(" "))
         if (item is EmptyTestableItem) {
-            sender.sendMessage(plugin.langYml.getMessage("invalid-item"))
+            player.sendMessage(plugin.langYml.getMessage("invalid-item"))
             return
         }
         if (RecipeResolver.resolve(item.item) == null) {
-            sender.sendMessage(plugin.langYml.getMessage("no-recipe"))
+            player.sendMessage(plugin.langYml.getMessage("no-recipe"))
             return
         }
-        RecipeGUI(item.item).open(sender, null)
+        RecipeGUI(item.item).open(player, null)
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {

@@ -18,7 +18,9 @@ object CommandCancel : Subcommand(
             sender.sendMessage(it)
             return
         }
+
         val player = sender as? Player ?: return
+
         RecipeCreatorGUI.cancelSave(player)
     }
 }

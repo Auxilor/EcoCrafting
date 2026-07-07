@@ -18,7 +18,9 @@ object CommandConfirm : Subcommand(
             sender.sendMessage(it)
             return
         }
+
         val player = sender as? Player ?: return
+
         RecipeCreatorGUI.confirmSave(player)
     }
 }
