@@ -194,6 +194,8 @@ item1: enchanted_book # left slot (required)
 item2: enchanted_book # right slot (optional - omit for single-item recipes)
 ```
 
+Grindstone results are delivered straight to the player's inventory (dropped at their feet if full) instead of onto their cursor like vanilla grindstone results.
+
 ### Anvil
 
 ```yaml
