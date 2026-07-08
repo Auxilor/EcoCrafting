@@ -9,6 +9,11 @@ import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.eco.util.formatEco
 import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.IngredientMatcher
+import io.auxilor.ecocrafting.recipe.RecipeDisplayType
+import io.auxilor.ecocrafting.recipe.RecipeIngredient
+import io.auxilor.ecocrafting.recipe.RecipeSource
+import io.auxilor.ecocrafting.recipe.ResolvedRecipe
 import java.io.File
 import java.util.UUID
 import org.bukkit.Material
@@ -550,7 +555,7 @@ object RecipeCreatorGUI {
     }
 
     fun openPreview(player: Player, pendingRecipe: PendingRecipe) {
-        RecipeGUI(pendingRecipe.output).open(player, null)
+        RecipeGUI(pendingRecipe.output, listOf(pendingRecipe.toPreviewResolvedRecipe())).open(player, null)
         player.sendMessage("&aPreview shown. Type &e/EcoCrafting confirm &ato save, or &c/EcoCrafting cancel &ato discard.".formatEco())
         pendingConfirm[player.uniqueId] = pendingRecipe
     }
@@ -702,3 +707,44 @@ data class PendingRecipe(
     val id: String,
     val permission: String
 )
+
+private fun PendingRecipe.toPreviewResolvedRecipe(): ResolvedRecipe {
+    fun ingredient(item: ItemStack?): RecipeIngredient =
+        if (item == null || item.type.isAir) RecipeIngredient.empty(ItemStack(Material.AIR))
+        else RecipeIngredient(item.clone(), IngredientMatcher.SimilarItem(item.clone()))
+
+    val ingredients: List<RecipeIngredient> = if (typeKey == "crafting_table" || typeKey == "crafter") {
+        (0..8).map { ingredient(parts[it]) }
+    } else {
+        val ordered = parts.entries.sortedBy { it.key }.map { ingredient(it.value) }
+        (ordered + List(9) { ingredient(null) }).take(9)
+    }
+
+    val displayType = when (typeKey) {
+        "crafting_table"  -> RecipeDisplayType.CRAFTING
+        "crafter"         -> RecipeDisplayType.CRAFTER
+        "furnace"         -> RecipeDisplayType.SMELTING
+        "blast_furnace"   -> RecipeDisplayType.BLAST_FURNACE
+        "smoker"          -> RecipeDisplayType.SMOKER
+        "campfire"        -> RecipeDisplayType.CAMPFIRE
+        "smithing_table"  -> RecipeDisplayType.SMITHING
+        "stonecutter"     -> RecipeDisplayType.STONECUTTER
+        "brewing_stand"   -> RecipeDisplayType.BREWING
+        "grindstone"      -> RecipeDisplayType.GRINDSTONE
+        "anvil"           -> RecipeDisplayType.ANVIL
+        "villager"        -> RecipeDisplayType.VILLAGER
+        else              -> RecipeDisplayType.CRAFTING
+    }
+
+    return ResolvedRecipe(
+        key = null,
+        output = output.clone(),
+        ingredients = ingredients,
+        permission = permission.takeIf { it.isNotBlank() },
+        source = RecipeSource.CUSTOM,
+        shapeless = shapeless,
+        displayType = displayType,
+        cookTime = cookTime,
+        villagerXp = villagerXp.takeIf { it > 0 }
+    )
+}

@@ -19,9 +19,11 @@ import io.auxilor.ecocrafting.custom.event.CustomSmeltEvent
 import io.auxilor.ecocrafting.custom.event.CustomSmithEvent
 import io.auxilor.ecocrafting.custom.event.CustomWorkbenchCraftEvent
 import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.recipe.requiredAmount
 import org.bukkit.Bukkit
 import org.bukkit.Keyed
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.BrewingStand
 import org.bukkit.block.Campfire
@@ -48,7 +50,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantInventory
 import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
-import org.bukkit.persistence.PersistentDataType
 
 internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
     val present = matrix.filter { it != null && !it.type.isAir }
@@ -265,11 +266,24 @@ object CustomRecipeListener : Listener {
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
-        if (!meta.giveResultItem) {
-            event.isCancelled = true
-            val furnaceState = event.block.state
-            if (furnaceState is Furnace) consume(furnaceState.inventory, 0)
+        // Vanilla always consumes exactly 1 source item per smelt and ignores recipe.input's
+        // configured amount. Rather than cancelling the event (which would also skip vanilla's
+        // burn-time/cook-time bookkeeping), bypass its output via AIR and write the input/output
+        // slots ourselves - cook time itself stays vanilla-driven via the registered recipe.
+        event.result = ItemStack(Material.AIR)
+        val furnaceState = event.block.state as? Furnace ?: return
+        val inventory = furnaceState.inventory
+
+        if (meta.giveResultItem) {
+            val existingResult = inventory.result
+            inventory.result = if (existingResult == null || existingResult.type.isAir) item
+                                else existingResult.apply { amount += item.amount }
         }
+        inventory.smelting?.let { source ->
+            val remaining = source.amount - recipe.input.requiredAmount()
+            inventory.smelting = if (remaining <= 0) null else source.apply { amount = remaining }
+        }
+
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
@@ -304,11 +318,13 @@ object CustomRecipeListener : Listener {
             event.isCancelled = true
             val campfire = event.block.state as? Campfire
             if (campfire != null) {
+                val requiredAmount = recipe.input.requiredAmount()
                 for (slot in 0 until 4) {
                     val slotItem = campfire.getItem(slot) ?: continue
                     if (slotItem.isSimilar(event.source)) {
-                        if (slotItem.amount <= 1) campfire.setItem(slot, null)
-                        else { slotItem.amount--; campfire.setItem(slot, slotItem) }
+                        val remaining = slotItem.amount - requiredAmount
+                        if (remaining <= 0) campfire.setItem(slot, null)
+                        else { slotItem.amount = remaining; campfire.setItem(slot, slotItem) }
                         campfire.update()
                         break
                     }
@@ -383,6 +399,7 @@ object CustomRecipeListener : Listener {
         }
         event.result = result
         event.inventory.repairCost = recipe.repairCost
+        event.inventory.repairCostAmount = recipe.material?.requiredAmount() ?: 1
     }
 
     // Smithing ghost result-click
@@ -475,12 +492,8 @@ object CustomRecipeListener : Listener {
             InventoryType.MERCHANT -> {
                 val merchant = inventory as? MerchantInventory ?: return
                 val selected = merchant.selectedRecipe ?: return
-                val tradeNamespacedKey = NamespacedKey("ecocrafting", "trade_key")
-                val tradeKey = selected.result.itemMeta
-                    ?.persistentDataContainer
-                    ?.get(tradeNamespacedKey, PersistentDataType.STRING)
                 WorkstationRecipes.getAll(VillagerRecipe::class.java)
-                    .firstOrNull { if (tradeKey != null) it.key.key == tradeKey else selected.result.isSimilar(it.output) }
+                    .firstOrNull { it.matchesMerchantRecipe(selected) }
                     ?: return
             }
 
@@ -490,29 +503,74 @@ object CustomRecipeListener : Listener {
         val meta = CustomRecipes.getMeta(workstationRecipe.key) ?: return
         if (!checkCraftingConditions(player, workstationRecipe, meta)) { event.isCancelled = true; return }
 
-        val item = workstationRecipe.output?.clone() ?: return
+        val output = workstationRecipe.output ?: return
+
+        val amount = if (workstationRecipe is GrindstoneRecipe && event.isShiftClick) {
+            val item1Amount = workstationRecipe.item1.requiredAmount()
+            val availableFromItem1 = (inventory.getItem(0)?.amount ?: 0) / item1Amount
+            val availableFromItem2 = workstationRecipe.item2?.let { item2 ->
+                (inventory.getItem(1)?.amount ?: 0) / item2.requiredAmount()
+            }
+            val ingredientBased = listOfNotNull(availableFromItem1, availableFromItem2).min()
+            minOf(spaceBasedAmount(player, output), ingredientBased).coerceAtLeast(1)
+        } else 1
+
+        val item = output.clone().apply { this.amount = output.amount * amount }
         val stationType = meta.displayType
         val customEvent = CustomWorkbenchCraftEvent(player, workstationRecipe, item, stationType)
 
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
-        if (!meta.giveResultItem) {
+        val selfHandle = workstationRecipe is GrindstoneRecipe || workstationRecipe is AnvilRecipe || !meta.giveResultItem
+        if (selfHandle) {
             event.isCancelled = true
-            consumeWorkbenchInputs(inventory, workstationRecipe)
+            consumeWorkbenchInputs(inventory, workstationRecipe, amount)
             if (inventory.type == InventoryType.MERCHANT) {
                 awardVillagerTrade(inventory as MerchantInventory, workstationRecipe as? VillagerRecipe)
             }
+            if (meta.giveResultItem) {
+                val preferCursor = workstationRecipe is AnvilRecipe && !event.isShiftClick
+                giveOrDropItem(player, item.clone(), preferCursor)
+            }
         }
-        fireCraftEffects(player, workstationRecipe, meta, item, 1)
+        fireCraftEffects(player, workstationRecipe, meta, item, amount)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
+        // Synchronous, not scheduled: this handler can fire on every click of a rapid/shift-click
+        // burst, and queuing a Runnable per click backs up the scheduler under load. Direct
+        // inventory.setItem/setItemOnCursor calls above already sync to the client on their own;
+        // this is just a safety-net resync and is safe to call inline from an event handler.
+        player.updateInventory()
     }
 
-    // Cancelling the MERCHANT click for no-item recipes stops vanilla's trade-completion
-    // logic (recipe uses, villager career XP, player XP orb) from running, so we replicate
-    // it manually. giveResultItem = true recipes go through uncancelled and get this for
-    // free from vanilla (eco's WorkstationRecipeListener now carries villagerXp onto the
-    // real MerchantRecipe it registers on the entity).
+    // UX difference from vanilla: grindstone/no-item results go straight to the inventory
+    // (dropped at the player's feet if full) instead of onto the cursor, since GrindstoneInventory
+    // has no consumption-amount API to fix shift-click over-consumption otherwise. Anvil prefers
+    // the cursor (matching vanilla) when it's free and the click wasn't a shift-click.
+    private fun giveOrDropItem(player: Player, item: ItemStack, preferCursor: Boolean = false) {
+        if (preferCursor) {
+            val cursor = player.itemOnCursor
+            if (cursor.type.isAir) {
+                player.setItemOnCursor(item)
+                return
+            }
+            if (cursor.isSimilar(item) && cursor.amount + item.amount <= cursor.maxStackSize) {
+                cursor.amount += item.amount
+                player.setItemOnCursor(cursor)
+                return
+            }
+        }
+        player.inventory.addItem(item).values.forEach { player.world.dropItem(player.location, it) }
+    }
+
+    private fun VillagerRecipe.matchesMerchantRecipe(merchantRecipe: org.bukkit.inventory.MerchantRecipe): Boolean {
+        val ingredients = merchantRecipe.ingredients
+        if (ingredients.isEmpty() || !input1.matches(ingredients[0])) return false
+        val secondInput = input2
+        return if (secondInput != null) ingredients.size > 1 && secondInput.matches(ingredients[1])
+               else ingredients.size <= 1
+    }
+
     private fun awardVillagerTrade(inventory: MerchantInventory, recipe: VillagerRecipe?) {
         val index = inventory.selectedRecipeIndex
         if (index < 0) return
@@ -558,11 +616,20 @@ object CustomRecipeListener : Listener {
         consume(inventory, 0, amount)
     }
 
-    private fun consumeWorkbenchInputs(inventory: Inventory, recipe: WorkstationRecipe) {
+    private fun consumeWorkbenchInputs(inventory: Inventory, recipe: WorkstationRecipe, crafts: Int = 1) {
         when (recipe) {
-            is GrindstoneRecipe -> { consume(inventory, 0); if (recipe.item2 != null) consume(inventory, 1) }
-            is AnvilRecipe      -> { consume(inventory, 0); if (recipe.material != null) consume(inventory, 1) }
-            is VillagerRecipe   -> { consume(inventory, 0); if (recipe.input2 != null) consume(inventory, 1) }
+            is GrindstoneRecipe -> {
+                consume(inventory, 0, recipe.item1.requiredAmount() * crafts)
+                recipe.item2?.let { consume(inventory, 1, it.requiredAmount() * crafts) }
+            }
+            is AnvilRecipe -> {
+                consume(inventory, 0, recipe.base.requiredAmount() * crafts)
+                recipe.material?.let { consume(inventory, 1, it.requiredAmount() * crafts) }
+            }
+            is VillagerRecipe -> {
+                consume(inventory, 0, recipe.input1.requiredAmount() * crafts)
+                recipe.input2?.let { consume(inventory, 1, it.requiredAmount() * crafts) }
+            }
             else -> {}
         }
     }

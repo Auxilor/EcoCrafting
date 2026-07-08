@@ -3,6 +3,7 @@
 import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.parts.MaterialTestableItem
+import com.willfp.eco.core.recipe.parts.TestableStack
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.custom.RecipeUnlockStore
 import io.auxilor.ecocrafting.plugin
@@ -105,11 +106,8 @@ sealed interface IngredientMatcher {
     data class SimilarItem(val item: ItemStack) : IngredientMatcher {
         override fun matches(stack: ItemStack?): Boolean {
             if (stack == null || stack.type.isAir) return false
-            val probe = stack.clone()
-            probe.amount = item.amount.coerceAtLeast(1)
-            val expected = item.clone()
-            expected.amount = item.amount.coerceAtLeast(1)
-            return probe.isSimilar(expected)
+            if (stack.amount < item.amount.coerceAtLeast(1)) return false
+            return stack.isSimilar(item)
         }
     }
 
@@ -131,7 +129,11 @@ sealed interface IngredientMatcher {
 fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
     is IngredientMatcher.Empty        -> EmptyTestableItem()
     is IngredientMatcher.EcoPart      -> part
-    is IngredientMatcher.SimilarItem  -> MaterialTestableItem(item.type)
+    is IngredientMatcher.SimilarItem  ->
+        if (item.amount > 1) TestableStack(MaterialTestableItem(item.type), item.amount)
+        else MaterialTestableItem(item.type)
     is IngredientMatcher.MaterialOnly -> MaterialTestableItem(item.type)
     is IngredientMatcher.AnyItem      -> EmptyTestableItem()
 }
+
+fun TestableItem.requiredAmount(): Int = (this as? TestableStack)?.amount ?: 1
