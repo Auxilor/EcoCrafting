@@ -9,7 +9,11 @@ Categories group items together in the recipe browser GUI. Each category appears
 
 ## How to add categories
 
-Each category is its own YAML config file, placed in the `/categories/` folder. The ID of the category is the file name (without `.yml`). IDs must be lowercase letters, numbers, and underscores only.
+Each category is its own YAML config file, placed in the `/categories/` folder. The ID of the category is the file name (without `.yml`).
+
+:::warning ID rules
+IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). No spaces, capitals, or hyphens, or the category will not load.
+:::
 
 ## Example Items Category Config
 

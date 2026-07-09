@@ -5,7 +5,11 @@ sidebar_position: 1
 
 ## Recipes
 
-Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID - lowercase letters, numbers, and underscores only. An `_example.yml` is provided in each folder.
+Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID. An `_example.yml` is provided in each folder.
+
+:::warning ID rules
+IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). No spaces, capitals, or hyphens, or the recipe will not load.
+:::
 
 | Folder | Workstation |
 |---|---|
@@ -20,6 +24,10 @@ Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `
 | `recipes/grindstone/` | Grindstone |
 | `recipes/anvil/` | Anvil |
 | `recipes/villager/` | Villager Trade |
+
+:::warning Potions
+The in-game recipe creator GUI can't capture potion effect data. Recipes with a potion output or ingredient (e.g. `potion effect:...`) must be written directly in YAML instead of built with the GUI.
+:::
 
 ---
 
@@ -43,6 +51,11 @@ give-result-item: true # false = no item given; fire libreforge effects instead
 #       xp: 100
 # conditions: []
 
+# price: # optional - requires the player to pay a price to craft this recipe
+#   value: "100" # expression, supports placeholders
+#   type: "coins" # price factory name (coins, xpl, etc.), or an item name to charge an item price instead
+#   display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
+
 permission: "" # optional - see Permissions section below
 
 locked-by-default: false # hide recipe until unlocked per-player
@@ -55,7 +68,18 @@ crafting-conditions: [] # libreforge - block crafting if not met
 unlock-conditions: [] # auto-unlock on join if met
 ```
 
-Items use [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system). Conditions use [libreforge conditions](https://plugins.auxilor.io/effects/configuring-a-condition).
+Items use [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system).
+
+:::info Prices
+A player who can't afford `price` is blocked from crafting the same way a failed `crafting-conditions` check is. Cost scales with the craft amount, so shift-clicking a batch charges proportionally. Omitting `price` (or leaving it incomplete) means the recipe is always free. For `stonecutter` recipes, `price` is set per-output instead of at the top level - see the Stonecutter section below.
+:::
+
+:::danger Effects are their own system
+Effects, conditions, filters, and mutators (`effects`, `crafting-conditions`, `visibility-conditions`, `unlock-conditions`) are a shared libreforge system, documented in full elsewhere.
+
+- [Configuring an Effect](https://hub.auxilor.io/wiki/libreforge/configuring-an-effect) covers single effects, conditions, and filters.
+- [Configuring an Effect Chain](https://hub.auxilor.io/wiki/libreforge/configuring-a-chain) covers stringing multiple effects together under one trigger.
+:::
 
 ---
 
@@ -66,7 +90,9 @@ Every recipe is gated by a permission node, whether or not you set one.
 - **`permission: ""` (blank/default)** - the recipe auto-gets its own node, `ecocrafting.recipe.<id>` (`<id>` = the yml file name). Plugin ships `ecocrafting.recipe.*` at `default: true`, so every player has every recipe's node out of the box. To lock one recipe down, revoke its specific node (e.g. `ecocrafting.recipe.netherite_sword`) from a group in your permissions plugin - no yml edit needed.
 - **`permission: "some.custom.node"`** - overrides the auto node entirely for this recipe. Use this to put several recipes behind one shared node (e.g. `myserver.tier.netherite` on 5 different recipes) so ops grant/revoke the whole tier in one go instead of per-recipe. Not covered by the `ecocrafting.recipe.*` default - you grant it yourself.
 
-A player failing the active node never sees the recipe in the GUI and can't craft it via quick-craft - it behaves as if it doesn't exist (independent of `locked-by-default`/`visibility-conditions`/etc., which only apply once permission passes).
+:::warning Permission is checked first
+A player failing the active node never sees the recipe in the GUI and can't craft it via quick-craft - it behaves as if it doesn't exist. This is independent of `locked-by-default`/`visibility-conditions`/etc., which only apply once permission passes.
+:::
 
 ---
 
@@ -163,6 +189,10 @@ outputs:
     lore:
       - "&7Crafted from stone"
     give-result-item: true
+    price: # optional - same format as the top-level price block
+      value: "10"
+      type: "coins"
+      display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
 
   # give-result-item: false on an output fires effects instead of giving the item
   - item: stone_brick_wall
@@ -185,6 +215,10 @@ ingredient: nether_wart # item in the ingredient slot (top)
 brew-time: 20 # ticks to brew (20 = 1 second)
 ```
 
+:::warning Shift-click into a brewing stand
+Shift-clicking only sends an item into the brewing stand's bottle/ingredient slots if vanilla already considers that item valid there (potions/bottles, or a vanilla brewing ingredient). A custom `base`/`ingredient` item that vanilla doesn't recognize won't be picked up by shift-click - players must click it into the slot manually instead.
+:::
+
 ### Grindstone
 
 ```yaml
@@ -194,7 +228,9 @@ item1: enchanted_book # left slot (required)
 item2: enchanted_book # right slot (optional - omit for single-item recipes)
 ```
 
+:::info Grindstone delivery
 Grindstone results are delivered straight to the player's inventory (dropped at their feet if full) instead of onto their cursor like vanilla grindstone results.
+:::
 
 ### Anvil
 
