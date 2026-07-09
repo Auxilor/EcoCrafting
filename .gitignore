@@ -40,3 +40,5 @@ bin/
 
 libs/*.jar
 2026-05-19-custom-crafting-ghost-items.md
+
+.worktrees/
