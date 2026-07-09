@@ -41,11 +41,12 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
         } else null
         val workstationRecipe = meta?.let { recipe.key?.let(WorkstationRecipes::getByKey) }
 
-        // meta-gated recipes reuse the real crafting path's lock/condition check
+        // meta-gated recipes reuse the real crafting path's lock/condition/price check
         // (and its player-facing messages) so quick-craft can't bypass them.
         if (meta != null && workstationRecipe != null) {
             if (!checkCraftingConditions(player, workstationRecipe, meta)) {
-                return CraftAttempt(false, CraftFailure.None)
+                val failure = if (!meta.price.canAfford(player)) CraftFailure.CannotAfford else CraftFailure.None
+                return CraftAttempt(false, failure)
             }
         }
 
@@ -66,6 +67,8 @@ class QuickCraftService(private val player: Player, private val recipe: Resolved
                 player.inventory.setItem(slot, current)
             }
         }
+
+        meta?.price?.pay(player, 1.0)
 
         if (giveResultItem) {
             val leftovers = player.inventory.addItem(output)
@@ -173,5 +176,6 @@ sealed class CraftFailure {
     object NoPermission : CraftFailure()
     object MissingMaterials : CraftFailure()
     object NoSpace : CraftFailure()
+    object CannotAfford : CraftFailure()
     data class Custom(val text: String) : CraftFailure()
 }

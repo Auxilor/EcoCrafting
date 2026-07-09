@@ -3,6 +3,7 @@
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.parts.GroupedTestableItems
 import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
@@ -141,6 +142,11 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
         )
     }
 
+    internal fun parsePrice(config: Config): ConfiguredPrice {
+        val priceConfig = config.getSubsectionOrNull("price") ?: return ConfiguredPrice.FREE
+        return ConfiguredPrice.createOrFree(priceConfig)
+    }
+
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): EcoCraftingMeta {
         val ctx = ViolationContext(plugin, "recipe-$id")
         val giveResultItem = if (config.has("give-result-item")) config.getBool("give-result-item") else true
@@ -156,7 +162,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
             unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
             displayType = displayType,
             supportCrafter = config.getBool("support-crafter"),
-            categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() }
+            categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
+            price = parsePrice(config)
         )
     }
 
@@ -322,7 +329,8 @@ object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
                 lockedLore = config.getFormattedStrings("locked-lore"),
                 unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
                 displayType = RecipeDisplayType.STONECUTTER,
-                categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() }
+                categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
+                price = parsePrice(outputConfig)
             )
             registerWithMeta(recipe, outMeta)
         }

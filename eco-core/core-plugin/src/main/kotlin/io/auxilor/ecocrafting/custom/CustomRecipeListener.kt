@@ -120,7 +120,7 @@ object CustomRecipeListener : Listener {
             return
         }
 
-        val amount = calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
 
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
@@ -128,6 +128,7 @@ object CustomRecipeListener : Listener {
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
         val tookOver = needsTakeover && meta.giveResultItem
+        meta.price.pay(player, amount.toDouble())
         when {
             !meta.giveResultItem -> {
                 event.isCancelled = true
@@ -172,6 +173,7 @@ object CustomRecipeListener : Listener {
             consumeSmithingSlots(event.view.topInventory)
             plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
         }
+        meta.price.pay(player, 1.0)
         fireCraftEffects(player, recipe, meta, item, 1)
         plugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
     }
@@ -189,12 +191,13 @@ object CustomRecipeListener : Listener {
 
         if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
 
-        val amount = calculateCraftAmount(event, maxCraftsFromInput(event.view.topInventory.getItem(0)))
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(event, maxCraftsFromInput(event.view.topInventory.getItem(0)))).coerceAtLeast(1)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
+        meta.price.pay(player, amount.toDouble())
         if (!meta.giveResultItem) {
             event.isCancelled = true
             consumeStonecutterSlot(event.view.topInventory, amount)
@@ -225,16 +228,20 @@ object CustomRecipeListener : Listener {
             val crafterInventory = (event.block.state as? Crafter)?.inventory ?: return
             for (slot in 0 until 9) consume(crafterInventory, slot)
             val player = BlockOwnerTracker.getOwner(event.block.location) ?: return
+            if (!checkCraftingConditions(player, recipe, meta)) return
+            meta.price.pay(player, 1.0)
             val item = recipe.output?.clone() ?: return
             fireCraftEffects(player, recipe, meta, item, 1)
             return
         }
         // giveResultItem = true: eco's AutocrafterPatch cancels every eco-namespace
         // CrafterCraftEvent. Uncancel and set result so vanilla delivers + consumes.
-        event.isCancelled = false
         val item = recipe.output?.clone() ?: return
-        event.result = item
         val player = BlockOwnerTracker.getOwner(event.block.location) ?: return
+        if (!checkCraftingConditions(player, recipe, meta)) { event.isCancelled = true; return }
+        meta.price.pay(player, 1.0)
+        event.isCancelled = false
+        event.result = item
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
@@ -284,6 +291,7 @@ object CustomRecipeListener : Listener {
             inventory.smelting = if (remaining <= 0) null else source.apply { amount = remaining }
         }
 
+        meta.price.pay(player, 1.0)
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
@@ -331,6 +339,7 @@ object CustomRecipeListener : Listener {
                 }
             }
         }
+        meta.price.pay(player, 1.0)
         fireCraftEffects(player, recipe, meta, item, 1)
     }
 
@@ -347,12 +356,16 @@ object CustomRecipeListener : Listener {
     private fun handleBrewCompleted(location: Location, recipe: BrewingRecipe, matchedSlots: List<Int>) {
         val meta = CustomRecipes.getMeta(recipe.key) ?: return
         val brewer = (location.block.state as? BrewingStand)?.inventory ?: return
+        val player = BlockOwnerTracker.getOwner(location) ?: return
+
+        if (!checkCraftingConditions(player, recipe, meta)) return
 
         if (!meta.giveResultItem) {
             matchedSlots.forEach { brewer.setItem(it, null) }
         }
 
-        val player = BlockOwnerTracker.getOwner(location) ?: return
+        meta.price.pay(player, matchedSlots.size.toDouble())
+
         val item = recipe.output?.clone() ?: return
 
         val ghostPerSlot = plugin.configYml.getBool("brewing-stand.ghost-per-slot")
@@ -424,6 +437,7 @@ object CustomRecipeListener : Listener {
 
         event.isCancelled = true
         consumeSmithingSlots(inventory)
+        meta.price.pay(player, 1.0)
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
@@ -452,12 +466,13 @@ object CustomRecipeListener : Listener {
 
         val item = resultItem.clone()
         val amount = if (event.isShiftClick) {
-            minOf(spaceBasedAmount(player, item), maxCraftsFromInput(inputItem)).coerceAtLeast(1)
-        } else 1
+            priceAffordableAmount(player, meta.price, minOf(spaceBasedAmount(player, item), maxCraftsFromInput(inputItem)).coerceAtLeast(1))
+        } else priceAffordableAmount(player, meta.price, 1)
 
         val craftItem = item.clone().apply { this.amount = amount }
         event.isCancelled = true
         consumeStonecutterSlot(inventory, amount)
+        meta.price.pay(player, amount.toDouble())
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount)
@@ -512,8 +527,8 @@ object CustomRecipeListener : Listener {
                 (inventory.getItem(1)?.amount ?: 0) / item2.requiredAmount()
             }
             val ingredientBased = listOfNotNull(availableFromItem1, availableFromItem2).min()
-            minOf(spaceBasedAmount(player, output), ingredientBased).coerceAtLeast(1)
-        } else 1
+            priceAffordableAmount(player, meta.price, minOf(spaceBasedAmount(player, output), ingredientBased).coerceAtLeast(1))
+        } else priceAffordableAmount(player, meta.price, 1)
 
         val item = output.clone().apply { this.amount = output.amount * amount }
         val stationType = meta.displayType
@@ -526,6 +541,7 @@ object CustomRecipeListener : Listener {
         if (selfHandle) {
             event.isCancelled = true
             consumeWorkbenchInputs(inventory, workstationRecipe, amount)
+            meta.price.pay(player, amount.toDouble())
             if (inventory.type == InventoryType.MERCHANT) {
                 awardVillagerTrade(inventory as MerchantInventory, workstationRecipe as? VillagerRecipe)
             }
@@ -533,6 +549,8 @@ object CustomRecipeListener : Listener {
                 val preferCursor = workstationRecipe is AnvilRecipe && !event.isShiftClick
                 giveOrDropItem(player, item.clone(), preferCursor)
             }
+        } else {
+            meta.price.pay(player, amount.toDouble())
         }
         fireCraftEffects(player, workstationRecipe, meta, item, amount)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)

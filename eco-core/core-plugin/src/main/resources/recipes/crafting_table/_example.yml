@@ -36,6 +36,12 @@ give-result-item: true # false = no item given; triggers libreforge effects inst
 # conditions: [ ]
 
 permission: "" # optional - permission required to craft this recipe, checked before conditions. If not met, the recipe is hidden from the GUI and crafting is blocked.
+
+# price: # optional - requires the player to pay a price to craft this recipe. If they can't afford it, crafting is blocked (same as a failed condition).
+#   value: "100" # expression, supports placeholders
+#   type: "coins" # price type: an eco price factory name (coins, xpl, etc.), or an item name to charge an item price instead
+#   display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
+
 locked-by-default: false # true = recipe hidden until unlocked
 show-when-locked: false # show recipe in GUI even when locked (with locked-lore)
 locked-lore:
