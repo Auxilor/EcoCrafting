@@ -13,7 +13,6 @@ import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import com.willfp.eco.core.recipe.workstation.CrafterRecipe
 import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
 import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
@@ -38,6 +37,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.entity.AbstractVillager
 import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 
 object CustomRecipeLoader : ConfigCategory("recipe", "recipes") {
 
