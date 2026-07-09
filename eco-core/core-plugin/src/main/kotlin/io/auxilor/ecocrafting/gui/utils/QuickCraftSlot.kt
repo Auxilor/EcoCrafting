@@ -98,5 +98,6 @@ fun resolveFailureMessage(failure: CraftFailure): String? = when (failure) {
     is CraftFailure.NoPermission -> plugin.langYml.getFormattedString("messages.failed-reason.no-permission")
     is CraftFailure.MissingMaterials -> plugin.langYml.getFormattedString("messages.failed-reason.missing-materials")
     is CraftFailure.NoSpace -> plugin.langYml.getFormattedString("messages.failed-reason.no-space")
+    is CraftFailure.CannotAfford -> plugin.langYml.getFormattedString("messages.failed-reason.cannot-afford").replace("%price%", "")
     is CraftFailure.Custom -> failure.text
 }

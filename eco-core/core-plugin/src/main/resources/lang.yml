@@ -19,10 +19,13 @@ messages:
   material-missing: "&c  %has%/%needs% &7%item%"
   shop-price-affordable: " &e(%price%)"
   shop-price-unaffordable: " &c(%price%)"
+  price-affordable: "&7Price: &a%price%"
+  price-unaffordable: "&7Price: &c%price%"
   failed-reason:
     no-permission: "&cYou don't have permission to craft this recipe!"
     missing-materials: "&cYou don't have enough materials to craft this item!"
     no-space: "&cYou don't have enough inventory space to craft this item!"
+    cannot-afford: "&cYou can't afford this recipe's price: %price%"
     shop-auto-buy-disabled: "&cAutomatic purchasing is disabled."
     shop-unavailable: "&cThe shop doesn't sell: %items%"
     shop-cannot-afford: "&cYou can't afford: %items%"

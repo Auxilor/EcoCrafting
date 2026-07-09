@@ -1,5 +1,6 @@
 ﻿package io.auxilor.ecocrafting.custom
 
+import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.effects.Chain
 import io.auxilor.ecocrafting.recipe.RecipeDisplayType
@@ -16,7 +17,8 @@ data class EcoCraftingMeta(
     val unlockConditions: ConditionList,
     val displayType: RecipeDisplayType,
     val supportCrafter: Boolean = false,
-    val categoryId: String? = null
+    val categoryId: String? = null,
+    val price: ConfiguredPrice = ConfiguredPrice.FREE
 )
 
 object CustomRecipes {

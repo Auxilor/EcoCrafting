@@ -180,6 +180,32 @@ object RecipeCreatorGUI {
 
         val supportCrafter = yaml.getBoolean("support-crafter")
         val permission = yaml.getString("permission")
+        val category = yaml.getString("category") ?: ""
+        val lockedByDefault = yaml.getBoolean("locked-by-default")
+        val showWhenLocked = yaml.getBoolean("show-when-locked")
+        val repairCost = if (typeKey == "anvil") yaml.getInt("repair-cost", 1) else 1
+        val brewTime = if (typeKey == "brewing_stand" && yaml.contains("brew-time")) yaml.getInt("brew-time") else null
+        val cookTime = if (typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire") && yaml.contains("cook-time")) yaml.getInt("cook-time") else null
+        val experience = if (typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire")) yaml.getDouble("experience") else 0.0
+        val profession = if (typeKey == "villager") yaml.getString("profession")?.lowercase() ?: "" else ""
+        val minLevel = if (typeKey == "villager") yaml.getInt("min-level") else 0
+        val chance = if (typeKey == "villager") { if (yaml.contains("chance")) yaml.getDouble("chance") else 1.0 } else 1.0
+        val wanderingTrader = if (typeKey == "villager") yaml.getBoolean("wandering-trader") else false
+        val villagerXp = if (typeKey == "villager") yaml.getInt("villager-xp") else 0
+
+        val seedState = WizardState(typeKey, parts, output ?: ItemStack(Material.AIR), shapeless, symmetry, supportCrafter, id, permission)
+        seedState.category = category
+        seedState.lockedByDefault = lockedByDefault
+        seedState.showWhenLocked = showWhenLocked
+        seedState.repairCost = repairCost
+        seedState.brewTime = brewTime
+        seedState.cookTime = cookTime
+        seedState.experience = experience
+        seedState.profession = profession
+        seedState.minLevel = minLevel
+        seedState.chance = chance
+        seedState.wanderingTrader = wanderingTrader
+        seedState.villagerXp = villagerXp
 
         openIngredientSetup(
             player,
@@ -190,7 +216,8 @@ object RecipeCreatorGUI {
             initialSupportCrafter = supportCrafter,
             initialOutput = output,
             editingId = id,
-            editingPermission = permission
+            editingPermission = permission,
+            initialState = seedState
         )
     }
 
@@ -343,7 +370,9 @@ object RecipeCreatorGUI {
                     return@onLeftClick
                 }
                 player.closeInventory()
-                val newState = WizardState(typeKey, parts, outputItem, shapeless, symmetry, supportCrafter, editingId, editingPermission)
+                val newState = WizardState(
+                    typeKey, parts, outputItem, shapeless, symmetry, supportCrafter, editingId, editingPermission
+                )
                 initialState?.let {
                     newState.cookTime = it.cookTime
                     newState.experience = it.experience
@@ -353,6 +382,11 @@ object RecipeCreatorGUI {
                     newState.wanderingTrader = it.wanderingTrader
                     newState.villagerXp = it.villagerXp
                     newState.permission = it.permission
+                    newState.category = it.category
+                    newState.lockedByDefault = it.lockedByDefault
+                    newState.showWhenLocked = it.showWhenLocked
+                    newState.repairCost = it.repairCost
+                    newState.brewTime = it.brewTime
                 }
                 openMetadata(player, newState)
             }.build())
@@ -387,45 +421,16 @@ object RecipeCreatorGUI {
         val builtMenu = menu(6) {
             title = "&8New Recipe - Options"
 
-            var row = 1
+            var fieldIndex = 0
             val fieldSlots = mutableSetOf<Pair<Int, Int>>()
-
-            if (state.typeKey == "crafting_table") {
-                val shapelessSlot = row to 2
-                fieldSlots += shapelessSlot
-                setSlot(shapelessSlot.first, shapelessSlot.second, Slot.builder { _: Player, _: Menu ->
-                    ItemStackBuilder(Material.PAPER).setDisplayName(
-                        ("&e" + (if (state.shapeless) "Shapeless" else "Shaped") + " (click to toggle)").formatEco()
-                    ).build()
-                }.onLeftClick { _, _ ->
-                    state.shapeless = !state.shapeless
-                }.build())
-                row++
-
-                val symmetrySlot = row to 2
-                fieldSlots += symmetrySlot
-                setSlot(symmetrySlot.first, symmetrySlot.second, Slot.builder { _: Player, _: Menu ->
-                    ItemStackBuilder(Material.COMPASS).setDisplayName(
-                        ("&e" + (if (state.symmetry) "Symmetry: ON" else "Symmetry: OFF") + " (click to toggle)").formatEco()
-                    ).build()
-                }.onLeftClick { _, _ ->
-                    state.symmetry = !state.symmetry
-                }.build())
-                row++
-
-                val supportCrafterSlot = row to 2
-                fieldSlots += supportCrafterSlot
-                setSlot(supportCrafterSlot.first, supportCrafterSlot.second, Slot.builder { _: Player, _: Menu ->
-                    ItemStackBuilder(Material.CRAFTER).setDisplayName(
-                        ("&e" + (if (state.supportCrafter) "Crafter Support: ON" else "Crafter Support: OFF") + " (click to toggle)").formatEco()
-                    ).build()
-                }.onLeftClick { _, _ ->
-                    state.supportCrafter = !state.supportCrafter
-                }.build())
-                row++
+            fun nextFieldSlot(): Pair<Int, Int> {
+                val row = 1 + fieldIndex / 6
+                val col = 2 + fieldIndex % 6
+                fieldIndex++
+                return row to col
             }
 
-            val permSlot = row to 2
+            val permSlot = nextFieldSlot()
             fieldSlots += permSlot
             setSlot(permSlot.first, permSlot.second, Slot.builder { _: Player, _: Menu ->
                 buildOptionItem(
@@ -438,10 +443,75 @@ object RecipeCreatorGUI {
             }.onRightClick { _, _ ->
                 state.permission = ""
             }.build())
-            row++
+
+            val categorySlot = nextFieldSlot()
+            fieldSlots += categorySlot
+            setSlot(categorySlot.first, categorySlot.second, Slot.builder { _: Player, _: Menu ->
+                buildOptionItem(
+                    Material.OAK_SIGN, "Category",
+                    state.category.ifBlank { "none" }, state.category.isBlank()
+                )
+            }.onLeftClick { _, _ ->
+                player.closeInventory()
+                promptCategory(player, state)
+            }.onRightClick { _, _ ->
+                state.category = ""
+            }.build())
+
+            val lockedByDefaultSlot = nextFieldSlot()
+            fieldSlots += lockedByDefaultSlot
+            setSlot(lockedByDefaultSlot.first, lockedByDefaultSlot.second, Slot.builder { _: Player, _: Menu ->
+                ItemStackBuilder(Material.IRON_DOOR).setDisplayName(
+                    ("&e" + (if (state.lockedByDefault) "Locked by Default: ON" else "Locked by Default: OFF") + " (click to toggle)").formatEco()
+                ).build()
+            }.onLeftClick { _, _ ->
+                state.lockedByDefault = !state.lockedByDefault
+            }.build())
+
+            val showWhenLockedSlot = nextFieldSlot()
+            fieldSlots += showWhenLockedSlot
+            setSlot(showWhenLockedSlot.first, showWhenLockedSlot.second, Slot.builder { _: Player, _: Menu ->
+                ItemStackBuilder(Material.SPYGLASS).setDisplayName(
+                    ("&e" + (if (state.showWhenLocked) "Show When Locked: ON" else "Show When Locked: OFF") + " (click to toggle)").formatEco()
+                ).build()
+            }.onLeftClick { _, _ ->
+                state.showWhenLocked = !state.showWhenLocked
+            }.build())
+
+            if (state.typeKey == "crafting_table") {
+                val shapelessSlot = nextFieldSlot()
+                fieldSlots += shapelessSlot
+                setSlot(shapelessSlot.first, shapelessSlot.second, Slot.builder { _: Player, _: Menu ->
+                    ItemStackBuilder(Material.PAPER).setDisplayName(
+                        ("&e" + (if (state.shapeless) "Shapeless" else "Shaped") + " (click to toggle)").formatEco()
+                    ).build()
+                }.onLeftClick { _, _ ->
+                    state.shapeless = !state.shapeless
+                }.build())
+
+                val symmetrySlot = nextFieldSlot()
+                fieldSlots += symmetrySlot
+                setSlot(symmetrySlot.first, symmetrySlot.second, Slot.builder { _: Player, _: Menu ->
+                    ItemStackBuilder(Material.COMPASS).setDisplayName(
+                        ("&e" + (if (state.symmetry) "Symmetry: ON" else "Symmetry: OFF") + " (click to toggle)").formatEco()
+                    ).build()
+                }.onLeftClick { _, _ ->
+                    state.symmetry = !state.symmetry
+                }.build())
+
+                val supportCrafterSlot = nextFieldSlot()
+                fieldSlots += supportCrafterSlot
+                setSlot(supportCrafterSlot.first, supportCrafterSlot.second, Slot.builder { _: Player, _: Menu ->
+                    ItemStackBuilder(Material.CRAFTER).setDisplayName(
+                        ("&e" + (if (state.supportCrafter) "Crafter Support: ON" else "Crafter Support: OFF") + " (click to toggle)").formatEco()
+                    ).build()
+                }.onLeftClick { _, _ ->
+                    state.supportCrafter = !state.supportCrafter
+                }.build())
+            }
 
             if (state.typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire")) {
-                val cookTimeSlot = row to 2
+                val cookTimeSlot = nextFieldSlot()
                 fieldSlots += cookTimeSlot
                 setSlot(cookTimeSlot.first, cookTimeSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(
@@ -455,9 +525,8 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.cookTime = null
                 }.build())
-                row++
 
-                val xpSlot = row to 2
+                val xpSlot = nextFieldSlot()
                 fieldSlots += xpSlot
                 setSlot(xpSlot.first, xpSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(Material.EXPERIENCE_BOTTLE, "XP", "${state.experience}", state.experience == 0.0)
@@ -467,11 +536,40 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.experience = 0.0
                 }.build())
-                row++
+            }
+
+            if (state.typeKey == "anvil") {
+                val repairCostSlot = nextFieldSlot()
+                fieldSlots += repairCostSlot
+                setSlot(repairCostSlot.first, repairCostSlot.second, Slot.builder { _: Player, _: Menu ->
+                    buildOptionItem(Material.EXPERIENCE_BOTTLE, "Repair Cost", "${state.repairCost}", state.repairCost == 1)
+                }.onLeftClick { _, _ ->
+                    player.closeInventory()
+                    promptRepairCost(player, state)
+                }.onRightClick { _, _ ->
+                    state.repairCost = 1
+                }.build())
+            }
+
+            if (state.typeKey == "brewing_stand") {
+                val brewTimeSlot = nextFieldSlot()
+                fieldSlots += brewTimeSlot
+                setSlot(brewTimeSlot.first, brewTimeSlot.second, Slot.builder { _: Player, _: Menu ->
+                    buildOptionItem(
+                        Material.CLOCK, "Brew Time",
+                        state.brewTime?.let { "$it ticks" } ?: "server default",
+                        state.brewTime == null
+                    )
+                }.onLeftClick { _, _ ->
+                    player.closeInventory()
+                    promptBrewTime(player, state)
+                }.onRightClick { _, _ ->
+                    state.brewTime = null
+                }.build())
             }
 
             if (state.typeKey == "villager") {
-                val professionSlot = row to 2
+                val professionSlot = nextFieldSlot()
                 fieldSlots += professionSlot
                 setSlot(professionSlot.first, professionSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(
@@ -484,9 +582,8 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.profession = ""
                 }.build())
-                row++
 
-                val minLevelSlot = row to 2
+                val minLevelSlot = nextFieldSlot()
                 fieldSlots += minLevelSlot
                 setSlot(minLevelSlot.first, minLevelSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(Material.BOOK, "Min Level", "${state.minLevel}", state.minLevel == 0)
@@ -496,9 +593,8 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.minLevel = 0
                 }.build())
-                row++
 
-                val chanceSlot = row to 2
+                val chanceSlot = nextFieldSlot()
                 fieldSlots += chanceSlot
                 setSlot(chanceSlot.first, chanceSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(Material.REDSTONE, "Chance", "${state.chance}", state.chance == 1.0)
@@ -508,9 +604,8 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.chance = 1.0
                 }.build())
-                row++
 
-                val traderSlot = row to 2
+                val traderSlot = nextFieldSlot()
                 fieldSlots += traderSlot
                 setSlot(traderSlot.first, traderSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(
@@ -520,9 +615,8 @@ object RecipeCreatorGUI {
                 }.onLeftClick { _, _ ->
                     state.wanderingTrader = !state.wanderingTrader
                 }.build())
-                row++
 
-                val villagerXpSlot = row to 2
+                val villagerXpSlot = nextFieldSlot()
                 fieldSlots += villagerXpSlot
                 setSlot(villagerXpSlot.first, villagerXpSlot.second, Slot.builder { _: Player, _: Menu ->
                     buildOptionItem(Material.EXPERIENCE_BOTTLE, "Villager XP", "${state.villagerXp}", state.villagerXp == 0)
@@ -532,7 +626,6 @@ object RecipeCreatorGUI {
                 }.onRightClick { _, _ ->
                     state.villagerXp = 0
                 }.build())
-                row++
             }
 
             setSlot(backSlot.first, backSlot.second, Slot.builder(
@@ -575,6 +668,21 @@ object RecipeCreatorGUI {
         }
     }
 
+    private fun promptCategory(player: Player, state: WizardState) {
+        player.sendMessage(
+            "&aType a category ID, or &enone &ato clear it:".formatEco()
+        )
+        awaitingInput[player.uniqueId] = { input ->
+            val trimmed = input.trim()
+            state.category = when {
+                trimmed.equals("none", ignoreCase = true) -> ""
+                trimmed.equals("default", ignoreCase = true) -> ""
+                else -> trimmed
+            }
+            openOptions(player, state)
+        }
+    }
+
     private fun promptCookTime(player: Player, state: WizardState) {
         player.sendMessage("&aType the cook time in ticks (e.g. 200), or &enone &afor the default:".formatEco())
         awaitingInput[player.uniqueId] = handler@{ input ->
@@ -591,6 +699,46 @@ object RecipeCreatorGUI {
                 return@handler
             }
             state.cookTime = ticks
+            openOptions(player, state)
+        }
+    }
+
+    private fun promptRepairCost(player: Player, state: WizardState) {
+        player.sendMessage("&aType the repair cost in levels (e.g. 3), or &enone &afor 1:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (trimmed.equals("none", ignoreCase = true) || trimmed.equals("default", ignoreCase = true)) {
+                state.repairCost = 1
+                openOptions(player, state)
+                return@handler
+            }
+            val cost = trimmed.toIntOrNull()
+            if (cost == null || cost < 0) {
+                player.sendMessage("&cInvalid repair cost, try again.".formatEco())
+                promptRepairCost(player, state)
+                return@handler
+            }
+            state.repairCost = cost
+            openOptions(player, state)
+        }
+    }
+
+    private fun promptBrewTime(player: Player, state: WizardState) {
+        player.sendMessage("&aType the brew time in ticks (e.g. 400), or &enone &afor the default:".formatEco())
+        awaitingInput[player.uniqueId] = handler@{ input ->
+            val trimmed = input.trim()
+            if (trimmed.equals("none", ignoreCase = true) || trimmed.equals("default", ignoreCase = true)) {
+                state.brewTime = null
+                openOptions(player, state)
+                return@handler
+            }
+            val ticks = trimmed.toIntOrNull()
+            if (ticks == null || ticks <= 0) {
+                player.sendMessage("&cInvalid brew time, try again.".formatEco())
+                promptBrewTime(player, state)
+                return@handler
+            }
+            state.brewTime = ticks
             openOptions(player, state)
         }
     }
@@ -750,6 +898,7 @@ object RecipeCreatorGUI {
         val file = findRecipeFile(pending.id) ?: File(dir, "${pending.id}.yml")
         val yaml = StringBuilder()
         yaml.appendLine("type: ${pending.typeKey}")
+        if (pending.category.isNotBlank()) yaml.appendLine("category: ${pending.category}")
 
         when (pending.typeKey) {
             "crafting_table", "crafter" -> {
@@ -782,6 +931,7 @@ object RecipeCreatorGUI {
             "brewing_stand" -> {
                 yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
                 yaml.appendLine("ingredient: ${itemLookup(pending.parts[1])}")
+                pending.brewTime?.let { yaml.appendLine("brew-time: $it") }
             }
             "grindstone" -> {
                 yaml.appendLine("item1: ${itemLookup(pending.parts[0])}")
@@ -799,7 +949,7 @@ object RecipeCreatorGUI {
             "anvil" -> {
                 yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
                 pending.parts[1]?.let { yaml.appendLine("material: ${itemLookup(it)}") }
-                yaml.appendLine("repair-cost: 1")
+                yaml.appendLine("repair-cost: ${pending.repairCost}")
             }
         }
 
@@ -809,7 +959,8 @@ object RecipeCreatorGUI {
         }
 
         if (pending.permission.isNotBlank()) yaml.appendLine("permission: \"${pending.permission}\"")
-        yaml.appendLine("locked-by-default: false")
+        yaml.appendLine("locked-by-default: ${pending.lockedByDefault}")
+        yaml.appendLine("show-when-locked: ${pending.showWhenLocked}")
         yaml.appendLine("visibility-conditions: []")
         yaml.appendLine("crafting-conditions: []")
         yaml.appendLine("unlock-conditions: []")
@@ -839,6 +990,11 @@ private class WizardState(
     var wanderingTrader: Boolean = false
     var villagerXp: Int = 0
     var permission: String = editingPermission ?: ""
+    var category: String = ""
+    var lockedByDefault: Boolean = false
+    var showWhenLocked: Boolean = false
+    var repairCost: Int = 1
+    var brewTime: Int? = null
 
     fun toPendingRecipe(id: String) = PendingRecipe(
         typeKey = typeKey,
@@ -855,7 +1011,12 @@ private class WizardState(
         wanderingTrader = wanderingTrader,
         villagerXp = villagerXp,
         id = id,
-        permission = permission
+        permission = permission,
+        category = category,
+        lockedByDefault = lockedByDefault,
+        showWhenLocked = showWhenLocked,
+        repairCost = repairCost,
+        brewTime = brewTime
     )
 }
 
@@ -874,7 +1035,12 @@ data class PendingRecipe(
     val wanderingTrader: Boolean,
     val villagerXp: Int,
     val id: String,
-    val permission: String
+    val permission: String,
+    val category: String,
+    val lockedByDefault: Boolean,
+    val showWhenLocked: Boolean,
+    val repairCost: Int,
+    val brewTime: Int?
 )
 
 private fun PendingRecipe.toPreviewResolvedRecipe(): ResolvedRecipe {

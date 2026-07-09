@@ -5,6 +5,7 @@ import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
+import com.willfp.eco.core.price.ConfiguredPrice
 import io.auxilor.ecocrafting.custom.CustomRecipes
 import io.auxilor.ecocrafting.gui.utils.RecipeGUIContext
 import io.auxilor.ecocrafting.gui.utils.buildBackSlot
@@ -57,6 +58,10 @@ class RecipeGUI(
             CustomRecipes.getMeta(recipe.key)
         } else null
         val outputLockedLore = if (recipe.locked && meta != null && meta.showWhenLocked) meta.lockedLore else emptyList()
+        val priceLore = meta?.price?.takeIf { it.getIdentifier() != ConfiguredPrice.FREE.getIdentifier() }?.let { price ->
+            val key = if (price.canAfford(player)) "messages.price-affordable" else "messages.price-unaffordable"
+            listOf(plugin.langYml.getFormattedString(key).replace("%price%", price.getDisplay(player)))
+        } ?: emptyList()
 
         val context = RecipeGUIContext(
             config = plugin.configYml.getSubsection(recipe.displayType.guiSection()),
@@ -94,7 +99,7 @@ class RecipeGUI(
                             ingredientIndex++
                         }
                         marker.equals('o', ignoreCase = true) ->
-                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore))
+                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore))
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->
