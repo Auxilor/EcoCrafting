@@ -8,7 +8,6 @@ import io.auxilor.ecocrafting.recipe.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.RecipeResolver
 import io.auxilor.ecocrafting.recipe.RecipeSource
 import io.auxilor.ecocrafting.recipe.ResolvedRecipe
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 

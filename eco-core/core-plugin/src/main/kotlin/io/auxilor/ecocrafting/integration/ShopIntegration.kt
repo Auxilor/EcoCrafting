@@ -3,7 +3,6 @@
 import com.willfp.ecoshop.shop.BuyStatus
 import com.willfp.ecoshop.shop.BuyType
 import com.willfp.ecoshop.shop.ShopItem
-import com.willfp.ecoshop.shop.getDisplay
 import com.willfp.ecoshop.shop.shopItem
 import io.auxilor.ecocrafting.BuildConfig
 import io.auxilor.ecocrafting.EcoCraftingPlugin
