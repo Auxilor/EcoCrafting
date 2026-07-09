@@ -1,6 +1,5 @@
 ﻿package io.auxilor.ecocrafting.custom
 
-import com.willfp.eco.core.recipe.Recipes
 import com.willfp.eco.core.recipe.workstation.AnvilRecipe
 import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import com.willfp.eco.core.recipe.workstation.CrafterRecipe
@@ -13,7 +12,6 @@ import com.willfp.eco.core.recipe.workstation.VillagerRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.eco.util.formatEco
-import io.auxilor.ecocrafting.custom.event.CustomBrewEvent
 import io.auxilor.ecocrafting.custom.event.CustomCraftEvent
 import io.auxilor.ecocrafting.custom.event.CustomSmeltEvent
 import io.auxilor.ecocrafting.custom.event.CustomSmithEvent
@@ -127,7 +125,12 @@ object CustomRecipeListener : Listener {
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
-        val tookOver = needsTakeover && meta.giveResultItem
+        // support-crafter recipes also register a second, ambiguous Bukkit recipe
+        // (RecipeChoice.ExactChoice on the same shape) so the vanilla Crafter block
+        // can match them. That duplicate breaks vanilla's own shift-click "craft all"
+        // repeat loop at a normal crafting table, so those recipes always take over
+        // the craft manually instead of trusting the vanilla native path.
+        val tookOver = (needsTakeover || meta.supportCrafter) && meta.giveResultItem
         meta.price.pay(player, amount.toDouble())
         when {
             !meta.giveResultItem -> {
@@ -135,13 +138,31 @@ object CustomRecipeListener : Listener {
                 consumeCraftingGrid(event, amount)
             }
             tookOver -> {
-                Recipes.takeOverCraftItem(event, item.clone().apply { this.amount = 1 })
+                event.isCancelled = true
+                consumeCraftingGrid(event, amount)
+                giveCraftedItem(event, player, item)
             }
         }
-        if (tookOver) {
-            fireCraftEffects(player, recipe, meta, item.clone().apply { this.amount = 1 }, 1)
-        } else {
-            fireCraftEffects(player, recipe, meta, item, amount)
+        fireCraftEffects(player, recipe, meta, item, amount)
+    }
+
+    private fun giveCraftedItem(event: CraftItemEvent, player: Player, item: ItemStack) {
+        if (event.isShiftClick) {
+            val overflow = player.inventory.addItem(item)
+            overflow.values.forEach { player.world.dropItemNaturally(player.location, it) }
+            return
+        }
+        val cursor = event.cursor
+        when {
+            cursor == null || cursor.type.isAir -> player.setItemOnCursor(item)
+            cursor.isSimilar(item) && cursor.amount + item.amount <= item.maxStackSize -> {
+                cursor.amount += item.amount
+                player.setItemOnCursor(cursor)
+            }
+            else -> {
+                val overflow = player.inventory.addItem(item)
+                overflow.values.forEach { player.world.dropItemNaturally(player.location, it) }
+            }
         }
     }
 
@@ -351,6 +372,22 @@ object CustomRecipeListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onBrew(event: BrewEvent) {
         WorkstationRecipes.cancelPendingBrew(event.block.location)
+
+        // The brewing stand is still a real vanilla block. If base+ingredient also
+        // happen to match a genuine vanilla recipe (e.g. potion + glowstone dust),
+        // vanilla brews it on its own timer regardless of our custom recipe - handing
+        // the player a real vanilla potion and completely bypassing give-result-item:
+        // false / our effects. Cancel vanilla's own completion whenever a custom
+        // recipe claims this combo; BrewingPacketHandler's own timer (which fires
+        // handleBrewCompleted) is the source of truth for these slots.
+        val ingredient = event.contents.ingredient ?: return
+        val matchesCustomRecipe = WorkstationRecipes.getAll(BrewingRecipe::class.java).any { recipe ->
+            recipe.ingredient.matches(ingredient) &&
+                (0..2).any { slot -> recipe.base.matches(event.contents.getItem(slot)) }
+        }
+        if (matchesCustomRecipe) {
+            event.isCancelled = true
+        }
     }
 
     private fun handleBrewCompleted(location: Location, recipe: BrewingRecipe, matchedSlots: List<Int>) {
