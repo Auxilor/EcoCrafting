@@ -21,7 +21,7 @@ class CommandLock(
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.size < 2) {
-            sender.sendMessage("Usage: /EcoCrafting lock <player> <recipe-id>")
+            sender.sendMessage("Usage: /ecocrafting lock <player> <recipe-id>")
             return
         }
 
