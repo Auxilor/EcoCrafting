@@ -3,12 +3,15 @@ package io.auxilor.ecocrafting.commands
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.util.formatEco
 import io.auxilor.ecocrafting.BuildConfig
-import io.auxilor.ecocrafting.gui.RecipeCreatorGUI
-import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.EcoCraftingPlugin
+import io.auxilor.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-object CommandEdit : Subcommand(
+class CommandEdit(
+    plugin: EcoCraftingPlugin,
+    private val recipeCreatorGUI: RecipeCreatorGUI
+) : Subcommand(
     plugin,
     "edit",
     "ecocrafting.admin.edit",
@@ -30,7 +33,7 @@ object CommandEdit : Subcommand(
             return
         }
 
-        RecipeCreatorGUI.startEditWizard(player, id)
+        recipeCreatorGUI.startEditWizard(player, id)
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
@@ -38,6 +41,6 @@ object CommandEdit : Subcommand(
             return emptyList()
         }
 
-        return RecipeCreatorGUI.existingRecipeIds()
+        return recipeCreatorGUI.existingRecipeIds()
     }
 }

@@ -2,12 +2,15 @@ package io.auxilor.ecocrafting.commands
 
 import com.willfp.eco.core.command.impl.Subcommand
 import io.auxilor.ecocrafting.BuildConfig
-import io.auxilor.ecocrafting.gui.RecipeCreatorGUI
-import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.EcoCraftingPlugin
+import io.auxilor.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-object CommandConfirm : Subcommand(
+class CommandConfirm(
+    plugin: EcoCraftingPlugin,
+    private val recipeCreatorGUI: RecipeCreatorGUI
+) : Subcommand(
     plugin,
     "confirm",
     "ecocrafting.admin.create",
@@ -21,6 +24,6 @@ object CommandConfirm : Subcommand(
 
         val player = sender as? Player ?: return
 
-        RecipeCreatorGUI.confirmSave(player)
+        recipeCreatorGUI.confirmSave(player)
     }
 }

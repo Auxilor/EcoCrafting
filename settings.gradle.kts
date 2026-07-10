@@ -15,4 +15,5 @@ rootProject.name = "EcoCrafting"
 
 // Core
 include(":eco-core")
+include(":eco-core:core-api")
 include(":eco-core:core-plugin")
