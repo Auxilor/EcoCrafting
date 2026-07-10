@@ -25,3 +25,12 @@ Recipes are stored as YAML files under `recipes/<workstation>/`. Categories grou
 category browser GUI. Categories are configured under `categories/`.
 
 Players open the recipe book with `/ecocrafting` (alias `/rbook`).
+
+<hr/>
+
+## Where to go next
+
+- **Build a recipe:** [How to Make a Recipe](how-to-make-a-recipe) walks through a recipe config for each workstation.
+- **Build a category:** [How to Make a Category](how-to-make-a-category) covers grouping items in the browser GUI.
+- **Plugin config:** [Plugin Config](plugin-config) covers the GUIs, sounds, and other settings.
+- **Commands:** [Commands and Permissions](commands-and-permissions) lists every command and node.

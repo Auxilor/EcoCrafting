@@ -44,7 +44,7 @@ items:
 
 gui:
   custom-slots: []
-  title: "&8Combat Recipes | Page &6%page%"
+  title: "&8Combat Recipes | Page &6%page%&8/&6%max_page%"
   mask:
     items:
       - black_stained_glass_pane
@@ -104,7 +104,7 @@ icon:
     - "&7Description shown to players"
 ```
 
-Uses [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system).
+Uses [eco item lookup format](https://hub.auxilor.io/wiki/eco/the-item-lookup-system-the-item-lookup-system).
 
 ### The Position Section
 
@@ -125,15 +125,21 @@ items:
     display-no-perm: false
   - item: "ecoitems:my_item" # Custom eco item
     display-no-perm: false
+    no-perm-item: # optional - shown instead of the locked fallback when display-no-perm is true and the player lacks permission
+      item: gray_dye
+      name: "&7???"
+      lore: []
+
+pull-vanilla-recipes: false # optional, top-level - true = auto-add any vanilla-recipe items not already listed above
 ```
 
-Items use [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system). Tags prefixed with `#` are expanded automatically.
+Items use [eco item lookup format](https://hub.auxilor.io/wiki/eco/the-item-lookup-system-the-item-lookup-system). Tags prefixed with `#` are expanded automatically.
 
 ### The GUI Section
 
 ```yaml
 gui:
-  title: "&8My Category | Page &6%page%"
+  title: "&8My Category | Page &6%page%&8/&6%max_page%"
   mask:
     items:
       - black_stained_glass_pane # Material list (indexed 1, 2, 3...)
@@ -177,3 +183,11 @@ The pattern uses `i` for item slots (auto-filled left-to-right, top-to-bottom) a
 ## Default configs
 
 The default category configs can be found in `eco-core/core-plugin/src/main/resources/categories/`.
+
+<hr/>
+
+## Where to go next
+
+- **Build a recipe:** [How to Make a Recipe](how-to-make-a-recipe) to fill categories with recipes.
+- **Plugin config:** [Plugin Config](plugin-config) for the GUI and sound settings.
+- **Commands:** [Commands and Permissions](commands-and-permissions) to open categories via command.

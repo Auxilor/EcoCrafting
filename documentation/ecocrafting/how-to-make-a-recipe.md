@@ -5,7 +5,7 @@ sidebar_position: 1
 
 ## Recipes
 
-Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID. An `_example.yml` is provided in each folder.
+Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID. An `_example_<workstation>.yml` is provided in each folder (e.g. `recipes/brewing_stand/_example_brewing.yml`).
 
 :::warning ID rules
 IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). No spaces, capitals, or hyphens, or the recipe will not load.
@@ -68,7 +68,7 @@ crafting-conditions: [] # libreforge - block crafting if not met
 unlock-conditions: [] # auto-unlock on join if met
 ```
 
-Items use [eco item lookup format](https://plugins.auxilor.io/the-item-lookup-system).
+Items use [eco item lookup format](https://hub.auxilor.io/wiki/eco/the-item-lookup-system-the-item-lookup-system).
 
 :::info Prices
 A player who can't afford `price` is blocked from crafting the same way a failed `crafting-conditions` check is. Cost scales with the craft amount, so shift-clicking a batch charges proportionally. Omitting `price` (or leaving it incomplete) means the recipe is always free. For `stonecutter` recipes, `price` is set per-output instead of at the top level - see the Stonecutter section below.
@@ -189,10 +189,6 @@ outputs:
     lore:
       - "&7Crafted from stone"
     give-result-item: true
-    price: # optional - same format as the top-level price block
-      value: "10"
-      type: "coins"
-      display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
 
   # give-result-item: false on an output fires effects instead of giving the item
   - item: stone_brick_wall
@@ -257,3 +253,11 @@ chance: 1.0 # probability this trade appears on a villager (0.0-1.0)
 wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
 ```
+
+<hr/>
+
+## Where to go next
+
+- **Build a category:** [How to Make a Category](how-to-make-a-category) to group recipes in the browser GUI.
+- **Plugin config:** [Plugin Config](plugin-config) for the GUI and sound settings.
+- **Commands:** [Commands and Permissions](commands-and-permissions) for locking/unlocking recipes.
