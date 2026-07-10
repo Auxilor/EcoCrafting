@@ -63,7 +63,7 @@ class SmithingListener(
         plugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
     }
 
-    // Smithing ghost result-click
+    // Smithing effect-recipe result-click
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSmithingResultClick(event: InventoryClickEvent) {
         if (event.inventory.type != InventoryType.SMITHING) return
