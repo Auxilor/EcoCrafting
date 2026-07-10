@@ -133,7 +133,7 @@ class RecipeCreatorGUI(
 
     fun openPreview(player: Player, pendingRecipe: PendingRecipe) {
         RecipeGUI(guiServices, pendingRecipe.output, listOf(pendingRecipe.toPreviewResolvedRecipe())).open(player, null)
-        player.sendMessage("&aPreview shown. Type &e/EcoCrafting confirm &ato save, or &c/EcoCrafting cancel &ato discard.".formatEco())
+        player.sendMessage("&aPreview shown. Type &e/ecocrafting confirm &ato save, or &c/ecocrafting cancel &ato discard.".formatEco())
         pendingConfirm[player.uniqueId] = pendingRecipe
     }
 
