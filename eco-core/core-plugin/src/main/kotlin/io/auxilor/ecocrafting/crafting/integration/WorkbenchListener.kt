@@ -148,7 +148,7 @@ class WorkbenchListener(
         } else {
             meta.price.pay(player, amount.toDouble())
         }
-        fireCraftEffects(player, workstationRecipe, meta, item, amount)
+        fireCraftEffects(player, workstationRecipe, meta, item, amount, inventory.location?.block)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
         // Synchronous, not scheduled: this handler can fire on every click of a rapid/shift-click
         // burst, and queuing a Runnable per click backs up the scheduler under load. Direct

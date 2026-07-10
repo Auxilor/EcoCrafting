@@ -4,6 +4,7 @@ import com.willfp.eco.core.bstats.EcoMetricsChart
 import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.filters.Filters
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.willfp.libreforge.triggers.Triggers
@@ -29,6 +30,8 @@ import io.auxilor.ecocrafting.crafting.integration.SmeltingListener
 import io.auxilor.ecocrafting.crafting.integration.SmithingListener
 import io.auxilor.ecocrafting.crafting.integration.StonecutterListener
 import io.auxilor.ecocrafting.crafting.integration.WorkbenchListener
+import io.auxilor.ecocrafting.libreforge.TriggerCraft
+import io.auxilor.ecocrafting.libreforge.TriggerGhostCraft
 import io.auxilor.ecocrafting.libreforge.TriggerCustomCraft
 import io.auxilor.ecocrafting.crafting.service.BlockOwnerService
 import io.auxilor.ecocrafting.recipe.integration.RecipeCapEnforcer
@@ -44,6 +47,8 @@ import io.auxilor.ecocrafting.unlock.integration.RecipeUnlockJoinListener
 import io.auxilor.ecocrafting.libreforge.ConditionHasUnlockedRecipe
 import io.auxilor.ecocrafting.libreforge.EffectLockRecipe
 import io.auxilor.ecocrafting.libreforge.EffectUnlockRecipe
+import io.auxilor.ecocrafting.libreforge.FilterRecipe
+import io.auxilor.ecocrafting.libreforge.FilterWorkstation
 import io.auxilor.ecocrafting.libreforge.TriggerRecipeLocked
 import io.auxilor.ecocrafting.libreforge.TriggerRecipeUnlocked
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
@@ -100,6 +105,8 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
 
+        Triggers.register(TriggerGhostCraft)
+        Triggers.register(TriggerCraft)
         Triggers.register(TriggerCustomCraft)
         Triggers.register(TriggerRecipeUnlocked)
         Triggers.register(TriggerRecipeLocked)
@@ -107,6 +114,9 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         Effects.register(EffectUnlockRecipe)
         Effects.register(EffectLockRecipe)
         Conditions.register(ConditionHasUnlockedRecipe)
+
+        Filters.register(FilterWorkstation)
+        Filters.register(FilterRecipe)
 
         shopIntegrationService.init()
 

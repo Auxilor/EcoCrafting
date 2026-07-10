@@ -21,7 +21,7 @@ class CommandUnlock(
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.size < 2) {
-            sender.sendMessage("Usage: /ecoerafting unlock <player> <recipe-id>")
+            sender.sendMessage("Usage: /ecocrafting unlock <player> <recipe-id>")
             return
         }
 

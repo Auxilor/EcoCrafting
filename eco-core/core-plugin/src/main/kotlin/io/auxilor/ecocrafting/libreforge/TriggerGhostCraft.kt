@@ -3,8 +3,8 @@ package io.auxilor.ecocrafting.libreforge
 import com.willfp.libreforge.triggers.Trigger
 import com.willfp.libreforge.triggers.TriggerParameter
 
-object TriggerCustomCraft : Trigger("custom_craft") {
-    override val description = "Fires when the player crafts an item using a custom recipe."
+object TriggerGhostCraft : Trigger("ghost_craft") {
+    override val description = "Fires when the player crafts a custom recipe that does not give the result item."
 
     override val categories = setOf("crafting")
 
@@ -12,7 +12,6 @@ object TriggerCustomCraft : Trigger("custom_craft") {
         TriggerParameter.PLAYER,
         TriggerParameter.LOCATION,
         TriggerParameter.ITEM,
-        TriggerParameter.VALUE,
-        TriggerParameter.TEXT
+        TriggerParameter.VALUE
     )
 }

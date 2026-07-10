@@ -59,7 +59,7 @@ class SmithingListener(
             plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
         }
         meta.price.pay(player, 1.0)
-        fireCraftEffects(player, recipe, meta, item, 1)
+        fireCraftEffects(player, recipe, meta, item, 1, event.view.topInventory.location?.block)
         plugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
     }
 
@@ -89,7 +89,7 @@ class SmithingListener(
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
-        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1)
+        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 

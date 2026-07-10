@@ -97,7 +97,7 @@ class CraftingTableListener(
                 giveCraftedItem(event, player, item)
             }
         }
-        fireCraftEffects(player, recipe, meta, item, amount)
+        fireCraftEffects(player, recipe, meta, item, amount, event.view.topInventory.location?.block)
     }
 
     private fun giveCraftedItem(event: CraftItemEvent, player: Player, item: ItemStack) {

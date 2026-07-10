@@ -45,7 +45,7 @@ class CrafterBlockListener(
             if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
             meta.price.pay(player, 1.0)
             val item = recipe.output?.clone() ?: return
-            fireCraftEffects(player, recipe, meta, item, 1)
+            fireCraftEffects(player, recipe, meta, item, 1, event.block)
             return
         }
         // giveResultItem = true: eco's AutocrafterPatch cancels every eco-namespace
@@ -56,6 +56,6 @@ class CrafterBlockListener(
         meta.price.pay(player, 1.0)
         event.isCancelled = false
         event.result = item
-        fireCraftEffects(player, recipe, meta, item, 1)
+        fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 }
