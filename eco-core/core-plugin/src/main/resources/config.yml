@@ -613,53 +613,6 @@ brewing-gui:
         inactive: black_stained_glass_pane name:""
       lore: [ ]
 
-cartography-gui:
-  title: "&8Cartography Recipe"
-  quick-craft-enabled: true
-  buy-materials-enabled: true
-  mask:
-    items:
-      - black_stained_glass_pane
-    pattern:
-      - "1111111CF"
-      - "1111111BS"
-      - "11i1io1PW"
-      - "1111111MT"
-      - "1111111GA"
-      - "11111111V"
-  buttons:
-    recipe-parts-lore: [ ]
-    back:
-      row: 6
-      column: 5
-      item: barrier name:"&cBack"
-      lore: [ ]
-    quick-craft:
-      row: 6
-      column: 1
-      item: crafting_table name:"&aQuick Craft"
-      lore:
-        - ""
-        - "&7Materials:"
-        - "%materials%"
-        - ""
-        - "&bLeft Click&f to craft"
-        - ""
-    prev-variant:
-      row: 6
-      column: 4
-      item:
-        active: arrow name:"&aPrevious Method"
-        inactive: black_stained_glass_pane name:""
-      lore: [ ]
-    next-variant:
-      row: 6
-      column: 6
-      item:
-        active: arrow name:"&aNext Method"
-        inactive: black_stained_glass_pane name:""
-      lore: [ ]
-
 grindstone-gui:
   title: "&8Grindstone Recipe"
   quick-craft-enabled: true

@@ -3,6 +3,8 @@ title: "Commands and Permissions"
 sidebar_position: 5
 ---
 
+Every EcoCrafting command and the permission node it requires.
+
 ## Commands
 
 | Command                                    | Description                                 | Permission                        |
@@ -27,3 +29,10 @@ sidebar_position: 5
 | Permission                | Description                                                                                    |
 |---------------------------|------------------------------------------------------------------------------------------------|
 | `EcoCrafting.open.others` | Required to open a category GUI for another player via `/ecocrafting open <category> <player>` |
+
+<hr/>
+
+## Where to go next
+
+- **Build a recipe:** [How to Make a Recipe](how-to-make-a-recipe) to create recipes to unlock and lock.
+- **Plugin config:** [Plugin Config](plugin-config) for the GUI and sound settings.

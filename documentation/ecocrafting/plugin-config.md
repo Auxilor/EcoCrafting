@@ -3,10 +3,15 @@ title: "Plugin Config"
 sidebar_position: 6
 ---
 
+The plugin-wide settings live in `config.yml` in the EcoCrafting data folder (`/plugins/EcoCrafting/config.yml`). It controls the recipe GUIs, sounds, and other plugin-wide behavior. Edit it, then run `/ecocrafting reload` to apply changes.
+
 ## Default config.yml
 
 ```yaml
 debug: false
+
+# Force local storage even when eco uses a database; disables cross-server sync
+use-local-storage: false
 
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
@@ -62,7 +67,7 @@ villager-scan-on-reload: true
 #*/ Category Browser GUI /*#
 category-browser-gui:
   custom-slots: []
-  title: "&8EcoCrafting | Page &6%page%"
+  title: "&8EcoCrafting | Page &6%page%&8/&6%max_page%"
   mask:
     items:
       - black_stained_glass_pane
@@ -85,6 +90,11 @@ category-browser-gui:
         inactive: black_stained_glass_pane name:""
       row: 5
       column: 4
+    close:
+      item: barrier name:"&cClose"
+      lore: []
+      row: 5
+      column: 5
 
 #*/ EcoShop Integration /*#
 shop-integration:
@@ -135,12 +145,14 @@ craft-gui:
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
+      lore: []
     next-variant:
       row: 6
       column: 6
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
+      lore: []
     crafter-indicator: # Shows whether recipe is available in the Crafter block
       enabled: false
       row: 5
@@ -187,6 +199,12 @@ sounds:
     volume: 1.0
     enabled: true
     category: MASTER
+  close:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
   slot-click:
     sound: ui.button_click
     pitch: 1.0
@@ -218,3 +236,11 @@ sounds:
     enabled: true
     category: MASTER
 ```
+
+<hr/>
+
+## Where to go next
+
+- **Build a recipe:** [How to Make a Recipe](how-to-make-a-recipe) covers the per-recipe config files.
+- **Build a category:** [How to Make a Category](how-to-make-a-category) covers the per-category config files.
+- **Commands:** [Commands and Permissions](commands-and-permissions) for the reload and admin commands.

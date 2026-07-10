@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.inventory.ItemStack
 
-// Fired for cartography, grindstone, anvil, and villager recipes.
+// Fired for grindstone, anvil, and villager recipes.
 class CustomWorkbenchCraftEvent(
     player: Player,
     val recipe: WorkstationRecipe,
