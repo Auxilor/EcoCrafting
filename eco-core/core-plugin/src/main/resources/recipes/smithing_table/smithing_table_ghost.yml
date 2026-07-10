@@ -1,0 +1,28 @@
+enabled: true
+category: combat
+
+type: smithing_table
+
+template: netherite_upgrade_smithing_template
+base: diamond_chestplate
+addition: netherite_ingot
+
+output: netherite_chestplate name:"&fsmithing_table_ghost"
+lore:
+  - "&8smithing_table | ghost"
+  - "&cNo item given - effects fire instead"
+
+give-result-item: false
+effects:
+  - id: send_message
+    args:
+      message: "&aGhost craft triggered: smithing_table"
+conditions: [ ]
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

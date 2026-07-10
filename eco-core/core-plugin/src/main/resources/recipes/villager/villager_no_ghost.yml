@@ -1,0 +1,21 @@
+enabled: true
+category: combat
+
+type: villager
+
+input1: emerald
+input2: paper
+
+output: map name:"&fvillager_no_ghost"
+lore:
+  - "&8villager | two inputs | no ghost"
+
+give-result-item: true
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

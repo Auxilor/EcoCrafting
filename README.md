@@ -1,6 +1,6 @@
-# RecipeBook
+﻿# EcoCrafting
 
-RecipeBook is a Paper/eco recipe viewer and quick-craft helper for modern Minecraft servers.
+EcoCrafting is a Paper/eco recipe viewer and quick-craft helper for modern Minecraft servers.
 
 ## Target stack
 
@@ -8,7 +8,6 @@ RecipeBook is a Paper/eco recipe viewer and quick-craft helper for modern Minecr
 - Paper / AdvancedSlimePaper 1.21.8+
 - eco 7.x, tested against 7.6.0
 - Optional: EcoShop 2.5.x
-- Optional: VaultPack (runtime softdepend; no VaultPack jar is needed at build time)
 
 ## Build
 
@@ -19,7 +18,7 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./gradlew clean build
 Install the shaded jar:
 
 ```text
-build/libs/RecipeBook.jar
+build/libs/EcoCrafting.jar
 ```
 
 ## Commands
@@ -36,7 +35,7 @@ build/libs/RecipeBook.jar
 
 ## Default categories
 
-RecipeBook ships with vanilla-only examples so it can boot on any server that has eco:
+EcoCrafting ships with vanilla-only examples so it can boot on any server that has eco:
 
 - `main.yml` - category hub
 - `farming.yml` - food/crop recipes
@@ -46,7 +45,7 @@ RecipeBook ships with vanilla-only examples so it can boot on any server that ha
 
 ## Adding EcoItems / EcoArmor / other eco items
 
-Add the item ID to a category file under `plugins/RecipeBook/categories/`:
+Add the item ID to a category file under `plugins/EcoCrafting/categories/`:
 
 ```yaml
 items:
@@ -99,11 +98,10 @@ When enabled, shift-clicking Quick Craft can buy missing materials from EcoShop 
 
 ## Maintenance notes
 
-RecipeBook keeps fast-moving integrations isolated:
+EcoCrafting keeps fast-moving integrations isolated:
 
 - `recipe/RecipeResolver.kt` owns Bukkit + eco recipe lookup.
 - `craft/QuickCraftService.kt` owns inventory matching and mutation.
 - `integration/ShopIntegration.kt` owns EcoShop integration boundaries.
-- `integration/VaultPackIntegration.kt` owns optional VaultPack support through reflection, so RecipeBook does not compile against or ship a VaultPack jar.
 
 When eco updates, start by checking `RecipeResolver.kt`, especially the fallback reflection used to list eco recipes.

@@ -1,0 +1,27 @@
+enabled: true
+# category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
+
+type: furnace
+
+input: raw_iron # eco item lookup - the item placed in the smelting slot
+output: iron_ingot name:"&7Example Iron"
+lore: [ ] # optional - lore lines for the output item
+
+cook-time: 200 # ticks (200 = 10 seconds, vanilla default)
+experience: 0.7 # xp orbs dropped when smelted
+
+give-result-item: true
+# give-result-item: false
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 50
+# conditions: [ ]
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

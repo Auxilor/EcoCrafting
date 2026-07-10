@@ -1,0 +1,102 @@
+type: "items"
+
+icon:
+  item: iron_pickaxe name:"&bMining"
+  lore:
+    - ""
+    - "&7Ore blocks, tools, and resource compression."
+    - ""
+    - "&bLeft Click &fto browse recipes"
+    - ""
+
+position:
+  column: 4
+  row: 3
+  page: 1
+
+items:
+  - item: "#minecraft:pickaxes"
+    display-no-perm: false
+  - item: "#minecraft:axes"
+    display-no-perm: false
+  - item: "#minecraft:shovels"
+    display-no-perm: false
+  - item: "#minecraft:hoes"
+    display-no-perm: false
+  - item: "shears"
+    display-no-perm: false
+  - item: "flint_and_steel"
+    display-no-perm: false
+  - item: "fishing_rod"
+    display-no-perm: false
+  - item: "carrot_on_a_stick"
+    display-no-perm: false
+  - item: "warped_fungus_on_a_stick"
+    display-no-perm: false
+  - item: "coal_block"
+    display-no-perm: false
+  - item: "iron_block"
+    display-no-perm: false
+  - item: "gold_block"
+    display-no-perm: false
+  - item: "copper_block"
+    display-no-perm: false
+  - item: "diamond_block"
+    display-no-perm: false
+  - item: "emerald_block"
+    display-no-perm: false
+  - item: "redstone_block"
+    display-no-perm: false
+  - item: "lapis_block"
+    display-no-perm: false
+  - item: "anvil"
+    display-no-perm: false
+  - item: "furnace"
+    display-no-perm: false
+  - item: "blast_furnace"
+    display-no-perm: false
+  - item: "stonecutter"
+    display-no-perm: false
+
+gui:
+  custom-slots: [ ]
+  title: "&8Mining Recipes | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "111111111"
+  buttons:
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 4
+    slot:
+      lore:
+        - ""
+        - "&bLeft Click&f to see the recipe"
+        - ""

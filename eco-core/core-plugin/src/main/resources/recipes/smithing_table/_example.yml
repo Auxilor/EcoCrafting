@@ -1,0 +1,28 @@
+enabled: true
+# category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
+
+type: smithing_table
+
+# Smithing transform: template + base + addition → output
+template: netherite_upgrade_smithing_template
+base: diamond_sword
+addition: netherite_ingot
+
+output: netherite_sword name:"&5Example Netherite Sword"
+lore: [ ] # optional - lore lines for the output item
+
+give-result-item: true
+# give-result-item: false
+# effects:
+#   - id: give_xp
+#     args:
+#       xp: 200
+# conditions: [ ]
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

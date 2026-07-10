@@ -1,0 +1,865 @@
+#
+# EcoCrafting
+# by Exanthiax, _OfTeN_ & joogiebear
+#
+
+# Designed for Paper/AdvancedSlimePaper 1.21.x and eco 7.x.
+debug: false
+
+# Force local storage even when eco uses a database; disables cross-server sync
+use-local-storage: false
+
+# Exclude rotated/mirrored duplicates of shaped crafting recipes
+deduplicate-symmetrical: false
+
+# When true, items with no recipe are still shown in categories
+show-items-without-recipes: false
+
+# When true, recipe lookup matches full item (name/lore/meta), not just base material
+# Useful when renamed items should not show vanilla recipes
+strict-item-matching: true
+
+# ItemFlags applied to every display item in EcoCrafting GUIs
+# Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
+#               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
+item-flags: [ ]
+
+fuel-slot: # The item shown in the fuel slot of furnace/smoker/blast furnace GUIs. Only for display, no interaction.
+  item: charcoal name:"&7Fuel"
+  lore: [ ]
+
+# Workstation Markers
+# Pattern marker key (used in mask.pattern of each GUI section):
+#   i = ingredient slot - auto-increments left→right top→bottom (all workstation types)
+#   o = output slot (all types)
+#   u = smelting fuel slot (display only, no interaction)
+#   Workstation sidebar markers (configure items in workstation-markers below):
+#   C = crafting table   F = furnace        B = blast furnace
+#   S = smoker           P = campfire       M = smithing table
+#   T = stonecutter      W = brewing stand  G = grindstone
+#   A = anvil            V = villager
+
+workstation-markers:
+  crafting_table: # The workstation type.
+    active: crafting_table name:"&aCrafting Table" glint # The item shown when viewing this workstation's recipe(s).
+    inactive: crafting_table name:"&7Crafting Table" # The item shown when this workstation is available but not currently being viewed.
+    not-applicable: gray_dye name:"&8%workstation%" # The item shown when this workstation has no recipe for the current item.
+    lore: # The lore for the items above. %workstation% is replaced with the workstation name (Crafting Table, Furnace, etc), from lang.yml.
+      active: [ ] # Lore shown when this workstation is active.
+      inactive: # Lore shown when this workstation is available but not active.
+        - "&bClick to view %workstation% recipe"
+      not-applicable: # Lore shown when this workstation is not applicable for the current recipe.
+        - "&7No %workstation% recipe available"
+  furnace:
+    active: furnace name:"&aFurnace" glint
+    inactive: furnace name:"&7Furnace"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  blast_furnace:
+    active: blast_furnace name:"&aBlast Furnace" glint
+    inactive: blast_furnace name:"&7Blast Furnace"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  smoker:
+    active: smoker name:"&aSmoker" glint
+    inactive: smoker name:"&7Smoker"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  campfire:
+    active: campfire name:"&aCampfire" glint
+    inactive: campfire name:"&7Campfire"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  smithing_table:
+    active: smithing_table name:"&aSmithing Table" glint
+    inactive: smithing_table name:"&7Smithing Table"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  stonecutter:
+    active: stonecutter name:"&aStonecutter" glint
+    inactive: stonecutter name:"&7Stonecutter"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  brewing_stand:
+    active: brewing_stand name:"&aBrewing Stand" glint
+    inactive: brewing_stand name:"&7Brewing Stand"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  grindstone:
+    active: grindstone name:"&aGrindstone" glint
+    inactive: grindstone name:"&7Grindstone"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  anvil:
+    active: anvil name:"&aAnvil" glint
+    inactive: anvil name:"&7Anvil"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+  villager:
+    active: villager_spawn_egg name:"&aVillager" glint
+    inactive: villager_spawn_egg name:"&7Villager"
+    not-applicable: gray_dye name:"&8%workstation%"
+    lore:
+      active: [ ]
+      inactive:
+        - "&bClick to view %workstation% recipe"
+      not-applicable:
+        - "&7No %workstation% recipe available"
+
+# Owner tracking for block-based recipes (furnace, brewing, crafter, campfire)
+# placed: dispatch effects on the player who placed (or first opened) the block
+# nearest: dispatch effects on the nearest online player within owner-nearest-radius blocks
+owner-mode: placed
+owner-nearest-radius: 32
+
+# Brewing stand ghost recipe behaviour
+brewing-stand:
+  # When true, ghost effects fire once per matched base slot (not once total)
+  ghost-per-slot: true
+
+# Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
+villager-scan-on-reload: true
+
+# Category Browser GUI
+category-browser-gui:
+  custom-slots: [ ]
+  title: "&8EcoCrafting | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "100000001"
+      - "100000001"
+      - "100000001"
+      - "111111111"
+  buttons:
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 5
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 5
+      column: 4
+    close:
+      item: barrier name:"&cClose"
+      lore: [ ]
+      row: 5
+      column: 5
+
+# EcoShop Integration
+shop-integration:
+  # Enable integration with EcoShop to allow purchasing missing materials.
+  enabled: true
+  # Show shop prices in the QuickCraft lore for missing materials.
+  show-prices: true
+  auto-buy-missing-materials: false
+  require-shift-click: true
+
+# Recipe Book GUI
+craft-gui:
+  title: "&8Crafting Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1iii111BS"
+      - "1iii1o1PW"
+      - "1iii111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore:
+      - ""
+      - "&bLeft Click&f to see the recipe"
+      - ""
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    crafter-indicator:
+      enabled: false
+      row: 5
+      column: 7
+      item:
+        active: crafter name:"&aAvailable in Crafter"
+        inactive: gray_dye name:"&7Not available in Crafter"
+      lore:
+        active: [ ]
+        inactive: [ ]
+    shapeless-indicator:
+      enabled: false
+      row: 5
+      column: 7
+      item:
+        active: slime_ball name:"&aShapeless Recipe"
+        inactive: gray_dye name:"&7Shaped Recipe"
+      lore:
+        active: [ ]
+        inactive: [ ]
+  custom-slots: [ ]
+
+furnace-gui:
+  title: "&8Smelting Recipe &7[%cook_time%]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11u1111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+blast-furnace-gui:
+  title: "&8Blast Furnace Recipe &7[%cook_time%]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11u1111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+smoker-gui:
+  title: "&8Smoker Recipe &7[%cook_time%]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "11u1111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+campfire-gui:
+  title: "&8Campfire Recipe &7[%cook_time%]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "11i1111BS"
+      - "11111o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+smithing-gui:
+  title: "&8Smithing Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "1iii1o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+stonecutter-gui:
+  title: "&8Stonecutter Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i11o1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+brewing-gui:
+  title: "&8Brewing Recipe &7[%brew_time%]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+cartography-gui:
+  title: "&8Cartography Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+grindstone-gui:
+  title: "&8Grindstone Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+anvil-gui:
+  title: "&8Anvil Recipe"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+villager-gui:
+  title: "&8Villager Trade &7[&6%xp% XP&7]"
+  quick-craft-enabled: true
+  buy-materials-enabled: true
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "1111111CF"
+      - "1111111BS"
+      - "11i1io1PW"
+      - "1111111MT"
+      - "1111111GA"
+      - "11111111V"
+  buttons:
+    recipe-parts-lore: [ ]
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    quick-craft:
+      row: 6
+      column: 1
+      item: crafting_table name:"&aQuick Craft"
+      lore:
+        - ""
+        - "&7Materials:"
+        - "%materials%"
+        - ""
+        - "&bLeft Click&f to craft"
+        - ""
+    prev-variant:
+      row: 6
+      column: 4
+      item:
+        active: arrow name:"&aPrevious Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+    next-variant:
+      row: 6
+      column: 6
+      item:
+        active: arrow name:"&aNext Method"
+        inactive: black_stained_glass_pane name:""
+      lore: [ ]
+
+# Sound Configuration
+sounds:
+  next-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  prev-page:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  workstation-switch:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  back:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  close:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  slot-click:
+    sound: ui.button_click
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-success:
+    sound: entity.player.levelup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  quick-craft-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-success:
+    sound: entity.experience_orb.pickup
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER
+  purchase-fail:
+    sound: entity.villager.no
+    pitch: 1.0
+    volume: 1.0
+    enabled: true
+    category: MASTER

@@ -1,0 +1,32 @@
+enabled: true
+category: combat
+
+type: crafting_table
+
+recipe:
+  - iron_ingot
+  - iron_ingot
+  - iron_ingot
+  - ""
+  - stick
+  - ""
+  - ""
+  - stick
+  - ""
+
+shapeless: false
+symmetry: false
+
+output: iron_sword name:"&fcrafting_table_shaped_no_ghost"
+lore:
+  - "&8crafting_table | shaped | no ghost"
+
+give-result-item: true
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

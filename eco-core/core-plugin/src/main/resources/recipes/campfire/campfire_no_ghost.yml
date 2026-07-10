@@ -1,0 +1,22 @@
+enabled: true
+category: combat
+
+type: campfire
+
+input: porkchop
+output: cooked_porkchop name:"&fcampfire_no_ghost"
+lore:
+  - "&8campfire | no ghost"
+
+cook-time: 600
+experience: 0.35
+
+give-result-item: true
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]
