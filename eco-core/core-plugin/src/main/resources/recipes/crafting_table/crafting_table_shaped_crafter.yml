@@ -1,0 +1,33 @@
+enabled: true
+category: combat
+
+type: crafting_table
+
+recipe:
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - ""
+  - oak_planks
+  - oak_planks
+  - oak_planks
+  - oak_planks
+
+shapeless: false
+symmetry: false
+support-crafter: true
+
+output: chest name:"&fcrafting_table_shaped_crafter"
+lore:
+  - "&8crafting_table | shaped | support-crafter"
+
+give-result-item: true
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]

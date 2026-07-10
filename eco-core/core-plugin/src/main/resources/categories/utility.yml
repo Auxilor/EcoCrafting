@@ -1,0 +1,84 @@
+type: "items"
+
+icon:
+  item: crafting_table name:"&eUtility"
+  lore:
+    - ""
+    - "&7Workstations, storage, movement, and redstone basics."
+    - ""
+    - "&bLeft Click &fto browse recipes"
+    - ""
+
+position:
+  column: 8
+  row: 3
+  page: 1
+
+items:
+  - item: "crafting_table"
+    display-no-perm: false
+  - item: "chest"
+    display-no-perm: false
+  - item: "barrel"
+    display-no-perm: false
+  - item: "hopper"
+    display-no-perm: false
+  - item: "piston"
+    display-no-perm: false
+  - item: "sticky_piston"
+    display-no-perm: false
+  - item: "observer"
+    display-no-perm: false
+  - item: "dispenser"
+    display-no-perm: false
+  - item: "dropper"
+    display-no-perm: false
+  - item: "rail"
+    display-no-perm: false
+  - item: "powered_rail"
+    display-no-perm: false
+  - item: "boat"
+    display-no-perm: false
+
+gui:
+  custom-slots: [ ]
+  title: "&8Utility Recipes | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "111111111"
+  buttons:
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 4
+    slot:
+      lore:
+        - ""
+        - "&bLeft Click&f to see the recipe"
+        - ""

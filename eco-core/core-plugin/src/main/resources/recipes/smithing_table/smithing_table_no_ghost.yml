@@ -1,0 +1,22 @@
+enabled: true
+category: combat
+
+type: smithing_table
+
+template: netherite_upgrade_smithing_template
+base: diamond_pickaxe
+addition: netherite_ingot
+
+output: netherite_pickaxe name:"&fsmithing_table_no_ghost"
+lore:
+  - "&8smithing_table | no ghost"
+
+give-result-item: true
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]
