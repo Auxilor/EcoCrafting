@@ -159,8 +159,8 @@ owner-nearest-radius: 32
 
 # Brewing stand ghost recipe behaviour
 brewing-stand:
-  # When true, ghost effects fire once per matched base slot (not once total)
-  ghost-per-slot: true
+  # When true, effect recipes fire once per matched base slot (not once total)
+  effect-recipes-per-slot: true
 
 # Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
 villager-scan-on-reload: true

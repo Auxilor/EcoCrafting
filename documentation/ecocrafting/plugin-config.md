@@ -52,9 +52,9 @@ workstation-markers:
 owner-mode: placed
 owner-nearest-radius: 32
 
-# When true, ghost effects in brewing stands fire once per matched base slot
+# When true, effect recipes in brewing stands fire once per matched base slot
 brewing-stand:
-  ghost-per-slot: true
+  effect-recipes-per-slot: true
 
 # Scan all loaded villagers on reload to remove PDC keys for disabled recipes
 villager-scan-on-reload: true
