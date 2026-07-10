@@ -69,9 +69,9 @@ class BrewingListener(
 
         val ghostPerSlot = plugin.configYml.getBool("brewing-stand.ghost-per-slot")
         if (!meta.giveResultItem && ghostPerSlot) {
-            matchedSlots.forEach { _ -> fireCraftEffects(player, recipe, meta, item.clone(), 1) }
+            matchedSlots.forEach { _ -> fireCraftEffects(player, recipe, meta, item.clone(), 1, location.block) }
         } else {
-            fireCraftEffects(player, recipe, meta, item, matchedSlots.size)
+            fireCraftEffects(player, recipe, meta, item, matchedSlots.size, location.block)
         }
     }
 }

@@ -6,18 +6,26 @@ import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import io.auxilor.ecocrafting.EcoCraftingPlugin
-import io.auxilor.ecocrafting.libreforge.TriggerCustomCraft
+import io.auxilor.ecocrafting.libreforge.TriggerCraft
 import io.auxilor.ecocrafting.libreforge.TriggerGhostCraft
 import io.auxilor.ecocrafting.recipe.model.EcoCraftingMeta
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-fun fireCraftEffects(player: Player, recipe: WorkstationRecipe, meta: EcoCraftingMeta, item: ItemStack, amount: Int) {
-    val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString())
+fun fireCraftEffects(
+    player: Player,
+    recipe: WorkstationRecipe,
+    meta: EcoCraftingMeta,
+    item: ItemStack,
+    amount: Int,
+    block: Block? = null
+) {
+    val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString(), block = block)
     meta.effectsChain?.trigger(player.toDispatcher(), data)
     if (!meta.giveResultItem) TriggerGhostCraft.dispatch(player.toDispatcher(), data)
-    TriggerCustomCraft.dispatch(player.toDispatcher(), data)
+    TriggerCraft.dispatch(player.toDispatcher(), data)
 }
 
 fun checkCraftingConditions(

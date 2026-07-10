@@ -76,7 +76,7 @@ class SmeltingListener(
         }
 
         meta.price.pay(player, 1.0)
-        fireCraftEffects(player, recipe, meta, item, 1)
+        fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -124,6 +124,6 @@ class SmeltingListener(
             }
         }
         meta.price.pay(player, 1.0)
-        fireCraftEffects(player, recipe, meta, item, 1)
+        fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 }
