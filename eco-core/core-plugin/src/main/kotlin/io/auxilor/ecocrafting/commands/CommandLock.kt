@@ -2,14 +2,18 @@ package io.auxilor.ecocrafting.commands
 
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import io.auxilor.ecocrafting.custom.CustomRecipes
-import io.auxilor.ecocrafting.custom.RecipeUnlockStore
-import io.auxilor.ecocrafting.plugin
+import io.auxilor.ecocrafting.EcoCraftingPlugin
+import io.auxilor.ecocrafting.recipe.service.RecipeService
+import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
 
-object CommandLock : Subcommand(
+class CommandLock(
+    plugin: EcoCraftingPlugin,
+    private val recipeService: RecipeService,
+    private val unlockService: RecipeUnlockService
+) : Subcommand(
     plugin,
     "lock",
     "ecocrafting.admin",
@@ -38,12 +42,12 @@ object CommandLock : Subcommand(
             return
         }
 
-        val meta = CustomRecipes.getMeta(key) ?: run {
+        val meta = recipeService.getMeta(key) ?: run {
             sender.sendMessage("Unknown recipe: ${args[1]}")
             return
         }
 
-        RecipeUnlockStore.lock(target, key, meta)
+        unlockService.lock(target, key, meta)
 
         sender.sendMessage("Locked '${args[1]}' for ${target.name}.")
     }
@@ -51,7 +55,7 @@ object CommandLock : Subcommand(
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
         return when (args.size) {
             1 -> Bukkit.getOnlinePlayers().map { it.name }
-            2 -> CustomRecipes.allKeys().map { it.key }
+            2 -> recipeService.allKeys().map { it.key }
             else -> emptyList()
         }
     }

@@ -30,6 +30,24 @@ val generateBuildConfig by tasks.registering {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    api(project(":eco-core:core-api"))
+
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // Model/service tests construct real eco/libreforge value types (ConditionList, Chain,
+    // ConfiguredPrice) rather than mocking them - those are compileOnly in production (the
+    // server provides them at runtime) but need to be present on the test runtime classpath.
+    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    testImplementation("com.willfp:eco:${rootProject.findProperty("eco-version")}")
+    testImplementation("com.willfp:libreforge-loader:${rootProject.findProperty("libreforge-version")}")
+    testImplementation("com.willfp:libreforge:${rootProject.findProperty("libreforge-version")}:shadow") {
+        // The shadow jar already bundles its own dependencies; the published module
+        // metadata's transitive deps point at bad coordinates that don't resolve.
+        isTransitive = false
+    }
 }
 
 tasks {
@@ -43,6 +61,10 @@ tasks {
 
     build {
         dependsOn(publishToMavenLocal)
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 
