@@ -1,0 +1,174 @@
+package io.auxilor.ecocrafting.crafting.integration
+
+import com.willfp.eco.core.recipe.workstation.CrafterRecipe
+import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
+import io.auxilor.ecocrafting.EcoCraftingPlugin
+import io.auxilor.ecocrafting.crafting.event.CustomCraftEvent
+import io.auxilor.ecocrafting.crafting.service.checkCraftingConditions
+import io.auxilor.ecocrafting.crafting.service.fireCraftEffects
+import io.auxilor.ecocrafting.crafting.service.priceAffordableAmount
+import io.auxilor.ecocrafting.recipe.service.RecipeService
+import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.CraftItemEvent
+import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.inventory.SmithingInventory
+import org.bukkit.inventory.StonecutterInventory
+import org.bukkit.inventory.ItemStack
+
+// Crafting table / Crafter block craft handling. Smithing table and stonecutter clicks
+// also fire CraftItemEvent but are handled by their own listeners - this one bails out
+// immediately for those inventory types.
+class CraftingTableListener(
+    private val plugin: EcoCraftingPlugin,
+    private val recipeService: RecipeService,
+    private val unlockService: RecipeUnlockService
+) : Listener {
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onPrepareCraft(event: PrepareItemCraftEvent) {
+        val recipe = findCraftingTableRecipe(event.inventory.matrix) ?: return
+        val output = recipe.output?.clone() ?: return
+        val player = event.view.player as? Player
+
+        val meta = recipeService.getMeta(recipe.key)
+        if (player != null && meta != null && meta.showWhenLocked && unlockService.isLocked(player, recipe.key, meta)) {
+            output.itemMeta = output.itemMeta?.apply {
+                lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) }
+            }
+        }
+
+        event.inventory.result = output
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onCraft(event: CraftItemEvent) {
+        if (event.view.topInventory is StonecutterInventory || event.view.topInventory is SmithingInventory) return
+
+        val player = event.whoClicked as? Player ?: return
+        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
+
+        val baseKey = recipeService.baseKeyForVariant(recipeKey)
+        val directMatch = WorkstationRecipes.getByKey(baseKey) as? CrafterRecipe
+        // Fall back to matrix match when vanilla recipe fires first (same shape/material)
+        val recipe = directMatch ?: findCraftingTableRecipe(event.inventory.matrix) ?: return
+        val needsTakeover = directMatch == null
+        val meta = recipeService.getMeta(recipe.key) ?: return
+        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) {
+            event.isCancelled = true
+            if (meta.showWhenLocked && unlockService.isLocked(player, recipe.key, meta)) {
+                recipe.output?.clone()?.let { lockedOutput ->
+                    lockedOutput.itemMeta = lockedOutput.itemMeta?.apply {
+                        lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) }
+                    }
+                    event.inventory.result = lockedOutput
+                }
+            }
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            return
+        }
+
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
+        val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
+
+        val customEvent = CustomCraftEvent(player, recipe, item, amount)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) { event.isCancelled = true; return }
+
+        // support-crafter recipes also register a second, ambiguous Bukkit recipe
+        // (RecipeChoice.ExactChoice on the same shape) so the vanilla Crafter block
+        // can match them. That duplicate breaks vanilla's own shift-click "craft all"
+        // repeat loop at a normal crafting table, so those recipes always take over
+        // the craft manually instead of trusting the vanilla native path.
+        val tookOver = (needsTakeover || meta.supportCrafter) && meta.giveResultItem
+        meta.price.pay(player, amount.toDouble())
+        when {
+            !meta.giveResultItem -> {
+                event.isCancelled = true
+                consumeCraftingGrid(event, amount)
+            }
+            tookOver -> {
+                event.isCancelled = true
+                consumeCraftingGrid(event, amount)
+                giveCraftedItem(event, player, item)
+            }
+        }
+        fireCraftEffects(player, recipe, meta, item, amount, event.view.topInventory.location?.block)
+    }
+
+    private fun giveCraftedItem(event: CraftItemEvent, player: Player, item: ItemStack) {
+        if (event.isShiftClick) {
+            val overflow = player.inventory.addItem(item)
+            overflow.values.forEach { player.world.dropItemNaturally(player.location, it) }
+            return
+        }
+        val cursor = event.cursor
+        when {
+            cursor == null || cursor.type.isAir -> player.setItemOnCursor(item)
+            cursor.isSimilar(item) && cursor.amount + item.amount <= item.maxStackSize -> {
+                cursor.amount += item.amount
+                player.setItemOnCursor(cursor)
+            }
+            else -> {
+                val overflow = player.inventory.addItem(item)
+                overflow.values.forEach { player.world.dropItemNaturally(player.location, it) }
+            }
+        }
+    }
+
+    private fun findCraftingTableRecipe(matrix: Array<out ItemStack?>): CrafterRecipe? {
+        return WorkstationRecipes.getAll(CrafterRecipe::class.java)
+            .firstOrNull { recipe ->
+                if (recipe.isShapeless) shapelessMatch(recipe, matrix)
+                else shapedMatch(recipe, matrix)
+            }
+    }
+
+    private fun shapedMatch(recipe: CrafterRecipe, matrix: Array<out ItemStack?>): Boolean {
+        if (matrix.size != recipe.parts.size) return false
+        return recipe.parts.zip(matrix.toList()).all { (part, slot) ->
+            if (part == null) slot == null || slot.type.isAir
+            else part.matches(slot)
+        }
+    }
+
+    private fun shapelessMatch(recipe: CrafterRecipe, matrix: Array<out ItemStack?>): Boolean {
+        val required = recipe.parts.filterNotNull().toMutableList()
+        val present = matrix.filter { it != null && !it.type.isAir }
+        if (required.size != present.size) return false
+        for (slot in present) {
+            val index = required.indexOfFirst { it.matches(slot) }
+            if (index < 0) return false
+            required.removeAt(index)
+        }
+        return required.isEmpty()
+    }
+
+    private fun consumeCraftingGrid(event: CraftItemEvent, amount: Int) {
+        val matrix = event.inventory.matrix
+        for (slot in matrix.indices) {
+            val stack = matrix[slot] ?: continue
+            if (stack.type.isAir) continue
+            val remaining = stack.amount - amount
+            matrix[slot] = if (remaining <= 0) null else stack.apply { this.amount = remaining }
+        }
+        event.inventory.matrix = matrix
+    }
+
+    private fun calculateCraftAmount(event: CraftItemEvent, ingredientBasedAmount: Int): Int {
+        return if (event.isShiftClick) {
+            val result = event.recipe.result
+            val player = event.whoClicked as Player
+            val spaceBased = spaceBasedAmount(player, result)
+            val amount = minOf(spaceBased, ingredientBasedAmount).coerceAtLeast(1)
+            if (ingredientBasedAmount < spaceBased) {
+                plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -> $amount")
+            }
+            amount
+        } else 1
+    }
+}

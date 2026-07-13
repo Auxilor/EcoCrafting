@@ -1,5 +1,19 @@
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+        maven("https://repo.auxilor.io/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
 }
-rootProject.name = "RecipeBook"
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "EcoCrafting"
+
+// Core
+include(":eco-core")
+include(":eco-core:core-api")
+include(":eco-core:core-plugin")

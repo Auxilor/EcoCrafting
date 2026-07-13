@@ -1,0 +1,37 @@
+enabled: true
+# category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
+
+type: stonecutter
+
+input: stone
+
+# Multiple outputs supported - each appears as a separate option in the stonecutter UI.
+# give-result-item: false on an output means no item is given; libreforge effects fire instead.
+outputs:
+  - item: stone_slab
+    lore: [ ]
+    give-result-item: true
+
+  - item: stone_stairs
+    lore:
+      - "&7Crafted from stone"
+    give-result-item: true
+
+  - item: stone_brick_wall name:"&7Ghost Wall"
+    lore:
+      - "&8Ghost output - no item given"
+      - "&7Effects fire on craft"
+    give-result-item: false
+    effects:
+      - id: give_xp
+        args:
+          xp: 25
+    conditions: [ ]
+
+permission: ""
+locked-by-default: false
+show-when-locked: false
+locked-lore: [ ]
+visibility-conditions: [ ]
+crafting-conditions: [ ]
+unlock-conditions: [ ]
