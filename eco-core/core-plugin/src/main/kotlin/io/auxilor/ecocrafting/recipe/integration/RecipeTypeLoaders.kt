@@ -58,7 +58,7 @@ internal fun RecipeLoader.loadCraftingTable(id: String, config: Config) {
             val builder = ShapelessCraftingRecipe
                 .builder(plugin, variantKey.key)
                 .setOutput(output)
-                .setSupportCrafter(meta.supportCrafter)
+                .setCrafterSupported(meta.supportCrafter)
             recipeParts
                 .filter { !it.empty && it.matcher !is IngredientMatcher.AnyItem }
                 .forEach { builder.addRecipePart(it.matcher.toTestableItem()) }
@@ -67,7 +67,7 @@ internal fun RecipeLoader.loadCraftingTable(id: String, config: Config) {
             val builder = ShapedCraftingRecipe
                 .builder(plugin, variantKey.key)
                 .setOutput(output)
-                .setSupportCrafter(meta.supportCrafter)
+                .setCrafterSupported(meta.supportCrafter)
             recipeParts.forEachIndexed { index, part ->
                 if (!part.empty) builder.setRecipePart(index, part.matcher.toTestableItem())
             }

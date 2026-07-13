@@ -31,8 +31,6 @@ import io.auxilor.ecocrafting.crafting.integration.SmithingListener
 import io.auxilor.ecocrafting.crafting.integration.StonecutterListener
 import io.auxilor.ecocrafting.crafting.integration.WorkbenchListener
 import io.auxilor.ecocrafting.libreforge.TriggerCraft
-import io.auxilor.ecocrafting.libreforge.TriggerGhostCraft
-import io.auxilor.ecocrafting.libreforge.TriggerCustomCraft
 import io.auxilor.ecocrafting.crafting.service.BlockOwnerService
 import io.auxilor.ecocrafting.recipe.integration.RecipeCapEnforcer
 import io.auxilor.ecocrafting.recipe.integration.RecipeLoader
@@ -105,9 +103,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
 
-        Triggers.register(TriggerGhostCraft)
         Triggers.register(TriggerCraft)
-        Triggers.register(TriggerCustomCraft)
         Triggers.register(TriggerRecipeUnlocked)
         Triggers.register(TriggerRecipeLocked)
 
