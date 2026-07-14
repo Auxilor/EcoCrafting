@@ -45,7 +45,7 @@ class CraftingTableListener(
         event.inventory.result = output
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCraft(event: CraftItemEvent) {
         if (event.view.topInventory is StonecutterInventory || event.view.topInventory is SmithingInventory) return
 

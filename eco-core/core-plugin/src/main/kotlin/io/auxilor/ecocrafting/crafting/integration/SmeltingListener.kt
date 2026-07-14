@@ -30,7 +30,7 @@ class SmeltingListener(
     private val blockOwnerService: BlockOwnerService
 ) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSmelt(event: FurnaceSmeltEvent) {
         val location = event.block.location
         val player = blockOwnerService.getActor(location)
@@ -81,7 +81,7 @@ class SmeltingListener(
         fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCampfire(event: BlockCookEvent) {
         val location = event.block.location
         val player = blockOwnerService.getActor(location)

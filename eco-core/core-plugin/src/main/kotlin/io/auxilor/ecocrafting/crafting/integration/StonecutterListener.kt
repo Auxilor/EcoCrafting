@@ -27,7 +27,7 @@ class StonecutterListener(
     private val unlockService: RecipeUnlockService
 ) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCraft(event: CraftItemEvent) {
         if (event.view.topInventory !is StonecutterInventory) return
 
