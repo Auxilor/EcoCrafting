@@ -23,7 +23,14 @@ class RecipeResolverService(
     private val recipeService: RecipeService
 ) {
     private val air = ItemStack(Material.AIR)
-    private val resolveCache = HashMap<Any, ResolvedRecipe?>()
+
+    // Bounded LRU: keyed by (Material, ItemMeta.hashCode()) for non-custom items, so distinct
+    // NBT/meta variants (potions, renamed items, written books, ...) don't share an entry, but
+    // the cache can't grow unbounded over a long-running server.
+    private val resolveCache = object : LinkedHashMap<Any, ResolvedRecipe?>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Any, ResolvedRecipe?>): Boolean =
+            size > 2000
+    }
 
     private val symmetryTransforms = listOf(
         intArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8),
