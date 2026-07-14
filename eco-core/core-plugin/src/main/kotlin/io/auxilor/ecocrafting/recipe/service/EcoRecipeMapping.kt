@@ -5,6 +5,7 @@ import com.willfp.eco.core.items.CustomItem
 import com.willfp.eco.core.recipe.Recipes
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.willfp.eco.core.recipe.recipes.CraftingRecipe
+import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
 import io.auxilor.ecocrafting.EcoCraftingPlugin
 import io.auxilor.ecocrafting.recipe.model.IngredientMatcher
 import io.auxilor.ecocrafting.recipe.model.RecipeIngredient
@@ -65,6 +66,8 @@ internal fun CraftingRecipe.toResolvedRecipe(air: ItemStack): ResolvedRecipe {
         ingredients = ingredients,
         permission = permission,
         source = RecipeSource.ECO,
-        shapeless = parts.size != 9
+        // ShapedCraftingRecipe always pads to exactly 9 parts; parts.size alone can't tell
+        // a 9-ingredient shapeless recipe apart from a shaped one, so check the concrete type.
+        shapeless = this !is ShapedCraftingRecipe
     )
 }
