@@ -9,8 +9,6 @@ import io.auxilor.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-// Final wizard step: shows the finished recipe's ingredients/output and lets the player
-// confirm (green wool) or cancel (red wool) with a click, instead of typing a chat command.
 internal fun RecipeCreatorGUI.openConfirmPreview(player: Player, pending: PendingRecipe) {
     val slotLayout = ingredientSlotLayout(pending.typeKey)
     val outputSlot = 3 to 4

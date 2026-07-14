@@ -67,8 +67,6 @@ internal fun CraftingRecipe.toResolvedRecipe(air: ItemStack): ResolvedRecipe {
         ingredients = ingredients,
         permission = permission,
         source = RecipeSource.ECO,
-        // ShapedCraftingRecipe always pads to exactly 9 parts; parts.size alone can't tell
-        // a 9-ingredient shapeless recipe apart from a shaped one, so check the concrete type.
         shapeless = this !is ShapedCraftingRecipe
     )
 }

@@ -9,8 +9,6 @@ import com.willfp.eco.core.sound.PlayableSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-// Shared menu scaffolding used by both ItemCategoryGUI and CategoryCategoryGUI.
-
 internal fun Config.backSlot(menu: Menu, sound: PlayableSound?): Slot {
     return Slot.builder(
         ItemStackBuilder(Items.lookup(getString("buttons.back.item")))
