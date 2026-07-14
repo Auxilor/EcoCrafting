@@ -88,11 +88,15 @@ class StonecutterListener(
 
         val craftItem = item.clone().apply { this.amount = amount }
         event.isCancelled = true
-        consumeStonecutterSlot(inventory, amount)
-        meta.price.pay(player, amount.toDouble())
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
-        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, craftItem, amount, inventory.location?.block)
+        if (customEvent.isCancelled) {
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            return
+        }
+        consumeStonecutterSlot(inventory, amount)
+        meta.price.pay(player, amount.toDouble())
+        fireCraftEffects(player, recipe, meta, craftItem, amount, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 
