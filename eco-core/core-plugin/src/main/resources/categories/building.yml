@@ -1,0 +1,98 @@
+type: "items"
+
+icon:
+  item: painting name:"&6Building"
+  lore:
+    - ""
+    - "&7Decoration, doors, fences, and building blocks."
+    - ""
+    - "&bLeft Click &fto browse recipes"
+    - ""
+
+position:
+  column: 4
+  row: 2
+  page: 1
+
+items:
+  - item: "item_frame"
+    display-no-perm: false
+  - item: "glow_item_frame"
+    display-no-perm: false
+  - item: "painting"
+    display-no-perm: false
+  - item: "flower_pot"
+    display-no-perm: false
+  - item: "#minecraft:beds"
+    display-no-perm: false
+  - item: "#minecraft:banners"
+    display-no-perm: false
+  - item: "#minecraft:wooden_doors"
+    display-no-perm: false
+  - item: "#minecraft:wooden_trapdoors"
+    display-no-perm: false
+  - item: "#minecraft:wooden_fences"
+    display-no-perm: false
+  - item: "#minecraft:fence_gates"
+    display-no-perm: false
+  - item: "#minecraft:wooden_stairs"
+    display-no-perm: false
+  - item: "#minecraft:wooden_slabs"
+    display-no-perm: false
+  - item: "#minecraft:stairs"
+    display-no-perm: false
+  - item: "#minecraft:slabs"
+    display-no-perm: false
+  - item: "#minecraft:walls"
+    display-no-perm: false
+  - item: "#minecraft:candles"
+    display-no-perm: false
+  - item: "glass_pane"
+    display-no-perm: false
+  - item: "bricks"
+    display-no-perm: false
+  - item: "chiseled_bookshelf"
+    display-no-perm: false
+
+gui:
+  custom-slots: [ ]
+  title: "&8Building Recipes | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "111111111"
+  buttons:
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 4
+    slot:
+      lore:
+        - ""
+        - "&bLeft Click&f to see the recipe"
+        - ""

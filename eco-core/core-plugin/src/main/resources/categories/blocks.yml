@@ -1,0 +1,104 @@
+type: "items"
+
+icon:
+  item: bricks name:"&7Blocks"
+  lore:
+    - ""
+    - "&7Generic building blocks: wood, stone, wool, and more."
+    - ""
+    - "&bLeft Click &fto browse recipes"
+    - ""
+
+position:
+  column: 2
+  row: 2
+  page: 1
+
+items:
+  - item: "#minecraft:planks"
+    display-no-perm: false
+  - item: "#minecraft:stone_bricks"
+    display-no-perm: false
+  - item: "#minecraft:wool"
+    display-no-perm: false
+  - item: "#minecraft:wool_carpets"
+    display-no-perm: false
+  - item: "#minecraft:concrete_powder"
+    display-no-perm: false
+  - item: "#minecraft:terracotta"
+    display-no-perm: false
+  - item: "glass"
+    display-no-perm: false
+  - item: "glowstone"
+    display-no-perm: false
+  - item: "sea_lantern"
+    display-no-perm: false
+  - item: "quartz_block"
+    display-no-perm: false
+  - item: "quartz_pillar"
+    display-no-perm: false
+  - item: "purpur_block"
+    display-no-perm: false
+  - item: "purpur_pillar"
+    display-no-perm: false
+  - item: "prismarine"
+    display-no-perm: false
+  - item: "prismarine_bricks"
+    display-no-perm: false
+  - item: "dark_prismarine"
+    display-no-perm: false
+  - item: "nether_bricks"
+    display-no-perm: false
+  - item: "red_nether_bricks"
+    display-no-perm: false
+  - item: "end_stone_bricks"
+    display-no-perm: false
+  - item: "smooth_stone"
+    display-no-perm: false
+  - item: "packed_mud"
+    display-no-perm: false
+  - item: "mud_bricks"
+    display-no-perm: false
+
+gui:
+  custom-slots: [ ]
+  title: "&8Block Recipes | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "111111111"
+  buttons:
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 4
+    slot:
+      lore:
+        - ""
+        - "&bLeft Click&f to see the recipe"
+        - ""

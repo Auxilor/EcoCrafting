@@ -1,0 +1,82 @@
+type: "items"
+
+icon:
+  item: brewing_stand name:"&5Brewing"
+  lore:
+    - ""
+    - "&7Potions, brewing equipment, and alchemy ingredients."
+    - ""
+    - "&bLeft Click &fto browse recipes"
+    - ""
+
+position:
+  column: 3
+  row: 2
+  page: 1
+
+items:
+  - item: "brewing_stand"
+    display-no-perm: false
+  - item: "cauldron"
+    display-no-perm: false
+  - item: "glass_bottle"
+    display-no-perm: false
+  - item: "blaze_powder"
+    display-no-perm: false
+  - item: "fermented_spider_eye"
+    display-no-perm: false
+  - item: "glistering_melon_slice"
+    display-no-perm: false
+  - item: "golden_carrot"
+    display-no-perm: false
+  - item: "sugar"
+    display-no-perm: false
+  - item: "gunpowder"
+    display-no-perm: false
+  - item: "magma_cream"
+    display-no-perm: false
+  - item: "experience_bottle"
+    display-no-perm: false
+
+gui:
+  custom-slots: [ ]
+  title: "&8Brewing Recipes | Page &6%page%&8/&6%max_page%"
+  mask:
+    items:
+      - black_stained_glass_pane
+    pattern:
+      - "111111111"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "1iiiiiii1"
+      - "111111111"
+  buttons:
+    back:
+      row: 6
+      column: 5
+      item: barrier name:"&cBack"
+      lore: [ ]
+    next-page:
+      item:
+        active: orange_stained_glass_pane name:"&aNext page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 6
+    prev-page:
+      item:
+        active: orange_stained_glass_pane name:"&aPrevious page"
+        inactive: black_stained_glass_pane name:""
+      lore:
+        active: [ ]
+        inactive: [ ]
+      row: 6
+      column: 4
+    slot:
+      lore:
+        - ""
+        - "&bLeft Click&f to see the recipe"
+        - ""
