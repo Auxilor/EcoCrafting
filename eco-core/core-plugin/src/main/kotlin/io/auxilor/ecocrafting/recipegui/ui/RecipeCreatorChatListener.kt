@@ -29,5 +29,6 @@ class RecipeCreatorChatListener(
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         recipeCreatorGUI.awaitingInput.remove(event.player.uniqueId)
+        recipeCreatorGUI.pendingConfirm.remove(event.player.uniqueId)
     }
 }
