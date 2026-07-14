@@ -15,6 +15,7 @@ import io.auxilor.ecocrafting.recipe.model.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.model.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.model.RecipeSource
 import io.auxilor.ecocrafting.recipe.model.ResolvedRecipe
+import io.auxilor.ecocrafting.recipe.model.asDisplayAlternatives
 import org.bukkit.inventory.ItemStack
 
 // Maps every EcoCrafting-registered WorkstationRecipe subtype into the normalized
@@ -33,7 +34,7 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
                     RecipeIngredient(
                         displayItem = displays.getOrNull(index)?.clone() ?: air.clone(),
                         matcher = IngredientMatcher.EcoPart(testable),
-                        displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
+                        displayAlternatives = alternatives.asDisplayAlternatives()
                     )
                 }
             }
@@ -43,7 +44,7 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             listOf(RecipeIngredient(
                 displayItem = displayOrAir(inputDisplay),
                 matcher = IngredientMatcher.EcoPart(input),
-                displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
+                displayAlternatives = alternatives.asDisplayAlternatives()
             )) + List(8) { emptyIngredient() }
         }
         is SmithingRecipe -> {
@@ -52,11 +53,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val additionAlternatives = addition.allDisplayItems()
             listOf(
                 RecipeIngredient(displayOrAir(templateDisplay), IngredientMatcher.EcoPart(template),
-                    displayAlternatives = if (templateAlternatives.size > 1) templateAlternatives else emptyList()),
+                    displayAlternatives = templateAlternatives.asDisplayAlternatives()),
                 RecipeIngredient(displayOrAir(baseDisplay), IngredientMatcher.EcoPart(base),
-                    displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
+                    displayAlternatives = baseAlternatives.asDisplayAlternatives()),
                 RecipeIngredient(displayOrAir(additionDisplay), IngredientMatcher.EcoPart(addition),
-                    displayAlternatives = if (additionAlternatives.size > 1) additionAlternatives else emptyList())
+                    displayAlternatives = additionAlternatives.asDisplayAlternatives())
             ) + List(6) { emptyIngredient() }
         }
         is StonecuttingRecipe -> {
@@ -64,7 +65,7 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             listOf(RecipeIngredient(
                 displayItem = displayOrAir(inputDisplay),
                 matcher = IngredientMatcher.EcoPart(input),
-                displayAlternatives = if (alternatives.size > 1) alternatives else emptyList()
+                displayAlternatives = alternatives.asDisplayAlternatives()
             )) + List(8) { emptyIngredient() }
         }
         is BrewingRecipe -> {
@@ -72,9 +73,9 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val ingredientAlternatives = ingredient.allDisplayItems()
             listOf(
                 RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
-                    displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
+                    displayAlternatives = baseAlternatives.asDisplayAlternatives()),
                 RecipeIngredient(ingredient.item.clone(), IngredientMatcher.EcoPart(ingredient),
-                    displayAlternatives = if (ingredientAlternatives.size > 1) ingredientAlternatives else emptyList())
+                    displayAlternatives = ingredientAlternatives.asDisplayAlternatives())
             ) + List(7) { emptyIngredient() }
         }
         is GrindstoneRecipe -> {
@@ -82,11 +83,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val item1Alternatives = item1.allDisplayItems()
             listOfNotNull(
                 RecipeIngredient(item1.item.clone(), IngredientMatcher.EcoPart(item1),
-                    displayAlternatives = if (item1Alternatives.size > 1) item1Alternatives else emptyList()),
+                    displayAlternatives = item1Alternatives.asDisplayAlternatives()),
                 if (secondItem != null) {
                     val item2Alternatives = secondItem.allDisplayItems()
                     RecipeIngredient(secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem),
-                        displayAlternatives = if (item2Alternatives.size > 1) item2Alternatives else emptyList())
+                        displayAlternatives = item2Alternatives.asDisplayAlternatives())
                 } else null
             ) + List(7) { emptyIngredient() }
         }
@@ -95,11 +96,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val baseAlternatives = base.allDisplayItems()
             listOfNotNull(
                 RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
-                    displayAlternatives = if (baseAlternatives.size > 1) baseAlternatives else emptyList()),
+                    displayAlternatives = baseAlternatives.asDisplayAlternatives()),
                 if (materialItem != null) {
                     val materialAlternatives = materialItem.allDisplayItems()
                     RecipeIngredient(materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem),
-                        displayAlternatives = if (materialAlternatives.size > 1) materialAlternatives else emptyList())
+                        displayAlternatives = materialAlternatives.asDisplayAlternatives())
                 } else null
             ) + List(7) { emptyIngredient() }
         }
@@ -108,11 +109,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val input1Alternatives = input1.allDisplayItems()
             listOfNotNull(
                 RecipeIngredient(displayOrAir(input1Display), IngredientMatcher.EcoPart(input1),
-                    displayAlternatives = if (input1Alternatives.size > 1) input1Alternatives else emptyList()),
+                    displayAlternatives = input1Alternatives.asDisplayAlternatives()),
                 if (secondInput != null) {
                     val secondInputAlternatives = secondInput.allDisplayItems()
                     RecipeIngredient(displayOrAir(input2Display), IngredientMatcher.EcoPart(secondInput),
-                        displayAlternatives = if (secondInputAlternatives.size > 1) secondInputAlternatives else emptyList())
+                        displayAlternatives = secondInputAlternatives.asDisplayAlternatives())
                 } else null
             ) + List(7) { emptyIngredient() }
         }

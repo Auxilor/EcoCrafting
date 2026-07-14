@@ -11,6 +11,7 @@ import io.auxilor.ecocrafting.recipe.model.IngredientMatcher
 import io.auxilor.ecocrafting.recipe.model.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.model.RecipeSource
 import io.auxilor.ecocrafting.recipe.model.ResolvedRecipe
+import io.auxilor.ecocrafting.recipe.model.asDisplayAlternatives
 import java.lang.reflect.Field
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -55,7 +56,7 @@ internal fun CraftingRecipe.toResolvedRecipe(air: ItemStack): ResolvedRecipe {
             RecipeIngredient(
                 displayItem = displayItems.first(),
                 matcher = IngredientMatcher.EcoPart(part),
-                displayAlternatives = if (displayItems.size > 1) displayItems else emptyList()
+                displayAlternatives = displayItems.asDisplayAlternatives()
             )
         }
     }.normalizeToNine(air)

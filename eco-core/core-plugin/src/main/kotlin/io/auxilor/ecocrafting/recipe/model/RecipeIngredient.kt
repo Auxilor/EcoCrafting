@@ -58,6 +58,10 @@ sealed interface IngredientMatcher {
     }
 }
 
+// `displayAlternatives` is only meaningful when there's more than one item to show;
+// a single-item list is represented as empty so `allDisplayItems` falls back to `displayItem`.
+fun List<ItemStack>.asDisplayAlternatives(): List<ItemStack> = if (size > 1) this else emptyList()
+
 fun IngredientMatcher.toTestableItem(): TestableItem = when (this) {
     is IngredientMatcher.Empty        -> EmptyTestableItem()
     is IngredientMatcher.EcoPart      -> part

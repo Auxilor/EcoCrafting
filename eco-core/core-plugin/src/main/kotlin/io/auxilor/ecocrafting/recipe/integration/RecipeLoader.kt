@@ -21,6 +21,7 @@ import io.auxilor.ecocrafting.recipe.model.IngredientMatcher
 import io.auxilor.ecocrafting.recipe.model.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.model.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.model.RecipeSymmetry
+import io.auxilor.ecocrafting.recipe.model.asDisplayAlternatives
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
@@ -135,7 +136,7 @@ class RecipeLoader(
         return RecipeIngredient(
             displayItem = displayItems.first(),
             matcher = matcher,
-            displayAlternatives = if (displayItems.size > 1) displayItems else emptyList()
+            displayAlternatives = displayItems.asDisplayAlternatives()
         )
     }
 

@@ -5,6 +5,7 @@ import io.auxilor.ecocrafting.recipe.model.RecipeDisplayType
 import io.auxilor.ecocrafting.recipe.model.RecipeIngredient
 import io.auxilor.ecocrafting.recipe.model.RecipeSource
 import io.auxilor.ecocrafting.recipe.model.ResolvedRecipe
+import io.auxilor.ecocrafting.recipe.model.asDisplayAlternatives
 import org.bukkit.Bukkit
 import org.bukkit.inventory.BlastingRecipe
 import org.bukkit.inventory.CampfireRecipe
@@ -90,7 +91,7 @@ private fun RecipeChoice.toIngredient(air: ItemStack): RecipeIngredient {
     return RecipeIngredient(
         displayItem = display,
         matcher = matcher,
-        displayAlternatives = if (allItems.size > 1) allItems else emptyList()
+        displayAlternatives = allItems.asDisplayAlternatives()
     )
 }
 
