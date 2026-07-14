@@ -148,7 +148,9 @@ class ItemCategoryGUI(
     }
 
     private fun slot(player: Player, item: ItemStack, sound: PlayableSound?): Slot {
-        val resolved = guiServices.resolverService.resolveAll(item).firstOrNull()
+        // Cached single-recipe lookup for the slot's own lore/lock display - resolveAll's
+        // full alternatives list is only needed once the player actually opens the recipe.
+        val resolved = guiServices.resolverService.resolve(item)
             ?.withLockState(player, guiServices.recipeService, guiServices.unlockService)
         val meta = if (resolved?.source == RecipeSource.CUSTOM && resolved.key != null) {
             guiServices.recipeService.getMeta(resolved.key)
