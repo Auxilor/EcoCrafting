@@ -193,6 +193,8 @@ internal fun RecipeLoader.loadGrindstone(id: String, config: Config) {
     val item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) }
     val recipe = GrindstoneRecipe.builder(key(id), parseOutputItem(config), item1.matcher.toTestableItem())
         .item2(item2?.matcher?.toTestableItem())
+        .item1Display(item1.displayItem)
+        .item2Display(item2?.displayItem)
         .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.GRINDSTONE))
@@ -203,6 +205,8 @@ internal fun RecipeLoader.loadAnvil(id: String, config: Config) {
     val material = config.getStringOrNull("material")?.let { parseIngredient(it) }
     val recipe = AnvilRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem())
         .material(material?.matcher?.toTestableItem())
+        .baseDisplay(base.displayItem)
+        .materialDisplay(material?.displayItem)
         .resultName(config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() })
         .repairCost(config.getIntOrNull("repair-cost") ?: 1)
         .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }

@@ -82,11 +82,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val secondItem = item2
             val item1Alternatives = item1.allDisplayItems()
             listOfNotNull(
-                RecipeIngredient(item1.item.clone(), IngredientMatcher.EcoPart(item1),
+                RecipeIngredient(item1Display?.clone() ?: item1.item.clone(), IngredientMatcher.EcoPart(item1),
                     displayAlternatives = item1Alternatives.asDisplayAlternatives()),
                 if (secondItem != null) {
                     val item2Alternatives = secondItem.allDisplayItems()
-                    RecipeIngredient(secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem),
+                    RecipeIngredient(item2Display?.clone() ?: secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem),
                         displayAlternatives = item2Alternatives.asDisplayAlternatives())
                 } else null
             ) + List(7) { emptyIngredient() }
@@ -95,11 +95,11 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val materialItem = material
             val baseAlternatives = base.allDisplayItems()
             listOfNotNull(
-                RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
+                RecipeIngredient(baseDisplay?.clone() ?: base.item.clone(), IngredientMatcher.EcoPart(base),
                     displayAlternatives = baseAlternatives.asDisplayAlternatives()),
                 if (materialItem != null) {
                     val materialAlternatives = materialItem.allDisplayItems()
-                    RecipeIngredient(materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem),
+                    RecipeIngredient(materialDisplay?.clone() ?: materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem),
                         displayAlternatives = materialAlternatives.asDisplayAlternatives())
                 } else null
             ) + List(7) { emptyIngredient() }
