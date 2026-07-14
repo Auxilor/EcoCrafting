@@ -36,10 +36,12 @@ class SmeltingListener(
         val player = blockOwnerService.getActor(location)
 
         if (player == null) {
+            // No player to unlock/price-check against - deny any tracked recipe outright,
+            // regardless of give-result-item, rather than letting it complete unchecked.
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
                 .firstOrNull { recipe ->
                     recipe.smeltingType != SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
-                    (recipeService.getMeta(recipe.key)?.giveResultItem == false)
+                    recipeService.getMeta(recipe.key) != null
                 }
             if (noItemMatch != null) event.isCancelled = true
             return
@@ -85,10 +87,12 @@ class SmeltingListener(
         val player = blockOwnerService.getActor(location)
 
         if (player == null) {
+            // No player to unlock/price-check against - deny any tracked recipe outright,
+            // regardless of give-result-item, rather than letting it complete unchecked.
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
                 .firstOrNull { recipe ->
                     recipe.smeltingType == SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
-                    (recipeService.getMeta(recipe.key)?.giveResultItem == false)
+                    recipeService.getMeta(recipe.key) != null
                 }
             if (noItemMatch != null) event.isCancelled = true
             return
