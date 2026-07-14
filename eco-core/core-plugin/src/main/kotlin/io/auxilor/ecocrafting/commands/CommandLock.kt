@@ -17,7 +17,7 @@ class CommandLock(
     plugin,
     "lock",
     "ecocrafting.admin",
-    true
+    false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (args.size < 2) {
