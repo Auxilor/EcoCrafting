@@ -70,6 +70,7 @@ class RecipeLoader(
                 else -> error("Unknown recipe type: $type")
             }
         } catch (e: Exception) {
+            capEnforcer.release(type, id)
             plugin.logger.warning("Failed to load recipe $id: ${e.message}")
         }
     }

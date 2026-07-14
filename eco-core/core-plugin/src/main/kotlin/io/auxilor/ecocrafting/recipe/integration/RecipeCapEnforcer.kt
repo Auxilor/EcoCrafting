@@ -18,6 +18,10 @@ class RecipeCapEnforcer {
         return true
     }
 
+    fun release(type: String, id: String) {
+        registeredIdsByType[type]?.remove(id)
+    }
+
     fun clear() {
         registeredIdsByType.clear()
     }
