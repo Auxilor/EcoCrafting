@@ -3,11 +3,13 @@ package io.auxilor.ecocrafting.crafting.integration
 import com.willfp.eco.core.recipe.workstation.BrewingRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import io.auxilor.ecocrafting.EcoCraftingPlugin
+import io.auxilor.ecocrafting.crafting.event.CustomBrewEvent
 import io.auxilor.ecocrafting.crafting.service.BlockOwnerService
 import io.auxilor.ecocrafting.crafting.service.checkCraftingConditions
 import io.auxilor.ecocrafting.crafting.service.fireCraftEffects
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.BrewingStand
 import org.bukkit.event.EventHandler
@@ -59,13 +61,16 @@ class BrewingListener(
 
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
 
+        val item = recipe.output?.clone() ?: return
+        val customEvent = CustomBrewEvent(player, recipe, item, location, matchedSlots.size)
+        Bukkit.getPluginManager().callEvent(customEvent)
+        if (customEvent.isCancelled) return
+
         if (!meta.giveResultItem) {
             matchedSlots.forEach { brewer.setItem(it, null) }
         }
 
         meta.price.pay(player, matchedSlots.size.toDouble())
-
-        val item = recipe.output?.clone() ?: return
 
         val effectRecipePerSlot = plugin.configYml.getBool("brewing-stand.effect-recipes-per-slot")
         if (!meta.giveResultItem && effectRecipePerSlot) {
