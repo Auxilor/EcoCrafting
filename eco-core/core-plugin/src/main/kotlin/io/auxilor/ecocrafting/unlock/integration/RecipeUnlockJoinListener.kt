@@ -3,6 +3,8 @@ package io.auxilor.ecocrafting.unlock.integration
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
+import com.willfp.libreforge.triggers.TriggerData
+import io.auxilor.ecocrafting.libreforge.TriggerRecipeUnlocked
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.event.EventHandler
@@ -22,6 +24,10 @@ class RecipeUnlockJoinListener(
             if (!unlockService.isLocked(player, recipe.key, meta)) continue
             if (meta.unlockConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) {
                 unlockService.unlock(player, recipe.key, meta)
+                TriggerRecipeUnlocked.dispatch(
+                    player.toDispatcher(),
+                    TriggerData(player = player, text = recipe.key.toString())
+                )
             }
         }
     }
