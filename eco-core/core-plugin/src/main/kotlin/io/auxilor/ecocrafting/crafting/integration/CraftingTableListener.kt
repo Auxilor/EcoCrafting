@@ -79,7 +79,7 @@ class CraftingTableListener(
             return
         }
 
-        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
 
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
@@ -166,16 +166,4 @@ class CraftingTableListener(
         event.inventory.matrix = matrix
     }
 
-    private fun calculateCraftAmount(event: CraftItemEvent, ingredientBasedAmount: Int): Int {
-        return if (event.isShiftClick) {
-            val result = event.recipe.result
-            val player = event.whoClicked as Player
-            val spaceBased = spaceBasedAmount(player, result)
-            val amount = minOf(spaceBased, ingredientBasedAmount).coerceAtLeast(1)
-            if (ingredientBasedAmount < spaceBased) {
-                plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -> $amount")
-            }
-            amount
-        } else 1
-    }
 }

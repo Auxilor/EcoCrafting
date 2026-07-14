@@ -46,7 +46,7 @@ class StonecutterListener(
 
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
 
-        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(event, maxCraftsFromInput(event.view.topInventory.getItem(0)))).coerceAtLeast(1)
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromInput(event.view.topInventory.getItem(0)))).coerceAtLeast(1)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
@@ -104,16 +104,4 @@ class StonecutterListener(
         consume(inventory, 0, amount)
     }
 
-    private fun calculateCraftAmount(event: CraftItemEvent, ingredientBasedAmount: Int): Int {
-        return if (event.isShiftClick) {
-            val result = event.recipe.result
-            val player = event.whoClicked as Player
-            val spaceBased = spaceBasedAmount(player, result)
-            val amount = minOf(spaceBased, ingredientBasedAmount).coerceAtLeast(1)
-            if (ingredientBasedAmount < spaceBased) {
-                plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -> $amount")
-            }
-            amount
-        } else 1
-    }
 }

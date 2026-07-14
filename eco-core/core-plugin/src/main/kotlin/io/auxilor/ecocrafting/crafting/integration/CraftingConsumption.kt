@@ -1,6 +1,8 @@
 package io.auxilor.ecocrafting.crafting.integration
 
+import io.auxilor.ecocrafting.EcoCraftingPlugin
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
@@ -21,6 +23,19 @@ internal fun consume(inventory: Inventory, slot: Int, amount: Int = 1) {
     val remaining = stack.amount - amount
     if (remaining <= 0) inventory.setItem(slot, null)
     else { stack.amount = remaining; inventory.setItem(slot, stack) }
+}
+
+internal fun calculateCraftAmount(plugin: EcoCraftingPlugin, event: CraftItemEvent, ingredientBasedAmount: Int): Int {
+    return if (event.isShiftClick) {
+        val result = event.recipe.result
+        val player = event.whoClicked as Player
+        val spaceBased = spaceBasedAmount(player, result)
+        val amount = minOf(spaceBased, ingredientBasedAmount).coerceAtLeast(1)
+        if (ingredientBasedAmount < spaceBased) {
+            plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -> $amount")
+        }
+        amount
+    } else 1
 }
 
 internal fun spaceBasedAmount(player: Player, result: ItemStack): Int {
