@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
@@ -123,15 +122,6 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
     fun onPlace(event: BlockPlaceEvent) {
         if (event.block.type !in TRACKED_MATERIALS) return
         setOwner(event.block, event.player)
-    }
-
-    @EventHandler
-    fun onOpen(event: InventoryOpenEvent) {
-        if (event.inventory.type !in TRACKED_INVENTORY_TYPES) return
-        val location = event.inventory.location ?: return
-        val block = location.block
-        if (hasOwner(block)) return
-        setOwner(block, event.player as? Player ?: return)
     }
 
     @EventHandler
