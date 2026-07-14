@@ -32,6 +32,9 @@ import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
 // shared parse*/register* helpers these call into) purely to keep each file under the
 // project's file-size convention - there is no independent state here.
 
+private fun Config.permissionOrNull(): String? =
+    getStringOrNull("permission")?.takeIf { it.isNotBlank() }
+
 @Suppress("UNCHECKED_CAST")
 private fun RecipeLoader.crafterParts(ingredients: List<RecipeIngredient>) =
     ingredients.map { if (it.matcher == IngredientMatcher.AnyItem) null else it.matcher.toTestableItem() }
@@ -49,7 +52,7 @@ internal fun RecipeLoader.loadCraftingTable(id: String, config: Config) {
     val output = parseOutputItem(config)
     val shapeless = config.getBool("shapeless")
     val symmetry = config.getBool("symmetry")
-    val permission = config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }
+    val permission = config.permissionOrNull()
     val meta = parseMeta(id, config, RecipeDisplayType.CRAFTING)
     val baseKey = key(id)
 
@@ -108,7 +111,7 @@ internal fun RecipeLoader.loadSmelting(id: String, config: Config, type: WSmelti
         .inputDisplay(ingredient.displayItem)
         .cookTime(if (config.has("cook-time")) config.getInt("cook-time") else -1)
         .experience(config.getStringOrNull("experience")?.toFloatOrNull() ?: 0f)
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     val displayType = when (type) {
         WSmeltingType.FURNACE       -> RecipeDisplayType.SMELTING
@@ -127,7 +130,7 @@ internal fun RecipeLoader.loadSmithing(id: String, config: Config) {
         .template(template.matcher.toTestableItem(), template.displayItem)
         .base(base.matcher.toTestableItem(), base.displayItem)
         .addition(addition.matcher.toTestableItem(), addition.displayItem)
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.SMITHING))
 }
@@ -154,7 +157,7 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
         }
         val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
             .inputDisplay(input.displayItem)
-            .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+            .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
             .build()
         val giveResultItem = if (outputConfig.has("give-result-item")) outputConfig.getBool("give-result-item") else true
         val effectsChain = Effects.compileChain(outputConfig.getSubsections("effects"), ctx.with("effects-$index"))
@@ -180,7 +183,7 @@ internal fun RecipeLoader.loadBrewing(id: String, config: Config) {
     val ingredient = parseIngredient(config.getString("ingredient"))
     val recipe = BrewingRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem(), ingredient.matcher.toTestableItem())
         .brewTime(config.getIntOrNull("brew-time") ?: 400)
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.BREWING))
 }
@@ -190,7 +193,7 @@ internal fun RecipeLoader.loadGrindstone(id: String, config: Config) {
     val item2 = config.getStringOrNull("item2")?.let { parseIngredient(it) }
     val recipe = GrindstoneRecipe.builder(key(id), parseOutputItem(config), item1.matcher.toTestableItem())
         .item2(item2?.matcher?.toTestableItem())
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.GRINDSTONE))
 }
@@ -202,7 +205,7 @@ internal fun RecipeLoader.loadAnvil(id: String, config: Config) {
         .material(material?.matcher?.toTestableItem())
         .resultName(config.getStringOrNull("result-name")?.takeIf { it.isNotBlank() })
         .repairCost(config.getIntOrNull("repair-cost") ?: 1)
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.ANVIL))
 }
@@ -221,7 +224,7 @@ internal fun RecipeLoader.loadVillager(id: String, config: Config) {
         .chance((config.getStringOrNull("chance")?.toDoubleOrNull() ?: 1.0).coerceIn(0.0, 1.0))
         .wanderingTrader(config.getBool("wandering-trader"))
         .villagerXp(config.getIntOrNull("villager-xp") ?: 0)
-        .also { builder -> config.getStringOrNull("permission")?.takeIf { it.isNotBlank() }?.let { builder.permission(it) } }
+        .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.VILLAGER))
 }
