@@ -62,6 +62,26 @@ class RecipeServiceTest {
     }
 
     @Test
+    fun `resolveBaseKey strips eco suffixes and maps variants back to base`() {
+        val base = NamespacedKey("ecocrafting", "example")
+        val variant = NamespacedKey("ecocrafting", "example_rot90")
+        service.registerVariant(variant, base)
+
+        // A plain base key resolves to itself.
+        assertEquals(base, service.resolveBaseKey(base))
+        // eco `_displayed` / `_crafter` ghosts of the base resolve to the base.
+        assertEquals(base, service.resolveBaseKey(NamespacedKey("ecocrafting", "example_displayed")))
+        assertEquals(base, service.resolveBaseKey(NamespacedKey("ecocrafting", "example_crafter")))
+        // A symmetry variant - bare or with an eco suffix stacked on top - resolves to the base.
+        assertEquals(base, service.resolveBaseKey(variant))
+        assertEquals(base, service.resolveBaseKey(NamespacedKey("ecocrafting", "example_rot90_displayed")))
+        assertEquals(base, service.resolveBaseKey(NamespacedKey("ecocrafting", "example_rot90_crafter")))
+        // An unrelated (vanilla/other-plugin) recipe key is left untouched.
+        val vanilla = NamespacedKey("minecraft", "diamond_sword")
+        assertEquals(vanilla, service.resolveBaseKey(vanilla))
+    }
+
+    @Test
     fun `clear wipes both metadata and variant mappings`() {
         val base = NamespacedKey("ecocrafting", "example")
         val variant = NamespacedKey("ecocrafting", "example_rot90")

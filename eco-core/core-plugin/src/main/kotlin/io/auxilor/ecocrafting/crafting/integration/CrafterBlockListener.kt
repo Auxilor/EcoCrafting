@@ -8,7 +8,6 @@ import io.auxilor.ecocrafting.crafting.service.checkCraftingConditions
 import io.auxilor.ecocrafting.crafting.service.fireCraftEffects
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
-import org.bukkit.NamespacedKey
 import org.bukkit.block.Crafter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -25,9 +24,10 @@ class CrafterBlockListener(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onCrafterCraft(event: CrafterCraftEvent) {
         val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
-        val baseKey = if (recipeKey.namespace == "ecocrafting" && recipeKey.key.endsWith("_crafter"))
-            NamespacedKey("ecocrafting", recipeKey.key.removeSuffix("_crafter"))
-        else recipeKey
+        // Normalize the fired key (`_crafter` suffix and/or a symmetry-variant `<id>_rot90`)
+        // to the base recipe, so a rotated placement in a crafter block still resolves and
+        // gets its lock/price/condition checks.
+        val baseKey = recipeService.resolveBaseKey(recipeKey)
 
         val recipe = WorkstationRecipes.getByKey(baseKey) as? CrafterRecipe ?: return
         val meta = recipeService.getMeta(baseKey) ?: return
@@ -40,9 +40,9 @@ class CrafterBlockListener(
         if (!meta.giveResultItem) {
             event.isCancelled = true
             val crafterInventory = (event.block.state as? Crafter)?.inventory ?: return
-            for (slot in 0 until 9) consume(crafterInventory, slot)
             val player = blockOwnerService.getOwner(event.block.location) ?: return
             if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
+            for (slot in 0 until 9) consume(crafterInventory, slot)
             meta.price.pay(player, 1.0)
             val item = recipe.output?.clone() ?: return
             fireCraftEffects(player, recipe, meta, item, 1, event.block)

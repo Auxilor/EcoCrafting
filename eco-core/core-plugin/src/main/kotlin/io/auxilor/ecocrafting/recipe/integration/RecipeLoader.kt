@@ -170,8 +170,8 @@ class RecipeLoader(
 
     internal fun generateSymmetryVariants(parts: List<RecipeIngredient>): List<Pair<String, List<RecipeIngredient>>> {
         val variants = mutableListOf<Pair<String, List<RecipeIngredient>>>()
-        val seen = mutableSetOf<List<Int>>()
-        fun fingerprint(ingredients: List<RecipeIngredient>) = ingredients.indices.filter { !ingredients[it].empty }
+        val seen = mutableSetOf<List<RecipeIngredient?>>()
+        fun fingerprint(ingredients: List<RecipeIngredient>) = ingredients.map { if (it.empty) null else it }
         fun addVariant(suffix: String, remap: IntArray) {
             val remapped = remap.map { parts[it] }
             val signature = fingerprint(remapped)

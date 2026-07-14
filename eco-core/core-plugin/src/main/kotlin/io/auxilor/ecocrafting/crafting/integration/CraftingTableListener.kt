@@ -52,10 +52,17 @@ class CraftingTableListener(
         val player = event.whoClicked as? Player ?: return
         val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
 
-        val baseKey = recipeService.baseKeyForVariant(recipeKey)
-        val directMatch = WorkstationRecipes.getByKey(baseKey) as? CrafterRecipe
-        // Fall back to matrix match when vanilla recipe fires first (same shape/material)
-        val recipe = directMatch ?: findCraftingTableRecipe(event.inventory.matrix) ?: return
+        val directMatch = WorkstationRecipes.getByKey(recipeService.baseKeyForVariant(recipeKey)) as? CrafterRecipe
+        // Fall back to matrix match when a vanilla recipe fires first (same shape/material),
+        // then to the fully-normalized base key - this last step catches a rotated symmetry
+        // variant fired under its `_displayed`/`_crafter` key, whose rotated matrix won't
+        // match the base orientation above. It routes through the manual-takeover path
+        // (needsTakeover stays true) just like the base recipe, so it can't skip the
+        // lock/price/condition checks below.
+        val recipe = directMatch
+            ?: findCraftingTableRecipe(event.inventory.matrix)
+            ?: (WorkstationRecipes.getByKey(recipeService.resolveBaseKey(recipeKey)) as? CrafterRecipe)
+            ?: return
         val needsTakeover = directMatch == null
         val meta = recipeService.getMeta(recipe.key) ?: return
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) {

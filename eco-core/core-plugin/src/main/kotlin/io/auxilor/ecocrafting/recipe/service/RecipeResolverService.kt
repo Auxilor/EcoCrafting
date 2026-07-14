@@ -10,7 +10,6 @@ import io.auxilor.ecocrafting.recipe.model.RecipeSymmetry
 import io.auxilor.ecocrafting.recipe.model.ResolvedRecipe
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -25,7 +24,6 @@ class RecipeResolverService(
 ) {
     private val air = ItemStack(Material.AIR)
     private val resolveCache = HashMap<Any, ResolvedRecipe?>()
-    private val ecoKeySuffixes = listOf("_displayed", "_crafter")
 
     private val symmetryTransforms = listOf(
         intArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8),
@@ -133,14 +131,13 @@ class RecipeResolverService(
         val strict = plugin.configYml.getBool("strict-item-matching")
         findAllBukkitRecipes(clean, air, strict).forEach { bukkit ->
             val bukkitKey = bukkit.key
-            // Eco registers extra Bukkit-only recipes under <key>_displayed (vanilla grid
-            // display with grouped-ingredient lore) and <key>_crafter (Crafter block support).
-            // These are ghosts of an existing entry, not distinct recipes - skip them.
-            val isKnownVariant = bukkitKey != null && ecoKeySuffixes.any { suffix ->
-                bukkitKey.key.endsWith(suffix) &&
-                    results.any { it.key == NamespacedKey(bukkitKey.namespace, bukkitKey.key.removeSuffix(suffix)) }
-            }
-            if (!isKnownVariant && results.none { it.key == bukkitKey }) results += bukkit
+            // Collapse eco `_displayed`/`_crafter` ghosts and symmetry variants
+            // (`<id>_rot90`, `<id>_rot90_displayed`, ...) onto the base recipe. The base is
+            // already present as the CUSTOM entry, so only add a bukkit recipe that IS its
+            // own base - i.e. a plain vanilla / other-plugin recipe.
+            val base = bukkitKey?.let(recipeService::resolveBaseKey)
+            val isVariantOrGhost = base != null && base != bukkitKey
+            if (!isVariantOrGhost && results.none { it.key == bukkitKey }) results += bukkit
         }
 
         val sorted = results.sortedBy { it.displayType.name }

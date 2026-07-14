@@ -254,6 +254,12 @@ wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
 ```
 
+:::warning Villager XP display with give-result-item: false
+When a villager trade uses `give-result-item: false` and the player does not meet the crafting conditions, the trade is correctly blocked and the villager keeps no XP on the server. The trade screen may still flash the villager gaining XP for a moment, and it resets when the screen is closed.
+
+This is a client-side display quirk only. Minecraft predicts the XP bar as soon as the trade looks valid, and the merchant screen does not refresh until it is reopened. The server never awards the XP and no reward is given. Trades that use `give-result-item: true` are not affected.
+:::
+
 <hr/>
 
 ## Where to go next

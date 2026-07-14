@@ -45,9 +45,13 @@ fun checkCraftingConditions(
         return false
     }
     val dispatcher = player.toDispatcher()
-    val notMet = meta.craftingConditions.getNotMetLines(dispatcher, EmptyProvidedHolder)
-    if (notMet.isNotEmpty()) {
-        notMet.forEach { player.sendMessage(it) }
+    if (!meta.craftingConditions.areMet(dispatcher, EmptyProvidedHolder)) {
+        val notMet = meta.craftingConditions.getNotMetLines(dispatcher, EmptyProvidedHolder)
+        if (notMet.isNotEmpty()) {
+            notMet.forEach { player.sendMessage(it) }
+        } else {
+            player.sendMessage(plugin.langYml.getFormattedString("messages.craft-conditions-not-met"))
+        }
         return false
     }
     return true
