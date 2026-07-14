@@ -4,7 +4,6 @@ import com.willfp.eco.core.data.keys.PersistentDataKey
 import com.willfp.eco.core.data.keys.PersistentDataKeyType
 import io.auxilor.ecocrafting.EcoCraftingPlugin
 
-// Single home for every player-profile PersistentDataKey the plugin creates.
 class PlayerDataKeys(plugin: EcoCraftingPlugin) {
     val unlockedRecipes = PersistentDataKey(
         plugin.namespacedKeyFactory.create("unlocked_recipes"),

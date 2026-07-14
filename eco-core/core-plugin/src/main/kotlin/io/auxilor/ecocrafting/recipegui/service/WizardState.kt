@@ -8,7 +8,6 @@ import io.auxilor.ecocrafting.recipe.model.ResolvedRecipe
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-// Mutable in-progress state for one player's recipe-creation wizard session.
 class WizardState(
     val typeKey: String,
     val parts: Map<Int, ItemStack>,

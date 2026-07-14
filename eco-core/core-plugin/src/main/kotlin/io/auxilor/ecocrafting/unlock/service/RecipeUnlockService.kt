@@ -14,8 +14,8 @@ class RecipeUnlockService(
     private val recipeService: RecipeService
 ) : UnlockManager {
     // Full "namespace:key" string, so two plugins registering the same local id under
-    // different namespaces don't collide in stored unlock state. `key.key in set` also
-    // matches on the bare local id for data written before this fix.
+    // different namespaces don't collide; `key.key in set` also matches bare-local-id
+    // data from older writes.
     private fun matches(stored: List<String>, key: NamespacedKey): Boolean =
         key.toString() in stored || key.key in stored
 

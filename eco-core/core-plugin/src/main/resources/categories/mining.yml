@@ -10,8 +10,8 @@ icon:
     - ""
 
 position:
-  column: 4
-  row: 3
+  column: 7
+  row: 2
   page: 1
 
 items:
@@ -56,6 +56,32 @@ items:
   - item: "blast_furnace"
     display-no-perm: false
   - item: "stonecutter"
+    display-no-perm: false
+  - item: "torch"
+    display-no-perm: false
+  - item: "lantern"
+    display-no-perm: false
+  - item: "soul_lantern"
+    display-no-perm: false
+  - item: "spyglass"
+    display-no-perm: false
+  - item: "compass"
+    display-no-perm: false
+  - item: "clock"
+    display-no-perm: false
+  - item: "lightning_rod"
+    display-no-perm: false
+  - item: "raw_iron_block"
+    display-no-perm: false
+  - item: "raw_copper_block"
+    display-no-perm: false
+  - item: "raw_gold_block"
+    display-no-perm: false
+  - item: "netherite_block"
+    display-no-perm: false
+  - item: "grindstone"
+    display-no-perm: false
+  - item: "smithing_table"
     display-no-perm: false
 
 gui:

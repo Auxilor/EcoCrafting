@@ -103,7 +103,6 @@ class RecipeLoader(
             }
     }
 
-    // Helpers
     internal fun key(id: String) = NamespacedKey("ecocrafting", id.lowercase())
 
     internal fun parseOutputItem(config: Config): ItemStack {
@@ -129,13 +128,9 @@ class RecipeLoader(
             testable.children.map { it.item.clone() }
         else
             listOf(testable.item.clone())
-        val matcher = if (testable is GroupedTestableItems && testable.children.isNotEmpty())
-            IngredientMatcher.EcoPart(testable)
-        else
-            IngredientMatcher.SimilarItem(displayItems.first())
         return RecipeIngredient(
             displayItem = displayItems.first(),
-            matcher = matcher,
+            matcher = IngredientMatcher.EcoPart(testable),
             displayAlternatives = displayItems.asDisplayAlternatives()
         )
     }

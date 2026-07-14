@@ -5,7 +5,6 @@ import io.auxilor.ecocrafting.api.recipe.RecipesManager
 import io.auxilor.ecocrafting.recipe.model.EcoCraftingMeta
 import org.bukkit.NamespacedKey
 
-// Registry of custom-recipe metadata, keyed by the recipe's NamespacedKey.
 class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     private val meta = mutableMapOf<NamespacedKey, EcoCraftingMeta>()
     private val variantToBase = mutableMapOf<NamespacedKey, NamespacedKey>()
@@ -26,12 +25,10 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
 
     override fun isCustomRecipe(key: NamespacedKey): Boolean = getMeta(key) != null
 
-    // Records that [variantKey] is a generated symmetry variant of [baseKey].
     fun registerVariant(variantKey: NamespacedKey, baseKey: NamespacedKey) {
         variantToBase[variantKey] = baseKey
     }
 
-    // Returns the base recipe key for a tracked symmetry-variant key, or [key] unchanged.
     override fun baseKeyForVariant(key: NamespacedKey): NamespacedKey = variantToBase[key] ?: key
 
     // Normalizes ANY eco-generated crafting-recipe key to its base recipe key: strips the

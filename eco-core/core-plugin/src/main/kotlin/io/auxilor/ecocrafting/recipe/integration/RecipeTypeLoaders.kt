@@ -82,9 +82,8 @@ internal fun RecipeLoader.loadCraftingTable(id: String, config: Config) {
         }
     }
 
-    // Register via eco's shaped/shapeless recipe system for crafting table.
-    // Eco now handles the <key>_crafter Bukkit registration when
-    // setSupportCrafter(true) is set on the builder.
+    // Eco handles the <key>_crafter Bukkit registration when setSupportCrafter(true)
+    // is set on the builder.
     registerEcoVariant(baseKey, ingredients)
     if (symmetry && !shapeless) {
         generateSymmetryVariants(ingredients).forEach { (suffix, variantParts) ->

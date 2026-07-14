@@ -24,9 +24,7 @@ class RecipeResolverService(
 ) {
     private val air = ItemStack(Material.AIR)
 
-    // Bounded LRU: keyed by (Material, ItemMeta.hashCode()) for non-custom items, so distinct
-    // NBT/meta variants (potions, renamed items, written books, ...) don't share an entry, but
-    // the cache can't grow unbounded over a long-running server.
+    // Bounded LRU so the cache can't grow unbounded over a long-running server.
     private val resolveCache = object : LinkedHashMap<Any, ResolvedRecipe?>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Any, ResolvedRecipe?>): Boolean =
             size > 2000

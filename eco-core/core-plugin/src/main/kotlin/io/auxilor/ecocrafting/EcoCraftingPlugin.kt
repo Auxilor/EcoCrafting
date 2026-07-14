@@ -54,23 +54,19 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.ServicePriority
 
 class EcoCraftingPlugin : LibreforgePlugin() {
-    // core kernel
     private val dataKeys = PlayerDataKeys(this)
 
-    // recipe slice
     private val recipeService = RecipeService(this)
     private val resolverService = RecipeResolverService(this, recipeService)
     private val recipeCapEnforcer = RecipeCapEnforcer()
     private val vanillaRecipeScanner = VanillaRecipeScanner()
 
-    // category slice
     private val categoryLoader = CategoryLoader(resolverService, vanillaRecipeScanner)
     private val categoryService = CategoryService(this, categoryLoader, resolverService)
     private val categoriesManager = CategoriesManagerImpl(categoryLoader)
 
     private val recipeLoader = RecipeLoader(this, recipeService, recipeCapEnforcer, categoryLoader)
 
-    // unlock slice
     private val unlockService = RecipeUnlockService(dataKeys, recipeService)
     private val unlockJoinListener = RecipeUnlockJoinListener(recipeService, unlockService)
 
@@ -84,15 +80,12 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private val brewingListener = BrewingListener(this, recipeService, unlockService, blockOwnerService)
     private val workbenchListener = WorkbenchListener(this, recipeService, unlockService)
 
-    // shop integration
     private val shopIntegrationService = ShopIntegrationService(this)
 
-    // recipe-gui slice
     private val guiServices = RecipeGuiServices(this, recipeService, resolverService, unlockService, shopIntegrationService)
     private val recipeCreatorGUI = RecipeCreatorGUI(this, guiServices)
     private val recipeCreatorChatListener = RecipeCreatorChatListener(this, recipeCreatorGUI)
 
-    // public API
     private val apiImpl = EcoCraftingApiImpl(categoriesManager, recipeService, unlockService)
 
     override fun handleEnable() {

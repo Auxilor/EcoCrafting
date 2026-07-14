@@ -33,7 +33,6 @@ give-result-item: true # false = no item given; triggers libreforge effects inst
 #   - id: give_xp
 #     args:
 #       xp: 100
-# conditions: [ ]
 
 permission: "" # optional - permission required to craft this recipe, checked before conditions. If not met, the recipe is hidden from the GUI and crafting is blocked.
 

@@ -62,7 +62,6 @@ class StonecutterListener(
         plugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
     }
 
-    // Stonecutter effect-recipe result-click
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onStonecutterResultClick(event: InventoryClickEvent) {
         if (event.inventory.type != InventoryType.STONECUTTER) return

@@ -4,13 +4,13 @@ icon:
   item: crafting_table name:"&eUtility"
   lore:
     - ""
-    - "&7Workstations, storage, movement, and redstone basics."
+    - "&7Workstations, storage, and movement."
     - ""
     - "&bLeft Click &fto browse recipes"
     - ""
 
 position:
-  column: 8
+  column: 2
   row: 3
   page: 1
 
@@ -21,23 +21,33 @@ items:
     display-no-perm: false
   - item: "barrel"
     display-no-perm: false
-  - item: "hopper"
-    display-no-perm: false
-  - item: "piston"
-    display-no-perm: false
-  - item: "sticky_piston"
-    display-no-perm: false
-  - item: "observer"
-    display-no-perm: false
-  - item: "dispenser"
-    display-no-perm: false
-  - item: "dropper"
-    display-no-perm: false
   - item: "rail"
     display-no-perm: false
   - item: "powered_rail"
     display-no-perm: false
   - item: "boat"
+    display-no-perm: false
+  - item: "minecart"
+    display-no-perm: false
+  - item: "detector_rail"
+    display-no-perm: false
+  - item: "activator_rail"
+    display-no-perm: false
+  - item: "jukebox"
+    display-no-perm: false
+  - item: "bookshelf"
+    display-no-perm: false
+  - item: "lectern"
+    display-no-perm: false
+  - item: "cartography_table"
+    display-no-perm: false
+  - item: "fletching_table"
+    display-no-perm: false
+  - item: "loom"
+    display-no-perm: false
+  - item: "ladder"
+    display-no-perm: false
+  - item: "scaffolding"
     display-no-perm: false
 
 gui:

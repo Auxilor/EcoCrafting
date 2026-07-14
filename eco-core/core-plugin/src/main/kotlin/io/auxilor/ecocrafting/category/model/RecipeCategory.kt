@@ -37,6 +37,10 @@ class RecipeCategory(
     }
 
     fun registerCustomRecipe(item: ItemStack) {
+        // Same output item can come from multiple recipes each with their own `category:`;
+        // dedupe here so it gets one slot, not one per recipe - the GUI already groups
+        // same-output recipes into methods once opened.
+        if (runtimeItems.any { it == item }) return
         runtimeItems += item
     }
 

@@ -19,6 +19,12 @@ show-items-without-recipes: false
 # Useful when renamed items should not show vanilla recipes
 strict-item-matching: true
 
+# When true, eco registers a second copy of every shaped/shapeless recipe using the full
+# ingredient ItemStacks (custom textures/model data/lore) instead of bare Material, and
+# steers the recipe book to that copy. Without this, the recipe book falls back to
+# Material-only matching, so custom-textured ingredients show their vanilla texture there.
+displayed-recipes: true
+
 # ItemFlags applied to every display item in EcoCrafting GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
 #               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
@@ -176,7 +182,6 @@ category-browser-gui:
       - "111111111"
       - "100000001"
       - "100000001"
-      - "100000001"
       - "111111111"
   buttons:
     next-page:
@@ -186,7 +191,7 @@ category-browser-gui:
       lore:
         active: [ ]
         inactive: [ ]
-      row: 5
+      row: 4
       column: 6
     prev-page:
       item:
@@ -195,12 +200,12 @@ category-browser-gui:
       lore:
         active: [ ]
         inactive: [ ]
-      row: 5
+      row: 4
       column: 4
     close:
       item: barrier name:"&cClose"
       lore: [ ]
-      row: 5
+      row: 4
       column: 5
 
 # EcoShop Integration

@@ -7,12 +7,17 @@ import org.bukkit.entity.Player
 
 fun MaterialCount.toLoreLine(player: Player, services: RecipeGuiServices): String {
     val plugin = services.plugin
-    val itemName = if (item.hasItemMeta() && item.itemMeta.hasDisplayName()) {
-        item.itemMeta.displayName()
-            ?.let { LegacyComponentSerializer.legacySection().serialize(it) }
-            ?: item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
-    } else {
-        item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
+    val meta = item.itemMeta
+    val fallbackName = item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
+    val itemName = when {
+        // Custom-item plugins (Nexo etc.) commonly set the item_name component rather than
+        // the legacy display-name NBT, so check it first or their names fall back to the
+        // base material here.
+        meta != null && meta.hasItemName() ->
+            LegacyComponentSerializer.legacySection().serialize(meta.itemName())
+        meta != null && meta.hasDisplayName() ->
+            meta.displayName()?.let { LegacyComponentSerializer.legacySection().serialize(it) } ?: fallbackName
+        else -> fallbackName
     }
     val langKey = if (has >= needs) "messages.material-sufficient" else "messages.material-missing"
     var line = plugin.langYml.getString(langKey)

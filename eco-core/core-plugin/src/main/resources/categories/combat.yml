@@ -10,8 +10,8 @@ icon:
     - ""
 
 position:
-  column: 6
-  row: 3
+  column: 5
+  row: 2
   page: 1
 
 items:
@@ -33,9 +33,19 @@ items:
     display-no-perm: false
   - item: "shield"
     display-no-perm: false
-  - item: "trident"
-    display-no-perm: false
   - item: "mace"
+    display-no-perm: false
+  - item: "totem_of_undying"
+    display-no-perm: false
+  - item: "elytra"
+    display-no-perm: false
+  - item: "target"
+    display-no-perm: false
+  - item: "tnt"
+    display-no-perm: false
+  - item: "wolf_armor"
+    display-no-perm: false
+  - item: "#minecraft:tridents"
     display-no-perm: false
 
 gui:

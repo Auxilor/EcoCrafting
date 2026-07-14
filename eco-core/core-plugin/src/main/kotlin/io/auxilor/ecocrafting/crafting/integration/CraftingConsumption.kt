@@ -6,9 +6,6 @@ import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-// Grid/slot consumption + amount-calculation helpers shared across the per-workstation
-// crafting listeners.
-
 internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
     val present = matrix.filter { it != null && !it.type.isAir }
     if (present.isEmpty()) return Int.MAX_VALUE

@@ -15,9 +15,7 @@ import io.auxilor.ecocrafting.recipe.model.requiredAmount
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
-import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.Player
-import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -75,7 +73,6 @@ class WorkbenchListener(
         event.inventory.repairCostAmount = recipe.material?.requiredAmount() ?: 1
     }
 
-    // InventoryClickEvent for grindstone / anvil / villager
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
@@ -133,28 +130,46 @@ class WorkbenchListener(
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) { event.isCancelled = true; return }
 
-        val selfHandle = workstationRecipe is GrindstoneRecipe || workstationRecipe is AnvilRecipe || !meta.giveResultItem
-        if (selfHandle) {
-            event.isCancelled = true
-            consumeWorkbenchInputs(inventory, workstationRecipe, amount)
-            meta.price.pay(player, amount.toDouble())
-            if (inventory.type == InventoryType.MERCHANT) {
-                awardVillagerTrade(inventory as MerchantInventory, workstationRecipe as? VillagerRecipe)
+        when (workstationRecipe) {
+            is GrindstoneRecipe, is AnvilRecipe -> {
+                event.isCancelled = true
+                consumeWorkbenchInputs(inventory, workstationRecipe, amount)
+                meta.price.pay(player, amount.toDouble())
+                if (meta.giveResultItem) {
+                    val preferCursor = workstationRecipe is AnvilRecipe && !event.isShiftClick
+                    giveOrDropItem(player, item.clone(), preferCursor)
+                }
             }
-            if (meta.giveResultItem) {
-                val preferCursor = workstationRecipe is AnvilRecipe && !event.isShiftClick
-                giveOrDropItem(player, item.clone(), preferCursor)
+            is VillagerRecipe -> {
+                // Eco already registers the real MerchantRecipe, so leave the click un-cancelled
+                // and let vanilla own consume/uses/xp/give - cancelling would double-credit the
+                // trade (uses/xp still advance, forcing a second click). Only charge the extra
+                // price here; claw back the item next tick if it shouldn't have been given.
+                meta.price.pay(player, amount.toDouble())
+                if (!meta.giveResultItem) {
+                    val taken = item.clone()
+                    plugin.server.scheduler.runTask(plugin, Runnable {
+                        if (player.itemOnCursor.isSimilar(taken)) {
+                            player.setItemOnCursor(null)
+                        } else {
+                            player.inventory.removeItem(taken)
+                        }
+                    })
+                }
             }
-        } else {
-            meta.price.pay(player, amount.toDouble())
+            else -> {
+                meta.price.pay(player, amount.toDouble())
+            }
         }
         fireCraftEffects(player, workstationRecipe, meta, item, amount, inventory.location?.block)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
-        // Synchronous, not scheduled: this handler can fire on every click of a rapid/shift-click
-        // burst, and queuing a Runnable per click backs up the scheduler under load. Direct
-        // inventory.setItem/setItemOnCursor calls above already sync to the client on their own;
-        // this is just a safety-net resync and is safe to call inline from an event handler.
-        player.updateInventory()
+        // Synchronous safety-net resync, not scheduled - queuing a Runnable per click backs up
+        // the scheduler under a rapid/shift-click burst. Only when we cancelled and hand-rolled
+        // the movement: an un-cancelled villager trade hasn't had vanilla's transfer happen yet
+        // here, so resyncing would show the pre-trade state and force a second click.
+        if (event.isCancelled) {
+            player.updateInventory()
+        }
     }
 
     private fun VillagerRecipe.matchesMerchantRecipe(merchantRecipe: org.bukkit.inventory.MerchantRecipe): Boolean {
@@ -163,24 +178,6 @@ class WorkbenchListener(
         val secondInput = input2
         return if (secondInput != null) ingredients.size > 1 && secondInput.matches(ingredients[1])
                else ingredients.size <= 1
-    }
-
-    private fun awardVillagerTrade(inventory: MerchantInventory, recipe: VillagerRecipe?) {
-        val index = inventory.selectedRecipeIndex
-        if (index < 0) return
-        val merchant = inventory.merchant ?: return
-
-        val merchantRecipe = merchant.getRecipe(index)
-        merchantRecipe.uses += 1
-        merchant.setRecipe(index, merchantRecipe)
-
-        val xp = recipe?.villagerXp ?: return
-        if (xp <= 0) return
-        val villager = merchant as? Villager ?: return
-        villager.villagerExperience += xp
-        villager.world.spawn(villager.location, ExperienceOrb::class.java) {
-            it.experience = xp
-        }
     }
 
     private fun consumeWorkbenchInputs(inventory: Inventory, recipe: WorkstationRecipe, crafts: Int = 1) {
@@ -192,10 +189,6 @@ class WorkbenchListener(
             is AnvilRecipe -> {
                 consume(inventory, 0, recipe.base.requiredAmount() * crafts)
                 recipe.material?.let { consume(inventory, 1, it.requiredAmount() * crafts) }
-            }
-            is VillagerRecipe -> {
-                consume(inventory, 0, recipe.input1.requiredAmount() * crafts)
-                recipe.input2?.let { consume(inventory, 1, it.requiredAmount() * crafts) }
             }
             else -> {}
         }

@@ -10,8 +10,8 @@ icon:
     - ""
 
 position:
-  column: 2
-  row: 3
+  column: 6
+  row: 2
   page: 1
 
 items:
@@ -36,6 +36,24 @@ items:
   - item: "composter"
     display-no-perm: false
   - item: "baked_potato"
+    display-no-perm: false
+  - item: "golden_carrot"
+    display-no-perm: false
+  - item: "golden_apple"
+    display-no-perm: false
+  - item: "glistering_melon_slice"
+    display-no-perm: false
+  - item: "dried_kelp_block"
+    display-no-perm: false
+  - item: "honey_block"
+    display-no-perm: false
+  - item: "sugar"
+    display-no-perm: false
+  - item: "bone_meal"
+    display-no-perm: false
+  - item: "flower_pot"
+    display-no-perm: false
+  - item: "beehive"
     display-no-perm: false
 
 gui:

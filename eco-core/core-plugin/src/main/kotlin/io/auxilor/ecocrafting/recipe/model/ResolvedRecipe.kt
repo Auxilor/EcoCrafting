@@ -3,7 +3,6 @@ package io.auxilor.ecocrafting.recipe.model
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
-// A normalized crafting recipe displayed and optionally quick-crafted by EcoCrafting.
 // Ingredients are always normalized to a 3x3 grid for GUI display.
 data class ResolvedRecipe(
     val key: NamespacedKey?,

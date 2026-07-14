@@ -17,7 +17,6 @@ give-result-item: true
 #   - id: give_xp
 #     args:
 #       xp: 200
-# conditions: [ ]
 
 permission: ""
 locked-by-default: false
