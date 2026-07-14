@@ -33,7 +33,7 @@ class SmeltingListener(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onSmelt(event: FurnaceSmeltEvent) {
         val location = event.block.location
-        val player = blockOwnerService.getOwner(location)
+        val player = blockOwnerService.getActor(location)
 
         if (player == null) {
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
@@ -82,7 +82,7 @@ class SmeltingListener(
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onCampfire(event: BlockCookEvent) {
         val location = event.block.location
-        val player = blockOwnerService.getOwner(location)
+        val player = blockOwnerService.getActor(location)
 
         if (player == null) {
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)

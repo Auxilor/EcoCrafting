@@ -10,15 +10,23 @@ import org.bukkit.block.TileState
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 
 class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
 
     private val PDC_KEY = NamespacedKey("ecocrafting", "owner")
+
+    // Tracks whoever last put an item into a furnace/campfire's input slot, so unlock
+    // checks and price charges apply to the actual user rather than the block's owner.
+    private val lastFeeder = mutableMapOf<Location, UUID>()
 
     private val TRACKED_MATERIALS = setOf(
         Material.FURNACE,
@@ -71,6 +79,46 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
         }
     }
 
+    // Actual user of a furnace/campfire (whoever fed it) if known, otherwise the block owner.
+    fun getActor(location: Location): Player? {
+        val loc = location.block.location
+        val feederUuid = lastFeeder[loc]
+        if (feederUuid != null) {
+            loc.world?.players?.firstOrNull { it.uniqueId == feederUuid }?.let { return it }
+        }
+        return getOwner(location)
+    }
+
+    private fun recordFeeder(location: Location, player: Player) {
+        lastFeeder[location.block.location] = player.uniqueId
+    }
+
+    @EventHandler
+    fun onFeedClick(event: InventoryClickEvent) {
+        if (event.clickedInventory?.type !in TRACKED_INVENTORY_TYPES) return
+        if (event.slot != 0) return
+        val location = event.clickedInventory?.location ?: return
+        val player = event.whoClicked as? Player ?: return
+        recordFeeder(location, player)
+    }
+
+    @EventHandler
+    fun onFeedDrag(event: InventoryDragEvent) {
+        if (event.inventory.type !in TRACKED_INVENTORY_TYPES) return
+        if (0 !in event.rawSlots) return
+        val location = event.inventory.location ?: return
+        val player = event.whoClicked as? Player ?: return
+        recordFeeder(location, player)
+    }
+
+    @EventHandler
+    fun onCampfireFeed(event: PlayerInteractEvent) {
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
+        val block = event.clickedBlock ?: return
+        if (block.type !in setOf(Material.CAMPFIRE, Material.SOUL_CAMPFIRE)) return
+        recordFeeder(block.location, event.player)
+    }
+
     @EventHandler
     fun onPlace(event: BlockPlaceEvent) {
         if (event.block.type !in TRACKED_MATERIALS) return
@@ -92,5 +140,6 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
         val state = event.block.state as? TileState ?: return
         state.persistentDataContainer.remove(PDC_KEY)
         state.update()
+        lastFeeder.remove(event.block.location)
     }
 }
