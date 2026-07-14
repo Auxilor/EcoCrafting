@@ -73,6 +73,10 @@ internal fun RecipeCreatorGUI.openIngredientSetup(
                     collectedParts[index] = it.clone()
                 }
             }
+            if (collectedParts.isEmpty()) {
+                player.sendMessage("&cPlace at least one ingredient first.".formatEco())
+                return@onLeftClick
+            }
             openOutputSetup(
                 player, typeKey, collectedParts, initialShapeless, initialSymmetry, initialSupportCrafter,
                 initialOutput, editingId, editingPermission, initialState
