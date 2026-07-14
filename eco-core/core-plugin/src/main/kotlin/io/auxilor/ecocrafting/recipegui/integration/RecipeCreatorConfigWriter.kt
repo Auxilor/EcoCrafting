@@ -50,6 +50,11 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         return Items.toLookupString(item)
     }
 
+    // YAML double-quoted scalar: only backslash and the closing quote need escaping,
+    // so free-form chat input (`:`, `#`, leading `*`, etc.) can't break the parse.
+    private fun yamlQuote(value: String): String =
+        "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+
     // Reconstructs a WizardState (and the raw fields the ingredient/output screens need)
     // from a previously-saved recipe yaml, so /ecocrafting edit can re-enter the wizard
     // pre-filled instead of starting from a blank recipe.
@@ -157,7 +162,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val file = findRecipeFile(pending.id) ?: File(dir, "${pending.id}.yml")
         val yaml = StringBuilder()
         yaml.appendLine("type: ${pending.typeKey}")
-        if (pending.category.isNotBlank()) yaml.appendLine("category: ${pending.category}")
+        if (pending.category.isNotBlank()) yaml.appendLine("category: ${yamlQuote(pending.category)}")
 
         when (pending.typeKey) {
             "crafting_table", "crafter" -> {
