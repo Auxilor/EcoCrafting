@@ -13,6 +13,7 @@ import io.auxilor.ecocrafting.recipegui.service.toPreviewResolvedRecipe
 import io.auxilor.ecocrafting.recipegui.ui.wizard.openIngredientSetup
 import io.auxilor.ecocrafting.recipegui.ui.wizard.openTypeSelect
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Material
 import org.bukkit.Registry
 import org.bukkit.configuration.file.YamlConfiguration
@@ -62,7 +63,9 @@ class RecipeCreatorGUI(
     }
 
     internal val pendingConfirm = mutableMapOf<UUID, PendingRecipe>()
-    val awaitingInput = mutableMapOf<UUID, (String) -> Unit>()
+    // AsyncChatEvent's handler (off-thread) and menu click handlers (main thread) both
+    // write this concurrently, so a plain HashMap risks corruption/CME under load.
+    val awaitingInput = ConcurrentHashMap<UUID, (String) -> Unit>()
 
     internal fun MenuBuilder.addWorkstationIcons(currentTypeKey: String) {
         workstationIconPositions.forEach { (row, col, key) ->
