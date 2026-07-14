@@ -46,16 +46,16 @@ class CategoryCategoryGUI(
 
             addPageChanger(
                 PageChanger.Direction.FORWARDS,
-                pageChangerItem("next-page", true),
-                pageChangerItem("next-page", false),
+                config.pageChangerItem("next-page", true),
+                config.pageChangerItem("next-page", false),
                 configSound(guiServices.plugin, "next-page"),
                 config.getInt("buttons.next-page.row"),
                 config.getInt("buttons.next-page.column")
             )
             addPageChanger(
                 PageChanger.Direction.BACKWARDS,
-                pageChangerItem("prev-page", true),
-                pageChangerItem("prev-page", false),
+                config.pageChangerItem("prev-page", true),
+                config.pageChangerItem("prev-page", false),
                 configSound(guiServices.plugin, "prev-page"),
                 config.getInt("buttons.prev-page.row"),
                 config.getInt("buttons.prev-page.column")
@@ -75,7 +75,7 @@ class CategoryCategoryGUI(
                             addComponent(
                                 config.getInt("buttons.back.row"),
                                 config.getInt("buttons.back.column"),
-                                backSlot(prevMenu, configSound(guiServices.plugin, "back"))
+                                config.backSlot(prevMenu, configSound(guiServices.plugin, "back"))
                             )
                         }
                     }
@@ -110,19 +110,6 @@ class CategoryCategoryGUI(
         builtMenu.open(player)
     }
 
-    private fun backSlot(menu: Menu, sound: PlayableSound?): Slot {
-        return Slot.builder(
-            ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
-                .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
-                .build()
-        )
-            .onLeftClick { event, _ ->
-                menu.open(event.whoClicked as Player)
-                sound?.playTo(event.whoClicked as Player)
-            }
-            .build()
-    }
-
     private fun closeSlot(sound: PlayableSound?): Slot {
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.close.item")))
@@ -134,19 +121,6 @@ class CategoryCategoryGUI(
                 sound?.playTo(event.player)
             }
             .build()
-    }
-
-    private fun pageChangerItem(base: String, active: Boolean): ItemStack {
-        val state = getActive(active)
-        return ItemStackBuilder(
-            Items.lookup(config.getString("buttons.$base.item.$state"))
-        ).addLoreLines(
-            config.getFormattedStrings("buttons.$base.lore.$state")
-        ).build()
-    }
-
-    private fun getActive(active: Boolean): String {
-        return if (active) "active" else "inactive"
     }
 
     private fun categoryGuiFor(category: RecipeCategory): CategoryGUI {
