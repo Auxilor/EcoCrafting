@@ -9,7 +9,7 @@ import io.auxilor.ecocrafting.EcoCraftingPlugin
 import io.auxilor.ecocrafting.recipegui.integration.RecipeCreatorConfigWriter
 import io.auxilor.ecocrafting.recipegui.service.PendingRecipe
 import io.auxilor.ecocrafting.recipegui.service.RecipeGuiServices
-import io.auxilor.ecocrafting.recipegui.service.toPreviewResolvedRecipe
+import io.auxilor.ecocrafting.recipegui.ui.wizard.openConfirmPreview
 import io.auxilor.ecocrafting.recipegui.ui.wizard.openIngredientSetup
 import io.auxilor.ecocrafting.recipegui.ui.wizard.openTypeSelect
 import java.util.UUID
@@ -135,9 +135,8 @@ class RecipeCreatorGUI(
     }
 
     fun openPreview(player: Player, pendingRecipe: PendingRecipe) {
-        RecipeGUI(guiServices, pendingRecipe.output, listOf(pendingRecipe.toPreviewResolvedRecipe())).open(player, null)
-        player.sendMessage("&aPreview shown. Type &e/ecocrafting confirm &ato save, or &c/ecocrafting cancel &ato discard.".formatEco())
         pendingConfirm[player.uniqueId] = pendingRecipe
+        openConfirmPreview(player, pendingRecipe)
     }
 
     fun confirmSave(player: Player) {
