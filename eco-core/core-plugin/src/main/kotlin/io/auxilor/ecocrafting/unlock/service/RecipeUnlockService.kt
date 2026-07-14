@@ -13,10 +13,16 @@ class RecipeUnlockService(
     private val dataKeys: PlayerDataKeys,
     private val recipeService: RecipeService
 ) : UnlockManager {
+    // Full "namespace:key" string, so two plugins registering the same local id under
+    // different namespaces don't collide in stored unlock state. `key.key in set` also
+    // matches on the bare local id for data written before this fix.
+    private fun matches(stored: List<String>, key: NamespacedKey): Boolean =
+        key.toString() in stored || key.key in stored
+
     fun isUnlocked(player: OfflinePlayer, key: NamespacedKey, meta: EcoCraftingMeta): Boolean {
         val profile = player.profile
-        if (key.key in profile.read(dataKeys.lockedRecipeOverrides)) return false
-        if (key.key in profile.read(dataKeys.unlockedRecipes)) return true
+        if (matches(profile.read(dataKeys.lockedRecipeOverrides), key)) return false
+        if (matches(profile.read(dataKeys.unlockedRecipes), key)) return true
         return !meta.lockedByDefault
     }
 
@@ -26,16 +32,16 @@ class RecipeUnlockService(
     fun unlock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta) {
         val profile = player.profile
         val locked = profile.read(dataKeys.lockedRecipeOverrides)
-        if (key.key in locked) profile.write(dataKeys.lockedRecipeOverrides, locked - key.key)
+        if (matches(locked, key)) profile.write(dataKeys.lockedRecipeOverrides, locked - key.key - key.toString())
         val unlocked = profile.read(dataKeys.unlockedRecipes)
-        if (key.key !in unlocked) profile.write(dataKeys.unlockedRecipes, unlocked + key.key)
+        if (!matches(unlocked, key)) profile.write(dataKeys.unlockedRecipes, unlocked + key.toString())
     }
 
     fun lock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta) {
         val unlocked = player.profile.read(dataKeys.unlockedRecipes)
-        if (key.key in unlocked) player.profile.write(dataKeys.unlockedRecipes, unlocked - key.key)
+        if (matches(unlocked, key)) player.profile.write(dataKeys.unlockedRecipes, unlocked - key.key - key.toString())
         val locked = player.profile.read(dataKeys.lockedRecipeOverrides)
-        if (key.key !in locked) player.profile.write(dataKeys.lockedRecipeOverrides, locked + key.key)
+        if (!matches(locked, key)) player.profile.write(dataKeys.lockedRecipeOverrides, locked + key.toString())
     }
 
     // Public-API variants: unlike the internal overloads above, these look up recipe
