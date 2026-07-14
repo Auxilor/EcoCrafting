@@ -222,7 +222,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
             yaml.appendLine("lore: []")
         }
 
-        if (pending.permission.isNotBlank()) yaml.appendLine("permission: \"${pending.permission}\"")
+        if (pending.permission.isNotBlank()) yaml.appendLine("permission: ${yamlQuote(pending.permission)}")
         yaml.appendLine("locked-by-default: ${pending.lockedByDefault}")
         yaml.appendLine("show-when-locked: ${pending.showWhenLocked}")
         yaml.appendLine("visibility-conditions: []")
