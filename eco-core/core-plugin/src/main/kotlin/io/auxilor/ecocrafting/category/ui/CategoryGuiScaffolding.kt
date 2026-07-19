@@ -5,11 +5,11 @@ import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.PlayableSound
+import com.willfp.eco.core.sound.AbstractPlayableSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-internal fun Config.backSlot(menu: Menu, sound: PlayableSound?): Slot {
+internal fun Config.backSlot(menu: Menu, sound: AbstractPlayableSound<*>?): Slot {
     return Slot.builder(
         ItemStackBuilder(Items.lookup(getString("buttons.back.item")))
             .addLoreLines(getFormattedStrings("buttons.back.lore"))

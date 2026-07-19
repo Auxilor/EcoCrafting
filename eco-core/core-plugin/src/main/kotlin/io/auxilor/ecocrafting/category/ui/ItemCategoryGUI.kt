@@ -12,7 +12,7 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.PlayableSound
+import com.willfp.eco.core.sound.AbstractPlayableSound
 import io.auxilor.ecocrafting.category.model.RecipeCategory
 import io.auxilor.ecocrafting.category.service.CategoryService
 import io.auxilor.ecocrafting.recipe.model.RecipeSource
@@ -120,7 +120,7 @@ class ItemCategoryGUI(
         return itemCount / perPage + if (itemCount % perPage > 0) 1 else 0
     }
 
-    private fun slot(player: Player, item: ItemStack, sound: PlayableSound?): Slot {
+    private fun slot(player: Player, item: ItemStack, sound: AbstractPlayableSound<*>?): Slot {
         // Cached single-recipe lookup for the slot's own lore/lock display - resolveAll's
         // full alternatives list is only needed once the player actually opens the recipe.
         val resolved = guiServices.resolverService.resolve(item)

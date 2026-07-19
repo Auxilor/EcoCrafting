@@ -21,7 +21,7 @@ class RecipeGUIContext(
         .mapNotNull { runCatching { ItemFlag.valueOf(it.uppercase()) }.getOrNull() }
         .toTypedArray()
 
-    fun sound(key: String): PlayableSound? =
+    fun sound(key: String) =
         services.plugin.configYml.getSubsectionOrNull("sounds.$key")
             ?.let { PlayableSound.create(it) }
 

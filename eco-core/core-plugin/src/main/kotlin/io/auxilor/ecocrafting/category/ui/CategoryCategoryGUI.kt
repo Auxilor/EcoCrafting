@@ -13,7 +13,7 @@ import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.PlayableSound
+import com.willfp.eco.core.sound.AbstractPlayableSound
 import io.auxilor.ecocrafting.category.integration.CategoryLoader
 import io.auxilor.ecocrafting.category.model.RecipeCategory
 import io.auxilor.ecocrafting.category.service.CategoryService
@@ -110,7 +110,7 @@ class CategoryCategoryGUI(
         builtMenu.open(player)
     }
 
-    private fun closeSlot(sound: PlayableSound?): Slot {
+    private fun closeSlot(sound: AbstractPlayableSound<*>?): Slot {
         return Slot.builder(
             ItemStackBuilder(Items.lookup(config.getString("buttons.close.item")))
                 .addLoreLines(config.getFormattedStrings("buttons.close.lore"))
@@ -131,7 +131,7 @@ class CategoryCategoryGUI(
         }
     }
 
-    private fun slot(item: ItemStack, category: RecipeCategory, sound: PlayableSound?): Slot {
+    private fun slot(item: ItemStack, category: RecipeCategory, sound: AbstractPlayableSound<*>?): Slot {
         return Slot.builder(
             ItemStackBuilder(item.clone())
                 .build()
