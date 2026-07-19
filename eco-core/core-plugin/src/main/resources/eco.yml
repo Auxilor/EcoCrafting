@@ -3,4 +3,4 @@ environment:
     value: ${libreforgeVersion}
 
 options:
-  bstats-id: 31426
+  bstats-id: 32767
