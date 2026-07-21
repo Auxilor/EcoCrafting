@@ -173,6 +173,9 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         },
         EcoMetricsChart.SimplePie("ecoshop_auto_buy_enabled") {
             shopIntegrationService.isAutoBuyEnabled().toString()
+        },
+        EcoMetricsChart.SimplePie("plugin_version") {
+            if (BuildConfig.FREE_VERSION) "Free" else "Premium"
         }
     )
 
