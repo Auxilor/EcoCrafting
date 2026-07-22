@@ -21,6 +21,8 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
 
     fun allKeys(): Set<NamespacedKey> = meta.keys.toSet()
 
+    fun allMeta(): Collection<EcoCraftingMeta> = meta.values.toList()
+
     override fun allRecipeKeys(): Set<NamespacedKey> = allKeys()
 
     override fun isCustomRecipe(key: NamespacedKey): Boolean = getMeta(key) != null
