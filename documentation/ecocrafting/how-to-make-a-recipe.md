@@ -7,6 +7,12 @@ sidebar_position: 1
 
 Each recipe is a YAML file in `recipes/<workstation>/`. The file name (without `.yml`) is the recipe ID. An `_example_<workstation>.yml` is provided in each folder (e.g. `recipes/brewing_stand/_example_brewing.yml`).
 
+:::info Recipe formats are shared across eco plugins
+The ingredient keys below - `recipe`, `input`, `template`/`base`/`addition`, and the rest - are the same ones every eco plugin uses, and are documented in full on the [Recipes](https://plugins.auxilor.io/the-item-lookup-system/recipes) page.
+
+EcoCrafting is the most complete implementation of them. **Villager trading and grindstone recipes are EcoCrafting only**, as are categories, the recipe book GUI, quick-crafting, `effects`, `conditions`, `price`, recipe locking, `give-result-item`, `symmetry`, and Crafter support. Other plugins support the crafting table; EcoItems also supports the remaining workstations.
+:::
+
 :::warning ID rules
 IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). No spaces, capitals, or hyphens, or the recipe will not load.
 :::
@@ -264,6 +270,7 @@ This is a client-side display quirk only. Minecraft predicts the XP bar as soon 
 
 ## Where to go next
 
+- **Recipe formats:** [Recipes](https://plugins.auxilor.io/the-item-lookup-system/recipes) for the shared reference on ingredient keys and which plugins support what.
 - **Build a category:** [How to Make a Category](how-to-make-a-category) to group recipes in the browser GUI.
 - **Plugin config:** [Plugin Config](plugin-config) for the GUI and sound settings.
 - **Commands:** [Commands and Permissions](commands-and-permissions) for locking/unlocking recipes.
