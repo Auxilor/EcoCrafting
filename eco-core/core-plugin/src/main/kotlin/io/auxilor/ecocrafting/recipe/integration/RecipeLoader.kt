@@ -39,7 +39,10 @@ class RecipeLoader(
 ) : ConfigCategory("recipe", "recipes") {
 
     override fun clear(plugin: LibreforgePlugin) {
-        WorkstationRecipes.clear()
+        // Only ours: the workstation registry is shared with every other plugin that
+        // uses it, so clearing all of it would drop their recipes until they happened
+        // to reload too.
+        WorkstationRecipes.clear("ecocrafting")
         recipeService.clear()
         capEnforcer.clear()
     }
