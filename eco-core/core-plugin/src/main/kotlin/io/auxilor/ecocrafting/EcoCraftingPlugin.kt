@@ -173,6 +173,24 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         },
         EcoMetricsChart.SimplePie("ecoshop_auto_buy_enabled") {
             shopIntegrationService.isAutoBuyEnabled().toString()
+        },
+        EcoMetricsChart.SimplePie("plugin_version") {
+            if (BuildConfig.FREE_VERSION) "Free" else "Premium"
+        },
+        EcoMetricsChart.AdvancedPie("recipes_per_workstation") {
+            recipeService.allMeta()
+                .groupingBy { it.displayType.name }
+                .eachCount()
+                .ifEmpty { null }
+        },
+        EcoMetricsChart.SingleLine("total_recipes") {
+            recipeService.allMeta().size
+        },
+        EcoMetricsChart.AdvancedPie("recipes_give_result_item") {
+            recipeService.allMeta()
+                .groupingBy { it.giveResultItem.toString() }
+                .eachCount()
+                .ifEmpty { null }
         }
     )
 
