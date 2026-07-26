@@ -20,9 +20,10 @@ import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
 import org.bukkit.inventory.ItemStack
 
-// Crafting table / Crafter block craft handling. Smithing table and stonecutter clicks
-// also fire CraftItemEvent but are handled by their own listeners - this one bails out
-// immediately for those inventory types.
+// Crafting table / Crafter block craft handling. CraftItemEvent is authoritative here
+// (topInventory really is a CraftingInventory), unlike the stonecutter/smithing table
+// where it's only an informational event and the real gate is an InventoryClickEvent -
+// see StonecutterListener/SmithingListener. The type guard below is just defensive.
 class CraftingTableListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
