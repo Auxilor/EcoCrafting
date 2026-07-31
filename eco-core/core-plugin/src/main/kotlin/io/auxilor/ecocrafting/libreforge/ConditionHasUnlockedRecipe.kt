@@ -26,7 +26,8 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
             "recipe",
             "You must specify the recipe!",
             description = "The ID of the custom recipe to check.",
-            type = ArgType.STRING
+            type = ArgType.STRING,
+            example = "epic_sword"
         )
     }
 

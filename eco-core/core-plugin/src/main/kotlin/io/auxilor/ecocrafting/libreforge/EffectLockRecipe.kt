@@ -31,7 +31,8 @@ object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
             "recipe",
             "You must specify the recipe!",
             description = "The ID of the custom recipe to lock.",
-            type = ArgType.STRING
+            type = ArgType.STRING,
+            example = "epic_sword"
         )
     }
 

@@ -28,7 +28,8 @@ object EffectUnlockRecipe : Effect<NoCompileData>("unlock_recipe") {
             "recipe",
             "You must specify the recipe!",
             description = "The ID of the custom recipe to unlock.",
-            type = ArgType.STRING
+            type = ArgType.STRING,
+            example = "epic_sword"
         )
     }
 
