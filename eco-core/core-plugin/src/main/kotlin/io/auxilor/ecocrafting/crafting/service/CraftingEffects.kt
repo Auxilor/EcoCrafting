@@ -33,6 +33,16 @@ fun checkCraftingConditions(
     recipe: WorkstationRecipe,
     meta: EcoCraftingMeta
 ): Boolean {
+    val explicitPermission = recipe.permission
+    val hasPermission = if (explicitPermission != null) {
+        player.hasPermission(explicitPermission)
+    } else {
+        player.hasPermission("ecocrafting.recipe.${recipe.key.key}") || player.hasPermission("ecocrafting.recipe.*")
+    }
+    if (!hasPermission) {
+        player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.no-permission"))
+        return false
+    }
     if (unlockService.isLocked(player, recipe.key, meta)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.recipe-locked"))
         return false

@@ -10,15 +10,12 @@ import io.auxilor.ecocrafting.crafting.service.priceAffordableAmount
 import io.auxilor.ecocrafting.recipe.service.RecipeService
 import io.auxilor.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
-import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.StonecutterInventory
 import org.bukkit.inventory.Inventory
 
 class StonecutterListener(
@@ -27,41 +24,9 @@ class StonecutterListener(
     private val unlockService: RecipeUnlockService
 ) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onCraft(event: CraftItemEvent) {
-        if (event.view.topInventory !is StonecutterInventory) return
-
-        val player = event.whoClicked as? Player ?: return
-        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
-
-        val recipe = WorkstationRecipes.getByKey(recipeKey) as? StonecuttingRecipe
-            ?: run {
-                plugin.debug("[Stonecutter] no recipe for key=$recipeKey")
-                return
-            }
-
-        val meta = recipeService.getMeta(recipeKey) ?: return
-
-        plugin.debug("[Stonecutter] onCraft: key=$recipeKey giveResultItem=${meta.giveResultItem}")
-
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
-
-        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromInput(event.view.topInventory.getItem(0)))).coerceAtLeast(1)
-        val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
-        val customEvent = CustomCraftEvent(player, recipe, item, amount)
-        Bukkit.getPluginManager().callEvent(customEvent)
-        if (customEvent.isCancelled) { event.isCancelled = true; return }
-
-        meta.price.pay(player, amount.toDouble())
-        if (!meta.giveResultItem) {
-            event.isCancelled = true
-            consumeStonecutterSlot(event.view.topInventory, amount)
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
-        }
-        fireCraftEffects(player, recipe, meta, item, amount, event.view.topInventory.location?.block)
-        plugin.debug("[Stonecutter] effects fired for recipe=${recipe.key}")
-    }
-
+    // Bukkit's CraftItemEvent only ever fires for a CraftingInventory (crafting table);
+    // taking the result out of a stonecutter is a plain InventoryClickEvent on rawSlot 1,
+    // so that's the only place we can gate/charge/effect a stonecutter craft.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onStonecutterResultClick(event: InventoryClickEvent) {
         if (event.inventory.type != InventoryType.STONECUTTER) return
@@ -75,18 +40,17 @@ class StonecutterListener(
         val recipe = WorkstationRecipes.getAll(StonecuttingRecipe::class.java)
             .firstOrNull { it.input.matches(inputItem) && it.output?.isSimilar(resultItem) == true } ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
-        if (meta.giveResultItem) return
 
-        plugin.debug("[Stonecutter] onStonecutterResultClick: no-item recipe=${recipe.key}")
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
+        event.isCancelled = true
+
+        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { return }
 
         val item = resultItem.clone()
         val amount = if (event.isShiftClick) {
             priceAffordableAmount(player, meta.price, minOf(spaceBasedAmount(player, item), maxCraftsFromInput(inputItem)).coerceAtLeast(1))
         } else priceAffordableAmount(player, meta.price, 1)
 
-        val craftItem = item.clone().apply { this.amount = amount }
-        event.isCancelled = true
+        val craftItem = item.clone().apply { this.amount = item.amount * amount }
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) {
@@ -95,6 +59,9 @@ class StonecutterListener(
         }
         consumeStonecutterSlot(inventory, amount)
         meta.price.pay(player, amount.toDouble())
+        if (meta.giveResultItem) {
+            giveOrDropItem(player, craftItem, preferCursor = !event.isShiftClick)
+        }
         fireCraftEffects(player, recipe, meta, craftItem, amount, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }

@@ -13,10 +13,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.Inventory
 
 class SmithingListener(
@@ -25,44 +23,9 @@ class SmithingListener(
     private val unlockService: RecipeUnlockService
 ) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun onCraft(event: CraftItemEvent) {
-        if (event.view.topInventory !is SmithingInventory) return
-
-        val player = event.whoClicked as? Player ?: return
-        val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
-        val inventory = event.view.topInventory
-        val recipe = (WorkstationRecipes.getByKey(recipeKey)
-            ?: WorkstationRecipes.getAll(SmithingRecipe::class.java).firstOrNull {
-                it.template.matches(inventory.getItem(0)) &&
-                it.base.matches(inventory.getItem(1)) &&
-                it.addition.matches(inventory.getItem(2))
-            }) as? SmithingRecipe
-            ?: run {
-                plugin.debug("[Smithing] no recipe for key=$recipeKey")
-                return
-            }
-
-        val meta = recipeService.getMeta(recipe.key) ?: return
-        plugin.debug("[Smithing] onCraft: key=${recipe.key} giveResultItem=${meta.giveResultItem}")
-
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
-
-        val item = recipe.output?.clone() ?: return
-        val customEvent = CustomSmithEvent(player, recipe, item)
-        Bukkit.getPluginManager().callEvent(customEvent)
-        if (customEvent.isCancelled) { event.isCancelled = true; return }
-
-        if (!meta.giveResultItem) {
-            event.isCancelled = true
-            consumeSmithingSlots(event.view.topInventory)
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
-        }
-        meta.price.pay(player, 1.0)
-        fireCraftEffects(player, recipe, meta, item, 1, event.view.topInventory.location?.block)
-        plugin.debug("[Smithing] effects fired for recipe=${recipe.key}")
-    }
-
+    // Like the stonecutter, CraftItemEvent on a SmithingInventory is informational only -
+    // cancelling it doesn't stop the take, since the actual transfer already happened via
+    // this InventoryClickEvent on rawSlot 3. That's the only place we can gate/charge/effect.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSmithingResultClick(event: InventoryClickEvent) {
         if (event.inventory.type != InventoryType.SMITHING) return
@@ -77,18 +40,24 @@ class SmithingListener(
                 it.addition.matches(inventory.getItem(2))
             } ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
-        if (meta.giveResultItem) return
-
-        plugin.debug("[Smithing] onSmithingResultClick: no-item recipe=${recipe.key}")
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
 
         event.isCancelled = true
-        consumeSmithingSlots(inventory)
-        meta.price.pay(player, 1.0)
+
+        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { return }
+
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
-        if (!customEvent.isCancelled) fireCraftEffects(player, recipe, meta, item, 1, inventory.location?.block)
+        if (customEvent.isCancelled) {
+            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            return
+        }
+        consumeSmithingSlots(inventory)
+        meta.price.pay(player, 1.0)
+        if (meta.giveResultItem) {
+            giveOrDropItem(player, item.clone())
+        }
+        fireCraftEffects(player, recipe, meta, item, 1, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 
