@@ -1,4 +1,4 @@
-group = "io.auxilor"
+group = "com.exanthiax"
 version = rootProject.version
 
 // The root build's `allprojects` block wires compileJava -> dependsOn(clean) (meant for

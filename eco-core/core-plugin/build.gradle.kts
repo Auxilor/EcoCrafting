@@ -1,4 +1,4 @@
-group = "io.auxilor"
+group = "com.exanthiax"
 version = rootProject.version
 
 val freeVersion = rootProject.hasProperty("free")
@@ -14,11 +14,11 @@ val generateBuildConfig by tasks.registering {
     inputs.property("freeVersion", freeVersion)
     outputs.dir(buildConfigDir)
     doFirst {
-        val file = buildConfigDir.get().file("io/auxilor/ecocrafting/BuildConfig.kt").asFile
+        val file = buildConfigDir.get().file("com/exanthiax/ecocrafting/BuildConfig.kt").asFile
         file.parentFile.mkdirs()
         file.writeText(
             """
-            package io.auxilor.ecocrafting
+            package com.exanthiax.ecocrafting
 
             object BuildConfig {
                 const val FREE_VERSION = $freeVersion
