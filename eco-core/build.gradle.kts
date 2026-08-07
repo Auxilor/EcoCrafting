@@ -1,2 +1,2 @@
-group = "io.auxilor"
+group = "com.exanthiax"
 version = rootProject.version
