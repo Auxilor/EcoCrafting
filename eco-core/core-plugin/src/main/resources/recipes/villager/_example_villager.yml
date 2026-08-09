@@ -11,6 +11,7 @@ min-level: 1 # optional - minimum villager level required (1-5); 0 = any level
 chance: 1.0 # probability this trade appears on the villager (0.0-1.0); rolled once per entity and persisted
 wandering-trader: false # true = inject into WanderingTrader instead of regular villagers
 villager-xp: 0 # XP awarded to the villager on trade completion (0 = none)
+max-uses: 0 # /ecocrafting open-trade only - times this trade can be used per GUI (0 = unlimited)
 
 output: enchanted_book name:"&5Villager Enchanted Book"
 lore: [ ] # optional - lore lines for the output item

@@ -171,6 +171,10 @@ brewing-stand:
 # Scan all loaded villagers on plugin reload to remove PDC keys for disabled recipes
 villager-scan-on-reload: true
 
+# Villager trade GUI opened by /ecocrafting open-trade (no villager entity required)
+trade-gui:
+  title: "&8Trades"
+
 # Category Browser GUI
 category-browser-gui:
   custom-slots: [ ]

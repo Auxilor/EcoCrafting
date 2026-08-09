@@ -20,6 +20,7 @@ import com.exanthiax.ecocrafting.commands.CommandEcoCrafting
 import com.exanthiax.ecocrafting.commands.CommandEdit
 import com.exanthiax.ecocrafting.commands.CommandLock
 import com.exanthiax.ecocrafting.commands.CommandOpen
+import com.exanthiax.ecocrafting.commands.CommandOpenTrade
 import com.exanthiax.ecocrafting.commands.CommandReload
 import com.exanthiax.ecocrafting.commands.CommandUnlock
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
@@ -41,6 +42,8 @@ import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorChatListener
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import com.exanthiax.ecocrafting.shop.service.ShopIntegrationService
+import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
+import com.exanthiax.ecocrafting.trade.service.TradeSessionService
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockJoinListener
 import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
 import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
@@ -78,7 +81,9 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private val crafterBlockListener = CrafterBlockListener(this, recipeService, unlockService, blockOwnerService)
     private val smeltingListener = SmeltingListener(this, recipeService, unlockService, blockOwnerService)
     private val brewingListener = BrewingListener(this, recipeService, unlockService, blockOwnerService)
-    private val workbenchListener = WorkbenchListener(this, recipeService, unlockService)
+    private val tradeSessionService = TradeSessionService()
+    private val tradeMerchantFactory = TradeMerchantFactory(this, recipeService, unlockService, tradeSessionService)
+    private val workbenchListener = WorkbenchListener(this, recipeService, unlockService, tradeSessionService)
 
     private val shopIntegrationService = ShopIntegrationService(this)
 
@@ -141,6 +146,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
                 listOf(
                     CommandReload(this, recipeService),
                     CommandOpen(this, categoryLoader, categoryService, guiServices),
+                    CommandOpenTrade(this, recipeService, tradeMerchantFactory),
                     CommandCreate(this, recipeCreatorGUI),
                     CommandEdit(this, recipeCreatorGUI),
                     CommandUnlock(this, recipeService, unlockService),
@@ -163,6 +169,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
             smeltingListener,
             brewingListener,
             workbenchListener,
+            tradeSessionService,
             recipeCreatorChatListener
         )
     }

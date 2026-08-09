@@ -13,6 +13,7 @@ import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
 import com.exanthiax.ecocrafting.crafting.service.priceAffordableAmount
 import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import com.exanthiax.ecocrafting.trade.service.TradeSessionService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -31,7 +32,8 @@ import org.bukkit.inventory.MerchantInventory
 class WorkbenchListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
-    private val unlockService: RecipeUnlockService
+    private val unlockService: RecipeUnlockService,
+    private val sessionService: TradeSessionService
 ) : Listener {
 
     // Grindstone + Anvil prepare (override eco's HIGH firstOrNull)
@@ -99,10 +101,17 @@ class WorkbenchListener(
 
             InventoryType.MERCHANT -> {
                 val merchant = inventory as? MerchantInventory ?: return
-                val selected = merchant.selectedRecipe ?: return
-                WorkstationRecipes.getAll(VillagerRecipe::class.java)
-                    .firstOrNull { it.matchesMerchantRecipe(selected) }
-                    ?: return
+                // A command-opened merchant knows exactly which recipe backs each slot. Only
+                // fall back to matching by ingredients (real villagers) when it doesn't, since
+                // two recipes sharing their inputs would otherwise resolve to the wrong meta.
+                sessionService.keyAt(player, merchant.selectedRecipeIndex)
+                    ?.let { WorkstationRecipes.getByKey(it) as? VillagerRecipe }
+                    ?: run {
+                        val selected = merchant.selectedRecipe ?: return
+                        WorkstationRecipes.getAll(VillagerRecipe::class.java)
+                            .firstOrNull { it.matchesMerchantRecipe(selected) }
+                            ?: return
+                    }
             }
 
             else -> return
