@@ -1,6 +1,6 @@
 ---
 title: "Plugin Config"
-sidebar_position: 6
+sidebar_position: 4
 ---
 
 The plugin-wide settings live in `config.yml` in the EcoCrafting data folder (`/plugins/EcoCrafting/config.yml`). It controls the recipe GUIs, sounds, and other plugin-wide behavior. Edit it, then run `/ecocrafting reload` to apply changes.
