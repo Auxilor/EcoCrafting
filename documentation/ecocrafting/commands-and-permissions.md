@@ -1,6 +1,6 @@
 ---
 title: "Commands and Permissions"
-sidebar_position: 5
+sidebar_position: 3
 ---
 
 Every EcoCrafting command and the permission node it requires.
