@@ -26,6 +26,17 @@ fun fireCraftEffects(
     TriggerCraft.dispatch(player.toDispatcher(), data)
 }
 
+// A recipe's explicit `permission` wins outright; otherwise the implicit per-recipe node
+// (or the wildcard) grants access.
+fun hasRecipePermission(player: Player, recipe: WorkstationRecipe): Boolean {
+    val explicitPermission = recipe.permission
+    return if (explicitPermission != null) {
+        player.hasPermission(explicitPermission)
+    } else {
+        player.hasPermission("ecocrafting.recipe.${recipe.key.key}") || player.hasPermission("ecocrafting.recipe.*")
+    }
+}
+
 fun checkCraftingConditions(
     plugin: EcoCraftingPlugin,
     unlockService: RecipeUnlockService,
@@ -33,13 +44,7 @@ fun checkCraftingConditions(
     recipe: WorkstationRecipe,
     meta: EcoCraftingMeta
 ): Boolean {
-    val explicitPermission = recipe.permission
-    val hasPermission = if (explicitPermission != null) {
-        player.hasPermission(explicitPermission)
-    } else {
-        player.hasPermission("ecocrafting.recipe.${recipe.key.key}") || player.hasPermission("ecocrafting.recipe.*")
-    }
-    if (!hasPermission) {
+    if (!hasRecipePermission(player, recipe)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.no-permission"))
         return false
     }

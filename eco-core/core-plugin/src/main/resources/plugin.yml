@@ -36,6 +36,7 @@ permissions:
       ecocrafting.command.ecocrafting: true
       ecocrafting.command.reload: true
       ecocrafting.command.open: true
+      ecocrafting.command.opentrade: true
 
   ecocrafting.command.ecocrafting:
     description: Allows the use of /ecocrafting (base recipe book command)
@@ -45,6 +46,9 @@ permissions:
     default: op
   ecocrafting.command.open:
     description: Allows opening a recipe category browser with /ecocrafting open
+    default: true
+  ecocrafting.command.opentrade:
+    description: Allows opening a villager trade GUI with /ecocrafting open-trade
     default: true
   ecocrafting.admin:
     description: Admin commands (unlock/lock recipes)

@@ -100,8 +100,12 @@ class RecipeLoader(
             .filterIsInstance<AbstractVillager>()
             .forEach { villager ->
                 val persistentDataContainer = villager.persistentDataContainer
-                persistentDataContainer.keys.filter { it.namespace == "ecocrafting" && it.key.startsWith("vr_") }
-                    .filter { it.key !in validKeyNames }
+                persistentDataContainer.keys
+                    // "recipebook" is the namespace eco used to store these rolls under. Its own
+                    // migration only moves keys for recipes that still exist, so orphans in either
+                    // namespace are cleaned up here; live legacy keys are left for it to migrate.
+                    .filter { it.namespace == "ecocrafting" || it.namespace == "recipebook" }
+                    .filter { it.key.startsWith("vr_") && it.key !in validKeyNames }
                     .forEach { persistentDataContainer.remove(it) }
             }
     }
@@ -159,7 +163,8 @@ class RecipeLoader(
             displayType = displayType,
             supportCrafter = config.getBool("support-crafter"),
             categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
-            price = parsePrice(config)
+            price = parsePrice(config),
+            maxUses = config.getIntOrNull("max-uses") ?: 0
         )
     }
 

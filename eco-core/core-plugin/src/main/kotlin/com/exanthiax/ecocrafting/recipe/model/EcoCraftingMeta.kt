@@ -16,5 +16,7 @@ data class EcoCraftingMeta(
     val displayType: RecipeDisplayType,
     val supportCrafter: Boolean = false,
     val categoryId: String? = null,
-    val price: ConfiguredPrice = ConfiguredPrice.FREE
+    val price: ConfiguredPrice = ConfiguredPrice.FREE,
+    // Villager trades only, and only in a command-opened merchant: 0 means unlimited uses.
+    val maxUses: Int = 0
 )

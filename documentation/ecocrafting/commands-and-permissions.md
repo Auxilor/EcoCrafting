@@ -13,6 +13,7 @@ Every EcoCrafting command and the permission node it requires.
 | `/ecocrafting reload`                      | Reloads the plugin                          | `ecocrafting.command.reload`      |
 | `/ecocrafting lookup <item>`               | Look up the recipe for any item             | `ecocrafting.command.lookup`      |
 | `/ecocrafting open <category> [player]`    | Open a specific category GUI                | `ecocrafting.command.open`        |
+| `/ecocrafting open-trade <ids> [player]`   | Open a villager trade GUI with no villager  | `ecocrafting.command.opentrade`   |
 | `/ecocrafting debug`                       | Debug the item held in main hand            | `ecocrafting.command.debug`       |
 | `/ecocrafting validate`                    | Validate all categories and report warnings | `ecocrafting.command.validate`    |
 | `/ecocrafting list`                        | List all loaded categories                  | `ecocrafting.command.list`        |
@@ -28,7 +29,7 @@ Every EcoCrafting command and the permission node it requires.
 
 | Permission                | Description                                                                                    |
 |---------------------------|------------------------------------------------------------------------------------------------|
-| `ecocrafting.open.others` | Required to open a category GUI for another player via `/ecocrafting open <category> <player>` |
+| `ecocrafting.open.others` | Required to open a category GUI or trade GUI for another player (the `<player>` argument)      |
 
 <hr/>
 

@@ -258,7 +258,28 @@ min-level: 1 # optional - minimum villager level (1-5; 0 = any)
 chance: 1.0 # probability this trade appears on a villager (0.0-1.0)
 wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
+
+max-uses: 0 # /ecocrafting open-trade only - uses per GUI (0 = unlimited)
 ```
+
+#### Trading without a villager
+
+`/ecocrafting open-trade <recipe-id> [player]` opens a trade GUI containing that recipe, with no villager entity involved - useful for spawn shops and NPC dialogue. Pass a comma-separated list to put several trades in one GUI:
+
+```
+/ecocrafting open-trade emerald_book Notch
+/ecocrafting open-trade emerald_book,diamond_deal,xp_bottle Notch
+```
+
+Trades appear in the order you list them. Everything the trade normally does still applies - `price`, `effects`, `crafting-conditions`, `give-result-item`, and recipe locking all behave exactly as they do at a real villager.
+
+A trade is left out of the GUI entirely when the player lacks its permission, has it locked, or fails its `visibility-conditions`. If nothing is left to show, the GUI doesn't open. `crafting-conditions` and `price` are *not* filtered - those are checked on click, so the player is told why the trade failed.
+
+:::info What doesn't apply
+`profession`, `min-level`, `chance`, `wandering-trader`, and `villager-xp` all describe a villager entity, so they're ignored here. `show-when-locked` is ignored too - the trade screen has nowhere to show locked lore.
+
+`max-uses` limits how many times a trade can be used within a single GUI. It resets each time the command opens a new one, and has no effect on real villagers.
+:::
 
 :::warning Villager XP display with give-result-item: false
 When a villager trade uses `give-result-item: false` and the player does not meet the crafting conditions, the trade is correctly blocked and the villager keeps no XP on the server. The trade screen may still flash the villager gaining XP for a moment, and it resets when the screen is closed.
