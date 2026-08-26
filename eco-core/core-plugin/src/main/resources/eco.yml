@@ -4,3 +4,4 @@ environment:
 
 options:
   bstats-id: 32767
+  eco-api-version: ${ecoApiVersion}
