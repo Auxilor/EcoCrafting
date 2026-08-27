@@ -13,6 +13,7 @@ plugins {
 group = "com.exanthiax"
 version = findProperty("version")!!
 val libreforgeVersion = findProperty("libreforge-version")
+val ecoApiVersion = findProperty("eco-api-version")
 val ecoVersion = findProperty("eco-version")
 
 base {
@@ -130,6 +131,7 @@ allprojects {
                 expand(
                     "version" to project.version,
                     "libreforgeVersion" to libreforgeVersion!!,
+                    "ecoApiVersion" to ecoApiVersion!!,
                     "pluginName" to rootProject.name
                 )
             }
