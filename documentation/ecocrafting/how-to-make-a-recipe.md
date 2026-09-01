@@ -106,6 +106,8 @@ A player failing the active node never sees the recipe in the GUI and can't craf
 
 Each section below shows only the fields unique to that workstation. All common fields above apply too.
 
+Any ingredient can ask for more than one item by putting an amount after it - `stone 4` needs four stone in that slot and consumes four per craft. This works everywhere an item is named, except the brewing stand, whose ingredient slot only ever holds one item.
+
 ### Crafting Table
 
 ```yaml
@@ -183,7 +185,6 @@ addition: netherite_ingot
 ```yaml
 type: stonecutter
 
-# `input: stone 4` requires four of the item per cut, and consumes four each time.
 input: stone
 
 # Multiple outputs supported - each appears as a separate option in the UI.

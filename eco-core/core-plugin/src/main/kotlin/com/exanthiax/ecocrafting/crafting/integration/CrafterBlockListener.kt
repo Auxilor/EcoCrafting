@@ -37,12 +37,23 @@ class CrafterBlockListener(
         // silently uncancelling every EcoCrafting recipe.
         if (!meta.supportCrafter) return
 
+        val crafterInventory = (event.block.state as? Crafter)?.inventory
+        // The `_crafter` Bukkit recipe uses ExactChoice, which ignores stack size, so the
+        // crafter fires with a single item in a slot a `<item> 4` part asked four of.
+        val requirements = crafterInventory
+            ?.let { gridRequirements(recipe, it.contents) }
+            ?: emptyMap()
+        if (crafterInventory != null && !gridSatisfies(crafterInventory.contents, requirements)) {
+            event.isCancelled = true
+            return
+        }
+
         if (!meta.giveResultItem) {
             event.isCancelled = true
-            val crafterInventory = (event.block.state as? Crafter)?.inventory ?: return
+            crafterInventory ?: return
             val player = blockOwnerService.getOwner(event.block.location) ?: return
             if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
-            for (slot in 0 until 9) consume(crafterInventory, slot)
+            for (slot in 0 until 9) consume(crafterInventory, slot, requirements[slot] ?: 1)
             meta.price.pay(player, 1.0)
             val item = recipe.output?.clone() ?: return
             fireCraftEffects(player, recipe, meta, item, 1, event.block)
@@ -54,6 +65,14 @@ class CrafterBlockListener(
         val player = blockOwnerService.getOwner(event.block.location) ?: return
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
         meta.price.pay(player, 1.0)
+        // Vanilla removes exactly one item per slot after this event, so anything a part
+        // needs beyond that first item has to come out of the grid here.
+        if (crafterInventory != null) {
+            for (slot in 0 until 9) {
+                val extra = (requirements[slot] ?: 1) - 1
+                if (extra > 0) consume(crafterInventory, slot, extra)
+            }
+        }
         event.isCancelled = false
         event.result = item
         fireCraftEffects(player, recipe, meta, item, 1, event.block)

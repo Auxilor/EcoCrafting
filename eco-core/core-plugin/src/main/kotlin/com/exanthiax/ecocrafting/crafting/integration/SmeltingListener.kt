@@ -8,6 +8,7 @@ import com.exanthiax.ecocrafting.crafting.event.CustomSmeltEvent
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.recipe.model.matchesIgnoringAmount
 import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
@@ -40,7 +41,7 @@ class SmeltingListener(
             // regardless of give-result-item, rather than letting it complete unchecked.
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
                 .firstOrNull { recipe ->
-                    recipe.smeltingType != SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
+                    recipe.smeltingType != SmeltingType.CAMPFIRE && recipe.input.matchesIgnoringAmount(event.source) &&
                     recipeService.getMeta(recipe.key) != null
                 }
             if (noItemMatch != null) event.isCancelled = true
@@ -48,9 +49,14 @@ class SmeltingListener(
         }
 
         val recipe = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
-            .firstOrNull { it.smeltingType != SmeltingType.CAMPFIRE && it.input.matches(event.source) }
+            .firstOrNull { it.smeltingType != SmeltingType.CAMPFIRE && it.input.matchesIgnoringAmount(event.source) }
             ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
+
+        // Eco registers the Bukkit cooking recipe with an ExactChoice, which ignores stack
+        // size, so vanilla would smelt a `<item> 4` input from a single item. Hold the smelt
+        // until the slot really holds the configured amount.
+        if (event.source.amount < recipe.input.requiredAmount()) { event.isCancelled = true; return }
 
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
 
@@ -91,7 +97,7 @@ class SmeltingListener(
             // regardless of give-result-item, rather than letting it complete unchecked.
             val noItemMatch = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
                 .firstOrNull { recipe ->
-                    recipe.smeltingType == SmeltingType.CAMPFIRE && recipe.input.matches(event.source) &&
+                    recipe.smeltingType == SmeltingType.CAMPFIRE && recipe.input.matchesIgnoringAmount(event.source) &&
                     recipeService.getMeta(recipe.key) != null
                 }
             if (noItemMatch != null) event.isCancelled = true
@@ -99,9 +105,14 @@ class SmeltingListener(
         }
 
         val recipe = WorkstationRecipes.getAll(SmeltingRecipe::class.java)
-            .firstOrNull { it.smeltingType == SmeltingType.CAMPFIRE && it.input.matches(event.source) }
+            .firstOrNull { it.smeltingType == SmeltingType.CAMPFIRE && it.input.matchesIgnoringAmount(event.source) }
             ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
+
+        // Eco registers the Bukkit cooking recipe with an ExactChoice, which ignores stack
+        // size, so vanilla would smelt a `<item> 4` input from a single item. Hold the smelt
+        // until the slot really holds the configured amount.
+        if (event.source.amount < recipe.input.requiredAmount()) { event.isCancelled = true; return }
 
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
 
