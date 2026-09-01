@@ -12,8 +12,8 @@ internal fun maxCraftsFromGrid(matrix: Array<out ItemStack?>): Int {
     return present.minOf { it!!.amount }
 }
 
-internal fun maxCraftsFromInput(inputStack: ItemStack?): Int =
-    inputStack?.amount ?: 0
+internal fun maxCraftsFromInput(inputStack: ItemStack?, requiredAmount: Int): Int =
+    (inputStack?.amount ?: 0) / requiredAmount.coerceAtLeast(1)
 
 internal fun consume(inventory: Inventory, slot: Int, amount: Int = 1) {
     val stack = inventory.getItem(slot) ?: return

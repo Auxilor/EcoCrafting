@@ -20,6 +20,14 @@ import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
 import org.bukkit.inventory.ItemStack
 
+// Eco registers a crafting recipe's Bukkit twin with material-only ingredients, so recipes
+// that differ only by which custom item a part tests for (several player_head-backed
+// EcoItems, say) collapse onto one Bukkit recipe and CraftItemEvent can name any of them.
+// The grid is the authority, so only trust the event's key when the two agree; a
+// disagreement drops back to the matrix match, which takes the craft over manually.
+internal fun trustedEventRecipe(fromEvent: CrafterRecipe?, fromGrid: CrafterRecipe?): CrafterRecipe? =
+    fromEvent?.takeIf { fromGrid == null || it.key == fromGrid.key }
+
 // Crafting table / Crafter block craft handling. CraftItemEvent is authoritative here
 // (topInventory really is a CraftingInventory), unlike the stonecutter/smithing table
 // where it's only an informational event and the real gate is an InventoryClickEvent -
@@ -53,7 +61,11 @@ class CraftingTableListener(
         val player = event.whoClicked as? Player ?: return
         val recipeKey = (event.recipe as? org.bukkit.Keyed)?.key ?: return
 
-        val directMatch = WorkstationRecipes.getByKey(recipeService.baseKeyForVariant(recipeKey)) as? CrafterRecipe
+        val matrixMatch = findCraftingTableRecipe(event.inventory.matrix)
+        val directMatch = trustedEventRecipe(
+            WorkstationRecipes.getByKey(recipeService.baseKeyForVariant(recipeKey)) as? CrafterRecipe,
+            matrixMatch
+        )
         // Fall back to matrix match when a vanilla recipe fires first (same shape/material),
         // then to the fully-normalized base key - this last step catches a rotated symmetry
         // variant fired under its `_displayed`/`_crafter` key, whose rotated matrix won't
@@ -61,7 +73,7 @@ class CraftingTableListener(
         // (needsTakeover stays true) just like the base recipe, so it can't skip the
         // lock/price/condition checks below.
         val recipe = directMatch
-            ?: findCraftingTableRecipe(event.inventory.matrix)
+            ?: matrixMatch
             ?: (WorkstationRecipes.getByKey(recipeService.resolveBaseKey(recipeKey)) as? CrafterRecipe)
             ?: return
         val needsTakeover = directMatch == null
