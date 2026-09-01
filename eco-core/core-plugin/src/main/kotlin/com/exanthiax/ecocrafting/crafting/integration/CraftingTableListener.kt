@@ -78,17 +78,6 @@ class CraftingTableListener(
             ?: return
         val needsTakeover = directMatch == null
         val meta = recipeService.getMeta(recipe.key) ?: return
-
-        // Eco registers the Bukkit twin with material-only ingredients, and Bukkit's
-        // ExactChoice ignores stack size regardless, so vanilla offers the craft as soon as
-        // one item sits in a slot a `<item> 4` part asked four of. Refuse until the grid
-        // really holds the amounts the recipe asks for.
-        val requirements = gridRequirements(recipe, event.inventory.matrix) ?: emptyMap()
-        if (!gridSatisfies(event.inventory.matrix, requirements)) {
-            event.isCancelled = true
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
-            return
-        }
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) {
             event.isCancelled = true
             if (meta.showWhenLocked && unlockService.isLocked(player, recipe.key, meta)) {
@@ -103,7 +92,7 @@ class CraftingTableListener(
             return
         }
 
-        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromGrid(event.inventory.matrix, requirements))).coerceAtLeast(1)
+        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
         val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
 
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
@@ -115,19 +104,16 @@ class CraftingTableListener(
         // can match them. That duplicate breaks vanilla's own shift-click "craft all"
         // repeat loop at a normal crafting table, so those recipes always take over
         // the craft manually instead of trusting the vanilla native path.
-        // A part needing more than one item has to be taken over too: vanilla only ever
-        // removes a single item per slot per craft.
-        val multiAmount = requirements.values.any { it > 1 }
-        val tookOver = (needsTakeover || meta.supportCrafter || multiAmount) && meta.giveResultItem
+        val tookOver = (needsTakeover || meta.supportCrafter) && meta.giveResultItem
         meta.price.pay(player, amount.toDouble())
         when {
             !meta.giveResultItem -> {
                 event.isCancelled = true
-                consumeCraftingGrid(event, amount, requirements)
+                consumeCraftingGrid(event, amount)
             }
             tookOver -> {
                 event.isCancelled = true
-                consumeCraftingGrid(event, amount, requirements)
+                consumeCraftingGrid(event, amount)
                 giveCraftedItem(event, player, item)
             }
         }
@@ -182,12 +168,12 @@ class CraftingTableListener(
         return required.isEmpty()
     }
 
-    private fun consumeCraftingGrid(event: CraftItemEvent, amount: Int, requirements: Map<Int, Int>) {
+    private fun consumeCraftingGrid(event: CraftItemEvent, amount: Int) {
         val matrix = event.inventory.matrix
         for (slot in matrix.indices) {
             val stack = matrix[slot] ?: continue
             if (stack.type.isAir) continue
-            val remaining = stack.amount - amount * (requirements[slot] ?: 1)
+            val remaining = stack.amount - amount
             matrix[slot] = if (remaining <= 0) null else stack.apply { this.amount = remaining }
         }
         event.inventory.matrix = matrix

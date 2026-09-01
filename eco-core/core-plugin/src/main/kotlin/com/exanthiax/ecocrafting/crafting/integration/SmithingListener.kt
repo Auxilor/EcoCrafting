@@ -6,8 +6,6 @@ import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomSmithEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
-import com.exanthiax.ecocrafting.recipe.model.matchesIgnoringAmount
-import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
@@ -35,23 +33,15 @@ class SmithingListener(
         val player = event.whoClicked as? Player ?: return
 
         val inventory = event.inventory
-        // Matched blind to stack size so a short slot is refused below rather than left to
-        // vanilla's own SmithingTransformRecipe, whose ExactChoice ignores stack size too.
         val recipe = WorkstationRecipes.getAll(SmithingRecipe::class.java)
             .firstOrNull {
-                it.template.matchesIgnoringAmount(inventory.getItem(0)) &&
-                it.base.matchesIgnoringAmount(inventory.getItem(1)) &&
-                it.addition.matchesIgnoringAmount(inventory.getItem(2))
+                it.template.matches(inventory.getItem(0)) &&
+                it.base.matches(inventory.getItem(1)) &&
+                it.addition.matches(inventory.getItem(2))
             } ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
 
         event.isCancelled = true
-
-        val required = listOf(recipe.template, recipe.base, recipe.addition).map { it.requiredAmount() }
-        if ((0..2).any { (inventory.getItem(it)?.amount ?: 0) < required[it] }) {
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
-            return
-        }
 
         if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { return }
 
@@ -62,7 +52,7 @@ class SmithingListener(
             plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
             return
         }
-        consumeSmithingSlots(inventory, required)
+        consumeSmithingSlots(inventory)
         meta.price.pay(player, 1.0)
         if (meta.giveResultItem) {
             giveOrDropItem(player, item.clone())
@@ -71,7 +61,7 @@ class SmithingListener(
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }
 
-    private fun consumeSmithingSlots(inventory: Inventory, required: List<Int>) {
-        for (slot in 0..2) consume(inventory, slot, required[slot])
+    private fun consumeSmithingSlots(inventory: Inventory) {
+        for (slot in 0..2) consume(inventory, slot)
     }
 }
