@@ -34,6 +34,7 @@ class WizardState(
     var showWhenLocked: Boolean = false
     var repairCost: Int = 1
     var brewTime: Int? = null
+    var giveResultItem: Boolean = true
 
     fun toPendingRecipe(id: String) = PendingRecipe(
         typeKey = typeKey,
@@ -55,7 +56,8 @@ class WizardState(
         lockedByDefault = lockedByDefault,
         showWhenLocked = showWhenLocked,
         repairCost = repairCost,
-        brewTime = brewTime
+        brewTime = brewTime,
+        giveResultItem = giveResultItem
     )
 }
 
@@ -79,7 +81,8 @@ data class PendingRecipe(
     val lockedByDefault: Boolean,
     val showWhenLocked: Boolean,
     val repairCost: Int,
-    val brewTime: Int?
+    val brewTime: Int?,
+    val giveResultItem: Boolean = true
 )
 
 internal fun PendingRecipe.toPreviewResolvedRecipe(): ResolvedRecipe {

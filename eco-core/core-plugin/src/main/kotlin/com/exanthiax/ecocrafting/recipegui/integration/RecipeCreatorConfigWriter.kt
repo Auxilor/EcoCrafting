@@ -128,6 +128,12 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val chance = if (typeKey == "villager") { if (yaml.contains("chance")) yaml.getDouble("chance") else 1.0 } else 1.0
         val wanderingTrader = if (typeKey == "villager") yaml.getBoolean("wandering-trader") else false
         val villagerXp = if (typeKey == "villager") yaml.getInt("villager-xp") else 0
+        // Stonecutters carry the flag per output, everything else at the top level.
+        // Absent means true, matching RecipeLoader.parseMeta.
+        val giveResultItemSection = if (typeKey == "stonecutter") yaml.getConfigurationSection("outputs.0") else yaml
+        val giveResultItem = giveResultItemSection?.let {
+            if (it.contains("give-result-item")) it.getBoolean("give-result-item") else null
+        } ?: true
 
         val seedState = WizardState(typeKey, parts, output ?: ItemStack(Material.AIR), shapeless, symmetry, supportCrafter, id, permission)
         seedState.category = category
@@ -142,6 +148,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         seedState.chance = chance
         seedState.wanderingTrader = wanderingTrader
         seedState.villagerXp = villagerXp
+        seedState.giveResultItem = giveResultItem
 
         return EditSeed(
             typeKey = typeKey,
@@ -191,6 +198,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
                 yaml.appendLine("outputs:")
                 yaml.appendLine("  - item: ${itemLookup(pending.output)}")
                 yaml.appendLine("    lore: []")
+                yaml.appendLine("    give-result-item: ${pending.giveResultItem}")
             }
             "brewing_stand" -> {
                 yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
@@ -220,6 +228,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         if (pending.typeKey != "stonecutter") {
             yaml.appendLine("output: ${itemLookup(pending.output)}")
             yaml.appendLine("lore: []")
+            yaml.appendLine("give-result-item: ${pending.giveResultItem}")
         }
 
         if (pending.permission.isNotBlank()) yaml.appendLine("permission: ${yamlQuote(pending.permission)}")

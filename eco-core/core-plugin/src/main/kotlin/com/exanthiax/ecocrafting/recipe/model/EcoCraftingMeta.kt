@@ -5,7 +5,9 @@ import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.effects.Chain
 
 data class EcoCraftingMeta(
-    val giveResultItem: Boolean,
+    // Omitted in config means the recipe hands over its result: only an explicit
+    // give-result-item: false turns that off.
+    val giveResultItem: Boolean = true,
     val effectsChain: Chain?,
     val visibilityConditions: ConditionList,
     val craftingConditions: ConditionList,
