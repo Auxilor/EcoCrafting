@@ -183,6 +183,7 @@ addition: netherite_ingot
 ```yaml
 type: stonecutter
 
+# `input: stone 4` requires four of the item per cut, and consumes four each time.
 input: stone
 
 # Multiple outputs supported - each appears as a separate option in the UI.

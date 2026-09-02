@@ -10,6 +10,17 @@ import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 
+// Uses eco's own lookup serialization so items (not just their base Material) round-trip
+// through RecipeLoader.parseIngredient/parseOutputItem. A registered custom item is written
+// as its key alone: toLookupString would also append every arg parser's output
+// (`texture:...`, `name:"..."`), and those become exact-match predicates at load time that
+// the item stops satisfying as soon as its texture or display name is edited.
+internal fun itemLookupString(item: ItemStack?): String {
+    if (item == null || item.isEmpty) return "air"
+    val custom = Items.getCustomItem(item) ?: return Items.toLookupString(item)
+    return if (item.amount > 1) "${custom.key} ${item.amount}" else custom.key.toString()
+}
+
 data class EditSeed(
     val typeKey: String,
     val parts: Map<Int, ItemStack>,
@@ -41,13 +52,6 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         if (!dir.exists()) return null
         return dir.walkTopDown()
             .firstOrNull { it.isFile && it.extension.equals("yml", ignoreCase = true) && it.nameWithoutExtension.equals(id, ignoreCase = true) }
-    }
-
-    // Uses eco's own lookup serialization so custom items (not just their base
-    // Material) round-trip through RecipeLoader.parseIngredient/parseOutputItem.
-    private fun itemLookup(item: ItemStack?): String {
-        if (item == null || item.type.isAir) return "air"
-        return Items.toLookupString(item)
     }
 
     // YAML double-quoted scalar: only backslash and the closing quote need escaping,
@@ -172,38 +176,38 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
                 yaml.appendLine("recipe:")
                 for (slot in 0..8) {
                     val item = pending.parts[slot]
-                    val lookup = if (item == null || item.type.isAir) "\"\"" else itemLookup(item)
+                    val lookup = if (item == null || item.type.isAir) "\"\"" else itemLookupString(item)
                     yaml.appendLine("  - $lookup")
                 }
             }
             "furnace", "blast_furnace", "smoker", "campfire" -> {
-                yaml.appendLine("input: ${itemLookup(pending.parts[0])}")
+                yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
                 pending.cookTime?.let { yaml.appendLine("cook-time: $it") }
                 yaml.appendLine("experience: ${pending.experience}")
             }
             "smithing_table" -> {
-                yaml.appendLine("template: ${itemLookup(pending.parts[0])}")
-                yaml.appendLine("base: ${itemLookup(pending.parts[1])}")
-                yaml.appendLine("addition: ${itemLookup(pending.parts[2])}")
+                yaml.appendLine("template: ${itemLookupString(pending.parts[0])}")
+                yaml.appendLine("base: ${itemLookupString(pending.parts[1])}")
+                yaml.appendLine("addition: ${itemLookupString(pending.parts[2])}")
             }
             "stonecutter" -> {
-                yaml.appendLine("input: ${itemLookup(pending.parts[0])}")
+                yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
                 yaml.appendLine("outputs:")
-                yaml.appendLine("  - item: ${itemLookup(pending.output)}")
+                yaml.appendLine("  - item: ${itemLookupString(pending.output)}")
                 yaml.appendLine("    lore: []")
             }
             "brewing_stand" -> {
-                yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
-                yaml.appendLine("ingredient: ${itemLookup(pending.parts[1])}")
+                yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
+                yaml.appendLine("ingredient: ${itemLookupString(pending.parts[1])}")
                 pending.brewTime?.let { yaml.appendLine("brew-time: $it") }
             }
             "grindstone" -> {
-                yaml.appendLine("item1: ${itemLookup(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("item2: ${itemLookup(it)}") }
+                yaml.appendLine("item1: ${itemLookupString(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("item2: ${itemLookupString(it)}") }
             }
             "villager" -> {
-                yaml.appendLine("input1: ${itemLookup(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("input2: ${itemLookup(it)}") }
+                yaml.appendLine("input1: ${itemLookupString(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("input2: ${itemLookupString(it)}") }
                 if (pending.profession.isNotBlank()) yaml.appendLine("profession: ${pending.profession}")
                 yaml.appendLine("min-level: ${pending.minLevel}")
                 yaml.appendLine("chance: ${pending.chance}")
@@ -211,14 +215,14 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
                 yaml.appendLine("villager-xp: ${pending.villagerXp}")
             }
             "anvil" -> {
-                yaml.appendLine("base: ${itemLookup(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("material: ${itemLookup(it)}") }
+                yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("material: ${itemLookupString(it)}") }
                 yaml.appendLine("repair-cost: ${pending.repairCost}")
             }
         }
 
         if (pending.typeKey != "stonecutter") {
-            yaml.appendLine("output: ${itemLookup(pending.output)}")
+            yaml.appendLine("output: ${itemLookupString(pending.output)}")
             yaml.appendLine("lore: []")
         }
 
