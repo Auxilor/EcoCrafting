@@ -50,7 +50,7 @@ type: crafting_table # workstation type (see table above)
 output: netherite_sword name:"&6Example Sword" # eco item lookup format
 lore: [] # optional extra lore on the output item
 
-give-result-item: true # false = no item given; fire libreforge effects instead
+give-result-item: true # defaults to true when omitted; false = no item given, fire libreforge effects instead
 # effects:
 #   - id: give_xp
 #     args:
