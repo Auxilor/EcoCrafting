@@ -6,7 +6,7 @@ import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
-import com.exanthiax.ecocrafting.libreforge.TriggerCustomCraft
+import com.exanthiax.ecocrafting.libreforge.TriggerCraft
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.block.Block
@@ -23,7 +23,7 @@ fun fireCraftEffects(
 ) {
     val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString(), block = block)
     meta.effectsChain?.trigger(player.toDispatcher(), data)
-    TriggerCustomCraft.dispatch(player.toDispatcher(), data)
+    TriggerCraft.dispatch(player.toDispatcher(), data)
 }
 
 // A recipe's explicit `permission` wins outright; otherwise the implicit per-recipe node

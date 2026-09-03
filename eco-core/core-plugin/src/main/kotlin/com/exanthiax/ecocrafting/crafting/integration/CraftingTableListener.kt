@@ -7,6 +7,7 @@ import com.exanthiax.ecocrafting.crafting.event.CustomCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
 import com.exanthiax.ecocrafting.crafting.service.priceAffordableAmount
+import com.exanthiax.ecocrafting.libreforge.TriggerCraft
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
@@ -117,6 +118,9 @@ class CraftingTableListener(
                 giveCraftedItem(event, player, item)
             }
         }
+        // Claim the event before dispatching, so the trigger's own vanilla CraftItemEvent
+        // handler doesn't fire `craft` a second time for this same craft.
+        TriggerCraft.markDispatched(event)
         fireCraftEffects(player, recipe, meta, item, amount, event.view.topInventory.location?.block)
     }
 

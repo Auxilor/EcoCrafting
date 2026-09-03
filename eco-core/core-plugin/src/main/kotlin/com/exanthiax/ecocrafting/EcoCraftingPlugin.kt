@@ -31,7 +31,7 @@ import com.exanthiax.ecocrafting.crafting.integration.SmeltingListener
 import com.exanthiax.ecocrafting.crafting.integration.SmithingListener
 import com.exanthiax.ecocrafting.crafting.integration.StonecutterListener
 import com.exanthiax.ecocrafting.crafting.integration.WorkbenchListener
-import com.exanthiax.ecocrafting.libreforge.TriggerCustomCraft
+import com.exanthiax.ecocrafting.libreforge.TriggerCraft
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.recipe.integration.RecipeCapEnforcer
 import com.exanthiax.ecocrafting.recipe.integration.RecipeLoader
@@ -101,7 +101,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
 
-        Triggers.register(TriggerCustomCraft)
+        Triggers.register(TriggerCraft)
         Triggers.register(TriggerRecipeUnlocked)
         Triggers.register(TriggerRecipeLocked)
 
