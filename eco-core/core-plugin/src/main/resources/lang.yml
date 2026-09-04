@@ -4,7 +4,7 @@ messages:
   not-player: "&cThis command must be run by a player"
   invalid-command: "&cUnknown subcommand!"
   no-recipe: "&cNo recipe found for specified item!"
-  reloaded: "&aEcoCrafting reloaded! Took %time%ms, loaded %count% recipes."
+  reloaded: "Reloaded in %time%ms! Loaded %count% recipes."
   craft-success: "&aSuccessfully crafted &f%item%&a!"
   craft-purchased: "&aPurchased missing materials and crafted &f%item%&a!"
   shop-disabled: "&cEcoShop auto-purchase is disabled."
