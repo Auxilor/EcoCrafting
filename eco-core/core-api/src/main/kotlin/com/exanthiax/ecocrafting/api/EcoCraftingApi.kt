@@ -1,6 +1,7 @@
 package com.exanthiax.ecocrafting.api
 
 import com.exanthiax.ecocrafting.api.category.CategoriesManager
+import com.exanthiax.ecocrafting.api.limit.LimitManager
 import com.exanthiax.ecocrafting.api.recipe.RecipesManager
 import com.exanthiax.ecocrafting.api.unlock.UnlockManager
 import org.bukkit.Bukkit
@@ -9,6 +10,7 @@ interface EcoCraftingApi {
     fun categories(): CategoriesManager
     fun recipes(): RecipesManager
     fun unlocks(): UnlockManager
+    fun limits(): LimitManager
 
     companion object {
         @JvmStatic

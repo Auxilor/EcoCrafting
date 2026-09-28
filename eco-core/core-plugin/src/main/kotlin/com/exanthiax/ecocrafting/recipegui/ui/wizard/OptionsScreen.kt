@@ -5,6 +5,7 @@ import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.util.formatEco
+import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.Material
@@ -79,6 +80,38 @@ internal fun RecipeCreatorGUI.openOptions(player: Player, state: WizardState) {
         }.onLeftClick { _, _ ->
             state.showWhenLocked = !state.showWhenLocked
         }.build())
+
+        if (state.typeKey != "brewing_stand") {
+            val playerLimitSlot = nextFieldSlot()
+            fieldSlots += playerLimitSlot
+            setSlot(playerLimitSlot.first, playerLimitSlot.second, Slot.builder { _: Player, _: Menu ->
+                buildOptionItem(
+                    Material.HOPPER, "Player Craft Limit",
+                    state.playerCraftLimit.takeIf { it >= 0 }?.toString() ?: "unlimited",
+                    state.playerCraftLimit < 0
+                )
+            }.onLeftClick { _, _ ->
+                player.closeInventory()
+                promptPlayerCraftLimit(player, state)
+            }.onRightClick { _, _ ->
+                state.playerCraftLimit = UNLIMITED
+            }.build())
+
+            val globalLimitSlot = nextFieldSlot()
+            fieldSlots += globalLimitSlot
+            setSlot(globalLimitSlot.first, globalLimitSlot.second, Slot.builder { _: Player, _: Menu ->
+                buildOptionItem(
+                    Material.CHEST, "Global Craft Limit",
+                    state.globalCraftLimit.takeIf { it >= 0 }?.toString() ?: "unlimited",
+                    state.globalCraftLimit < 0
+                )
+            }.onLeftClick { _, _ ->
+                player.closeInventory()
+                promptGlobalCraftLimit(player, state)
+            }.onRightClick { _, _ ->
+                state.globalCraftLimit = UNLIMITED
+            }.build())
+        }
 
         if (state.typeKey == "crafting_table") {
             val shapelessSlot = nextFieldSlot()

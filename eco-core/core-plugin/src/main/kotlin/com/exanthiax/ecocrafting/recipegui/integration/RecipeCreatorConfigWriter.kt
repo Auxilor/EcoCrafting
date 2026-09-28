@@ -3,10 +3,13 @@ package com.exanthiax.ecocrafting.recipegui.integration
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
+import com.exanthiax.ecocrafting.limit.model.UNLIMITED
+import com.exanthiax.ecocrafting.limit.model.normaliseLimit
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
 import java.io.File
 import org.bukkit.Material
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 
@@ -15,6 +18,25 @@ import org.bukkit.inventory.ItemStack
 // as its key alone: toLookupString would also append every arg parser's output
 // (`texture:...`, `name:"..."`), and those become exact-match predicates at load time that
 // the item stops satisfying as soon as its texture or display name is edited.
+internal fun craftLimitLines(playerCraftLimit: Int, globalCraftLimit: Int, indent: String): List<String> {
+    if (playerCraftLimit < 0 && globalCraftLimit < 0) return emptyList()
+    return listOfNotNull(
+        "${indent}craft-limits:",
+        playerCraftLimit.takeIf { it >= 0 }?.let { "$indent  player: $it" },
+        globalCraftLimit.takeIf { it >= 0 }?.let { "$indent  global: $it" }
+    )
+}
+
+internal fun readCraftLimits(section: ConfigurationSection?): Pair<Int, Int> =
+    normaliseLimit(section?.takeIf { it.contains("craft-limits.player") }?.getInt("craft-limits.player")) to
+        normaliseLimit(section?.takeIf { it.contains("craft-limits.global") }?.getInt("craft-limits.global"))
+
+internal fun parseLimitInput(input: String): Int? {
+    val trimmed = input.trim()
+    if (trimmed.equals("none", ignoreCase = true) || trimmed.equals("unlimited", ignoreCase = true)) return UNLIMITED
+    return trimmed.toIntOrNull()?.takeIf { it >= UNLIMITED }
+}
+
 internal fun itemLookupString(item: ItemStack?): String {
     if (item == null || item.isEmpty) return "air"
     val custom = Items.getCustomItem(item) ?: return Items.toLookupString(item)
@@ -138,6 +160,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val giveResultItem = giveResultItemSection?.let {
             if (it.contains("give-result-item")) it.getBoolean("give-result-item") else null
         } ?: true
+        val (playerCraftLimit, globalCraftLimit) = readCraftLimits(giveResultItemSection)
 
         val seedState = WizardState(typeKey, parts, output ?: ItemStack(Material.AIR), shapeless, symmetry, supportCrafter, id, permission)
         seedState.category = category
@@ -153,6 +176,8 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         seedState.wanderingTrader = wanderingTrader
         seedState.villagerXp = villagerXp
         seedState.giveResultItem = giveResultItem
+        seedState.playerCraftLimit = playerCraftLimit
+        seedState.globalCraftLimit = globalCraftLimit
 
         return EditSeed(
             typeKey = typeKey,
@@ -171,6 +196,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val dir = File(plugin.dataFolder, "recipes")
         dir.mkdirs()
         val file = findRecipeFile(pending.id) ?: File(dir, "${pending.id}.yml")
+        val existing = file.takeIf { it.exists() }?.let { YamlConfiguration.loadConfiguration(it) }
         val yaml = StringBuilder()
         yaml.appendLine("type: ${pending.typeKey}")
         if (pending.category.isNotBlank()) yaml.appendLine("category: ${yamlQuote(pending.category)}")
@@ -199,10 +225,15 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
             }
             "stonecutter" -> {
                 yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
-                yaml.appendLine("outputs:")
-                yaml.appendLine("  - item: ${itemLookupString(pending.output)}")
-                yaml.appendLine("    lore: []")
-                yaml.appendLine("    give-result-item: ${pending.giveResultItem}")
+                yaml.append(
+                    stonecutterOutputsYaml(
+                        existing,
+                        itemLookupString(pending.output),
+                        pending.giveResultItem,
+                        pending.playerCraftLimit,
+                        pending.globalCraftLimit
+                    )
+                )
             }
             "brewing_stand" -> {
                 yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
@@ -231,16 +262,17 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
 
         if (pending.typeKey != "stonecutter") {
             yaml.appendLine("output: ${itemLookupString(pending.output)}")
-            yaml.appendLine("lore: []")
             yaml.appendLine("give-result-item: ${pending.giveResultItem}")
+            if (pending.typeKey != "brewing_stand") {
+                craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, "").forEach { yaml.appendLine(it) }
+            }
         }
 
         if (pending.permission.isNotBlank()) yaml.appendLine("permission: ${yamlQuote(pending.permission)}")
         yaml.appendLine("locked-by-default: ${pending.lockedByDefault}")
         yaml.appendLine("show-when-locked: ${pending.showWhenLocked}")
-        yaml.appendLine("visibility-conditions: []")
-        yaml.appendLine("crafting-conditions: []")
-        yaml.appendLine("unlock-conditions: []")
+        builderDefaultLines(existing, includeLore = pending.typeKey != "stonecutter").forEach { yaml.appendLine(it) }
+        yaml.append(carriedOverYaml(existing))
 
         file.writeText(yaml.toString())
     }

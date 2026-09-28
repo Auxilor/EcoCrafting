@@ -21,3 +21,6 @@ enum class RecipeDisplayType {
     ANVIL,
     VILLAGER
 }
+
+val RecipeDisplayType.supportsCraftLimits: Boolean
+    get() = this != RecipeDisplayType.BREWING

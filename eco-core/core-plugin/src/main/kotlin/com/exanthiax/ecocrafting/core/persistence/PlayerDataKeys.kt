@@ -16,4 +16,22 @@ class PlayerDataKeys(plugin: EcoCraftingPlugin) {
         PersistentDataKeyType.STRING_LIST,
         emptyList()
     )
+
+    val craftLimitCounts = PersistentDataKey(
+        plugin.namespacedKeyFactory.create("craft_limit_counts"),
+        PersistentDataKeyType.STRING_LIST,
+        emptyList()
+    )
+
+    val craftLimitGlobalCounts = PersistentDataKey(
+        plugin.namespacedKeyFactory.create("craft_limit_global_counts"),
+        PersistentDataKeyType.STRING_LIST,
+        emptyList()
+    )
+
+    val craftLimitResets = PersistentDataKey(
+        plugin.namespacedKeyFactory.create("craft_limit_resets"),
+        PersistentDataKeyType.STRING_LIST,
+        emptyList()
+    )
 }

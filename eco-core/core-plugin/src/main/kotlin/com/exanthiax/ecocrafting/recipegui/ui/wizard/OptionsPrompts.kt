@@ -2,6 +2,7 @@ package com.exanthiax.ecocrafting.recipegui.ui.wizard
 
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.willfp.eco.util.formatEco
+import com.exanthiax.ecocrafting.recipegui.integration.parseLimitInput
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.NamespacedKey
@@ -221,5 +222,29 @@ internal fun RecipeCreatorGUI.promptId(player: Player, state: WizardState) {
             return@handler
         }
         openPreview(player, state.toPendingRecipe(cleanId))
+    }
+}
+
+internal fun RecipeCreatorGUI.promptPlayerCraftLimit(player: Player, state: WizardState) {
+    player.sendMessage("&aType how many times each player can craft this, or &eunlimited&a:".formatEco())
+    awaitingInput[player.uniqueId] = handler@{ input ->
+        state.playerCraftLimit = parseLimitInput(input) ?: run {
+            player.sendMessage("&cInvalid limit, try again.".formatEco())
+            promptPlayerCraftLimit(player, state)
+            return@handler
+        }
+        openOptions(player, state)
+    }
+}
+
+internal fun RecipeCreatorGUI.promptGlobalCraftLimit(player: Player, state: WizardState) {
+    player.sendMessage("&aType how many times the whole server can craft this, or &eunlimited&a:".formatEco())
+    awaitingInput[player.uniqueId] = handler@{ input ->
+        state.globalCraftLimit = parseLimitInput(input) ?: run {
+            player.sendMessage("&cInvalid limit, try again.".formatEco())
+            promptGlobalCraftLimit(player, state)
+            return@handler
+        }
+        openOptions(player, state)
     }
 }

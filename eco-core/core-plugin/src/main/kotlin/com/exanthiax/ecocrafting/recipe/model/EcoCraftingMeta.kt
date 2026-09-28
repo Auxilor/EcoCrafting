@@ -3,6 +3,7 @@ package com.exanthiax.ecocrafting.recipe.model
 import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.effects.Chain
+import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 
 data class EcoCraftingMeta(
     // Omitted in config means the recipe hands over its result: only an explicit
@@ -20,5 +21,10 @@ data class EcoCraftingMeta(
     val categoryId: String? = null,
     val price: ConfiguredPrice = ConfiguredPrice.FREE,
     // Villager trades only, and only in a command-opened merchant: 0 means unlimited uses.
-    val maxUses: Int = 0
-)
+    val maxUses: Int = 0,
+    val playerCraftLimit: Int = UNLIMITED,
+    val globalCraftLimit: Int = UNLIMITED
+) {
+    val hasCraftLimit: Boolean
+        get() = playerCraftLimit >= 0 || globalCraftLimit >= 0
+}

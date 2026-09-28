@@ -22,6 +22,7 @@ import com.exanthiax.ecocrafting.commands.CommandLock
 import com.exanthiax.ecocrafting.commands.CommandOpen
 import com.exanthiax.ecocrafting.commands.CommandOpenTrade
 import com.exanthiax.ecocrafting.commands.CommandReload
+import com.exanthiax.ecocrafting.commands.CommandResetLimits
 import com.exanthiax.ecocrafting.commands.CommandUnlock
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
 import com.exanthiax.ecocrafting.crafting.integration.BrewingListener
@@ -31,7 +32,10 @@ import com.exanthiax.ecocrafting.crafting.integration.SmeltingListener
 import com.exanthiax.ecocrafting.crafting.integration.SmithingListener
 import com.exanthiax.ecocrafting.crafting.integration.StonecutterListener
 import com.exanthiax.ecocrafting.crafting.integration.WorkbenchListener
+import com.exanthiax.ecocrafting.libreforge.ConditionHasCraftsRemaining
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
+import com.exanthiax.ecocrafting.limit.integration.registerCraftLimitPlaceholders
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.recipe.integration.RecipeCapEnforcer
 import com.exanthiax.ecocrafting.recipe.integration.RecipeLoader
@@ -71,27 +75,28 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private val recipeLoader = RecipeLoader(this, recipeService, recipeCapEnforcer, categoryLoader)
 
     private val unlockService = RecipeUnlockService(dataKeys, recipeService)
+    private val craftLimitService = CraftLimitService(dataKeys, recipeService)
     private val unlockJoinListener = RecipeUnlockJoinListener(recipeService, unlockService)
 
     // crafting slice - one listener per workstation type instead of one god-listener
     private val blockOwnerService = BlockOwnerService(this)
-    private val craftingTableListener = CraftingTableListener(this, recipeService, unlockService)
-    private val smithingListener = SmithingListener(this, recipeService, unlockService)
-    private val stonecutterListener = StonecutterListener(this, recipeService, unlockService)
-    private val crafterBlockListener = CrafterBlockListener(this, recipeService, unlockService, blockOwnerService)
-    private val smeltingListener = SmeltingListener(this, recipeService, unlockService, blockOwnerService)
-    private val brewingListener = BrewingListener(this, recipeService, unlockService, blockOwnerService)
+    private val craftingTableListener = CraftingTableListener(this, recipeService, unlockService, craftLimitService)
+    private val smithingListener = SmithingListener(this, recipeService, unlockService, craftLimitService)
+    private val stonecutterListener = StonecutterListener(this, recipeService, unlockService, craftLimitService)
+    private val crafterBlockListener = CrafterBlockListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)
+    private val smeltingListener = SmeltingListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)
+    private val brewingListener = BrewingListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)
     private val tradeSessionService = TradeSessionService()
     private val tradeMerchantFactory = TradeMerchantFactory(this, recipeService, unlockService, tradeSessionService)
-    private val workbenchListener = WorkbenchListener(this, recipeService, unlockService, tradeSessionService)
+    private val workbenchListener = WorkbenchListener(this, recipeService, unlockService, craftLimitService, tradeSessionService)
 
     private val shopIntegrationService = ShopIntegrationService(this)
 
-    private val guiServices = RecipeGuiServices(this, recipeService, resolverService, unlockService, shopIntegrationService)
+    private val guiServices = RecipeGuiServices(this, recipeService, resolverService, unlockService, craftLimitService, shopIntegrationService)
     private val recipeCreatorGUI = RecipeCreatorGUI(this, guiServices)
     private val recipeCreatorChatListener = RecipeCreatorChatListener(this, recipeCreatorGUI)
 
-    private val apiImpl = EcoCraftingApiImpl(categoriesManager, recipeService, unlockService)
+    private val apiImpl = EcoCraftingApiImpl(categoriesManager, recipeService, unlockService, craftLimitService)
 
     override fun handleEnable() {
         EffectLockRecipe.recipeService = recipeService
@@ -100,6 +105,8 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         EffectUnlockRecipe.unlockService = unlockService
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
+        ConditionHasCraftsRemaining.recipeService = recipeService
+        ConditionHasCraftsRemaining.limitService = craftLimitService
 
         Triggers.register(TriggerCraft)
         Triggers.register(TriggerRecipeUnlocked)
@@ -108,11 +115,13 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         Effects.register(EffectUnlockRecipe)
         Effects.register(EffectLockRecipe)
         Conditions.register(ConditionHasUnlockedRecipe)
+        Conditions.register(ConditionHasCraftsRemaining)
 
         Filters.register(FilterWorkstation)
         Filters.register(FilterRecipe)
 
         shopIntegrationService.init()
+        registerCraftLimitPlaceholders(this, recipeService, craftLimitService)
 
         server.servicesManager.register(
             EcoCraftingApi::class.java,
@@ -151,6 +160,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
                     CommandEdit(this, recipeCreatorGUI),
                     CommandUnlock(this, recipeService, unlockService),
                     CommandLock(this, recipeService, unlockService),
+                    CommandResetLimits(this, recipeService, craftLimitService),
                     CommandConfirm(this, recipeCreatorGUI),
                     CommandCancel(this, recipeCreatorGUI)
                 )

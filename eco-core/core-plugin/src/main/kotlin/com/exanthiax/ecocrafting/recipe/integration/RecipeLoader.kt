@@ -16,12 +16,15 @@ import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.exanthiax.ecocrafting.BuildConfig
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
+import com.exanthiax.ecocrafting.limit.model.UNLIMITED
+import com.exanthiax.ecocrafting.limit.model.normaliseLimit
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import com.exanthiax.ecocrafting.recipe.model.RecipeSymmetry
 import com.exanthiax.ecocrafting.recipe.model.asDisplayAlternatives
+import com.exanthiax.ecocrafting.recipe.model.supportsCraftLimits
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
@@ -147,10 +150,17 @@ class RecipeLoader(
         return ConfiguredPrice.createOrFree(priceConfig)
     }
 
+    internal fun parseCraftLimit(config: Config, limit: String): Int =
+        normaliseLimit(config.getIntOrNull("craft-limits.$limit"))
+
     internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): EcoCraftingMeta {
         val ctx = ViolationContext(plugin, "recipe-$id")
         val giveResultItem = if (config.has("give-result-item")) config.getBool("give-result-item") else true
         val effectsChain = Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
+        val supportsCraftLimits = displayType.supportsCraftLimits
+        if (!supportsCraftLimits && config.has("craft-limits")) {
+            plugin.logger.warning("Recipe $id: craft-limits is not supported on brewing_stand recipes and is ignored.")
+        }
         return EcoCraftingMeta(
             giveResultItem = giveResultItem,
             effectsChain = effectsChain,
@@ -164,7 +174,9 @@ class RecipeLoader(
             supportCrafter = config.getBool("support-crafter"),
             categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
             price = parsePrice(config),
-            maxUses = config.getIntOrNull("max-uses") ?: 0
+            maxUses = config.getIntOrNull("max-uses") ?: 0,
+            playerCraftLimit = if (supportsCraftLimits) parseCraftLimit(config, "player") else UNLIMITED,
+            globalCraftLimit = if (supportsCraftLimits) parseCraftLimit(config, "global") else UNLIMITED
         )
     }
 

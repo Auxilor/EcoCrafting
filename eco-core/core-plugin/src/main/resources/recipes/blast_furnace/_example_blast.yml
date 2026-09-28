@@ -17,6 +17,10 @@ give-result-item: true
 #     args:
 #       xp: 50
 
+# craft-limits: # Optional. Caps how many times this recipe can be crafted.
+#   player: 5 # Crafts each player can make. -1 is unlimited.
+#   global: 100 # Crafts the whole server can make. -1 is unlimited.
+
 permission: ""
 locked-by-default: false
 show-when-locked: false

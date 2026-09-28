@@ -29,6 +29,7 @@ permissions:
       ecocrafting.admin.edit: true
       ecocrafting.open.others: true
       ecocrafting.recipe.*: true
+      ecocrafting.limit.bypass: true
   ecocrafting.command.*:
     description: All commands
     default: op
@@ -65,3 +66,6 @@ permissions:
   ecocrafting.recipe.*:
     description: Access to every recipe-specific permission node (ecocrafting.recipe.<id>)
     default: true
+  ecocrafting.limit.bypass:
+    description: Ignore craft limits. Crafts made with this are not counted.
+    default: false

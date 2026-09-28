@@ -6,6 +6,7 @@ import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomSmithEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
@@ -20,7 +21,8 @@ import org.bukkit.inventory.Inventory
 class SmithingListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
-    private val unlockService: RecipeUnlockService
+    private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService
 ) : Listener {
 
     // Like the stonecutter, CraftItemEvent on a SmithingInventory is informational only -
@@ -43,7 +45,7 @@ class SmithingListener(
 
         event.isCancelled = true
 
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { return }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { return }
 
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmithEvent(player, recipe, item)
@@ -57,6 +59,7 @@ class SmithingListener(
         if (meta.giveResultItem) {
             giveOrDropItem(player, item.clone())
         }
+        limitService.record(player, recipe.key, meta, 1)
         fireCraftEffects(player, recipe, meta, item, 1, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }

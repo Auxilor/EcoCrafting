@@ -7,6 +7,7 @@ import com.exanthiax.ecocrafting.crafting.event.CustomCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
 import com.exanthiax.ecocrafting.crafting.service.priceAffordableAmount
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.model.matchesIgnoringAmount
 import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
@@ -23,7 +24,8 @@ import org.bukkit.inventory.Inventory
 class StonecutterListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
-    private val unlockService: RecipeUnlockService
+    private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService
 ) : Listener {
 
     // Bukkit's CraftItemEvent only ever fires for a CraftingInventory (crafting table);
@@ -56,11 +58,19 @@ class StonecutterListener(
             return
         }
 
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { return }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { return }
 
         val item = resultItem.clone()
         val amount = if (event.isShiftClick) {
-            priceAffordableAmount(player, meta.price, minOf(spaceBasedAmount(player, item), maxCraftsFromInput(inputItem, required)).coerceAtLeast(1))
+            priceAffordableAmount(
+                player,
+                meta.price,
+                minOf(
+                    spaceBasedAmount(player, item),
+                    maxCraftsFromInput(inputItem, required),
+                    limitService.craftsAllowed(player, recipe.key, meta)
+                ).coerceAtLeast(1)
+            )
         } else priceAffordableAmount(player, meta.price, 1)
 
         val craftItem = item.clone().apply { this.amount = item.amount * amount }
@@ -75,6 +85,7 @@ class StonecutterListener(
         if (meta.giveResultItem) {
             giveOrDropItem(player, craftItem, preferCursor = !event.isShiftClick)
         }
+        limitService.record(player, recipe.key, meta, amount)
         fireCraftEffects(player, recipe, meta, craftItem, amount, inventory.location?.block)
         plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
     }

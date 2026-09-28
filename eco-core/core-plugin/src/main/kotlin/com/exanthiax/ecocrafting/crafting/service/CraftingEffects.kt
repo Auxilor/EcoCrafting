@@ -7,6 +7,7 @@ import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.TriggerData
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.block.Block
@@ -40,9 +41,11 @@ fun hasRecipePermission(player: Player, recipe: WorkstationRecipe): Boolean {
 fun checkCraftingConditions(
     plugin: EcoCraftingPlugin,
     unlockService: RecipeUnlockService,
+    limitService: CraftLimitService,
     player: Player,
     recipe: WorkstationRecipe,
-    meta: EcoCraftingMeta
+    meta: EcoCraftingMeta,
+    crafts: Int = 1
 ): Boolean {
     if (!hasRecipePermission(player, recipe)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.no-permission"))
@@ -50,6 +53,10 @@ fun checkCraftingConditions(
     }
     if (unlockService.isLocked(player, recipe.key, meta)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.recipe-locked"))
+        return false
+    }
+    limitService.limitReachedMessage(player, recipe.key, meta, crafts)?.let {
+        player.sendMessage(plugin.langYml.getFormattedString(it))
         return false
     }
     if (!meta.price.canAfford(player)) {

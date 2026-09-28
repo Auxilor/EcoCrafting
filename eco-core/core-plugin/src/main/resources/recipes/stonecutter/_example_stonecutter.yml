@@ -11,6 +11,10 @@ outputs:
   - item: stone_slab
     lore: [ ]
     give-result-item: true
+    # craft-limits is set per output, like price.
+    # craft-limits: # Optional. Caps how many times this recipe can be crafted.
+    #   player: 5 # Crafts each player can make. -1 is unlimited.
+    #   global: 100 # Crafts the whole server can make. -1 is unlimited.
 
   - item: stone_stairs
     lore:

@@ -32,7 +32,7 @@ IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). 
 | `recipes/villager/` | Villager Trade |
 
 :::warning Potions
-The in-game recipe creator GUI can't capture potion effect data. Recipes with a potion output or ingredient (e.g. `potion effect:...`) must be written directly in YAML instead of built with the GUI.
+The in-game recipe creator GUI can't capture potion effect data. Recipes with a potion output or ingredient (e.g. `potion effect:...`) must be written directly in YAML instead of built with the GUI. Editing a recipe in the GUI keeps any config it does not show, such as `price`, `effects`, conditions and extra stonecutter outputs.
 :::
 
 ---
@@ -62,6 +62,10 @@ give-result-item: true # defaults to true when omitted; false = no item given, f
 #   type: "coins" # price factory name (coins, xpl, etc.), or an item name to charge an item price instead
 #   display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
 
+# craft-limits: # Optional. Caps how many times this recipe can be crafted.
+#   player: 5 # Crafts each player can make. -1 is unlimited.
+#   global: 100 # Crafts the whole server can make. -1 is unlimited.
+
 permission: "" # optional - see Permissions section below
 
 locked-by-default: false # hide recipe until unlocked per-player
@@ -86,6 +90,49 @@ Effects, conditions, filters, and mutators (`effects`, `crafting-conditions`, `v
 - [Configuring an Effect](https://hub.auxilor.io/wiki/libreforge/configuring-an-effect) covers single effects, conditions, and filters.
 - [Configuring an Effect Chain](https://hub.auxilor.io/wiki/libreforge/configuring-a-chain) covers stringing multiple effects together under one trigger.
 :::
+
+---
+
+## Craft limits
+
+`craft-limits` caps how many times a recipe can be crafted. `player` is per player, `global` is shared by the whole server. `-1` is unlimited and is the default. `0` means the recipe cannot be crafted.
+
+```yaml
+craft-limits:
+  player: 5 # Crafts each player can make. -1 is unlimited.
+  global: 100 # Crafts the whole server can make. -1 is unlimited.
+```
+
+Each craft counts once, so shift-clicking 10 counts 10. A shift-click only crafts what is left. Villager trades with a limit must be made one at a time, since shift-clicking is refused. Furnaces, campfires and Crafter blocks count against the player who owns the block.
+
+Limits only reset with `/ecocrafting resetlimits <player|global|all> [recipe]`. `<player>` resets one player, `global` resets the server count and `all` resets every player, online or not. Leave out the recipe to reset every recipe. To reset on a schedule, run the command from a scheduler plugin. Players with `ecocrafting.limit.bypass` ignore limits, and their crafts are not counted. Ops have it by default through `ecocrafting.*`, so test limits on a player without op.
+
+Both limits can also be set on the options screen of the in-game recipe creator.
+
+:::info Stonecutter
+Like `price`, `craft-limits` is set per output. Each output has its own counters, with the ID `<file name>_<output index>`.
+:::
+
+:::warning Brewing stands are not supported
+`craft-limits` is ignored on `brewing_stand` recipes, and a warning is logged when one is set. A brew completes before EcoCrafting can check it, so it cannot be refused.
+:::
+
+:::warning Global limits are per server
+On a network that shares one database, each server keeps its own global count.
+:::
+
+### Placeholders
+
+| Placeholder | Value |
+|---|---|
+| `%ecocrafting_limit_<id>_used%` | Crafts the player has made |
+| `%ecocrafting_limit_<id>_remaining%` | Crafts the player has left |
+| `%ecocrafting_limit_<id>_max%` | Player limit |
+| `%ecocrafting_limit_<id>_global_used%` | Crafts the server has made |
+| `%ecocrafting_limit_<id>_global_remaining%` | Crafts the server has left |
+| `%ecocrafting_limit_<id>_global_max%` | Global limit |
+
+Unlimited values show `limit-unlimited` from `lang.yml`.
 
 ---
 

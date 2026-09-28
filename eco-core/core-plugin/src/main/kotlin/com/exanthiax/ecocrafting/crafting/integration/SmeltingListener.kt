@@ -8,13 +8,18 @@ import com.exanthiax.ecocrafting.crafting.event.CustomSmeltEvent
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
+import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.block.Campfire
 import org.bukkit.block.Furnace
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -27,8 +32,10 @@ class SmeltingListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
     private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService,
     private val blockOwnerService: BlockOwnerService
 ) : Listener {
+    private val limitNotices = NoticeThrottle<Location>()
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSmelt(event: FurnaceSmeltEvent) {
@@ -52,7 +59,8 @@ class SmeltingListener(
             ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
 
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
+        if (limitReached(player, recipe.key, meta, location)) { event.isCancelled = true; return }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmeltEvent(player, recipe, item, location)
@@ -78,6 +86,8 @@ class SmeltingListener(
         }
 
         meta.price.pay(player, 1.0)
+        limitService.record(player, recipe.key, meta, 1)
+        limitNotices.clear(location)
         fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 
@@ -103,7 +113,8 @@ class SmeltingListener(
             ?: return
         val meta = recipeService.getMeta(recipe.key) ?: return
 
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
+        if (limitReached(player, recipe.key, meta, location)) { event.isCancelled = true; return }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { event.isCancelled = true; return }
 
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomSmeltEvent(player, recipe, item, location)
@@ -128,6 +139,14 @@ class SmeltingListener(
             }
         }
         meta.price.pay(player, 1.0)
+        limitService.record(player, recipe.key, meta, 1)
+        limitNotices.clear(location)
         fireCraftEffects(player, recipe, meta, item, 1, event.block)
+    }
+
+    private fun limitReached(player: Player, key: NamespacedKey, meta: EcoCraftingMeta, location: Location): Boolean {
+        val messagePath = limitService.limitReachedMessage(player, key, meta) ?: return false
+        if (limitNotices.shouldNotify(location)) player.sendMessage(plugin.langYml.getFormattedString(messagePath))
+        return true
     }
 }

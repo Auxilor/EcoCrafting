@@ -41,6 +41,10 @@ permission: "" # optional - permission required to craft this recipe, checked be
 #   type: "coins" # price type: an eco price factory name (coins, xpl, etc.), or an item name to charge an item price instead
 #   display: "&a%value% coins" # optional - falls back to lang.yml's price-display section for this type if omitted
 
+# craft-limits: # Optional. Caps how many times this recipe can be crafted.
+#   player: 5 # Crafts each player can make. -1 is unlimited.
+#   global: 100 # Crafts the whole server can make. -1 is unlimited.
+
 locked-by-default: false # true = recipe hidden until unlocked
 show-when-locked: false # show recipe in GUI even when locked (with locked-lore)
 locked-lore:
