@@ -50,11 +50,11 @@ type: crafting_table # workstation type (see table above)
 output: netherite_sword name:"&6Example Sword" # eco item lookup format
 lore: [] # optional extra lore on the output item
 
-give-result-item: true # defaults to true when omitted; false = no item given, fire libreforge effects instead
+give-result-item: true # Defaults to true when omitted. false = no item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 100
+#       amount: 100
 # conditions: []
 
 # price: # optional - requires the player to pay a price to craft this recipe
@@ -244,14 +244,14 @@ outputs:
       - "&7Crafted from stone"
     give-result-item: true
 
-  # give-result-item: false on an output fires effects instead of giving the item
+  # give-result-item: false on an output means no item is given. Effects fire on every craft either way.
   - item: stone_brick_wall
     lore: []
     give-result-item: false
     effects:
       - id: give_xp
         args:
-          xp: 25
+          amount: 25
     conditions: []
 ```
 
