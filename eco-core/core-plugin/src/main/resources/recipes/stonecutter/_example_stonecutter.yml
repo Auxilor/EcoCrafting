@@ -6,7 +6,7 @@ type: stonecutter
 input: stone
 
 # Multiple outputs supported - each appears as a separate option in the stonecutter UI.
-# give-result-item: false on an output means no item is given; libreforge effects fire instead.
+# give-result-item: false on an output means no item is given. Effects fire on every craft either way.
 outputs:
   - item: stone_slab
     lore: [ ]

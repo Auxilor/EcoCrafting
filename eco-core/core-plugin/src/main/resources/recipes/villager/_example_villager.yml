@@ -17,7 +17,7 @@ output: enchanted_book name:"&5Villager Enchanted Book"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - consume trade inputs, fire effects, give no item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:

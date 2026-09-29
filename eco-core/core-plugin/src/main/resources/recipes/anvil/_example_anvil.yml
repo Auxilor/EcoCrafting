@@ -13,7 +13,7 @@ output: diamond_sword name:"&bDiamond-Edged Sword"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - consume inputs, pay cost, fire effects, give no item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:

@@ -11,7 +11,7 @@ cook-time: 200 # ticks (200 = 10 seconds, vanilla default)
 experience: 0.7 # xp orbs dropped when smelted
 
 give-result-item: true
-# give-result-item: false
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:

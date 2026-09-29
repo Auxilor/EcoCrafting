@@ -11,7 +11,8 @@ output: potion name:"&dExample Potion"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - cancel the brew and fire effects instead of producing a potion
+# give-result-item: false # No item is given. Effects fire on every craft either way.
+# With brewing-stand.effect-recipes-per-slot, effects fire once per potion slot when false.
 # effects:
 #   - id: give_effect
 #     args:
