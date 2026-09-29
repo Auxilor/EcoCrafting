@@ -14,7 +14,7 @@ give-result-item: true
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 50
+#       amount: 50
 
 # craft-limits: # Optional. Caps how many times this recipe can be crafted.
 #   player: 5 # Crafts each player can make. -1 is unlimited.

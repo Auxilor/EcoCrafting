@@ -29,7 +29,7 @@ outputs:
     effects:
       - id: give_xp
         args:
-          xp: 25
+          amount: 25
     conditions: [ ]
 
 permission: ""
