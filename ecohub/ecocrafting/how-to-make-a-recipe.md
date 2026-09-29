@@ -254,9 +254,9 @@ type: villager
 input1: emerald # first trade ingredient (required)
 input2: book # second trade ingredient (optional)
 
-profession: FARMER # optional - restrict to this profession
+profession: FARMER # optional - restrict to this profession; a misspelled one stops the recipe loading
 min-level: 1 # optional - minimum villager level (1-5; 0 = any)
-chance: 1.0 # probability this trade appears on a villager (0.0-1.0)
+chance: 100 # percentage chance this trade appears on a villager (0-100)
 wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
 
