@@ -196,7 +196,6 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val dir = File(plugin.dataFolder, "recipes")
         dir.mkdirs()
         val file = findRecipeFile(pending.id) ?: File(dir, "${pending.id}.yml")
-        val existing = file.takeIf { it.exists() }?.let { YamlConfiguration.loadConfiguration(it) }
         val yaml = StringBuilder()
         yaml.appendLine("type: ${pending.typeKey}")
         if (pending.category.isNotBlank()) yaml.appendLine("category: ${yamlQuote(pending.category)}")
@@ -225,15 +224,11 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
             }
             "stonecutter" -> {
                 yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
-                yaml.append(
-                    stonecutterOutputsYaml(
-                        existing,
-                        itemLookupString(pending.output),
-                        pending.giveResultItem,
-                        pending.playerCraftLimit,
-                        pending.globalCraftLimit
-                    )
-                )
+                yaml.appendLine("outputs:")
+                yaml.appendLine("  - item: ${itemLookupString(pending.output)}")
+                yaml.appendLine("    lore: []")
+                yaml.appendLine("    give-result-item: ${pending.giveResultItem}")
+                craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, "    ").forEach { yaml.appendLine(it) }
             }
             "brewing_stand" -> {
                 yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
@@ -262,6 +257,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
 
         if (pending.typeKey != "stonecutter") {
             yaml.appendLine("output: ${itemLookupString(pending.output)}")
+            yaml.appendLine("lore: []")
             yaml.appendLine("give-result-item: ${pending.giveResultItem}")
             if (pending.typeKey != "brewing_stand") {
                 craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, "").forEach { yaml.appendLine(it) }
@@ -271,8 +267,9 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         if (pending.permission.isNotBlank()) yaml.appendLine("permission: ${yamlQuote(pending.permission)}")
         yaml.appendLine("locked-by-default: ${pending.lockedByDefault}")
         yaml.appendLine("show-when-locked: ${pending.showWhenLocked}")
-        builderDefaultLines(existing, includeLore = pending.typeKey != "stonecutter").forEach { yaml.appendLine(it) }
-        yaml.append(carriedOverYaml(existing))
+        yaml.appendLine("visibility-conditions: []")
+        yaml.appendLine("crafting-conditions: []")
+        yaml.appendLine("unlock-conditions: []")
 
         file.writeText(yaml.toString())
     }
