@@ -1,8 +1,12 @@
 package com.exanthiax.ecocrafting.unlock.service
 
 import com.willfp.eco.core.data.profile
+import com.willfp.libreforge.EmptyProvidedHolder
+import com.willfp.libreforge.toDispatcher
+import com.willfp.libreforge.triggers.TriggerData
 import com.exanthiax.ecocrafting.api.unlock.UnlockManager
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
+import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import org.bukkit.NamespacedKey
@@ -19,10 +23,12 @@ class RecipeUnlockService(
     private fun matches(stored: List<String>, key: NamespacedKey): Boolean =
         key.toString() in stored || key.key in stored
 
+    fun isManuallyLocked(player: OfflinePlayer, key: NamespacedKey): Boolean =
+        matches(player.profile.read(dataKeys.lockedRecipeOverrides), key)
+
     fun isUnlocked(player: OfflinePlayer, key: NamespacedKey, meta: EcoCraftingMeta): Boolean {
-        val profile = player.profile
-        if (matches(profile.read(dataKeys.lockedRecipeOverrides), key)) return false
-        if (matches(profile.read(dataKeys.unlockedRecipes), key)) return true
+        if (isManuallyLocked(player, key)) return false
+        if (matches(player.profile.read(dataKeys.unlockedRecipes), key)) return true
         return !meta.lockedByDefault
     }
 
@@ -35,6 +41,21 @@ class RecipeUnlockService(
         if (matches(locked, key)) profile.write(dataKeys.lockedRecipeOverrides, locked - key.key - key.toString())
         val unlocked = profile.read(dataKeys.unlockedRecipes)
         if (!matches(unlocked, key)) profile.write(dataKeys.unlockedRecipes, unlocked + key.toString())
+    }
+
+    fun checkAutoUnlock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta): Boolean {
+        if (!meta.lockedByDefault || meta.unlockConditions.isEmpty()) return false
+        if (isManuallyLocked(player, key) || !isLocked(player, key, meta)) return false
+        if (!meta.unlockConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) return false
+        unlock(player, key, meta)
+        TriggerRecipeUnlocked.dispatch(player.toDispatcher(), TriggerData(player = player, text = key.toString()))
+        return true
+    }
+
+    fun checkAutoUnlocks(player: Player) {
+        for (key in recipeService.autoUnlockKeys()) {
+            checkAutoUnlock(player, key, recipeService.getMeta(key) ?: continue)
+        }
     }
 
     fun lock(player: Player, key: NamespacedKey, meta: EcoCraftingMeta) {
