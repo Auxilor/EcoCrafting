@@ -25,7 +25,7 @@ class WizardState(
     var experience: Double = 0.0
     var profession: String = ""
     var minLevel: Int = 0
-    var chance: Double = 1.0
+    var chance: Double = 100.0
     var wanderingTrader: Boolean = false
     var villagerXp: Int = 0
     var permission: String = editingPermission ?: ""

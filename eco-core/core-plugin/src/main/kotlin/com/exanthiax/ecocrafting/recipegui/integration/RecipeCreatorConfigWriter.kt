@@ -129,7 +129,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         val experience = if (typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire")) yaml.getDouble("experience") else 0.0
         val profession = if (typeKey == "villager") yaml.getString("profession")?.lowercase() ?: "" else ""
         val minLevel = if (typeKey == "villager") yaml.getInt("min-level") else 0
-        val chance = if (typeKey == "villager") { if (yaml.contains("chance")) yaml.getDouble("chance") else 1.0 } else 1.0
+        val chance = if (typeKey == "villager") { if (yaml.contains("chance")) yaml.getDouble("chance") else 100.0 } else 100.0
         val wanderingTrader = if (typeKey == "villager") yaml.getBoolean("wandering-trader") else false
         val villagerXp = if (typeKey == "villager") yaml.getInt("villager-xp") else 0
         // Stonecutters carry the flag per output, everything else at the top level.
