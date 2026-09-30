@@ -10,11 +10,11 @@ output: experience_bottle name:"&aDisenchanted XP"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - cancel result, fire effects instead (e.g. give XP to player)
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 50
+#       amount: 50
 
 # craft-limits: # Optional. Caps how many times this recipe can be crafted.
 #   player: 5 # Crafts each player can make. -1 is unlimited.

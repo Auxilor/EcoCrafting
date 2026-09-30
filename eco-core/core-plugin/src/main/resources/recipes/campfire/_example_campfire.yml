@@ -11,11 +11,11 @@ cook-time: 600 # ticks (campfire is slow, vanilla = 600)
 experience: 0.35 # experience given to the player when the item is taken out of the campfire (vanilla = 0.35 for cooked rabbit)
 
 give-result-item: true
-# give-result-item: false - cancel the cook, fire effects instead of producing the item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 50
+#       amount: 50
 
 # craft-limits: # Optional. Caps how many times this recipe can be crafted.
 #   player: 5 # Crafts each player can make. -1 is unlimited.

@@ -17,11 +17,11 @@ output: enchanted_book name:"&5Villager Enchanted Book"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - consume trade inputs, fire effects, give no item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 100
+#       amount: 100
 
 # craft-limits: # Optional. Caps how many times this recipe can be crafted.
 #   player: 5 # Crafts each player can make. -1 is unlimited.
