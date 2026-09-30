@@ -111,7 +111,6 @@ shop-integration:
 craft-gui:
   title: "&8Crafting Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -227,19 +226,9 @@ sounds:
     volume: 1.0
     enabled: true
     category: MASTER
-  purchase-success:
-    sound: entity.experience_orb.pickup
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  purchase-fail:
-    sound: entity.villager.no
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
 ```
+
+Recipe book display of custom ingredients is controlled by `displayed-recipes` in eco's own `config.yml`.
 
 <hr/>
 
