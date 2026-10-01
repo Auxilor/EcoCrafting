@@ -77,9 +77,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
     private val unlockService = RecipeUnlockService(dataKeys, recipeService)
     private val unlockListener = RecipeUnlockListener(unlockService)
-    private val unlockHolderProvider = RecipeUnlockHolderProvider(this, recipeService, unlockService) {
-        Effects.compile(listOf(config { "id" to EffectRecipeUnlockCheck.id }), ViolationContext(this, "unlock-conditions"))
-    }
+    private lateinit var unlockHolderProvider: RecipeUnlockHolderProvider
 
     // crafting slice - one listener per workstation type instead of one god-listener
     private val blockOwnerService = BlockOwnerService(this)
@@ -123,6 +121,9 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         Filters.register(FilterRecipe)
 
         shopIntegrationService.init()
+        unlockHolderProvider = RecipeUnlockHolderProvider(this, recipeService, unlockService) {
+            Effects.compile(listOf(config { "id" to EffectRecipeUnlockCheck.id }), ViolationContext(this, "unlock-conditions"))
+        }
         registerHolderProvider(unlockHolderProvider)
 
         server.servicesManager.register(

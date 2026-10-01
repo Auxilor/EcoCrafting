@@ -48,4 +48,4 @@ locked-lore:
 
 visibility-conditions: [ ] # libreforge conditions - hide recipe from GUI if not met
 crafting-conditions: [ ] # libreforge conditions - block crafting if not met
-unlock-conditions: [ ] # auto-unlock on join if these are met
+unlock-conditions: [ ] # libreforge conditions - unlock automatically when met. Empty means unlock only by effect or command.
