@@ -23,6 +23,7 @@ import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import com.exanthiax.ecocrafting.recipe.model.toTestableItem
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.inventory.ItemStack
@@ -216,18 +217,28 @@ internal fun RecipeLoader.loadAnvil(id: String, config: Config) {
 internal fun RecipeLoader.loadVillager(id: String, config: Config) {
     val input1 = parseIngredient(config.getString("input1"))
     val input2 = config.getStringOrNull("input2")?.let { parseIngredient(it) }
-    val profession = config.getStringOrNull("profession")
-        ?.let { Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(it.lowercase())) }
     val recipe = VillagerRecipe.builder(key(id), parseOutputItem(config), input1.matcher.toTestableItem())
         .input1Display(input1.displayItem)
         .input2(input2?.matcher?.toTestableItem())
         .input2Display(input2?.displayItem)
-        .profession(profession)
+        .profession(parseVillagerProfession(config.getStringOrNull("profession"), Registry.VILLAGER_PROFESSION))
         .minLevel(config.getIntOrNull("min-level") ?: 0)
-        .chance((config.getStringOrNull("chance")?.toDoubleOrNull() ?: 1.0).coerceIn(0.0, 1.0))
+        .chance(parseVillagerChance(config.getStringOrNull("chance")))
         .wanderingTrader(config.getBool("wandering-trader"))
         .villagerXp(config.getIntOrNull("villager-xp") ?: 0)
         .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
     registerWithMeta(recipe, parseMeta(id, config, RecipeDisplayType.VILLAGER))
+}
+
+internal fun <T : Keyed> parseVillagerProfession(value: String?, professions: Iterable<T>): T? {
+    if (value.isNullOrBlank()) return null
+    return professions.firstOrNull { it.key == NamespacedKey.minecraft(value.lowercase()) }
+        ?: error("Unknown villager profession '$value', valid professions are: ${professions.joinToString { it.key.key.uppercase() }}")
+}
+
+internal fun parseVillagerChance(value: String?): Double {
+    if (value.isNullOrBlank()) return 1.0
+    return (value.toDoubleOrNull()?.takeIf { it.isFinite() } ?: error("chance must be a number between 0 and 100, got '$value'"))
+        .coerceIn(0.0, 100.0) / 100.0
 }
