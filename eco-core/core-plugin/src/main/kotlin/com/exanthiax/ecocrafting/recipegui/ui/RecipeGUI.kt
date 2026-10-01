@@ -47,6 +47,7 @@ class RecipeGUI(
 ) {
     fun open(player: Player, parent: Menu?) {
         val plugin = services.plugin
+        services.unlockService.checkAutoUnlocks(player)
         val effectiveAlternatives = alternatives.ifEmpty { services.resolverService.resolveAll(stack) }
         val recipe = (effectiveAlternatives.getOrNull(altIndex)
             ?: services.resolverService.resolveForPlayer(stack, player, services.unlockService)

@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey
 class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     private val meta = mutableMapOf<NamespacedKey, EcoCraftingMeta>()
     private val variantToBase = mutableMapOf<NamespacedKey, NamespacedKey>()
+    private val autoUnlockKeys = mutableSetOf<NamespacedKey>()
     private val warnedInvalidRecipeIds = mutableSetOf<String>()
 
     // Bukkit-key suffixes eco appends to its registered crafting recipes.
@@ -15,6 +16,7 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
 
     fun register(key: NamespacedKey, meta: EcoCraftingMeta) {
         this.meta[key] = meta
+        if (meta.lockedByDefault && meta.unlockConditions.isNotEmpty()) autoUnlockKeys += key else autoUnlockKeys -= key
     }
 
     fun getMeta(key: NamespacedKey): EcoCraftingMeta? = meta[key]
@@ -22,6 +24,8 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     fun allKeys(): Set<NamespacedKey> = meta.keys.toSet()
 
     fun allMeta(): Collection<EcoCraftingMeta> = meta.values.toList()
+
+    fun autoUnlockKeys(): Set<NamespacedKey> = autoUnlockKeys
 
     override fun allRecipeKeys(): Set<NamespacedKey> = allKeys()
 
@@ -49,6 +53,7 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     fun clear() {
         meta.clear()
         variantToBase.clear()
+        autoUnlockKeys.clear()
     }
 
     // Builds an "ecocrafting"-namespaced NamespacedKey from a config-supplied recipe id,

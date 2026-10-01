@@ -2,11 +2,14 @@ package com.exanthiax.ecocrafting
 
 import com.willfp.eco.core.bstats.EcoMetricsChart
 import com.willfp.eco.core.command.impl.PluginCommand
+import com.willfp.eco.core.config.config
+import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.filters.Filters
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.ConfigCategory
+import com.willfp.libreforge.registerHolderProvider
 import com.willfp.libreforge.triggers.Triggers
 import com.exanthiax.ecocrafting.api.EcoCraftingApi
 import com.exanthiax.ecocrafting.api.EcoCraftingApiImpl
@@ -48,9 +51,11 @@ import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import com.exanthiax.ecocrafting.shop.service.ShopIntegrationService
 import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
 import com.exanthiax.ecocrafting.trade.service.TradeSessionService
-import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockJoinListener
+import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockHolderProvider
+import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockListener
 import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
 import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
+import com.exanthiax.ecocrafting.libreforge.EffectRecipeUnlockCheck
 import com.exanthiax.ecocrafting.libreforge.EffectUnlockRecipe
 import com.exanthiax.ecocrafting.libreforge.FilterRecipe
 import com.exanthiax.ecocrafting.libreforge.FilterWorkstation
@@ -77,6 +82,8 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     private val unlockService = RecipeUnlockService(dataKeys, recipeService)
     private val craftLimitService = CraftLimitService(dataKeys, recipeService)
     private val unlockJoinListener = RecipeUnlockJoinListener(recipeService, unlockService)
+    private val unlockListener = RecipeUnlockListener(unlockService)
+    private lateinit var unlockHolderProvider: RecipeUnlockHolderProvider
 
     // crafting slice - one listener per workstation type instead of one god-listener
     private val blockOwnerService = BlockOwnerService(this)
@@ -103,6 +110,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         EffectLockRecipe.unlockService = unlockService
         EffectUnlockRecipe.recipeService = recipeService
         EffectUnlockRecipe.unlockService = unlockService
+        EffectRecipeUnlockCheck.unlockService = unlockService
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
         ConditionHasCraftsRemaining.recipeService = recipeService
@@ -114,6 +122,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
         Effects.register(EffectUnlockRecipe)
         Effects.register(EffectLockRecipe)
+        Effects.register(EffectRecipeUnlockCheck)
         Conditions.register(ConditionHasUnlockedRecipe)
         Conditions.register(ConditionHasCraftsRemaining)
 
@@ -122,6 +131,10 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
         shopIntegrationService.init()
         registerCraftLimitPlaceholders(this, recipeService, craftLimitService)
+        unlockHolderProvider = RecipeUnlockHolderProvider(this, recipeService, unlockService) {
+            Effects.compile(listOf(config { "id" to EffectRecipeUnlockCheck.id }), ViolationContext(this, "unlock-conditions"))
+        }
+        registerHolderProvider(unlockHolderProvider)
 
         server.servicesManager.register(
             EcoCraftingApi::class.java,
@@ -133,6 +146,10 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
     override fun handleReload() {
         shopIntegrationService.init()
+        val liveUnlockRecipes = recipeService.autoUnlockKeys().size
+        if (unlockHolderProvider.isLive && liveUnlockRecipes > 50) {
+            logger.warning("$liveUnlockRecipes recipes use live unlock checks. If you see lag, set unlock-conditions.live: false in config.yml.")
+        }
     }
 
     override fun handleDisable() {
@@ -171,7 +188,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     override fun loadListeners(): List<Listener> {
         return listOf(
             blockOwnerService,
-            unlockJoinListener,
+            unlockListener,
             craftingTableListener,
             smithingListener,
             stonecutterListener,

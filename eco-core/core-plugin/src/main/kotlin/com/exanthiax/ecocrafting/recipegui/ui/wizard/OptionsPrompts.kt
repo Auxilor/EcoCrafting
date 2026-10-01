@@ -163,16 +163,16 @@ internal fun RecipeCreatorGUI.promptMinLevel(player: Player, state: WizardState)
 }
 
 internal fun RecipeCreatorGUI.promptChance(player: Player, state: WizardState) {
-    player.sendMessage("&aType the trade chance (0.0-1.0), or &enone &afor 1.0:".formatEco())
+    player.sendMessage("&aType the trade chance (0-100), or &enone &afor 100:".formatEco())
     awaitingInput[player.uniqueId] = handler@{ input ->
         val trimmed = input.trim()
         if (trimmed.equals("none", ignoreCase = true) || trimmed.equals("default", ignoreCase = true)) {
-            state.chance = 1.0
+            state.chance = 100.0
             openOptions(player, state)
             return@handler
         }
         val chance = trimmed.toDoubleOrNull()
-        if (chance == null || chance < 0.0 || chance > 1.0) {
+        if (chance == null || chance < 0.0 || chance > 100.0) {
             player.sendMessage("&cInvalid chance, try again.".formatEco())
             promptChance(player, state)
             return@handler

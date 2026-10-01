@@ -18,6 +18,7 @@ Every EcoCrafting command and the permission node it requires.
 | `/ecocrafting validate`                                   | Validate all categories and report warnings | `ecocrafting.command.validate`    |
 | `/ecocrafting list`                                       | List all loaded categories                  | `ecocrafting.command.list`        |
 | `/ecocrafting create`                                     | Open the in-game recipe creator GUI         | `ecocrafting.admin.create`        |
+| `/ecocrafting edit <recipe-id>`                           | Edit a recipe in the recipe creator GUI     | `ecocrafting.admin.edit`          |
 | `/ecocrafting confirm`                                    | Confirm save in the recipe creator          | `ecocrafting.admin.create`        |
 | `/ecocrafting cancel`                                     | Cancel save in the recipe creator           | `ecocrafting.admin.create`        |
 | `/ecocrafting unlock <player> <recipe-id>`                | Unlock a locked recipe for a player         | `ecocrafting.admin`               |

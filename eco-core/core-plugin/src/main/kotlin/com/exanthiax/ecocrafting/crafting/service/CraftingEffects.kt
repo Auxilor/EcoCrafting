@@ -51,7 +51,7 @@ fun checkCraftingConditions(
         player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.no-permission"))
         return false
     }
-    if (unlockService.isLocked(player, recipe.key, meta)) {
+    if (unlockService.isLocked(player, recipe.key, meta) && !unlockService.checkAutoUnlock(player, recipe.key, meta)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.recipe-locked"))
         return false
     }

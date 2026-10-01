@@ -75,13 +75,21 @@ locked-lore:
 
 visibility-conditions: [] # libreforge - hide from GUI if not met
 crafting-conditions: [] # libreforge - block crafting if not met
-unlock-conditions: [] # auto-unlock on join if met
+unlock-conditions: [] # libreforge - unlock automatically when met. Empty means unlock only by effect or command.
 ```
 
 Items use [eco item lookup format](https://hub.auxilor.io/wiki/eco/the-item-lookup-system-the-item-lookup-system).
 
 :::info Prices
 A player who can't afford `price` is blocked from crafting the same way a failed `crafting-conditions` check is. Cost scales with the craft amount, so shift-clicking a batch charges proportionally. Omitting `price` (or leaving it incomplete) means the recipe is always free. For `stonecutter` recipes, `price` is set per-output instead of at the top level - see the Stonecutter section below.
+:::
+
+:::info Unlocking recipes
+A recipe with `locked-by-default: true` unlocks for a player once they meet all of its `unlock-conditions`. With `unlock-conditions` left empty, the recipe never unlocks by itself. Only the `unlock_recipe` effect or `/ecocrafting unlock` unlocks it.
+
+Unlock conditions are checked about once a second, and also on join, when a workstation or recipe GUI opens, and when crafting. Setting `unlock-conditions.live: false` in `config.yml` turns off the once-a-second check. See [Plugin Config](plugin-config).
+
+A recipe locked with `/ecocrafting lock` or the `lock_recipe` effect stays locked, even when its unlock conditions are met, until it is unlocked again.
 :::
 
 :::danger Effects are their own system
@@ -301,9 +309,9 @@ type: villager
 input1: emerald # first trade ingredient (required)
 input2: book # second trade ingredient (optional)
 
-profession: FARMER # optional - restrict to this profession
+profession: FARMER # optional - restrict to this profession; a misspelled one stops the recipe loading
 min-level: 1 # optional - minimum villager level (1-5; 0 = any)
-chance: 1.0 # probability this trade appears on a villager (0.0-1.0)
+chance: 100 # percentage chance this trade appears on a villager (0-100)
 wandering-trader: false # true = inject into WanderingTrader instead
 villager-xp: 0 # XP awarded to the villager on trade completion
 

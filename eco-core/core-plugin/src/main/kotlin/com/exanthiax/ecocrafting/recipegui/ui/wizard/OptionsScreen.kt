@@ -232,12 +232,12 @@ internal fun RecipeCreatorGUI.openOptions(player: Player, state: WizardState) {
             val chanceSlot = nextFieldSlot()
             fieldSlots += chanceSlot
             setSlot(chanceSlot.first, chanceSlot.second, Slot.builder { _: Player, _: Menu ->
-                buildOptionItem(Material.REDSTONE, "Chance", "${state.chance}", state.chance == 1.0)
+                buildOptionItem(Material.REDSTONE, "Chance", "${state.chance}", state.chance == 100.0)
             }.onLeftClick { _, _ ->
                 player.closeInventory()
                 promptChance(player, state)
             }.onRightClick { _, _ ->
-                state.chance = 1.0
+                state.chance = 100.0
             }.build())
 
             val traderSlot = nextFieldSlot()
