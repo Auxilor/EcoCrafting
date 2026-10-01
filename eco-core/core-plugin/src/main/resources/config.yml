@@ -19,12 +19,6 @@ show-items-without-recipes: false
 # Useful when renamed items should not show vanilla recipes
 strict-item-matching: true
 
-# When true, eco registers a second copy of every shaped/shapeless recipe using the full
-# ingredient ItemStacks (custom textures/model data/lore) instead of bare Material, and
-# steers the recipe book to that copy. Without this, the recipe book falls back to
-# Material-only matching, so custom-textured ingredients show their vanilla texture there.
-displayed-recipes: true
-
 # ItemFlags applied to every display item in EcoCrafting GUIs
 # Valid values: HIDE_ATTRIBUTES, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_DESTROYS,
 #               HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE, HIDE_ARMOR_TRIM
@@ -225,7 +219,6 @@ shop-integration:
 craft-gui:
   title: "&8Crafting Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -296,7 +289,6 @@ craft-gui:
 furnace-gui:
   title: "&8Smelting Recipe &7[%cook_time%]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -343,7 +335,6 @@ furnace-gui:
 blast-furnace-gui:
   title: "&8Blast Furnace Recipe &7[%cook_time%]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -390,7 +381,6 @@ blast-furnace-gui:
 smoker-gui:
   title: "&8Smoker Recipe &7[%cook_time%]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -437,7 +427,6 @@ smoker-gui:
 campfire-gui:
   title: "&8Campfire Recipe &7[%cook_time%]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -484,7 +473,6 @@ campfire-gui:
 smithing-gui:
   title: "&8Smithing Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -531,7 +519,6 @@ smithing-gui:
 stonecutter-gui:
   title: "&8Stonecutter Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -578,7 +565,6 @@ stonecutter-gui:
 brewing-gui:
   title: "&8Brewing Recipe &7[%brew_time%]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -625,7 +611,6 @@ brewing-gui:
 grindstone-gui:
   title: "&8Grindstone Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -672,7 +657,6 @@ grindstone-gui:
 anvil-gui:
   title: "&8Anvil Recipe"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -719,7 +703,6 @@ anvil-gui:
 villager-gui:
   title: "&8Villager Trade &7[&6%xp% XP&7]"
   quick-craft-enabled: true
-  buy-materials-enabled: true
   mask:
     items:
       - black_stained_glass_pane
@@ -808,18 +791,6 @@ sounds:
     enabled: true
     category: MASTER
   quick-craft-fail:
-    sound: entity.villager.no
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  purchase-success:
-    sound: entity.experience_orb.pickup
-    pitch: 1.0
-    volume: 1.0
-    enabled: true
-    category: MASTER
-  purchase-fail:
     sound: entity.villager.no
     pitch: 1.0
     volume: 1.0
