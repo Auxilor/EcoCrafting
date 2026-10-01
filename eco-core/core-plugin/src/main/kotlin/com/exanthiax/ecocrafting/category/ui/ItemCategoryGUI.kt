@@ -30,6 +30,7 @@ class ItemCategoryGUI(
     private val guiServices: RecipeGuiServices
 ) : CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
+        guiServices.unlockService.checkAutoUnlocks(player)
         open(player, page, prevMenu, categoryService.getMemberItemsRecipes(parent, player))
     }
 

@@ -29,6 +29,7 @@ class CategoryCategoryGUI(
     private val guiServices: RecipeGuiServices
 ) : CategoryGUI {
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
+        guiServices.unlockService.checkAutoUnlocks(player)
         val maxPage = (categoryLoader.values()
             .mapNotNull { it.guiPosition?.page }
             .maxOrNull() ?: 1).coerceAtLeast(1)

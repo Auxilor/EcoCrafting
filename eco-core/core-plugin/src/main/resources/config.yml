@@ -9,6 +9,11 @@ debug: false
 # Force local storage even when eco uses a database; disables cross-server sync
 use-local-storage: false
 
+unlock-conditions:
+  # When true, recipe unlock-conditions are re-checked about once a second, so a recipe unlocks as soon as they are met.
+  # Set to false if this causes lag. Recipes are then checked on join, when a workstation or recipe GUI opens, and when crafting.
+  live: true
+
 # Exclude rotated/mirrored duplicates of shaped crafting recipes
 deduplicate-symmetrical: false
 
