@@ -7,6 +7,7 @@ import com.exanthiax.ecocrafting.crafting.event.CustomBrewEvent
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
@@ -21,6 +22,7 @@ class BrewingListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
     private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService,
     private val blockOwnerService: BlockOwnerService
 ) : Listener {
 
@@ -59,7 +61,7 @@ class BrewingListener(
         val brewer = (location.block.state as? BrewingStand)?.inventory ?: return
         val player = blockOwnerService.getOwner(location) ?: return
 
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) return
 
         val item = recipe.output?.clone() ?: return
         val customEvent = CustomBrewEvent(player, recipe, item, location, matchedSlots.size)

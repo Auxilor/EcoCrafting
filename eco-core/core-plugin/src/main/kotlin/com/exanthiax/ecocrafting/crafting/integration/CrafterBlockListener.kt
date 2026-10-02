@@ -6,6 +6,7 @@ import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.block.Crafter
@@ -18,6 +19,7 @@ class CrafterBlockListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
     private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService,
     private val blockOwnerService: BlockOwnerService
 ) : Listener {
 
@@ -41,10 +43,11 @@ class CrafterBlockListener(
             event.isCancelled = true
             val crafterInventory = (event.block.state as? Crafter)?.inventory ?: return
             val player = blockOwnerService.getOwner(event.block.location) ?: return
-            if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) return
+            if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) return
             for (slot in 0 until 9) consume(crafterInventory, slot)
             meta.price.pay(player, 1.0)
             val item = recipe.output?.clone() ?: return
+            limitService.record(player, recipe.key, meta, 1)
             fireCraftEffects(player, recipe, meta, item, 1, event.block)
             return
         }
@@ -52,10 +55,11 @@ class CrafterBlockListener(
         // CrafterCraftEvent. Uncancel and set result so vanilla delivers + consumes.
         val item = recipe.output?.clone() ?: return
         val player = blockOwnerService.getOwner(event.block.location) ?: return
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) { event.isCancelled = true; return }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { event.isCancelled = true; return }
         meta.price.pay(player, 1.0)
         event.isCancelled = false
         event.result = item
+        limitService.record(player, recipe.key, meta, 1)
         fireCraftEffects(player, recipe, meta, item, 1, event.block)
     }
 }

@@ -13,11 +13,15 @@ output: diamond_sword name:"&bDiamond-Edged Sword"
 lore: [ ] # optional - lore lines for the output item
 
 give-result-item: true
-# give-result-item: false - consume inputs, pay cost, fire effects, give no item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 30
+#       amount: 30
+
+# craft-limits: # Optional. Caps how many times this recipe can be crafted.
+#   player: 5 # Crafts each player can make. -1 is unlimited.
+#   global: 100 # Crafts the whole server can make. -1 is unlimited.
 
 permission: ""
 locked-by-default: false

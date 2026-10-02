@@ -8,6 +8,8 @@ import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
 import com.exanthiax.ecocrafting.crafting.service.priceAffordableAmount
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
+import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
@@ -29,6 +31,11 @@ import org.bukkit.inventory.ItemStack
 internal fun trustedEventRecipe(fromEvent: CrafterRecipe?, fromGrid: CrafterRecipe?): CrafterRecipe? =
     fromEvent?.takeIf { fromGrid == null || it.key == fromGrid.key }
 
+internal fun craftedItemAmount(outputAmount: Int, crafts: Int): Int = outputAmount * crafts
+
+internal fun takesOverCraft(needsTakeover: Boolean, meta: EcoCraftingMeta): Boolean =
+    (needsTakeover || meta.supportCrafter || meta.hasCraftLimit) && meta.giveResultItem
+
 // Crafting table / Crafter block craft handling. CraftItemEvent is authoritative here
 // (topInventory really is a CraftingInventory), unlike the stonecutter/smithing table
 // where it's only an informational event and the real gate is an InventoryClickEvent -
@@ -36,7 +43,8 @@ internal fun trustedEventRecipe(fromEvent: CrafterRecipe?, fromGrid: CrafterReci
 class CraftingTableListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
-    private val unlockService: RecipeUnlockService
+    private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService
 ) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -79,7 +87,7 @@ class CraftingTableListener(
             ?: return
         val needsTakeover = directMatch == null
         val meta = recipeService.getMeta(recipe.key) ?: return
-        if (!checkCraftingConditions(plugin, unlockService, player, recipe, meta)) {
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) {
             event.isCancelled = true
             if (meta.showWhenLocked && unlockService.isLocked(player, recipe.key, meta)) {
                 recipe.output?.clone()?.let { lockedOutput ->
@@ -93,8 +101,15 @@ class CraftingTableListener(
             return
         }
 
-        val amount = priceAffordableAmount(player, meta.price, calculateCraftAmount(plugin, event, maxCraftsFromGrid(event.inventory.matrix))).coerceAtLeast(1)
-        val item = recipe.output?.clone()?.apply { this.amount = amount } ?: return
+        val amount = priceAffordableAmount(
+            player,
+            meta.price,
+            minOf(
+                calculateCraftAmount(plugin, event, maxCraftsFromGrid(event.inventory.matrix)),
+                limitService.craftsAllowed(player, recipe.key, meta)
+            )
+        ).coerceAtLeast(1)
+        val item = recipe.output?.clone()?.apply { this.amount = craftedItemAmount(this.amount, amount) } ?: return
 
         val customEvent = CustomCraftEvent(player, recipe, item, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
@@ -105,7 +120,7 @@ class CraftingTableListener(
         // can match them. That duplicate breaks vanilla's own shift-click "craft all"
         // repeat loop at a normal crafting table, so those recipes always take over
         // the craft manually instead of trusting the vanilla native path.
-        val tookOver = (needsTakeover || meta.supportCrafter) && meta.giveResultItem
+        val tookOver = takesOverCraft(needsTakeover, meta)
         meta.price.pay(player, amount.toDouble())
         when {
             !meta.giveResultItem -> {
@@ -120,6 +135,7 @@ class CraftingTableListener(
         }
         // Claim the event before dispatching, so the trigger's own vanilla CraftItemEvent
         // handler doesn't fire `craft` a second time for this same craft.
+        limitService.record(player, recipe.key, meta, amount)
         TriggerCraft.markDispatched(event)
         fireCraftEffects(player, recipe, meta, item, amount, event.view.topInventory.location?.block)
     }

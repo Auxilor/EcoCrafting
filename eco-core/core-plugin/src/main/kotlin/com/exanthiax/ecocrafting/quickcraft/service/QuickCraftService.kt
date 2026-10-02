@@ -4,6 +4,7 @@ import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
@@ -18,6 +19,7 @@ class QuickCraftService(
     private val recipeService: RecipeService,
     private val resolverService: RecipeResolverService,
     private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService,
     private val player: Player,
     private val recipe: ResolvedRecipe
 ) {
@@ -52,7 +54,7 @@ class QuickCraftService(
         // meta-gated recipes reuse the real crafting path's lock/condition/price check
         // (and its player-facing messages) so quick-craft can't bypass them.
         if (meta != null && workstationRecipe != null) {
-            if (!checkCraftingConditions(plugin, unlockService, player, workstationRecipe, meta)) {
+            if (!checkCraftingConditions(plugin, unlockService, limitService, player, workstationRecipe, meta)) {
                 val failure = if (!meta.price.canAfford(player)) CraftFailure.CannotAfford else CraftFailure.None
                 return CraftAttempt(false, failure)
             }
@@ -87,6 +89,7 @@ class QuickCraftService(
         }
 
         if (meta != null && workstationRecipe != null) {
+            limitService.record(player, workstationRecipe.key, meta, 1)
             fireCraftEffects(player, workstationRecipe, meta, output, 1)
         }
 

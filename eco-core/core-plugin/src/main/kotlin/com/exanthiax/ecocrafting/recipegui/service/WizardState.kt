@@ -1,5 +1,6 @@
 package com.exanthiax.ecocrafting.recipegui.service
 
+import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
@@ -35,6 +36,8 @@ class WizardState(
     var repairCost: Int = 1
     var brewTime: Int? = null
     var giveResultItem: Boolean = true
+    var playerCraftLimit: Int = UNLIMITED
+    var globalCraftLimit: Int = UNLIMITED
 
     fun toPendingRecipe(id: String) = PendingRecipe(
         typeKey = typeKey,
@@ -57,7 +60,9 @@ class WizardState(
         showWhenLocked = showWhenLocked,
         repairCost = repairCost,
         brewTime = brewTime,
-        giveResultItem = giveResultItem
+        giveResultItem = giveResultItem,
+        playerCraftLimit = playerCraftLimit,
+        globalCraftLimit = globalCraftLimit
     )
 }
 
@@ -82,7 +87,9 @@ data class PendingRecipe(
     val showWhenLocked: Boolean,
     val repairCost: Int,
     val brewTime: Int?,
-    val giveResultItem: Boolean = true
+    val giveResultItem: Boolean = true,
+    val playerCraftLimit: Int = UNLIMITED,
+    val globalCraftLimit: Int = UNLIMITED
 )
 
 internal fun PendingRecipe.toPreviewResolvedRecipe(): ResolvedRecipe {

@@ -1,6 +1,7 @@
 package com.exanthiax.ecocrafting.recipegui.service
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.quickcraft.service.QuickCraftService
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipe.service.RecipeResolverService
@@ -17,8 +18,9 @@ class RecipeGuiServices(
     val recipeService: RecipeService,
     val resolverService: RecipeResolverService,
     val unlockService: RecipeUnlockService,
+    val limitService: CraftLimitService,
     val shopService: ShopIntegrationService
 ) {
     fun quickCraft(player: Player, recipe: ResolvedRecipe) =
-        QuickCraftService(plugin, recipeService, resolverService, unlockService, player, recipe)
+        QuickCraftService(plugin, recipeService, resolverService, unlockService, limitService, player, recipe)
 }

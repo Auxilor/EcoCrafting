@@ -172,7 +172,9 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
             unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
             displayType = RecipeDisplayType.STONECUTTER,
             categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
-            price = parsePrice(outputConfig)
+            price = parsePrice(outputConfig),
+            playerCraftLimit = parseCraftLimit(outputConfig, "player"),
+            globalCraftLimit = parseCraftLimit(outputConfig, "global")
         )
         registerWithMeta(recipe, outMeta)
     }

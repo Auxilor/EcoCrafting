@@ -11,6 +11,7 @@ import com.exanthiax.ecocrafting.crafting.event.CustomWorkbenchCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
 import com.exanthiax.ecocrafting.crafting.service.priceAffordableAmount
+import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.model.requiredAmount
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.trade.service.TradeSessionService
@@ -27,12 +28,21 @@ import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.MerchantInventory
 
+internal enum class MerchantClick { IGNORE, BLOCK_SHIFT, PROCEED }
+
+internal fun classifyMerchantClick(resultPresent: Boolean, shiftClick: Boolean, hasCraftLimit: Boolean): MerchantClick = when {
+    !resultPresent -> MerchantClick.IGNORE
+    shiftClick && hasCraftLimit -> MerchantClick.BLOCK_SHIFT
+    else -> MerchantClick.PROCEED
+}
+
 // Grindstone, anvil, and villager trades - all three deliver their result via a plain
 // InventoryClickEvent on the output slot rather than a dedicated craft event.
 class WorkbenchListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
     private val unlockService: RecipeUnlockService,
+    private val limitService: CraftLimitService,
     private val sessionService: TradeSessionService
 ) : Listener {
 
@@ -118,7 +128,18 @@ class WorkbenchListener(
         }
 
         val meta = recipeService.getMeta(workstationRecipe.key) ?: return
-        if (!checkCraftingConditions(plugin, unlockService, player, workstationRecipe, meta)) { event.isCancelled = true; return }
+        if (workstationRecipe is VillagerRecipe) {
+            when (classifyMerchantClick(event.currentItem?.type?.isAir == false, event.isShiftClick, meta.hasCraftLimit)) {
+                MerchantClick.IGNORE -> return
+                MerchantClick.BLOCK_SHIFT -> {
+                    event.isCancelled = true
+                    player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.limit-single-trade"))
+                    return
+                }
+                MerchantClick.PROCEED -> {}
+            }
+        }
+        if (!checkCraftingConditions(plugin, unlockService, limitService, player, workstationRecipe, meta)) { event.isCancelled = true; return }
 
         val output = workstationRecipe.output ?: return
 
@@ -129,7 +150,15 @@ class WorkbenchListener(
                 (inventory.getItem(1)?.amount ?: 0) / item2.requiredAmount()
             }
             val ingredientBased = listOfNotNull(availableFromItem1, availableFromItem2).min()
-            priceAffordableAmount(player, meta.price, minOf(spaceBasedAmount(player, output), ingredientBased).coerceAtLeast(1))
+            priceAffordableAmount(
+                player,
+                meta.price,
+                minOf(
+                    spaceBasedAmount(player, output),
+                    ingredientBased,
+                    limitService.craftsAllowed(player, workstationRecipe.key, meta)
+                ).coerceAtLeast(1)
+            )
         } else priceAffordableAmount(player, meta.price, 1)
 
         val item = output.clone().apply { this.amount = output.amount * amount }
@@ -170,6 +199,7 @@ class WorkbenchListener(
                 meta.price.pay(player, amount.toDouble())
             }
         }
+        limitService.record(player, workstationRecipe.key, meta, amount)
         fireCraftEffects(player, workstationRecipe, meta, item, amount, inventory.location?.block)
         WorkstationRecipes.clearPendingRecipe(player.uniqueId)
         // Synchronous safety-net resync, not scheduled - queuing a Runnable per click backs up

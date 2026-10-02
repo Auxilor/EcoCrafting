@@ -6,6 +6,7 @@ import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.price.ConfiguredPrice
+import com.exanthiax.ecocrafting.limit.model.remainingUnder
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
@@ -63,6 +64,20 @@ class RecipeGUI(
             val key = if (price.canAfford(player)) "messages.price-affordable" else "messages.price-unaffordable"
             listOf(plugin.langYml.getFormattedString(key).replace("%price%", price.getDisplay(player)))
         } ?: emptyList()
+        val limitLore = if (meta != null && recipe.key != null) {
+            listOfNotNull(
+                meta.playerCraftLimit.takeIf { it >= 0 }?.let { limit ->
+                    plugin.langYml.getFormattedString("messages.player-limit")
+                        .replace("%remaining%", remainingUnder(limit, services.limitService.playerCrafts(player, recipe.key)).toString())
+                        .replace("%limit%", limit.toString())
+                },
+                meta.globalCraftLimit.takeIf { it >= 0 }?.let { limit ->
+                    plugin.langYml.getFormattedString("messages.global-limit")
+                        .replace("%remaining%", remainingUnder(limit, services.limitService.globalCrafts(recipe.key)).toString())
+                        .replace("%limit%", limit.toString())
+                }
+            )
+        } else emptyList()
 
         val context = RecipeGUIContext(
             services = services,
@@ -101,7 +116,7 @@ class RecipeGUI(
                             ingredientIndex++
                         }
                         marker.equals('o', ignoreCase = true) ->
-                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore))
+                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore + limitLore))
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->

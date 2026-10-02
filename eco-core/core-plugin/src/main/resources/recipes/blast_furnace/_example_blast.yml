@@ -11,11 +11,15 @@ cook-time: 100 # ticks (blast furnace is 2x faster, vanilla = 100)
 experience: 1.0 # experience given to the player when the item is taken out of the blast furnace (vanilla = 0.7 for gold ingot)
 
 give-result-item: true
-# give-result-item: false - cancel the smelt, fire effects instead of producing the item
+# give-result-item: false # No item is given. Effects fire on every craft either way.
 # effects:
 #   - id: give_xp
 #     args:
-#       xp: 50
+#       amount: 50
+
+# craft-limits: # Optional. Caps how many times this recipe can be crafted.
+#   player: 5 # Crafts each player can make. -1 is unlimited.
+#   global: 100 # Crafts the whole server can make. -1 is unlimited.
 
 permission: ""
 locked-by-default: false
