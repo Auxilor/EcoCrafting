@@ -81,7 +81,6 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
     private val unlockService = RecipeUnlockService(dataKeys, recipeService)
     private val craftLimitService = CraftLimitService(dataKeys, recipeService)
-    private val unlockJoinListener = RecipeUnlockJoinListener(recipeService, unlockService)
     private val unlockListener = RecipeUnlockListener(unlockService)
     private lateinit var unlockHolderProvider: RecipeUnlockHolderProvider
 
