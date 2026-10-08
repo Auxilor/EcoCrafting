@@ -7,6 +7,7 @@ import com.exanthiax.ecocrafting.category.service.CategoryService
 import com.exanthiax.ecocrafting.category.ui.CategoryCategoryGUI
 import com.exanthiax.ecocrafting.category.ui.ItemCategoryGUI
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
+import com.exanthiax.ecocrafting.runOwned
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -55,7 +56,7 @@ class CommandOpen(
         } else {
             CategoryCategoryGUI(category.config.getSubsection("gui"), categoryLoader, categoryService, guiServices)
         }
-        gui.open(target, 1, null)
+        target.runOwned(plugin) { gui.open(target, 1, null) }
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {

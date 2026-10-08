@@ -60,9 +60,10 @@ class WorkbenchListener(
             ?: return
         recipeService.getMeta(recipe.key) ?: return
         event.result = recipe.output?.clone()
-        plugin.server.scheduler.runTask(plugin, Runnable {
-            (event.view.player as? Player)?.updateInventory()
-        })
+        val viewer = event.view.player
+        plugin.scheduler.on(viewer).run {
+            (viewer as? Player)?.updateInventory()
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -186,13 +187,13 @@ class WorkbenchListener(
                 meta.price.pay(player, amount.toDouble())
                 if (!meta.giveResultItem) {
                     val taken = item.clone()
-                    plugin.server.scheduler.runTask(plugin, Runnable {
+                    plugin.scheduler.on(player).run {
                         if (player.itemOnCursor.isSimilar(taken)) {
                             player.setItemOnCursor(null)
                         } else {
                             player.inventory.removeItem(taken)
                         }
-                    })
+                    }
                 }
             }
             else -> {

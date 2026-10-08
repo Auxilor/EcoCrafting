@@ -54,7 +54,7 @@ class StonecutterListener(
         // this a `<item> 4` input would trade one-for-one.
         val required = recipe.input.requiredAmount()
         if (inputItem.amount < required) {
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            plugin.scheduler.on(player).run { player.updateInventory() }
             return
         }
 
@@ -77,7 +77,7 @@ class StonecutterListener(
         val customEvent = CustomCraftEvent(player, recipe, craftItem, amount)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) {
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            plugin.scheduler.on(player).run { player.updateInventory() }
             return
         }
         consumeStonecutterSlot(inventory, required * amount)
@@ -87,7 +87,7 @@ class StonecutterListener(
         }
         limitService.record(player, recipe.key, meta, amount)
         fireCraftEffects(player, recipe, meta, craftItem, amount, inventory.location?.block)
-        plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+        plugin.scheduler.on(player).run { player.updateInventory() }
     }
 
     private fun consumeStonecutterSlot(inventory: Inventory, totalInput: Int) {

@@ -97,7 +97,7 @@ class CraftingTableListener(
                     event.inventory.result = lockedOutput
                 }
             }
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            plugin.scheduler.on(player).run { player.updateInventory() }
             return
         }
 

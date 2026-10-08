@@ -1,4 +1,4 @@
-folia-supported: false
+folia-supported: true
 name: ${pluginName}
 version: ${version}
 main: com.exanthiax.ecocrafting.EcoCraftingPlugin
