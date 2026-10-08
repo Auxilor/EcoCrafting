@@ -3,7 +3,7 @@ name: ${pluginName}
 version: ${version}
 main: com.exanthiax.ecocrafting.EcoCraftingPlugin
 api-version: 1.21.8
-authors: [ Exanthiax, _OfTeN_, joogiebear, Auxilor ]
+authors: [ Exanthiax, _OfTeN_, joogiebear, Auxilor, Callum ]
 depend:
   - eco
 softdepend:
