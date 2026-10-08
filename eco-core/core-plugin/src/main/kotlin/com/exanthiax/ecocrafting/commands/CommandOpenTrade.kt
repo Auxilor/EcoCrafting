@@ -2,6 +2,7 @@ package com.exanthiax.ecocrafting.commands
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import com.exanthiax.ecocrafting.runOwned
 import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
@@ -65,8 +66,10 @@ class CommandOpenTrade(
             return
         }
 
-        if (!merchantFactory.open(target, recipes)) {
-            sender.sendMessage(plugin.langYml.getMessage("no-trades-available"))
+        target.runOwned(plugin) {
+            if (!merchantFactory.open(target, recipes)) {
+                sender.sendMessage(plugin.langYml.getMessage("no-trades-available"))
+            }
         }
     }
 

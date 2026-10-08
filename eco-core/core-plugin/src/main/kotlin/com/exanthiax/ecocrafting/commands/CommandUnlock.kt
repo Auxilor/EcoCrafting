@@ -4,13 +4,14 @@ import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import com.exanthiax.ecocrafting.runOwned
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
 
 class CommandUnlock(
-    plugin: EcoCraftingPlugin,
+    private val plugin: EcoCraftingPlugin,
     private val recipeService: RecipeService,
     private val unlockService: RecipeUnlockService
 ) : Subcommand(
@@ -47,9 +48,10 @@ class CommandUnlock(
             return
         }
 
-        unlockService.unlock(target, key, meta)
-
-        sender.sendMessage("Unlocked '${args[1]}' for ${target.name}.")
+        target.runOwned(plugin) {
+            unlockService.unlock(target, key, meta)
+            sender.sendMessage("Unlocked '${args[1]}' for ${target.name}.")
+        }
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {

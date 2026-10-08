@@ -4,12 +4,14 @@ import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.api.recipe.RecipesManager
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import org.bukkit.NamespacedKey
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
-    private val meta = mutableMapOf<NamespacedKey, EcoCraftingMeta>()
-    private val variantToBase = mutableMapOf<NamespacedKey, NamespacedKey>()
-    private val autoUnlockKeys = mutableSetOf<NamespacedKey>()
-    private val warnedInvalidRecipeIds = mutableSetOf<String>()
+    private val meta: MutableMap<NamespacedKey, EcoCraftingMeta> = Collections.synchronizedMap(linkedMapOf())
+    private val variantToBase = ConcurrentHashMap<NamespacedKey, NamespacedKey>()
+    private val autoUnlockKeys: MutableSet<NamespacedKey> = Collections.synchronizedSet(linkedSetOf())
+    private val warnedInvalidRecipeIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     // Bukkit-key suffixes eco appends to its registered crafting recipes.
     private val ecoKeySuffixes = listOf("_displayed", "_crafter")
@@ -21,11 +23,11 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
 
     fun getMeta(key: NamespacedKey): EcoCraftingMeta? = meta[key]
 
-    fun allKeys(): Set<NamespacedKey> = meta.keys.toSet()
+    fun allKeys(): Set<NamespacedKey> = synchronized(meta) { meta.keys.toSet() }
 
-    fun allMeta(): Collection<EcoCraftingMeta> = meta.values.toList()
+    fun allMeta(): Collection<EcoCraftingMeta> = synchronized(meta) { meta.values.toList() }
 
-    fun autoUnlockKeys(): Set<NamespacedKey> = autoUnlockKeys
+    fun autoUnlockKeys(): Set<NamespacedKey> = synchronized(autoUnlockKeys) { autoUnlockKeys.toSet() }
 
     override fun allRecipeKeys(): Set<NamespacedKey> = allKeys()
 

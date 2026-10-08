@@ -5,6 +5,7 @@ import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNiceString
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import com.exanthiax.ecocrafting.runOnGlobalRegion
 import org.bukkit.command.CommandSender
 
 class CommandReload(
@@ -16,7 +17,7 @@ class CommandReload(
     "ecocrafting.command.reload",
     false
 ) {
-    override fun onExecute(sender: CommandSender, args: List<String>) {
+    override fun onExecute(sender: CommandSender, args: List<String>) = plugin.runOnGlobalRegion {
         sender.sendMessage(
             plugin.langYml.getMessage("reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
                 .replace("%time%", plugin.reloadWithTime().toNiceString())

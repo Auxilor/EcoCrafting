@@ -19,11 +19,11 @@ class RecipeCreatorChatListener(
         val message = PlainTextComponentSerializer.plainText().serialize(event.message())
 
         if (message.trim().equals("cancel", ignoreCase = true)) {
-            plugin.server.scheduler.runTask(plugin, Runnable { recipeCreatorGUI.cancelSave(event.player) })
+            plugin.scheduler.on(event.player).run { recipeCreatorGUI.cancelSave(event.player) }
             return
         }
 
-        plugin.server.scheduler.runTask(plugin, Runnable { handler(message) })
+        plugin.scheduler.on(event.player).run { handler(message) }
     }
 
     @EventHandler

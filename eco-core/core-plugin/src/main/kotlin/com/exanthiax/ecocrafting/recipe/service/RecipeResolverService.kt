@@ -62,7 +62,7 @@ class RecipeResolverService(
     }
 
     fun clearCache() {
-        resolveCache.clear()
+        synchronized(resolveCache) { resolveCache.clear() }
     }
 
     fun warmCache(items: Collection<ItemStack>) {
@@ -90,9 +90,11 @@ class RecipeResolverService(
         // items, enchanted books, ...) don't collapse onto one shared cache entry.
         val cacheKey: Any = Items.getCustomItem(clean)?.key
             ?: (clean.type to (if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0))
-        if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]
+        synchronized(resolveCache) {
+            if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]
+        }
         val result = resolveUncached(clean)
-        resolveCache[cacheKey] = result
+        synchronized(resolveCache) { resolveCache[cacheKey] = result }
         return result
     }
 

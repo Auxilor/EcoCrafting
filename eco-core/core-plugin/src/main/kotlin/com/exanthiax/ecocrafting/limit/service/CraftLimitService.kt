@@ -24,6 +24,8 @@ class CraftLimitService(
     private val dataKeys: PlayerDataKeys,
     private val recipeService: RecipeService
 ) : LimitManager {
+    private val writeLock = Any()
+
     private fun resets(): Map<String, Long> =
         parseRecipeValues(Bukkit.getServer().profile.read(dataKeys.craftLimitResets))
 
@@ -59,6 +61,10 @@ class CraftLimitService(
 
     fun record(player: Player, key: NamespacedKey, meta: EcoCraftingMeta, crafts: Int) {
         if (crafts <= 0 || !meta.hasCraftLimit || player.hasPermission(LIMIT_BYPASS_PERMISSION)) return
+        synchronized(writeLock) { recordLocked(player, key, meta, crafts) }
+    }
+
+    private fun recordLocked(player: Player, key: NamespacedKey, meta: EcoCraftingMeta, crafts: Int) {
         if (meta.playerCraftLimit >= 0) {
             player.profile.write(
                 dataKeys.craftLimitCounts,
@@ -95,7 +101,7 @@ class CraftLimitService(
         return remaining(player, recipeKey, meta).takeIf { it != Int.MAX_VALUE }
     }
 
-    override fun resetPlayer(player: OfflinePlayer, recipeKey: NamespacedKey?) {
+    override fun resetPlayer(player: OfflinePlayer, recipeKey: NamespacedKey?) = synchronized(writeLock) {
         player.profile.write(
             dataKeys.craftLimitCounts,
             if (recipeKey == null) emptyList()
@@ -105,14 +111,14 @@ class CraftLimitService(
         )
     }
 
-    override fun resetGlobal(recipeKey: NamespacedKey?) {
+    override fun resetGlobal(recipeKey: NamespacedKey?) = synchronized(writeLock) {
         Bukkit.getServer().profile.write(
             dataKeys.craftLimitGlobalCounts,
             if (recipeKey == null) emptyList() else (globalCounts() - recipeKey.toString()).serialiseRecipeValues()
         )
     }
 
-    override fun resetAllPlayers(recipeKey: NamespacedKey?) {
+    override fun resetAllPlayers(recipeKey: NamespacedKey?) = synchronized(writeLock) {
         val resets = resets()
         val target = recipeKey?.toString() ?: ALL_RECIPES
         Bukkit.getServer().profile.write(

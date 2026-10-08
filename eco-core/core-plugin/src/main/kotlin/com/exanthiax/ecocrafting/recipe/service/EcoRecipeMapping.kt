@@ -30,7 +30,8 @@ internal fun findEcoRecipe(customItem: CustomItem, air: ItemStack, plugin: EcoCr
 
 internal fun getEcoRecipes(plugin: EcoCraftingPlugin): Collection<CraftingRecipe> {
     return try {
-        getRecipesBiMap().values.toList()
+        val recipes = getRecipesBiMap()
+        synchronized(recipes) { recipes.values.toList() }
     } catch (e: Exception) {
         plugin.logger.warning("Could not read eco recipe registry: ${e.message}")
         emptyList()

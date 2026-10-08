@@ -6,6 +6,7 @@ import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.price.ConfiguredPrice
+import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
@@ -22,7 +23,6 @@ import com.exanthiax.ecocrafting.recipegui.ui.utils.buildVariantSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildWorkstationSlot
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitTask
 
 private fun RecipeDisplayType.guiSection() = when (this) {
     RecipeDisplayType.CRAFTING      -> "craft-gui"
@@ -98,7 +98,7 @@ class RecipeGUI(
         val currentType = effectiveAlternatives.getOrNull(altIndex)?.displayType
         val hasAlternatives = recipe.ingredients.any { it.allDisplayItems.size > 1 }
 
-        var refreshTask: BukkitTask? = null
+        var refreshTask: EcoTask? = null
 
         val builtMenu = menu(pattern.size) {
             title = formattedTitle
@@ -178,9 +178,7 @@ class RecipeGUI(
         }
 
         if (hasAlternatives) {
-            refreshTask = plugin.server.scheduler.runTaskTimer(
-                plugin, Runnable { builtMenu.refresh(player) }, 20L, 20L
-            )
+            refreshTask = plugin.scheduler.on(player).runTimer(20L, 20L) { builtMenu.refresh(player) }
         }
         builtMenu.open(player)
     }

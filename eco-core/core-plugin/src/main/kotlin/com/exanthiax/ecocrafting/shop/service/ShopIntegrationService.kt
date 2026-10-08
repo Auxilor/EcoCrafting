@@ -13,10 +13,19 @@ import org.bukkit.inventory.ItemStack
 // Optional EcoShop integration boundary. Keep all direct EcoShop calls here so
 // weekly EcoShop API changes are isolated.
 class ShopIntegrationService(private val plugin: EcoCraftingPlugin) {
+    @Volatile
     private var pluginAvailable = false
+
+    @Volatile
     private var configEnabled = false
+
+    @Volatile
     private var showPrices = true
+
+    @Volatile
     private var autoBuy = false
+
+    @Volatile
     private var requireShiftClick = true
 
     fun init() {

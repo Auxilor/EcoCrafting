@@ -12,6 +12,7 @@ import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.recipegui.ui.wizard.openConfirmPreview
 import com.exanthiax.ecocrafting.recipegui.ui.wizard.openIngredientSetup
 import com.exanthiax.ecocrafting.recipegui.ui.wizard.openTypeSelect
+import com.exanthiax.ecocrafting.runOnGlobalRegion
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Material
@@ -62,7 +63,7 @@ class RecipeCreatorGUI(
         Registry.VILLAGER_PROFESSION.mapNotNull { it.key.key }.sorted()
     }
 
-    internal val pendingConfirm = mutableMapOf<UUID, PendingRecipe>()
+    internal val pendingConfirm = ConcurrentHashMap<UUID, PendingRecipe>()
     // AsyncChatEvent's handler (off-thread) and menu click handlers (main thread) both
     // write this concurrently, so a plain HashMap risks corruption/CME under load.
     val awaitingInput = ConcurrentHashMap<UUID, (String) -> Unit>()
@@ -144,9 +145,11 @@ class RecipeCreatorGUI(
             player.sendMessage("&cNo pending recipe to confirm.".formatEco())
             return
         }
-        configWriter.saveRecipeYaml(pending)
-        plugin.reload()
-        player.sendMessage("&aRecipe '${pending.id}' saved and loaded.".formatEco())
+        plugin.runOnGlobalRegion {
+            configWriter.saveRecipeYaml(pending)
+            plugin.reload()
+            player.sendMessage("&aRecipe '${pending.id}' saved and loaded.".formatEco())
+        }
     }
 
     fun cancelSave(player: Player) {

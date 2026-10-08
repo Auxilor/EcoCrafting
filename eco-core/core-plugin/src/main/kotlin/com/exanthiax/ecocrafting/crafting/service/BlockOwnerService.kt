@@ -1,7 +1,9 @@
 package com.exanthiax.ecocrafting.crafting.service
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
+import com.exanthiax.ecocrafting.isOwnedHere
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -25,7 +27,7 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
 
     // Tracks whoever last put an item into a furnace/campfire's input slot, so unlock
     // checks and price charges apply to the actual user rather than the block's owner.
-    private val lastFeeder = mutableMapOf<Location, UUID>()
+    private val lastFeeder = ConcurrentHashMap<Location, UUID>()
 
     private val TRACKED_MATERIALS = setOf(
         Material.FURNACE,
@@ -68,12 +70,12 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
                 val radius = plugin.configYml.getInt("owner-nearest-radius")
                     .takeIf { it > 0 } ?: 32
                 location.world?.players
-                    ?.filter { it.location.distanceSquared(location) <= (radius * radius).toDouble() }
+                    ?.filter { it.isOwnedHere() && it.location.distanceSquared(location) <= (radius * radius).toDouble() }
                     ?.minByOrNull { it.location.distanceSquared(location) }
             }
             else -> {
                 val uuid = getStoredUUID(location.block) ?: return null
-                location.world?.players?.firstOrNull { it.uniqueId == uuid }
+                location.world?.players?.firstOrNull { it.uniqueId == uuid }?.takeIf { it.isOwnedHere() }
             }
         }
     }
@@ -83,7 +85,7 @@ class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
         val loc = location.block.location
         val feederUuid = lastFeeder[loc]
         if (feederUuid != null) {
-            loc.world?.players?.firstOrNull { it.uniqueId == feederUuid }?.let { return it }
+            loc.world?.players?.firstOrNull { it.uniqueId == feederUuid }?.takeIf { it.isOwnedHere() }?.let { return it }
         }
         return getOwner(location)
     }

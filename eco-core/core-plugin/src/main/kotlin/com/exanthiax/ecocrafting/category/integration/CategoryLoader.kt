@@ -6,13 +6,13 @@ import com.willfp.libreforge.loader.configs.RegistrableCategory
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
 import com.exanthiax.ecocrafting.recipe.service.RecipeResolverService
-import org.bukkit.scheduler.BukkitTask
+import com.willfp.eco.core.scheduling.EcoTask
 
 class CategoryLoader(
     private val resolverService: RecipeResolverService,
     private val vanillaRecipeScanner: VanillaRecipeScanner
 ) : RegistrableCategory<RecipeCategory>("category", "categories") {
-    private var pendingPostReload: BukkitTask? = null
+    private var pendingPostReload: EcoTask? = null
 
     override fun clear(plugin: LibreforgePlugin) {
         registry.clear()
@@ -30,11 +30,11 @@ class CategoryLoader(
     override fun afterReload(plugin: LibreforgePlugin) {
         vanillaRecipeScanner.populate(values().toList())
         pendingPostReload?.cancel()
-        pendingPostReload = plugin.server.scheduler.runTask(plugin, Runnable {
+        pendingPostReload = plugin.scheduler.global().run {
             pendingPostReload = null
             validateCategories(plugin, values().toList())
             resolverService.warmCache(values().flatMap { it.allItemStacks() })
-        })
+        }
     }
 
     private fun validateCategories(plugin: LibreforgePlugin, categories: List<RecipeCategory>) {

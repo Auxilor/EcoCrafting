@@ -51,7 +51,7 @@ class SmithingListener(
         val customEvent = CustomSmithEvent(player, recipe, item)
         Bukkit.getPluginManager().callEvent(customEvent)
         if (customEvent.isCancelled) {
-            plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+            plugin.scheduler.on(player).run { player.updateInventory() }
             return
         }
         consumeSmithingSlots(inventory)
@@ -61,7 +61,7 @@ class SmithingListener(
         }
         limitService.record(player, recipe.key, meta, 1)
         fireCraftEffects(player, recipe, meta, item, 1, inventory.location?.block)
-        plugin.server.scheduler.runTask(plugin, Runnable { player.updateInventory() })
+        plugin.scheduler.on(player).run { player.updateInventory() }
     }
 
     private fun consumeSmithingSlots(inventory: Inventory) {

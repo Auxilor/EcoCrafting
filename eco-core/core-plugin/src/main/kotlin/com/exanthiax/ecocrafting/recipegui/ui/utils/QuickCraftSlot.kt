@@ -8,7 +8,6 @@ import com.exanthiax.ecocrafting.quickcraft.service.CraftAttempt
 import com.exanthiax.ecocrafting.quickcraft.service.CraftFailure
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 
@@ -50,13 +49,13 @@ fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe)
     }
 
     fun retryAfterPurchase(event: InventoryClickEvent, target: Player, attempts: Int = 0) {
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        plugin.scheduler.on(target).runLater(1L) {
             val result = services.quickCraft(target, recipe).craft()
             if (result.success || result.failure !is CraftFailure.MissingMaterials || attempts >= 20)
                 finish(event, target, result, true)
             else
                 retryAfterPurchase(event, target, attempts + 1)
-        }, 1L)
+        }
     }
 
     fun handle(event: InventoryClickEvent) {

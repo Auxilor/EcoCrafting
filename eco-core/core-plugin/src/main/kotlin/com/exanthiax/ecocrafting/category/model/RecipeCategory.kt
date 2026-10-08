@@ -12,6 +12,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Tag
 import org.bukkit.inventory.ItemStack
+import java.util.concurrent.CopyOnWriteArrayList
 
 data class CategoryPosition(val column: Int, val row: Int, val page: Int)
 
@@ -28,12 +29,13 @@ class RecipeCategory(
     }
     val pullVanillaRecipes = config.getBool("pull-vanilla-recipes")
 
-    private val runtimeItems = mutableListOf<ItemStack>()
-    private val vanillaItems = mutableListOf<ItemStack>()
+    private val runtimeItems = CopyOnWriteArrayList<ItemStack>()
+
+    @Volatile
+    private var vanillaItems = emptyList<ItemStack>()
 
     fun setVanillaItems(items: List<ItemStack>) {
-        vanillaItems.clear()
-        vanillaItems.addAll(items)
+        vanillaItems = items.toList()
     }
 
     fun registerCustomRecipe(item: ItemStack) {

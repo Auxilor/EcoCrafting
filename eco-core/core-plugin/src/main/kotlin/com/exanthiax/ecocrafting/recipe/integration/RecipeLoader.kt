@@ -1,5 +1,6 @@
 package com.exanthiax.ecocrafting.recipe.integration
 
+import com.willfp.eco.core.FoliaSupport
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.price.ConfiguredPrice
@@ -97,6 +98,7 @@ class RecipeLoader(
     }
 
     private fun scanVillagers() {
+        if (FoliaSupport.isUnsupported("Villager scan on reload")) return
         val validKeyNames = WorkstationRecipes.getAll(VillagerRecipe::class.java)
             .map { "vr_${it.key.key}" }.toSet()
         Bukkit.getWorlds().flatMap { it.entities }
