@@ -54,6 +54,16 @@ class TradeServiceTest {
     }
 
     @Test
+    fun `stonecutter group permission grants every output`() {
+        val output = recipe("slabs_1")
+        val group = NamespacedKey("ecocrafting", "slabs")
+        assertTrue(hasRecipePermission(player("ecocrafting.recipe.slabs"), output, group))
+        assertTrue(hasRecipePermission(player("ecocrafting.recipe.slabs_1"), output, group))
+        assertFalse(hasRecipePermission(player("ecocrafting.recipe.slabs"), output))
+        assertFalse(hasRecipePermission(player("ecocrafting.recipe.other"), output, group))
+    }
+
+    @Test
     fun `explicit permission replaces the implicit node`() {
         val trade = recipe("emerald_book", permission = "myserver.trade")
         assertTrue(hasRecipePermission(player("myserver.trade"), trade))

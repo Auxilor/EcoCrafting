@@ -95,6 +95,28 @@ class RecipeServiceTest {
     }
 
     @Test
+    fun `stonecutter group resolves to its output keys`() {
+        val group = NamespacedKey("ecocrafting", "example")
+        val outputs = listOf(NamespacedKey("ecocrafting", "example_0"), NamespacedKey("ecocrafting", "example_1"))
+        service.registerGroup(group, outputs)
+
+        assertEquals(outputs, service.groupOutputs(group))
+        assertEquals(setOf(group), service.groupKeys())
+        assertNull(service.groupOutputs(outputs[0]))
+    }
+
+    @Test
+    fun `clear wipes stonecutter groups`() {
+        val group = NamespacedKey("ecocrafting", "example")
+        service.registerGroup(group, listOf(NamespacedKey("ecocrafting", "example_0")))
+
+        service.clear()
+
+        assertNull(service.groupOutputs(group))
+        assertEquals(emptySet<NamespacedKey>(), service.groupKeys())
+    }
+
+    @Test
     fun `keyOrWarn lowercases valid ids and rejects invalid ones`() {
         assertEquals(NamespacedKey("ecocrafting", "example"), service.keyOrWarn("Example"))
         assertNull(service.keyOrWarn("not a valid id!"))

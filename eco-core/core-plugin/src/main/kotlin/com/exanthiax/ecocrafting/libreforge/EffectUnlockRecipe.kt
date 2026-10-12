@@ -41,8 +41,7 @@ object EffectUnlockRecipe : Effect<NoCompileData>("unlock_recipe") {
         val player = data.player ?: return false
         val recipeId = config.getString("recipe")
         val key = recipeService.keyOrWarn(recipeId) ?: return false
-        val meta = recipeService.getMeta(key) ?: return false
-        unlockService.unlock(player, key, meta)
+        if (!unlockService.unlock(player, key)) return false
         TriggerRecipeUnlocked.dispatch(
             player.toDispatcher(),
             data.copy(text = key.toString())

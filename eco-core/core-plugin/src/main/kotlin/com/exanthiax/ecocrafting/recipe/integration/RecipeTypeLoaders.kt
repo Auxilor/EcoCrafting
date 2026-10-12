@@ -141,8 +141,15 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
     val rawOutputs = config.getSubsections("outputs")
     require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
 
+    val groupKey = key(id)
+    val outputKeys = mutableListOf<NamespacedKey>()
+
     rawOutputs.forEachIndexed { index, outputConfig ->
-        val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_$index")
+        val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_${outputConfig.getStringOrNull("id")?.lowercase() ?: index}")
+        if (outKey in outputKeys) {
+            plugin.logger.warning("Stonecutter recipe '$id' has two outputs with key '${outKey.key}', skipping output $index")
+            return@forEachIndexed
+        }
         val outItem = run {
             val base = Items.lookup(outputConfig.getString("item")).item
             val lore = outputConfig.getFormattedStrings("lore")
@@ -174,10 +181,14 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
             categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
             price = parsePrice(outputConfig),
             playerCraftLimit = parseCraftLimit(outputConfig, "player"),
-            globalCraftLimit = parseCraftLimit(outputConfig, "global")
+            globalCraftLimit = parseCraftLimit(outputConfig, "global"),
+            groupKey = groupKey
         )
         registerWithMeta(recipe, outMeta)
+        outputKeys += outKey
     }
+
+    recipeService.registerGroup(groupKey, outputKeys)
 }
 
 internal fun RecipeLoader.loadBrewing(id: String, config: Config) {

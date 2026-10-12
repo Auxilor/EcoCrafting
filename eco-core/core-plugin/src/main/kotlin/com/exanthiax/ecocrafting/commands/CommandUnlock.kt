@@ -38,18 +38,13 @@ class CommandUnlock(
             return
         }
 
-        WorkstationRecipes.getByKey(key) ?: run {
-            sender.sendMessage("Unknown recipe: ${args[1]}")
-            return
-        }
-
-        val meta = recipeService.getMeta(key) ?: run {
+        if (recipeService.groupOutputs(key) == null && (WorkstationRecipes.getByKey(key) == null || recipeService.getMeta(key) == null)) {
             sender.sendMessage("Unknown recipe: ${args[1]}")
             return
         }
 
         target.runOwned(plugin) {
-            unlockService.unlock(target, key, meta)
+            unlockService.unlock(target, key)
             sender.sendMessage("Unlocked '${args[1]}' for ${target.name}.")
         }
     }
@@ -57,7 +52,7 @@ class CommandUnlock(
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
         return when (args.size) {
             1 -> Bukkit.getOnlinePlayers().map { it.name }
-            2 -> recipeService.allKeys().map { it.key }
+            2 -> (recipeService.groupKeys() + recipeService.allKeys()).map { it.key }
             else -> emptyList()
         }
     }

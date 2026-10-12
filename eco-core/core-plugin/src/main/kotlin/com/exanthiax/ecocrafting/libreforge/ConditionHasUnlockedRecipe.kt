@@ -40,6 +40,7 @@ object ConditionHasUnlockedRecipe : Condition<NoCompileData>("has_unlocked_recip
         val player = dispatcher.get<Player>() ?: return false
         val recipeId = config.getString("recipe")
         val key = recipeService.keyOrWarn(recipeId) ?: return false
+        if (recipeService.groupOutputs(key) != null) return unlockService.isUnlocked(player, key)
         WorkstationRecipes.getByKey(key) ?: return false
         val meta = recipeService.getMeta(key) ?: return false
         return unlockService.isUnlocked(player, key, meta)
