@@ -142,6 +142,16 @@ On a network that shares one database, each server keeps its own global count.
 
 Unlimited values show `limit-unlimited` from `lang.yml`.
 
+On a stonecutter recipe, each output has its own placeholders, named by its output ID (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)). In `stone_cuts.yml`, with a first output that has no `id` and a second with `id: stairs`:
+
+| Placeholder | Value |
+|---|---|
+| `%ecocrafting_limit_stone_cuts_0_remaining%` | Crafts the player has left of the first output |
+| `%ecocrafting_limit_stone_cuts_stairs_remaining%` | Crafts the player has left of the `stairs` output |
+| `%ecocrafting_limit_stone_cuts_stairs_global_remaining%` | Crafts the server has left of the `stairs` output |
+
+The file name on its own, e.g. `%ecocrafting_limit_stone_cuts_remaining%`, shows nothing.
+
 ---
 
 ## Permissions

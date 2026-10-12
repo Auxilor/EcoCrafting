@@ -32,7 +32,7 @@ Every EcoCrafting command and the permission node it requires.
 A stonecutter recipe has one ID for the whole recipe and one ID for each output.
 
 - **Whole recipe:** the file name, e.g. `stone_cuts`. `/ecocrafting unlock` and `/ecocrafting lock` act on every output at once, and `ecocrafting.recipe.stone_cuts` lets a player craft every output.
-- **One output:** the file name, an underscore, then the output's `id`, e.g. `stone_cuts_stairs`. An output without an `id` uses its position in the list, counting from 0, e.g. `stone_cuts_0`. Use it to unlock or lock that output alone, for its own node `ecocrafting.recipe.stone_cuts_stairs`, and for `/ecocrafting resetlimits`, which only accepts output IDs.
+- **One output:** the file name, an underscore, then the output's `id`, e.g. `stone_cuts_stairs`. An output without an `id` uses its position in the list, counting from 0, e.g. `stone_cuts_0`. Use it to unlock or lock that output alone, for its own node `ecocrafting.recipe.stone_cuts_stairs`, and for `/ecocrafting resetlimits` and the craft limit placeholders (e.g. `%ecocrafting_limit_stone_cuts_stairs_remaining%`), which only accept output IDs.
 
 An output's own unlock or lock wins over the whole recipe's. The `unlock_recipe` and `lock_recipe` effects and the `has_unlocked_recipe` condition take the same IDs.
 
