@@ -4,6 +4,7 @@ import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.libreforge.conditions.ConditionList
 import com.willfp.libreforge.effects.Chain
 import com.exanthiax.ecocrafting.limit.model.UNLIMITED
+import org.bukkit.NamespacedKey
 
 data class EcoCraftingMeta(
     // Omitted in config means the recipe hands over its result: only an explicit
@@ -23,7 +24,8 @@ data class EcoCraftingMeta(
     // Villager trades only, and only in a command-opened merchant: 0 means unlimited uses.
     val maxUses: Int = 0,
     val playerCraftLimit: Int = UNLIMITED,
-    val globalCraftLimit: Int = UNLIMITED
+    val globalCraftLimit: Int = UNLIMITED,
+    val groupKey: NamespacedKey? = null
 ) {
     val hasCraftLimit: Boolean
         get() = playerCraftLimit >= 0 || globalCraftLimit >= 0

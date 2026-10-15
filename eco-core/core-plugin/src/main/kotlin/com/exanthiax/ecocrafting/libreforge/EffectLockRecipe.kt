@@ -44,8 +44,7 @@ object EffectLockRecipe : Effect<NoCompileData>("lock_recipe") {
         val player = data.player ?: return false
         val recipeId = config.getString("recipe")
         val key = recipeService.keyOrWarn(recipeId) ?: return false
-        val meta = recipeService.getMeta(key) ?: return false
-        unlockService.lock(player, key, meta)
+        if (!unlockService.lock(player, key)) return false
         TriggerRecipeLocked.dispatch(
             player.toDispatcher(),
             data.copy(text = key.toString())

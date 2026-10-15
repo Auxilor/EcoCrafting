@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     private val meta: MutableMap<NamespacedKey, EcoCraftingMeta> = Collections.synchronizedMap(linkedMapOf())
     private val variantToBase = ConcurrentHashMap<NamespacedKey, NamespacedKey>()
+    private val groups = ConcurrentHashMap<NamespacedKey, List<NamespacedKey>>()
     private val autoUnlockKeys: MutableSet<NamespacedKey> = Collections.synchronizedSet(linkedSetOf())
     private val warnedInvalidRecipeIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
@@ -33,6 +34,14 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
 
     override fun isCustomRecipe(key: NamespacedKey): Boolean = getMeta(key) != null
 
+    fun registerGroup(groupKey: NamespacedKey, outputKeys: List<NamespacedKey>) {
+        groups[groupKey] = outputKeys
+    }
+
+    fun groupOutputs(groupKey: NamespacedKey): List<NamespacedKey>? = groups[groupKey]
+
+    fun groupKeys(): Set<NamespacedKey> = groups.keys.toSet()
+
     fun registerVariant(variantKey: NamespacedKey, baseKey: NamespacedKey) {
         variantToBase[variantKey] = baseKey
     }
@@ -55,6 +64,7 @@ class RecipeService(private val plugin: EcoCraftingPlugin) : RecipesManager {
     fun clear() {
         meta.clear()
         variantToBase.clear()
+        groups.clear()
         autoUnlockKeys.clear()
     }
 

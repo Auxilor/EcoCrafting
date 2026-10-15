@@ -118,7 +118,7 @@ Limits only reset with `/ecocrafting resetlimits <player|global|all> [recipe]`. 
 Both limits can also be set on the options screen of the in-game recipe creator.
 
 :::info Stonecutter
-Like `price`, `craft-limits` is set per output. Each output has its own counters, with the ID `<file name>_<output index>`.
+Like `price`, `craft-limits` is set on each output, and each output counts its crafts separately. To reset one output's limit, use its output ID (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)).
 :::
 
 :::warning Brewing stands are not supported
@@ -142,13 +142,23 @@ On a network that shares one database, each server keeps its own global count.
 
 Unlimited values show `limit-unlimited` from `lang.yml`.
 
+On a stonecutter recipe, each output has its own placeholders, named by its output ID (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)). In `stone_cuts.yml`, with a first output that has no `id` and a second with `id: stairs`:
+
+| Placeholder | Value |
+|---|---|
+| `%ecocrafting_limit_stone_cuts_0_remaining%` | Crafts the player has left of the first output |
+| `%ecocrafting_limit_stone_cuts_stairs_remaining%` | Crafts the player has left of the `stairs` output |
+| `%ecocrafting_limit_stone_cuts_stairs_global_remaining%` | Crafts the server has left of the `stairs` output |
+
+The file name on its own, e.g. `%ecocrafting_limit_stone_cuts_remaining%`, shows nothing.
+
 ---
 
 ## Permissions
 
 Every recipe is gated by a permission node, whether or not you set one.
 
-- **`permission: ""` (blank/default)** - the recipe auto-gets its own node, `ecocrafting.recipe.<id>` (`<id>` = the yml file name). Plugin ships `ecocrafting.recipe.*` at `default: true`, so every player has every recipe's node out of the box. To lock one recipe down, revoke its specific node (e.g. `ecocrafting.recipe.netherite_sword`) from a group in your permissions plugin - no yml edit needed.
+- **`permission: ""` (blank/default)** - the recipe auto-gets its own node, `ecocrafting.recipe.<id>` (`<id>` = the yml file name). Stonecutter recipes also have a node per output (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)). Plugin ships `ecocrafting.recipe.*` at `default: true`, so every player has every recipe's node out of the box. To lock one recipe down, revoke its specific node (e.g. `ecocrafting.recipe.netherite_sword`) from a group in your permissions plugin - no yml edit needed.
 - **`permission: "some.custom.node"`** - overrides the auto node entirely for this recipe. Use this to put several recipes behind one shared node (e.g. `myserver.tier.netherite` on 5 different recipes) so ops grant/revoke the whole tier in one go instead of per-recipe. Not covered by the `ecocrafting.recipe.*` default - you grant it yourself.
 
 :::warning Permission is checked first
@@ -247,7 +257,9 @@ outputs:
     lore: []
     give-result-item: true
 
-  - item: stone_stairs
+  # Optional. Names this output, so its ID is `<file name>_stairs` instead of `<file name>_1`.
+  - id: stairs
+    item: stone_stairs
     lore:
       - "&7Crafted from stone"
     give-result-item: true
@@ -262,6 +274,10 @@ outputs:
           amount: 25
     conditions: []
 ```
+
+:::tip Output IDs
+Give outputs an `id` if you might reorder them later. An output without one is named by its position in the list, so moving it hands its unlocks and craft counts to whichever output takes its place. How the IDs are used is on [Commands and Permissions](commands-and-permissions#stonecutter-recipe-ids).
+:::
 
 ### Brewing Stand
 

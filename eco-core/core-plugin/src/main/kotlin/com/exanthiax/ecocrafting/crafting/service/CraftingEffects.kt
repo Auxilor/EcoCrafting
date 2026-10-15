@@ -10,6 +10,7 @@ import com.exanthiax.ecocrafting.libreforge.TriggerCraft
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
+import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -27,14 +28,16 @@ fun fireCraftEffects(
     TriggerCraft.dispatch(player.toDispatcher(), data)
 }
 
-// A recipe's explicit `permission` wins outright; otherwise the implicit per-recipe node
-// (or the wildcard) grants access.
-fun hasRecipePermission(player: Player, recipe: WorkstationRecipe): Boolean {
+// A recipe's explicit `permission` wins outright; otherwise the implicit per-recipe node,
+// the stonecutter group node, or the wildcard grants access.
+fun hasRecipePermission(player: Player, recipe: WorkstationRecipe, groupKey: NamespacedKey? = null): Boolean {
     val explicitPermission = recipe.permission
     return if (explicitPermission != null) {
         player.hasPermission(explicitPermission)
     } else {
-        player.hasPermission("ecocrafting.recipe.${recipe.key.key}") || player.hasPermission("ecocrafting.recipe.*")
+        player.hasPermission("ecocrafting.recipe.${recipe.key.key}") ||
+            (groupKey != null && player.hasPermission("ecocrafting.recipe.${groupKey.key}")) ||
+            player.hasPermission("ecocrafting.recipe.*")
     }
 }
 
@@ -47,7 +50,7 @@ fun checkCraftingConditions(
     meta: EcoCraftingMeta,
     crafts: Int = 1
 ): Boolean {
-    if (!hasRecipePermission(player, recipe)) {
+    if (!hasRecipePermission(player, recipe, meta.groupKey)) {
         player.sendMessage(plugin.langYml.getFormattedString("messages.failed-reason.no-permission"))
         return false
     }
