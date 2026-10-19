@@ -1,5 +1,6 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
+import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -129,49 +130,55 @@ class RecipeGUI(
 
             context.config.getSubsectionOrNull("buttons.back")?.let {
                 parent?.let {
-                    addComponent(
-                        context.config.getInt("buttons.back.row"),
-                        context.config.getInt("buttons.back.column"),
-                        context.buildBackSlot(parent)
-                    )
+                    for (location in context.config.getSlotLocations("buttons.back")) {
+                        addComponent(location.row, location.column, context.buildBackSlot(parent))
+                    }
                 }
             }
 
             context.config.getSubsectionOrNull("buttons.quick-craft")
                 ?.takeIf { if (context.config.has("quick-craft-enabled")) context.config.getBool("quick-craft-enabled") else true }
                 ?.let {
-                    addComponent(
-                        context.config.getInt("buttons.quick-craft.row"),
-                        context.config.getInt("buttons.quick-craft.column"),
-                        context.buildQuickCraftSlot(player, recipe)
-                    )
+                    for (location in context.config.getSlotLocations("buttons.quick-craft")) {
+                        addComponent(location.row, location.column, context.buildQuickCraftSlot(player, recipe))
+                    }
                 }
 
             context.config.getSubsectionOrNull("buttons.crafter-indicator")
                 ?.takeIf { it.getBool("enabled") }
                 ?.let { indicatorConfig ->
                     val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
-                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                    for (location in indicatorConfig.getSlotLocations()) {
+                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                    }
                 }
 
             context.config.getSubsectionOrNull("buttons.shapeless-indicator")
                 ?.takeIf { it.getBool("enabled") }
                 ?.let { indicatorConfig ->
                     val state = if (recipe.shapeless) "active" else "inactive"
-                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                    for (location in indicatorConfig.getSlotLocations()) {
+                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                    }
                 }
 
             if (effectiveAlternatives.size > 1) {
                 context.config.getSubsectionOrNull("buttons.prev-variant")?.let {
-                    setSlot(context.config.getInt("buttons.prev-variant.row"), context.config.getInt("buttons.prev-variant.column"), context.buildVariantSlot(-1))
+                    for (location in context.config.getSlotLocations("buttons.prev-variant")) {
+                        setSlot(location.row, location.column, context.buildVariantSlot(-1))
+                    }
                 }
                 context.config.getSubsectionOrNull("buttons.next-variant")?.let {
-                    setSlot(context.config.getInt("buttons.next-variant.row"), context.config.getInt("buttons.next-variant.column"), context.buildVariantSlot(+1))
+                    for (location in context.config.getSlotLocations("buttons.next-variant")) {
+                        setSlot(location.row, location.column, context.buildVariantSlot(+1))
+                    }
                 }
             }
 
             for (slotConfig in context.config.getSubsections("custom-slots")) {
-                setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
+                for (location in slotConfig.getSlotLocations()) {
+                    setSlot(location.row, location.column, ConfigSlot(slotConfig))
+                }
             }
 
             onClose { _, _ -> refreshTask?.cancel() }
