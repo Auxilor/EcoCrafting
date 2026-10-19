@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
+import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
@@ -174,11 +174,7 @@ class RecipeGUI(
                 }
             }
 
-            for (slotConfig in context.config.getSubsections("custom-slots")) {
-                for (location in slotConfig.getSlotLocations()) {
-                    setSlot(location.row, location.column, ConfigSlot(slotConfig))
-                }
-            }
+            addCustomSlots(context.config, "")
 
             onClose { _, _ -> refreshTask?.cancel() }
         }

@@ -1,6 +1,7 @@
 package com.exanthiax.ecocrafting.category.ui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.getSlotLocations
@@ -9,7 +10,6 @@ import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
@@ -84,11 +84,7 @@ class CategoryCategoryGUI(
                         }
                     }
 
-                    for (slotConfig in config.getSubsections("custom-slots")) {
-                        for (location in slotConfig.getSlotLocations()) {
-                            setSlot(location.row, location.column, ConfigSlot(slotConfig))
-                        }
-                    }
+                    addCustomSlots(config, "")
 
                     val positionedCategories = categoryLoader.values()
                         .filter { it.guiPosition?.page == pageNum }
