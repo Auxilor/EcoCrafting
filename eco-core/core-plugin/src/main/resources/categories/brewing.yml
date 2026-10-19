@@ -31,11 +31,7 @@ items:
     display-no-perm: false
   - item: "sugar"
     display-no-perm: false
-  - item: "gunpowder"
-    display-no-perm: false
   - item: "magma_cream"
-    display-no-perm: false
-  - item: "experience_bottle"
     display-no-perm: false
 
 gui:

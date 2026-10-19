@@ -35,10 +35,6 @@ items:
     display-no-perm: false
   - item: "mace"
     display-no-perm: false
-  - item: "totem_of_undying"
-    display-no-perm: false
-  - item: "elytra"
-    display-no-perm: false
   - item: "target"
     display-no-perm: false
   - item: "tnt"

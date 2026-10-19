@@ -40,7 +40,7 @@ class CategoryLoader(
     private fun validateCategories(plugin: LibreforgePlugin, categories: List<RecipeCategory>) {
         for (category in categories) {
             for (stack in category.items) {
-                if (resolverService.resolve(stack.item.item) == null) {
+                if (!stack.fromTag && resolverService.resolve(stack.item.item) == null) {
                     plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
                 }
             }
