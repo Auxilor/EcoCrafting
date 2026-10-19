@@ -1,10 +1,13 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
 import com.willfp.eco.core.gui.addCustomSlots
+import com.willfp.eco.core.gui.component.ConfigButton
+import com.willfp.eco.core.gui.component.addComponent
 import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.menu.Menu
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
@@ -14,7 +17,6 @@ import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipe.service.withLockState
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.recipegui.ui.utils.RecipeGUIContext
-import com.exanthiax.ecocrafting.recipegui.ui.utils.buildBackSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildFuelSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildIndicatorSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildIngredientSlot
@@ -127,11 +129,15 @@ class RecipeGUI(
 
             setMask(context.config, "")
 
-            context.config.getSubsectionOrNull("buttons.back")?.let {
-                parent?.let {
-                    for (location in context.config.getSlotLocations("buttons.back")) {
-                        addComponent(location.row, location.column, context.buildBackSlot(parent))
-                    }
+            context.config.getSubsectionOrNull("buttons.back")?.let { section ->
+                parent?.let { parentMenu ->
+                    addComponent(
+                        ConfigButton(
+                            section,
+                            itemModifier = { item -> with(context) { ItemStackBuilder(item).withGlobalFlags().build() } },
+                            sound = context.sound("back")
+                        ) { clicker, _, _, _ -> parentMenu.open(clicker) }
+                    )
                 }
             }
 

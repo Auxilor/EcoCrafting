@@ -4,6 +4,7 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.ConfigButton
 import com.willfp.eco.core.gui.component.addComponent
 import com.willfp.eco.core.gui.component.closeButton
 import com.willfp.eco.core.gui.getSlotLocations
@@ -71,11 +72,11 @@ class CategoryCategoryGUI(
                 addPage(pageNum) {
                     setMask(config, "")
 
-                    config.getSubsectionOrNull("buttons.back")?.let {
-                        prevMenu?.let {
-                            for (location in config.getSlotLocations("buttons.back")) {
-                                addComponent(location.row, location.column, config.backSlot(prevMenu, configSound(guiServices.plugin, "back")))
-                            }
+                    config.getSubsectionOrNull("buttons.back")?.let { section ->
+                        prevMenu?.let { menu ->
+                            addComponent(ConfigButton(section, sound = configSound(guiServices.plugin, "back")) { player, _, _, _ ->
+                                menu.open(player)
+                            })
                         }
                     }
 
