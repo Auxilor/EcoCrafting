@@ -4,6 +4,8 @@ import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.addComponent
+import com.willfp.eco.core.gui.component.closeButton
 import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
@@ -11,7 +13,6 @@ import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.player
 import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.AbstractPlayableSound
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
@@ -79,9 +80,7 @@ class CategoryCategoryGUI(
                     }
 
                     config.getSubsectionOrNull("buttons.close")?.let {
-                        for (location in config.getSlotLocations("buttons.close")) {
-                            addComponent(location.row, location.column, closeSlot(configSound(guiServices.plugin, "close")))
-                        }
+                        addComponent(closeButton(it, sound = configSound(guiServices.plugin, "close")))
                     }
 
                     addCustomSlots(config, "")
@@ -98,19 +97,6 @@ class CategoryCategoryGUI(
             }
         }
         builtMenu.open(player)
-    }
-
-    private fun closeSlot(sound: AbstractPlayableSound<*>?): Slot {
-        return Slot.builder(
-            ItemStackBuilder(Items.lookup(config.getString("buttons.close.item")))
-                .addLoreLines(config.getFormattedStrings("buttons.close.lore"))
-                .build()
-        )
-            .onLeftClick { event, _, _ ->
-                event.player.closeInventory()
-                sound?.playTo(event.player)
-            }
-            .build()
     }
 
     private fun categoryGuiFor(category: RecipeCategory): CategoryGUI {
