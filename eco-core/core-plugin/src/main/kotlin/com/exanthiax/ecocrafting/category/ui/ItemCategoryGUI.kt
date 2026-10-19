@@ -6,7 +6,6 @@ import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.component.ConfigButton
 import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.page.PageChanger
@@ -50,26 +49,8 @@ class ItemCategoryGUI(
             // down to whatever page we opened on. The Function overload isn't bugged.
             defaultPage { page }
 
-            for (location in config.getSlotLocations("buttons.next-page")) {
-                addPageChanger(
-                    PageChanger.Direction.FORWARDS,
-                    config.pageChangerItem("next-page", true),
-                    config.pageChangerItem("next-page", false),
-                    configSound(guiServices.plugin, "next-page"),
-                    location.row,
-                    location.column
-                )
-            }
-            for (location in config.getSlotLocations("buttons.prev-page")) {
-                addPageChanger(
-                    PageChanger.Direction.BACKWARDS,
-                    config.pageChangerItem("prev-page", true),
-                    config.pageChangerItem("prev-page", false),
-                    configSound(guiServices.plugin, "prev-page"),
-                    location.row,
-                    location.column
-                )
-            }
+            addPageChanger(config, "buttons.next-page", PageChanger.Direction.FORWARDS, configSound(guiServices.plugin, "next-page"))
+            addPageChanger(config, "buttons.prev-page", PageChanger.Direction.BACKWARDS, configSound(guiServices.plugin, "prev-page"))
 
             for (pageNum in 1..maxPages) {
                 addPage(pageNum) {
