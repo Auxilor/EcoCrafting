@@ -2,10 +2,9 @@ package com.exanthiax.ecocrafting.recipegui.ui
 
 import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
@@ -126,7 +125,7 @@ class RecipeGUI(
                 }
             }
 
-            setMask(FillerMask(MaskItems.fromItemNames(context.config.getStrings("mask.items")), *pattern.toTypedArray()))
+            setMask(context.config, "")
 
             context.config.getSubsectionOrNull("buttons.back")?.let {
                 parent?.let {

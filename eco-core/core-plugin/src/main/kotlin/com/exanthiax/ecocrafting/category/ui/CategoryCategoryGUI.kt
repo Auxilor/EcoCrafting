@@ -8,9 +8,8 @@ import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.player
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
@@ -69,12 +68,7 @@ class CategoryCategoryGUI(
 
             for (pageNum in 1..maxPage) {
                 addPage(pageNum) {
-                    setMask(
-                        FillerMask(
-                            MaskItems.fromItemNames(config.getStrings("mask.items")),
-                            *pattern.toTypedArray()
-                        )
-                    )
+                    setMask(config, "")
 
                     config.getSubsectionOrNull("buttons.back")?.let {
                         prevMenu?.let {
