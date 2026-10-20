@@ -58,9 +58,8 @@ class RecipeCategory(
 }
 
 class CategoryStack private constructor(
-    private val parent: RecipeCategory,
+    val parent: RecipeCategory,
     val item: TestableItem,
-    val fromTag: Boolean,
     val displayNoPerm: Boolean,
     private val configuredNoPermItem: ItemStack?
 ) {
@@ -78,7 +77,7 @@ class CategoryStack private constructor(
                     .build()
             }
             val children = expandItemString(itemString)
-            return children.map { child -> CategoryStack(parent, child, itemString.startsWith("#"), displayNoPerm, noPermItem) }
+            return children.map { child -> CategoryStack(parent, child, displayNoPerm, noPermItem) }
         }
 
         private fun expandItemString(itemString: String): List<TestableItem> {
