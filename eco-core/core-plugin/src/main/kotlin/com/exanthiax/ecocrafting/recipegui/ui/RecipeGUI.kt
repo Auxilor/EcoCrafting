@@ -118,7 +118,15 @@ class RecipeGUI(
                             ingredientIndex++
                         }
                         marker.equals('o', ignoreCase = true) ->
-                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore + limitLore))
+                            setSlot(
+                                row,
+                                col,
+                                context.buildIngredientSlot(
+                                    listOf(recipe.output),
+                                    isIngredient = false,
+                                    lockedLore = outputLockedLore + priceLore + limitLore
+                                )
+                            )
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->
@@ -129,25 +137,24 @@ class RecipeGUI(
 
             setMask(context.config, "")
 
-            context.config.getSubsectionOrNull("buttons.back")?.let { section ->
-                parent?.let { parentMenu ->
-                    addComponent(
-                        ConfigButton(
-                            section,
-                            itemModifier = { item -> with(context) { ItemStackBuilder(item).withGlobalFlags().build() } },
-                            sound = context.sound("back")
-                        ) { clicker, _, _, _ -> parentMenu.open(clicker) }
-                    )
-                }
+            val backSection = context.config.getSubsectionOrNull("buttons.back")
+            if (backSection != null && parent != null) {
+                addComponent(
+                    ConfigButton(
+                        backSection,
+                        itemModifier = { item -> with(context) { ItemStackBuilder(item).withGlobalFlags().build() } },
+                        sound = context.sound("back")
+                    ) { clicker, _, _, _ -> parent.open(clicker) }
+                )
             }
 
-            context.config.getSubsectionOrNull("buttons.quick-craft")
-                ?.takeIf { if (context.config.has("quick-craft-enabled")) context.config.getBool("quick-craft-enabled") else true }
-                ?.let {
-                    for (location in context.config.getSlotLocations("buttons.quick-craft")) {
-                        addComponent(location.row, location.column, context.buildQuickCraftSlot(player, recipe))
-                    }
+            val quickCraftEnabled = !context.config.has("quick-craft-enabled") ||
+                context.config.getBool("quick-craft-enabled")
+            if (context.config.getSubsectionOrNull("buttons.quick-craft") != null && quickCraftEnabled) {
+                for (location in context.config.getSlotLocations("buttons.quick-craft")) {
+                    addComponent(location.row, location.column, context.buildQuickCraftSlot(player, recipe))
                 }
+            }
 
             context.config.getSubsectionOrNull("buttons.crafter-indicator")
                 ?.takeIf { it.getBool("enabled") }
@@ -168,12 +175,12 @@ class RecipeGUI(
                 }
 
             if (effectiveAlternatives.size > 1) {
-                context.config.getSubsectionOrNull("buttons.prev-variant")?.let {
+                if (context.config.getSubsectionOrNull("buttons.prev-variant") != null) {
                     for (location in context.config.getSlotLocations("buttons.prev-variant")) {
                         setSlot(location.row, location.column, context.buildVariantSlot(-1))
                     }
                 }
-                context.config.getSubsectionOrNull("buttons.next-variant")?.let {
+                if (context.config.getSubsectionOrNull("buttons.next-variant") != null) {
                     for (location in context.config.getSlotLocations("buttons.next-variant")) {
                         setSlot(location.row, location.column, context.buildVariantSlot(+1))
                     }

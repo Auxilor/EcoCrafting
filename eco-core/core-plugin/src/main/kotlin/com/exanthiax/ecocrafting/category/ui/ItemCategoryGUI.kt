@@ -49,19 +49,33 @@ class ItemCategoryGUI(
             // down to whatever page we opened on. The Function overload isn't bugged.
             defaultPage { page }
 
-            addPageChanger(config, "buttons.next-page", PageChanger.Direction.FORWARDS, configSound(guiServices.plugin, "next-page"))
-            addPageChanger(config, "buttons.prev-page", PageChanger.Direction.BACKWARDS, configSound(guiServices.plugin, "prev-page"))
+            addPageChanger(
+                config,
+                "buttons.next-page",
+                PageChanger.Direction.FORWARDS,
+                configSound(guiServices.plugin, "next-page")
+            )
+            addPageChanger(
+                config,
+                "buttons.prev-page",
+                PageChanger.Direction.BACKWARDS,
+                configSound(guiServices.plugin, "prev-page")
+            )
 
             for (pageNum in 1..maxPages) {
                 addPage(pageNum) {
                     setMask(config, "")
 
-                    config.getSubsectionOrNull("buttons.back")?.let { section ->
-                        prevMenu?.let { menu ->
-                            addComponent(ConfigButton(section, sound = configSound(guiServices.plugin, "back")) { player, _, _, _ ->
-                                menu.open(player)
-                            })
-                        }
+                    val backSection = config.getSubsectionOrNull("buttons.back")
+                    if (backSection != null && prevMenu != null) {
+                        addComponent(
+                            ConfigButton(
+                                backSection,
+                                sound = configSound(guiServices.plugin, "back")
+                            ) { clicker, _, _, _ ->
+                                prevMenu.open(clicker)
+                            }
+                        )
                     }
 
                     addCustomSlots(config, "")
