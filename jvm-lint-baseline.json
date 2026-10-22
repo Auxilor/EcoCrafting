@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "findings": [
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/category/service/CategoryService.kt",
+      "message": "Unused function `getMemberItems`"
+    },
+    {
+      "code": "U003",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/crafting/event/CustomBrewEvent.kt",
+      "message": "Unused property `bottlesAffected`"
+    },
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/crafting/service/BlockOwnerService.kt",
+      "message": "Unused function `hasOwner`"
+    },
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/recipe/integration/VanillaRecipeScanner.kt",
+      "message": "Unused function `displayNameFor`"
+    },
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/recipe/service/RecipeResolverService.kt",
+      "message": "Unused function `resolveOutput`"
+    },
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocrafting/recipegui/service/WizardState.kt",
+      "message": "Unused function `toPreviewResolvedRecipe`"
+    }
+  ]
+}
