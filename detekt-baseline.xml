@@ -1,0 +1,674 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>AbstractClassCanBeInterface:QuickCraftService.kt:CraftFailure$CraftFailure</ID>
+    <ID>BracesOnIfStatements:CraftLimitService.kt:CraftLimitService$else</ID>
+    <ID>BracesOnIfStatements:CraftLimitService.kt:CraftLimitService$if</ID>
+    <ID>BracesOnIfStatements:CrafterBlockListener.kt:CrafterBlockListener$if</ID>
+    <ID>BracesOnIfStatements:CraftingConsumption.kt:else</ID>
+    <ID>BracesOnIfStatements:CraftingConsumption.kt:if</ID>
+    <ID>BracesOnIfStatements:CraftingTableListener.kt:CraftingTableListener$else</ID>
+    <ID>BracesOnIfStatements:CraftingTableListener.kt:CraftingTableListener$if</ID>
+    <ID>BracesOnIfStatements:DisplaySlots.kt:if</ID>
+    <ID>BracesOnIfStatements:ItemCategoryGUI.kt:ItemCategoryGUI$else</ID>
+    <ID>BracesOnIfStatements:QuickCraftService.kt:QuickCraftService$else</ID>
+    <ID>BracesOnIfStatements:QuickCraftSlot.kt:else</ID>
+    <ID>BracesOnIfStatements:QuickCraftSlot.kt:if</ID>
+    <ID>BracesOnIfStatements:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$if</ID>
+    <ID>BracesOnIfStatements:RecipeGUI.kt:RecipeGUI$else</ID>
+    <ID>BracesOnIfStatements:RecipeGUI.kt:RecipeGUI$if</ID>
+    <ID>BracesOnIfStatements:RecipeIngredient.kt:else</ID>
+    <ID>BracesOnIfStatements:RecipeIngredient.kt:if</ID>
+    <ID>BracesOnIfStatements:RecipeLoader.kt:RecipeLoader$else</ID>
+    <ID>BracesOnIfStatements:RecipeLoader.kt:RecipeLoader$if</ID>
+    <ID>BracesOnIfStatements:RecipeMappingSupport.kt:else</ID>
+    <ID>BracesOnIfStatements:RecipeMappingSupport.kt:if</ID>
+    <ID>BracesOnIfStatements:ShopIntegrationService.kt:ShopIntegrationService$if</ID>
+    <ID>BracesOnIfStatements:SmeltingListener.kt:SmeltingListener$if</ID>
+    <ID>BracesOnIfStatements:SmithingListener.kt:SmithingListener$if</ID>
+    <ID>BracesOnIfStatements:StonecutterListener.kt:StonecutterListener$else</ID>
+    <ID>BracesOnIfStatements:StonecutterListener.kt:StonecutterListener$if</ID>
+    <ID>BracesOnIfStatements:WizardState.kt:else</ID>
+    <ID>BracesOnIfStatements:WizardState.kt:if</ID>
+    <ID>BracesOnIfStatements:WorkbenchListener.kt:WorkbenchListener$else</ID>
+    <ID>BracesOnIfStatements:WorkbenchListener.kt:WorkbenchListener$if</ID>
+    <ID>BracesOnIfStatements:WorkstationRecipeMapping.kt:else</ID>
+    <ID>BracesOnIfStatements:WorkstationRecipeMapping.kt:if</ID>
+    <ID>BracesOnWhenStatements:CraftingTableListener.kt:CraftingTableListener$when</ID>
+    <ID>BracesOnWhenStatements:RecipeGUI.kt:RecipeGUI$when</ID>
+    <ID>BracesOnWhenStatements:WorkbenchListener.kt:WorkbenchListener$when</ID>
+    <ID>BracesOnWhenStatements:WorkstationRecipeMapping.kt:when</ID>
+    <ID>CascadingCallWrapping:BlockOwnerService.kt:BlockOwnerService$plugin.configYml.getInt("owner-nearest-radius") .takeIf { it &gt; 0 } ?: 32</ID>
+    <ID>CascadingCallWrapping:CategoryCategoryGUI.kt:CategoryCategoryGUI$categoryLoader.values() .mapNotNull { it.guiPosition?.page } .maxOrNull() ?: 1</ID>
+    <ID>CascadingCallWrapping:CraftLimitPlaceholders.kt:meta.globalCraftLimit.takeIf { it &gt;= 0 } ?.let { remainingUnder(it, limitService.globalCrafts(key)).toString() } ?: unlimited</ID>
+    <ID>CascadingCallWrapping:CraftLimitPlaceholders.kt:meta.playerCraftLimit.takeIf { it &gt;= 0 } ?.let { remainingUnder(it, limitService.playerCrafts(player, key)).toString() } ?: unlimited</ID>
+    <ID>CascadingCallWrapping:OutputSetupScreen.kt:event.inventory.getItem(outputRawSlot) ?.takeIf { !it.type.isAir } ?: run { player.sendMessage("&amp;cPlace an output item first.".formatEco()) return@onLeftClick }</ID>
+    <ID>CascadingCallWrapping:RecipeCreatorGUI.kt:RecipeCreatorGUI$build()</ID>
+    <ID>CascadingCallWrapping:RecipeLoader.kt:RecipeLoader$toSet()</ID>
+    <ID>CascadingCallWrapping:SmithingListener.kt:SmithingListener$WorkstationRecipes.getAll(SmithingRecipe::class.java) .firstOrNull { it.template.matches(inventory.getItem(0)) &amp;&amp; it.base.matches(inventory.getItem(1)) &amp;&amp; it.addition.matches(inventory.getItem(2)) } ?: return</ID>
+    <ID>CascadingCallWrapping:StonecutterListener.kt:StonecutterListener$WorkstationRecipes.getAll(StonecuttingRecipe::class.java) .firstOrNull { it.input.matchesIgnoringAmount(inputItem) &amp;&amp; it.output?.isSimilar(resultItem) == true } ?: return</ID>
+    <ID>CascadingCallWrapping:WorkbenchListener.kt:WorkbenchListener$WorkstationRecipes.getAll(AnvilRecipe::class.java) .firstOrNull { it.base.matches(inventory.getItem(0)) &amp;&amp; (it.material == null || it.material!!.matches(inventory.getItem(1))) } ?: return</ID>
+    <ID>CastNullableToNonNullableType:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$as</ID>
+    <ID>CastNullableToNonNullableType:CraftingEffectsTest.kt:CraftingEffectsTest$as</ID>
+    <ID>CastNullableToNonNullableType:RecipeEditSaveTest.kt:RecipeEditSaveTest$as</ID>
+    <ID>CognitiveComplexMethod:DisplaySlots.kt:fun RecipeGUIContext.buildIngredientSlot: Slot</ID>
+    <ID>CognitiveComplexMethod:ItemCategoryGUI.kt:ItemCategoryGUI$private fun open</ID>
+    <ID>CognitiveComplexMethod:OptionsScreen.kt:internal fun RecipeCreatorGUI.openOptions</ID>
+    <ID>CognitiveComplexMethod:QuickCraftService.kt:QuickCraftService$fun craft: CraftAttempt</ID>
+    <ID>CognitiveComplexMethod:QuickCraftSlot.kt:fun RecipeGUIContext.buildQuickCraftSlot: Slot</ID>
+    <ID>CognitiveComplexMethod:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$fun parseEditSeed: EditSeed</ID>
+    <ID>CognitiveComplexMethod:RecipeGUI.kt:RecipeGUI$fun open</ID>
+    <ID>CognitiveComplexMethod:ShopIntegrationService.kt:ShopIntegrationService$fun purchaseMaterials: PurchaseResult</ID>
+    <ID>CognitiveComplexMethod:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCampfire</ID>
+    <ID>CognitiveComplexMethod:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onSmelt</ID>
+    <ID>CognitiveComplexMethod:WorkbenchListener.kt:WorkbenchListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onInventoryClick</ID>
+    <ID>CollapsibleIfStatements:QuickCraftService.kt:QuickCraftService$if (meta != null &amp;&amp; workstationRecipe != null) { if (!checkCraftingConditions(plugin, unlockService, limitService, player, workstationRecipe, meta)) { val failure = if (!meta.price.canAfford(player)) CraftFailure.CannotAfford else CraftFailure.None return CraftAttempt(false, failure) } }</ID>
+    <ID>ComplexCondition:CraftingTableListener.kt:CraftingTableListener$player != null &amp;&amp; meta != null &amp;&amp; meta.showWhenLocked &amp;&amp; unlockService.isLocked(player, recipe.key, meta)</ID>
+    <ID>ComplexCondition:ItemCategoryGUI.kt:ItemCategoryGUI$resolved?.locked == true &amp;&amp; meta != null &amp;&amp; meta.showWhenLocked &amp;&amp; meta.lockedLore.isNotEmpty()</ID>
+    <ID>ComplexCondition:QuickCraftSlot.kt:recipe.locked &amp;&amp; meta != null &amp;&amp; meta.showWhenLocked &amp;&amp; meta.lockedLore.isNotEmpty()</ID>
+    <ID>CouldBeSequence:RecipeEditPreservation.kt:filter { includeLore || it != "lore" }</ID>
+    <ID>CyclomaticComplexMethod:CraftLimitPlaceholders.kt:fun registerCraftLimitPlaceholders</ID>
+    <ID>CyclomaticComplexMethod:CraftingTableListener.kt:CraftingTableListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCraft</ID>
+    <ID>CyclomaticComplexMethod:OptionsScreen.kt:internal fun RecipeCreatorGUI.openOptions</ID>
+    <ID>CyclomaticComplexMethod:QuickCraftService.kt:QuickCraftService$fun craft: CraftAttempt</ID>
+    <ID>CyclomaticComplexMethod:QuickCraftSlot.kt:fun RecipeGUIContext.buildQuickCraftSlot: Slot</ID>
+    <ID>CyclomaticComplexMethod:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$fun parseEditSeed: EditSeed</ID>
+    <ID>CyclomaticComplexMethod:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$fun saveRecipeYaml</ID>
+    <ID>CyclomaticComplexMethod:RecipeGUI.kt:RecipeGUI$fun open</ID>
+    <ID>CyclomaticComplexMethod:RecipeLoader.kt:RecipeLoader$override fun acceptConfig</ID>
+    <ID>CyclomaticComplexMethod:RecipeResolverService.kt:RecipeResolverService$fun resolveAll: List&lt;ResolvedRecipe&gt;</ID>
+    <ID>CyclomaticComplexMethod:ShopIntegrationService.kt:ShopIntegrationService$fun purchaseMaterials: PurchaseResult</ID>
+    <ID>CyclomaticComplexMethod:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCampfire</ID>
+    <ID>CyclomaticComplexMethod:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onSmelt</ID>
+    <ID>CyclomaticComplexMethod:StonecutterListener.kt:StonecutterListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onStonecutterResultClick</ID>
+    <ID>CyclomaticComplexMethod:VanillaRecipeScanner.kt:VanillaRecipeScanner$private fun collectVanillaOutputs: List&lt;ItemStack&gt;</ID>
+    <ID>CyclomaticComplexMethod:WizardState.kt:internal fun PendingRecipe.toPreviewResolvedRecipe: ResolvedRecipe</ID>
+    <ID>CyclomaticComplexMethod:WorkbenchListener.kt:WorkbenchListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onInventoryClick</ID>
+    <ID>CyclomaticComplexMethod:WorkstationRecipeMapping.kt:internal fun WorkstationRecipe.toResolvedRecipe: ResolvedRecipe</ID>
+    <ID>ElseCaseInsteadOfExhaustiveWhen:TriggerCraft.kt:TriggerCraft$when (event.click) { ClickType.NUMBER_KEY -&gt; handleNumberKeyCompletion(cursor, player, event) ClickType.DROP, ClickType.CONTROL_DROP -&gt; handleDropCompletion(cursor) ClickType.SWAP_OFFHAND -&gt; handleSwapOffhandCompletion(player) ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT -&gt; handleShiftClickCompletion(event, item) else -&gt; 1 }</ID>
+    <ID>ElseCaseInsteadOfExhaustiveWhen:WorkbenchListener.kt:WorkbenchListener$when (inventory.type) { InventoryType.ANVIL -&gt; WorkstationRecipes.getAll(AnvilRecipe::class.java) .firstOrNull { it.base.matches(inventory.getItem(0)) &amp;&amp; (it.material == null || it.material!!.matches(inventory.getItem(1))) } ?: return InventoryType.GRINDSTONE -&gt; WorkstationRecipes.getAll(GrindstoneRecipe::class.java) .filter { it.item1.matches(inventory.getItem(0)) &amp;&amp; (it.item2 == null || it.item2!!.matches(inventory.getItem(1))) } .maxByOrNull { if (it.item2 != null) 1 else 0 } ?: return InventoryType.MERCHANT -&gt; { val merchant = inventory as? MerchantInventory ?: return // A command-opened merchant knows exactly which recipe backs each slot. Only // fall back to matching by ingredients (real villagers) when it doesn't, since // two recipes sharing their inputs would otherwise resolve to the wrong meta. sessionService.keyAt(player, merchant.selectedRecipeIndex) ?.let { WorkstationRecipes.getByKey(it) as? VillagerRecipe } ?: run { val selected = merchant.selectedRecipe ?: return WorkstationRecipes.getAll(VillagerRecipe::class.java) .firstOrNull { it.matchesMerchantRecipe(selected) } ?: return } } else -&gt; return }</ID>
+    <ID>EmptyFunctionBlock:EcoCraftingPlugin.kt:EcoCraftingPlugin${ }</ID>
+    <ID>ExplicitCollectionElementAccessMethod:RecipeEditPreservation.kt:carried.set(key, existing.get(key).let { if (it is ConfigurationSection) it.toPlainMap() else it })</ID>
+    <ID>ExplicitCollectionElementAccessMethod:RecipeEditPreservation.kt:existing.get(key)</ID>
+    <ID>ExpressionBodySyntax:CategoryGuiScaffolding.kt:return if (active) "active" else "inactive"</ID>
+    <ID>ExpressionBodySyntax:CategoryService.kt:CategoryService$return item.clone().apply { amount = 1 }</ID>
+    <ID>ExpressionBodySyntax:CustomBrewEvent.kt:CustomBrewEvent$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomBrewEvent.kt:CustomBrewEvent.Companion$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomCraftEvent.kt:CustomCraftEvent$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomCraftEvent.kt:CustomCraftEvent.Companion$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomSmeltEvent.kt:CustomSmeltEvent$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomSmeltEvent.kt:CustomSmeltEvent.Companion$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomSmithEvent.kt:CustomSmithEvent$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomSmithEvent.kt:CustomSmithEvent.Companion$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomWorkbenchCraftEvent.kt:CustomWorkbenchCraftEvent$return handlerList</ID>
+    <ID>ExpressionBodySyntax:CustomWorkbenchCraftEvent.kt:CustomWorkbenchCraftEvent.Companion$return handlerList</ID>
+    <ID>ExpressionBodySyntax:FilterRecipe.kt:FilterRecipe$return config.getStrings(key)</ID>
+    <ID>ExpressionBodySyntax:FilterWorkstation.kt:FilterWorkstation$return config.getStrings(key)</ID>
+    <ID>ExpressionBodySyntax:FilterWorkstation.kt:FilterWorkstation$return values.map { Blocks.lookup(it) }</ID>
+    <ID>ExpressionBodySyntax:RecipeCategory.kt:RecipeCategory$return id</ID>
+    <ID>ExpressionBodySyntax:RecipeCategory.kt:RecipeCategory$return items.map { it.item.item } + vanillaItems + runtimeItems</ID>
+    <ID>ExpressionBodySyntax:RecipeIngredient.kt:RecipeIngredient.Companion$return RecipeIngredient(air, IngredientMatcher.Empty, true)</ID>
+    <ID>ExpressionBodySyntax:RecipeResolverService.kt:RecipeResolverService$return resolve(itemStack)?.output?.clone()</ID>
+    <ID>ExpressionBodySyntax:ShopIntegrationService.kt:ShopIntegrationService$return isAutoBuyEnabled() &amp;&amp; (!requireShiftClick || shiftClick)</ID>
+    <ID>F001:RecipeCapEnforcer.kt:RecipeCapEnforcer$mutableMapOf&lt;String, MutableSet&lt;String&gt;&gt;()</ID>
+    <ID>F001:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$mutableSetOf&lt;NamespacedKey&gt;()</ID>
+    <ID>F001:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$mutableSetOf&lt;NamespacedKey&gt;()</ID>
+    <ID>FunctionNameMaxLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$@Test fun `chat input accepts a count or an unlimited keyword`</ID>
+    <ID>FunctionNameMaxLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$@Test fun `limits are read back from a section, defaulting to unlimited`</ID>
+    <ID>FunctionNameMaxLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$@Test fun `negative stored limits read back as unlimited`</ID>
+    <ID>FunctionNameMaxLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$@Test fun `no craft-limits block is written when both limits are unlimited`</ID>
+    <ID>FunctionNameMaxLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$@Test fun `only the limits that are set are written, at the given indent`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `a new recipe carries nothing over`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `a new stonecutter output gets the default lore`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `keys the builder does not manage are carried over`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `keys the builder manages are not carried over`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `placeholder defaults are only written for keys the file does not already have`</ID>
+    <ID>FunctionNameMaxLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$@Test fun `stonecutter output 0 keeps its extra keys and later outputs are untouched`</ID>
+    <ID>FunctionNameMaxLength:CommandResetLimitsTest.kt:CommandResetLimitsTest$@Test fun `the ecocrafting namespace is stripped from a recipe argument`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$@Test fun `a limit notice is sent once per key until cleared`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$@Test fun `clicking an empty merchant result slot is ignored`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$@Test fun `shift-clicking a limited trade is blocked so vanilla cannot repeat it past the limit`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$@Test fun `taken-over crafting table crafts deliver the output amount for every craft`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$@Test fun `unlimited trades and single clicks proceed as before`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitPlaceholdersTest.kt:CraftLimitPlaceholdersTest$@Test fun `an id ending in _global resolves to the recipe that exists`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitPlaceholdersTest.kt:CraftLimitPlaceholdersTest$@Test fun `recipe ids with underscores keep their full id`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitPlaceholdersTest.kt:CraftLimitPlaceholdersTest$@Test fun `simple recipe ids resolve every stat`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitPlaceholdersTest.kt:CraftLimitPlaceholdersTest$@Test fun `unrelated or incomplete args do not match`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `a craft between two resets in the same millisecond is cleared by the second`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `a new reset stamp always lands after every earlier stamp`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `count is current only when started after the reset stamp`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `malformed player entries are skipped`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `negative and absent limits normalise to unlimited`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `negative stored counts are treated as malformed`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `player counts round trip through serialise and parse`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `recipe values round trip and skip malformed entries`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `recording adds to a current window and keeps its start`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `recording after a reset starts a new window`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `remaining is unlimited, floored at zero, or limit minus used`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `reset stamp is the later of recipe and all-recipes stamps`</ID>
+    <ID>FunctionNameMaxLength:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$@Test fun `window started in the same millisecond as a reset still counts`</ID>
+    <ID>FunctionNameMaxLength:CraftingConsumptionTest.kt:CraftingConsumptionTest$@Test fun `a missing input yields no crafts`</ID>
+    <ID>FunctionNameMaxLength:CraftingConsumptionTest.kt:CraftingConsumptionTest$@Test fun `a multi-item input divides the available amount by the required amount`</ID>
+    <ID>FunctionNameMaxLength:CraftingConsumptionTest.kt:CraftingConsumptionTest$@Test fun `a single-item input yields one craft per item`</ID>
+    <ID>FunctionNameMaxLength:CraftingConsumptionTest.kt:CraftingConsumptionTest$@Test fun `an input below the required amount yields no crafts`</ID>
+    <ID>FunctionNameMaxLength:CraftingEffectsTest.kt:CraftingEffectsTest$@Test fun `binary search finds the largest affordable amount`</ID>
+    <ID>FunctionNameMaxLength:CraftingEffectsTest.kt:CraftingEffectsTest$@Test fun `desired amount is returned outright when it's affordable`</ID>
+    <ID>FunctionNameMaxLength:CraftingEffectsTest.kt:CraftingEffectsTest$@Test fun `non-positive desired amount short-circuits to zero`</ID>
+    <ID>FunctionNameMaxLength:CraftingEffectsTest.kt:CraftingEffectsTest$@Test fun `zero is returned when nothing at all is affordable`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableRecipeSelectionTest.kt:CraftingTableRecipeSelectionTest$@Test fun `nothing is trusted when the event had no matching recipe`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableRecipeSelectionTest.kt:CraftingTableRecipeSelectionTest$@Test fun `the event's recipe is dropped when the grid says it's a different recipe`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableRecipeSelectionTest.kt:CraftingTableRecipeSelectionTest$@Test fun `the event's recipe is used when it agrees with the grid`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableRecipeSelectionTest.kt:CraftingTableRecipeSelectionTest$@Test fun `the event's recipe is used when the grid matched nothing`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableTakeoverTest.kt:CraftingTableTakeoverTest$@Test fun `existing takeover reasons still apply`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableTakeoverTest.kt:CraftingTableTakeoverTest$@Test fun `limited recipe always takes over so vanilla craft-all cannot overshoot`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableTakeoverTest.kt:CraftingTableTakeoverTest$@Test fun `no-result recipes never take over`</ID>
+    <ID>FunctionNameMaxLength:CraftingTableTakeoverTest.kt:CraftingTableTakeoverTest$@Test fun `plain recipe on the native path is left to vanilla`</ID>
+    <ID>FunctionNameMaxLength:DisplaySlotsTest.kt:DisplaySlotsTest$@Test fun `a custom item is never the same as a plain vanilla item`</ID>
+    <ID>FunctionNameMaxLength:DisplaySlotsTest.kt:DisplaySlotsTest$@Test fun `plain items fall back to a similarity check`</ID>
+    <ID>FunctionNameMaxLength:DisplaySlotsTest.kt:DisplaySlotsTest$@Test fun `the same custom item is the same item`</ID>
+    <ID>FunctionNameMaxLength:DisplaySlotsTest.kt:DisplaySlotsTest$@Test fun `two custom items sharing a base material are not the same item`</ID>
+    <ID>FunctionNameMaxLength:EcoCraftingMetaLimitTest.kt:EcoCraftingMetaLimitTest$@Test fun `any non-negative limit counts as a limit, including zero`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `caps are tracked independently per recipe type`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `clear resets all per-type counters`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `crafting_table cap is 10, every other type is 5`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `free version rejects registration once a type's cap is reached`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `paid version never enforces a cap`</ID>
+    <ID>FunctionNameMaxLength:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$@Test fun `re-registering an already-counted id on reload does not consume another slot`</ID>
+    <ID>FunctionNameMaxLength:RecipeCreatorConfigWriterTest.kt:RecipeCreatorConfigWriterTest$@Test fun `a custom item serializes to its key alone`</ID>
+    <ID>FunctionNameMaxLength:RecipeCreatorConfigWriterTest.kt:RecipeCreatorConfigWriterTest$@Test fun `a stacked custom item keeps its amount`</ID>
+    <ID>FunctionNameMaxLength:RecipeCreatorConfigWriterTest.kt:RecipeCreatorConfigWriterTest$@Test fun `a vanilla item still round-trips through eco's own serialization`</ID>
+    <ID>FunctionNameMaxLength:RecipeCreatorConfigWriterTest.kt:RecipeCreatorConfigWriterTest$@Test fun `an empty or missing item serializes to air`</ID>
+    <ID>FunctionNameMaxLength:RecipeDisplayTypeLimitTest.kt:RecipeDisplayTypeLimitTest$@Test fun `brewing does not support craft limits`</ID>
+    <ID>FunctionNameMaxLength:RecipeDisplayTypeLimitTest.kt:RecipeDisplayTypeLimitTest$@Test fun `every other workstation supports craft limits`</ID>
+    <ID>FunctionNameMaxLength:RecipeEditSaveTest.kt:RecipeEditSaveTest$@Test fun `editing a recipe keeps its price, effects and lore and applies the new builder values`</ID>
+    <ID>FunctionNameMaxLength:RecipeEditSaveTest.kt:RecipeEditSaveTest$@Test fun `editing a stonecutter keeps every output and its keys`</ID>
+    <ID>FunctionNameMaxLength:RecipeIngredientTest.kt:RecipeIngredientTest$@Test fun `a plain testable item requires one of the item`</ID>
+    <ID>FunctionNameMaxLength:RecipeIngredientTest.kt:RecipeIngredientTest$@Test fun `a testable stack reports its required amount`</ID>
+    <ID>FunctionNameMaxLength:RecipeIngredientTest.kt:RecipeIngredientTest$@Test fun `matching a stack ignoring amount skips the testable stack's size requirement`</ID>
+    <ID>FunctionNameMaxLength:RecipeIngredientTest.kt:RecipeIngredientTest$@Test fun `matching ignoring amount is a plain match for a non-stack item`</ID>
+    <ID>FunctionNameMaxLength:RecipeIngredientTest.kt:RecipeIngredientTest$@Test fun `matching ignoring amount still defers to the underlying item test`</ID>
+    <ID>FunctionNameMaxLength:RecipeResolverService.kt:RecipeResolverService$private fun findAllWorkstationRecipesByOutput: List&lt;ResolvedRecipe&gt;</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `clear wipes both metadata and variant mappings`</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `keyOrWarn lowercases valid ids and rejects invalid ones`</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `registered recipe metadata is retrievable by key`</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `resolveBaseKey strips eco suffixes and maps variants back to base`</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `stonecutter group resolves to its output keys`</ID>
+    <ID>FunctionNameMaxLength:RecipeServiceTest.kt:RecipeServiceTest$@Test fun `symmetry variant keys resolve back to their base key`</ID>
+    <ID>FunctionNameMaxLength:RecipeSymmetryTest.kt:RecipeSymmetryTest$@Test fun `180 degree rotation is its own inverse`</ID>
+    <ID>FunctionNameMaxLength:RecipeSymmetryTest.kt:RecipeSymmetryTest$@Test fun `applying a 90 degree rotation four times returns to the original`</ID>
+    <ID>FunctionNameMaxLength:RecipeSymmetryTest.kt:RecipeSymmetryTest$@Test fun `center cell is fixed under every transform`</ID>
+    <ID>FunctionNameMaxLength:RecipeSymmetryTest.kt:RecipeSymmetryTest$@Test fun `every symmetry transform is a valid 3x3 permutation`</ID>
+    <ID>FunctionNameMaxLength:RecipeSymmetryTest.kt:RecipeSymmetryTest$@Test fun `mirroring twice returns to the original`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$@Test fun `holder carries the recipe unlock conditions and is reused until the recipe reloads`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$@Test fun `provides a holder for each locked recipe with unlock conditions`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$@Test fun `provides nothing to non-player dispatchers`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$@Test fun `provides nothing when live checks are turned off`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockHolderProviderTest.kt:RecipeUnlockHolderProviderTest$@Test fun `skips unlocked and manually locked recipes`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `already unlocked recipe does not fire again`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `empty unlock conditions never auto-unlock`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `manually locked recipe is not auto-unlocked`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `met unlock conditions unlock and fire recipe_unlocked once`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `only locked recipes with unlock conditions are auto-unlock candidates`</ID>
+    <ID>FunctionNameMaxLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$@Test fun `unmet unlock conditions stay locked`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `closing the session stops resolving slots`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `explicit permission replaces the implicit node`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `implicit per-recipe permission grants access`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `max uses of zero means unlimited`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `session resolves merchant slots back to recipe keys`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `stonecutter group permission grants every output`</ID>
+    <ID>FunctionNameMaxLength:TradeServiceTest.kt:TradeServiceTest$@Test fun `trade ids are split, trimmed, and blanks dropped`</ID>
+    <ID>FunctionNameMaxLength:VillagerConfigTest.kt:VillagerConfigTest$@Test fun `chance is a percentage clamped between 0 and 100`</ID>
+    <ID>FunctionNameMaxLength:VillagerConfigTest.kt:VillagerConfigTest$@Test fun `missing chance defaults to always`</ID>
+    <ID>FunctionNameMaxLength:VillagerConfigTest.kt:VillagerConfigTest$@Test fun `missing or blank profession means any profession`</ID>
+    <ID>FunctionNameMaxLength:VillagerConfigTest.kt:VillagerConfigTest$@Test fun `misspelled profession fails and lists valid professions`</ID>
+    <ID>IC001:RecipeResolverService.kt:RecipeResolverService$// anti-diagonal (MIRROR_H . ROT_270_CW)</ID>
+    <ID>IC001:RecipeResolverService.kt:RecipeResolverService$// transpose (MIRROR_H . ROT_90_CW)</ID>
+    <ID>IC001:RecipeResolverService.kt:RecipeResolverService$// vertical flip (MIRROR_H . ROT_180)</ID>
+    <ID>IC002:BrewingListener.kt:BrewingListener$// The brewing stand is still a real vanilla block. If base+ingredient also</ID>
+    <ID>IC002:CategoryCategoryGUI.kt:CategoryCategoryGUI$// eco's defaultPage(Int) delegates to maxPages(...) instead of setting the</ID>
+    <ID>IC002:CommandOpenTrade.kt:CommandOpenTrade$// Abort on the first bad id rather than opening a partial GUI - an unknown id is an</ID>
+    <ID>IC002:CrafterBlockListener.kt:CrafterBlockListener$// Normalize the fired key (`_crafter` suffix and/or a symmetry-variant `&lt;id&gt;_rot90`)</ID>
+    <ID>IC002:CrafterBlockListener.kt:CrafterBlockListener$// Opt-in: only handle Crafter for recipes that declare support-crafter=true.</ID>
+    <ID>IC002:CrafterBlockListener.kt:CrafterBlockListener$// giveResultItem = true: eco's AutocrafterPatch cancels every eco-namespace</ID>
+    <ID>IC002:CraftingEffectsTest.kt:CraftingEffectsTest$// Player can afford up to (and including) 7 units, but not 8+.</ID>
+    <ID>IC002:CraftingTableListener.kt:CraftingTableListener$// Claim the event before dispatching, so the trigger's own vanilla CraftItemEvent</ID>
+    <ID>IC002:CraftingTableListener.kt:CraftingTableListener$// Fall back to matrix match when a vanilla recipe fires first (same shape/material),</ID>
+    <ID>IC002:CraftingTableListener.kt:CraftingTableListener$// support-crafter recipes also register a second, ambiguous Bukkit recipe</ID>
+    <ID>IC002:CraftingTableRecipeSelectionTest.kt:CraftingTableRecipeSelectionTest$// Every crafting-table recipe registers its Bukkit twin with material-only</ID>
+    <ID>IC002:DisplaySlotsTest.kt:DisplaySlotsTest$// Both are player_head-backed EcoItems - comparing Material alone would call</ID>
+    <ID>IC002:ItemCategoryGUI.kt:ItemCategoryGUI$// Cached single-recipe lookup for the slot's own lore/lock display - resolveAll's</ID>
+    <ID>IC002:ItemCategoryGUI.kt:ItemCategoryGUI$// eco's defaultPage(Int) delegates to maxPages(...) instead of setting the</ID>
+    <ID>IC002:MaterialLore.kt:// Custom-item plugins (Nexo etc.) commonly set the item_name component rather than</ID>
+    <ID>IC002:QuickCraftService.kt:QuickCraftService$// This should not happen because canFit checked a simulated inventory.</ID>
+    <ID>IC002:QuickCraftService.kt:QuickCraftService$// meta-gated recipes reuse the real crafting path's lock/condition/price check</ID>
+    <ID>IC002:QuickCraftSlot.kt:// CraftFailure.None means checkCraftingConditions already messaged the</ID>
+    <ID>IC002:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$// Same ids re-submitted (e.g. on /ecocrafting reload) must not push the type over its cap.</ID>
+    <ID>IC002:RecipeCapEnforcerTest.kt:RecipeCapEnforcerTest$// furnace is full, but crafting_table (cap 10) is a separate bucket and still has room.</ID>
+    <ID>IC002:RecipeCategory.kt:CategoryStack.Companion$// Eco custom tag fallback - enumerate via matches()</ID>
+    <ID>IC002:RecipeCategory.kt:RecipeCategory$// Same output item can come from multiple recipes each with their own `category:`;</ID>
+    <ID>IC002:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$// Stonecutters carry the flag per output, everything else at the top level.</ID>
+    <ID>IC002:RecipeCreatorConfigWriterTest.kt:RecipeCreatorConfigWriterTest$// eco's own toLookupString would append `texture:... name:"..."` here, which</ID>
+    <ID>IC002:RecipeCreatorGUI.kt:RecipeCreatorGUI$// Open the new menu directly instead of closing first: Bukkit swaps</ID>
+    <ID>IC002:RecipeIngredient.kt:IngredientMatcher.MaterialOnly$// Vanilla material requirements should not consume custom/PDC-tagged items.</ID>
+    <ID>IC002:RecipeLoader.kt:RecipeLoader$// "recipebook" is the namespace eco used to store these rolls under. Its own</ID>
+    <ID>IC002:RecipeLoader.kt:RecipeLoader$// Only ours: the workstation registry is shared with every other plugin that</ID>
+    <ID>IC002:RecipeResolverService.kt:RecipeResolverService$// Collapse eco `_displayed`/`_crafter` ghosts and symmetry variants</ID>
+    <ID>IC002:RecipeResolverService.kt:RecipeResolverService$// Registered eco custom items cache by their stable key; everything else caches by</ID>
+    <ID>IC002:RecipeResolverService.kt:RecipeResolverService$// Same recipe registered under both eco's CraftingRecipe system and</ID>
+    <ID>IC002:RecipeServiceTest.kt:RecipeServiceTest$// A key with no registered variant mapping resolves to itself.</ID>
+    <ID>IC002:RecipeServiceTest.kt:RecipeServiceTest$// A plain base key resolves to itself.</ID>
+    <ID>IC002:RecipeServiceTest.kt:RecipeServiceTest$// A symmetry variant - bare or with an eco suffix stacked on top - resolves to the base.</ID>
+    <ID>IC002:RecipeServiceTest.kt:RecipeServiceTest$// An unrelated (vanilla/other-plugin) recipe key is left untouched.</ID>
+    <ID>IC002:RecipeServiceTest.kt:RecipeServiceTest$// eco `_displayed` / `_crafter` ghosts of the base resolve to the base.</ID>
+    <ID>IC002:RecipeSymmetryTest.kt:RecipeSymmetryTest$// Index 4 is the centre of a 3x3 grid - every rotation/mirror maps it to itself.</ID>
+    <ID>IC002:RecipeTypeLoaders.kt:// CrafterRecipe entry in WorkstationRecipes is for listener key lookup</ID>
+    <ID>IC002:RecipeTypeLoaders.kt:// Eco handles the &lt;key&gt;_crafter Bukkit registration when setSupportCrafter(true)</ID>
+    <ID>IC002:ShopIntegrationService.kt:ShopIntegrationService$// EcoShop's buy() has no transactional rollback, so buy each item</ID>
+    <ID>IC002:SmeltingListener.kt:SmeltingListener$// No player to unlock/price-check against - deny any tracked recipe outright,</ID>
+    <ID>IC002:SmeltingListener.kt:SmeltingListener$// Vanilla always consumes exactly 1 source item per smelt and ignores recipe.input's</ID>
+    <ID>IC002:StonecutterListener.kt:StonecutterListener$// Match on the item alone: the stack size is checked separately below so an</ID>
+    <ID>IC002:StonecutterListener.kt:StonecutterListener$// The Bukkit recipe eco registers uses an ExactChoice, which ignores stack size, so</ID>
+    <ID>IC002:TradeMerchantFactory.kt:TradeMerchantFactory$// Registered before opening: the click handler resolves trades through the session, and</ID>
+    <ID>IC002:TradeMerchantFactory.kt:TradeMerchantFactory$// eco's ViewBuilders, not MenuType.MERCHANT.builder() directly - the Bukkit builder takes</ID>
+    <ID>IC002:TradeMerchantFactory.kt:TradeMerchantFactory$// uses = 0, no experience reward, no price multiplier - there's no villager to level up</ID>
+    <ID>IC002:TradeServiceTest.kt:TradeServiceTest$// Duplicates are kept - listing the same trade twice is intentional.</ID>
+    <ID>IC002:TradeServiceTest.kt:TradeServiceTest$// Out-of-range and unselected (-1) indices fall through to ingredient matching.</ID>
+    <ID>IC002:TradeServiceTest.kt:TradeServiceTest$// The implicit node no longer applies once the recipe names its own permission.</ID>
+    <ID>IC002:TriggerCraft.kt:TriggerCraft$// Can't craft into off-hand if off-hand is full.</ID>
+    <ID>IC002:TriggerCraft.kt:TriggerCraft$// Drop crafting with Q fails if cursor is full</ID>
+    <ID>IC002:TriggerCraft.kt:TriggerCraft$// Hotbar crafting fails if cursor contains item, or hotbar destination is not empty.</ID>
+    <ID>IC002:VanillaRecipeScanner.kt:VanillaRecipeScanner$// recipeIterator may omit furnace/stonecutter/smoker in some Paper builds;</ID>
+    <ID>IC002:WorkbenchListener.kt:WorkbenchListener$// A command-opened merchant knows exactly which recipe backs each slot. Only</ID>
+    <ID>IC002:WorkbenchListener.kt:WorkbenchListener$// Eco already registers the real MerchantRecipe, so leave the click un-cancelled</ID>
+    <ID>IC002:WorkbenchListener.kt:WorkbenchListener$// Prefer more specific (two-item) recipes over one-item recipes</ID>
+    <ID>IC002:WorkbenchListener.kt:WorkbenchListener$// Synchronous safety-net resync, not scheduled - queuing a Runnable per click backs up</ID>
+    <ID>IC003:RecipeResolverService.kt:RecipeResolverService$// anti-diagonal (MIRROR_H . ROT_270_CW)</ID>
+    <ID>IC003:RecipeResolverService.kt:RecipeResolverService$// transpose (MIRROR_H . ROT_90_CW)</ID>
+    <ID>IC003:RecipeResolverService.kt:RecipeResolverService$// vertical flip (MIRROR_H . ROT_180)</ID>
+    <ID>IM001:BukkitRecipeMapping.kt:org.bukkit.inventory.Recipe</ID>
+    <ID>IM001:CrafterBlockListener.kt:CrafterBlockListener$org.bukkit.Keyed</ID>
+    <ID>IM001:CraftingTableListener.kt:CraftingTableListener$org.bukkit.Keyed</ID>
+    <ID>IM001:QuickCraftSlot.kt:com.exanthiax.ecocrafting.EcoCraftingPlugin</ID>
+    <ID>IM001:TriggerCraft.kt:TriggerCraft$org.bukkit.Keyed</ID>
+    <ID>IM001:WorkbenchListener.kt:WorkbenchListener$org.bukkit.inventory.MerchantRecipe</ID>
+    <ID>IgnoredReturnValue:RecipeCreatorChatListener.kt:RecipeCreatorChatListener$remove(event.player.uniqueId)</ID>
+    <ID>IgnoredReturnValue:RecipeCreatorGUI.kt:RecipeCreatorGUI$remove(player.uniqueId)</ID>
+    <ID>ImplicitUnitReturnType:CommandReload.kt:CommandReload$override fun onExecute</ID>
+    <ID>ImplicitUnitReturnType:CraftLimitService.kt:CraftLimitService$override fun resetAllPlayers</ID>
+    <ID>ImplicitUnitReturnType:CraftLimitService.kt:CraftLimitService$override fun resetGlobal</ID>
+    <ID>ImplicitUnitReturnType:CraftLimitService.kt:CraftLimitService$override fun resetPlayer</ID>
+    <ID>LabeledExpression:BukkitRecipeMapping.kt:@firstNotNullOfOrNull</ID>
+    <ID>LabeledExpression:BukkitRecipeMapping.kt:@mapNotNull</ID>
+    <ID>LabeledExpression:CraftLimitPlaceholders.kt:@PlayerDynamicPlaceholder</ID>
+    <ID>LabeledExpression:CraftLimitWindows.kt:@mapNotNull</ID>
+    <ID>LabeledExpression:CraftingConsumptionTest.kt:CraftingConsumptionTest$@mockk</ID>
+    <ID>LabeledExpression:IngredientSetupScreen.kt:@onLeftClick</ID>
+    <ID>LabeledExpression:OptionsPrompts.kt:@handler</ID>
+    <ID>LabeledExpression:OptionsPrompts.kt:handler@</ID>
+    <ID>LabeledExpression:OutputSetupScreen.kt:@onLeftClick</ID>
+    <ID>LabeledExpression:RecipeEditSaveTest.kt:RecipeEditSaveTest$@mockk</ID>
+    <ID>LabeledExpression:RecipeIngredientTest.kt:RecipeIngredientTest$@mockk</ID>
+    <ID>LabeledExpression:RecipeLoader.kt:RecipeLoader$@forEach</ID>
+    <ID>LabeledExpression:RecipeTypeLoaders.kt:@forEachIndexed</ID>
+    <ID>LabeledExpression:RecipeTypeLoaders.kt:@run</ID>
+    <ID>LabeledExpression:RecipeUnlockHolderProvider.kt:RecipeUnlockHolderProvider$@mapNotNull</ID>
+    <ID>LabeledExpression:TradeMerchantFactory.kt:TradeMerchantFactory$@let</ID>
+    <ID>LabeledExpression:TradeMerchantFactory.kt:TradeMerchantFactory$@mapNotNull</ID>
+    <ID>LabeledExpression:TriggerCraft.kt:TriggerCraft$@sumOf</ID>
+    <ID>LongMethod:CategoryCategoryGUI.kt:CategoryCategoryGUI$override fun open</ID>
+    <ID>LongMethod:ItemCategoryGUI.kt:ItemCategoryGUI$private fun open</ID>
+    <ID>LongMethod:OptionsScreen.kt:internal fun RecipeCreatorGUI.openOptions</ID>
+    <ID>LongMethod:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$fun parseEditSeed: EditSeed</ID>
+    <ID>LongMethod:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$fun saveRecipeYaml</ID>
+    <ID>LongMethod:RecipeGUI.kt:RecipeGUI$fun open</ID>
+    <ID>LongMethod:WorkbenchListener.kt:WorkbenchListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onInventoryClick</ID>
+    <ID>LongMethod:WorkstationRecipeMapping.kt:internal fun WorkstationRecipe.toResolvedRecipe: ResolvedRecipe</ID>
+    <ID>LongParameterList:CraftingEffects.kt:fun checkCraftingConditions: Boolean</ID>
+    <ID>LongParameterList:CraftingEffects.kt:fun fireCraftEffects</ID>
+    <ID>LongParameterList:IngredientSetupScreen.kt:internal fun RecipeCreatorGUI.openIngredientSetup</ID>
+    <ID>LongParameterList:OutputSetupScreen.kt:internal fun RecipeCreatorGUI.openOutputSetup</ID>
+    <ID>LongParameterList:QuickCraftService.kt:QuickCraftService</ID>
+    <ID>LongParameterList:WizardState.kt:WizardState</ID>
+    <ID>LoopWithTooManyJumpStatements:CraftingTableListener.kt:CraftingTableListener$for</ID>
+    <ID>LoopWithTooManyJumpStatements:QuickCraftService.kt:QuickCraftService$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ShopIntegrationService.kt:ShopIntegrationService$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SmeltingListener.kt:SmeltingListener$for</ID>
+    <ID>LoopWithTooManyJumpStatements:VanillaRecipeScanner.kt:VanillaRecipeScanner$while</ID>
+    <ID>MagicNumber:BukkitRecipeMapping.kt:3</ID>
+    <ID>MagicNumber:BukkitRecipeMapping.kt:6</ID>
+    <ID>MagicNumber:BukkitRecipeMapping.kt:8</ID>
+    <ID>MagicNumber:CraftLimitWindows.kt:3</ID>
+    <ID>MagicNumber:CrafterBlockListener.kt:CrafterBlockListener$9</ID>
+    <ID>MagicNumber:EcoCraftingPlugin.kt:EcoCraftingPlugin$50</ID>
+    <ID>MagicNumber:IngredientSetupScreen.kt:3</ID>
+    <ID>MagicNumber:IngredientSetupScreen.kt:4</ID>
+    <ID>MagicNumber:IngredientSetupScreen.kt:5</ID>
+    <ID>MagicNumber:IngredientSetupScreen.kt:6</ID>
+    <ID>MagicNumber:OptionsPrompts.kt:100.0</ID>
+    <ID>MagicNumber:QuickCraftSlot.kt:20</ID>
+    <ID>MagicNumber:RecipeCapEnforcer.kt:RecipeCapEnforcer$10</ID>
+    <ID>MagicNumber:RecipeCapEnforcer.kt:RecipeCapEnforcer$5</ID>
+    <ID>MagicNumber:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$8</ID>
+    <ID>MagicNumber:RecipeCreatorGUI.kt:RecipeCreatorGUI$9</ID>
+    <ID>MagicNumber:RecipeGUI.kt:RecipeGUI$20L</ID>
+    <ID>MagicNumber:RecipeMappingSupport.kt:9</ID>
+    <ID>MagicNumber:RecipeTypeLoaders.kt:100.0</ID>
+    <ID>MagicNumber:RecipeTypeLoaders.kt:9</ID>
+    <ID>MagicNumber:SmeltingListener.kt:SmeltingListener$4</ID>
+    <ID>MagicNumber:SmithingListener.kt:SmithingListener$3</ID>
+    <ID>MapGetWithNotNullAssertionOperator:WorkstationSlot.kt:MARKER_CONFIG_KEY[marker]!!</ID>
+    <ID>MapGetWithNotNullAssertionOperator:WorkstationSlot.kt:WORKSTATION_MARKERS[marker]!!</ID>
+    <ID>MatchingDeclarationName:CraftLimitPlaceholders.kt:LimitStat</ID>
+    <ID>MatchingDeclarationName:WorkstationMarkers.kt:WorkstationMarkerState</ID>
+    <ID>MaxChainedCallsOnSameLine:BlockOwnerService.kt:BlockOwnerService$loc.world?.players?.firstOrNull { it.uniqueId == feederUuid }?.takeIf { it.isOwnedHere() }?.let { return it }</ID>
+    <ID>MaxChainedCallsOnSameLine:MaterialLore.kt:item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }</ID>
+    <ID>MaxChainedCallsOnSameLine:QuickCraftSlot.kt:recipe.output.type.name.lowercase().replace("_", " ")</ID>
+    <ID>MaxChainedCallsOnSameLine:TriggerCraft.kt:TriggerCraft$event.view.topInventory.storageContents.toList().filterNot { item -&gt; item == null || item.type.isAir }</ID>
+    <ID>MaxLineLength:BlockOwnerService.kt:BlockOwnerService$?.</ID>
+    <ID>MaxLineLength:BlockOwnerService.kt:BlockOwnerService$loc.world?.players?.firstOrNull { it.uniqueId == feederUuid }?.takeIf { it.isOwnedHere() }?.let { return it }</ID>
+    <ID>MaxLineLength:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$assertEquals(UNLIMITED to 7, readCraftLimits(YamlConfiguration().apply { loadFromString("craft-limits:\n player: -4\n global: 7\n") }))</ID>
+    <ID>MaxLineLength:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$assertEquals(listOf(mapOf("item" to "stone_slab", "lore" to emptyList&lt;String&gt;(), "give-result-item" to true)), outputs)</ID>
+    <ID>MaxLineLength:CategoryCategoryGUI.kt:CategoryCategoryGUI$setSlot(position.row, position.column, slot(icon, category, configSound(guiServices.plugin, "slot-click")))</ID>
+    <ID>MaxLineLength:CategoryLoader.kt:CategoryLoader$plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")</ID>
+    <ID>MaxLineLength:CommandEcoCrafting.kt:CommandEcoCrafting$CategoryCategoryGUI(plugin.configYml.getSubsection("category-browser-gui"), categoryLoader, categoryService, guiServices)</ID>
+    <ID>MaxLineLength:CommandLock.kt:CommandLock$if</ID>
+    <ID>MaxLineLength:CommandUnlock.kt:CommandUnlock$if</ID>
+    <ID>MaxLineLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$assertEquals(MerchantClick.BLOCK_SHIFT, classifyMerchantClick(resultPresent = true, shiftClick = true, hasCraftLimit = true))</ID>
+    <ID>MaxLineLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$assertEquals(MerchantClick.IGNORE, classifyMerchantClick(resultPresent = false, shiftClick = false, hasCraftLimit = true))</ID>
+    <ID>MaxLineLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$assertEquals(MerchantClick.IGNORE, classifyMerchantClick(resultPresent = false, shiftClick = true, hasCraftLimit = false))</ID>
+    <ID>MaxLineLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$assertEquals(MerchantClick.PROCEED, classifyMerchantClick(resultPresent = true, shiftClick = false, hasCraftLimit = true))</ID>
+    <ID>MaxLineLength:CraftLimitFixesTest.kt:CraftLimitFixesTest$assertEquals(MerchantClick.PROCEED, classifyMerchantClick(resultPresent = true, shiftClick = true, hasCraftLimit = false))</ID>
+    <ID>MaxLineLength:CraftLimitPlaceholdersTest.kt:CraftLimitPlaceholdersTest$assertEquals("foo_global" to LimitStat.USED, parseLimitPlaceholder("limit_foo_global_used") { it == "foo_global" })</ID>
+    <ID>MaxLineLength:CraftLimitService.kt:CraftLimitService$currentPlayerCrafts(parsePlayerCraftCounts(player.profile.read(dataKeys.craftLimitCounts)), key.toString(), resets())</ID>
+    <ID>MaxLineLength:CraftLimitService.kt:CraftLimitService$if (!meta.hasCraftLimit) Int.MAX_VALUE else minOf(playerRemaining(player, key, meta), globalRemaining(key, meta))</ID>
+    <ID>MaxLineLength:CraftLimitService.kt:CraftLimitService$if (meta.playerCraftLimit &lt; 0) Int.MAX_VALUE else remainingUnder(meta.playerCraftLimit, playerCrafts(player, key))</ID>
+    <ID>MaxLineLength:CraftLimitWindows.kt:val latest = if (target == ALL_RECIPES) resets.values.maxOrNull() ?: Long.MIN_VALUE else resetStampFor(resets, target)</ID>
+    <ID>MaxLineLength:CrafterBlockListener.kt:CrafterBlockListener$if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { event.isCancelled = true; return }</ID>
+    <ID>MaxLineLength:CraftingConsumption.kt:plugin.debug("[CraftAmount] capped by ingredients: space=$spaceBased ingredients=$ingredientBasedAmount -&gt; $amount")</ID>
+    <ID>MaxLineLength:CraftingEffects.kt:val data = TriggerData(player = player, item = item, value = amount.toDouble(), text = recipe.key.toString(), block = block)</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$Effects.compile(listOf(config { "id" to EffectRecipeUnlockCheck.id }), ViolationContext(this, "unlock-conditions"))</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$logger.warning("$liveUnlockRecipes recipes use live unlock checks. If you see lag, set unlock-conditions.live: false in config.yml.")</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$private val brewingListener = BrewingListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$private val crafterBlockListener = CrafterBlockListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$private val guiServices = RecipeGuiServices(this, recipeService, resolverService, unlockService, craftLimitService, shopIntegrationService)</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$private val smeltingListener = SmeltingListener(this, recipeService, unlockService, craftLimitService, blockOwnerService)</ID>
+    <ID>MaxLineLength:EcoCraftingPlugin.kt:EcoCraftingPlugin$private val workbenchListener = WorkbenchListener(this, recipeService, unlockService, craftLimitService, tradeSessionService)</ID>
+    <ID>MaxLineLength:EffectRecipeUnlockCheck.kt:EffectRecipeUnlockCheck$override val description = "Internal to EcoCrafting. Unlocks a recipe when its unlock-conditions are met. Not for use in configs."</ID>
+    <ID>MaxLineLength:FilterWorkstation.kt:FilterWorkstation$override val additionalInfo = listOf("Passes automatically when no workstation block is present in the trigger data.")</ID>
+    <ID>MaxLineLength:ItemCategoryGUI.kt:ItemCategoryGUI$setSlot(rowIndex + 1, colIndex + 1, slot(player, items[itemIndex], configSound(guiServices.plugin, "slot-click")))</ID>
+    <ID>MaxLineLength:OptionsScreen.kt:("&amp;e" + (if (state.lockedByDefault) "Locked by Default: ON" else "Locked by Default: OFF") + " (click to toggle)").formatEco()</ID>
+    <ID>MaxLineLength:OptionsScreen.kt:("&amp;e" + (if (state.showWhenLocked) "Show When Locked: ON" else "Show When Locked: OFF") + " (click to toggle)").formatEco()</ID>
+    <ID>MaxLineLength:OptionsScreen.kt:("&amp;e" + (if (state.supportCrafter) "Crafter Support: ON" else "Crafter Support: OFF") + " (click to toggle)").formatEco()</ID>
+    <ID>MaxLineLength:OptionsScreen.kt:("&amp;e" + (if (state.symmetry) "Symmetry: ON" else "Symmetry: OFF") + " (click to toggle)").formatEco()</ID>
+    <ID>MaxLineLength:QuickCraftSlot.kt:fun</ID>
+    <ID>MaxLineLength:QuickCraftSlot.kt:is CraftFailure.CannotAfford -&gt; plugin.langYml.getFormattedString("messages.failed-reason.cannot-afford").replace("%price%", "")</ID>
+    <ID>MaxLineLength:QuickCraftSlot.kt:result = result.copy(failure = CraftFailure.Custom(plugin.langYml.getFormattedString("messages.failed-reason.shop-auto-buy-disabled")))</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$.</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, " ").forEach { yaml.appendLine(it) }</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$val chance = if (typeKey == "villager") { if (yaml.contains("chance")) yaml.getDouble("chance") else 100.0 } else 100.0</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$val cookTime = if (typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire") &amp;&amp; yaml.contains("cook-time")) yaml.getInt("cook-time") else null</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$val experience = if (typeKey in setOf("furnace", "blast_furnace", "smoker", "campfire")) yaml.getDouble("experience") else 0.0</ID>
+    <ID>MaxLineLength:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$val seedState = WizardState(typeKey, parts, output ?: ItemStack(Material.AIR), shapeless, symmetry, supportCrafter, id, permission)</ID>
+    <ID>MaxLineLength:RecipeEditSaveTest.kt:RecipeEditSaveTest$assertEquals(listOf("give_xp", "give_money", "send_message"), outputs.map { (it["effects"] as List&lt;*&gt;).single().let { effect -&gt; (effect as Map&lt;*, *&gt;)["id"] } })</ID>
+    <ID>MaxLineLength:RecipeEditSaveTest.kt:RecipeEditSaveTest$assertEquals(listOf("is_sneaking", "is_gliding", "is_night"), outputs.map { (it["crafting-conditions"] as List&lt;*&gt;).single().let { condition -&gt; (condition as Map&lt;*, *&gt;)["id"] } })</ID>
+    <ID>MaxLineLength:RecipeEditSaveTest.kt:RecipeEditSaveTest$val plugin = mockk&lt;EcoCraftingPlugin&gt; { every { this@mockk.dataFolder } returns this@RecipeEditSaveTest.dataFolder }</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$.</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$?.</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setMask(FillerMask(MaskItems.fromItemNames(context.config.getStrings("mask.items")), *pattern.toTypedArray()))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setSlot(context.config.getInt("buttons.next-variant.row"), context.config.getInt("buttons.next-variant.column"), context.buildVariantSlot(+1))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setSlot(context.config.getInt("buttons.prev-variant.row"), context.config.getInt("buttons.prev-variant.column"), context.buildVariantSlot(-1))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setSlot(row, col, context.buildIngredientSlot(ingredient.allDisplayItems, isIngredient = true, cancelRefresh = { refreshTask?.cancel() }))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore + limitLore))</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$val</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$val outputLockedLore = if (recipe.locked &amp;&amp; meta != null &amp;&amp; meta.showWhenLocked) meta.lockedLore else emptyList()</ID>
+    <ID>MaxLineLength:RecipeGUI.kt:RecipeGUI$val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"</ID>
+    <ID>MaxLineLength:RecipeLoader.kt:RecipeLoader$craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions"))</ID>
+    <ID>MaxLineLength:RecipeLoader.kt:RecipeLoader$unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions"))</ID>
+    <ID>MaxLineLength:RecipeLoader.kt:RecipeLoader$visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions"))</ID>
+    <ID>MaxLineLength:RecipeResolverService.kt:RecipeResolverService$.</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:?:</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions"))</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:plugin.logger.warning("Stonecutter recipe '$id' has two outputs with key '${outKey.key}', skipping output $index")</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:return</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions"))</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:val</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:val giveResultItem = if (outputConfig.has("give-result-item")) outputConfig.getBool("give-result-item") else true</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:val outKey = NamespacedKey("ecocrafting", "${id.lowercase()}_${outputConfig.getStringOrNull("id")?.lowercase() ?: index}")</ID>
+    <ID>MaxLineLength:RecipeTypeLoaders.kt:visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions"))</ID>
+    <ID>MaxLineLength:RecipeUnlockHolderProvider.kt:RecipeUnlockHolderProvider$if (unlockService.isManuallyLocked(player, key) || !unlockService.isLocked(player, key, meta)) return@mapNotNull null</ID>
+    <ID>MaxLineLength:RecipeUnlockService.kt:RecipeUnlockService$profile.write(dataKeys.lockedRecipeOverrides, profile.read(dataKeys.lockedRecipeOverrides) - storedForms(outputKeys + groupKey).toSet())</ID>
+    <ID>MaxLineLength:RecipeUnlockService.kt:RecipeUnlockService$profile.write(dataKeys.unlockedRecipes, profile.read(dataKeys.unlockedRecipes) - storedForms(outputKeys + groupKey).toSet())</ID>
+    <ID>MaxLineLength:RecipeUnlockServiceTest.kt:RecipeUnlockServiceTest$recipeService.register(NamespacedKey("ecocrafting", "open"), meta(lockedByDefault = false, unlockConditions = conditions(true)))</ID>
+    <ID>MaxLineLength:ShopIntegrationService.kt:ShopIntegrationService$BuyStatus.ALLOW -&gt; purchases += Triple(shopItem, shopItem.getPurchaseTimesFor(amount), material.type.name)</ID>
+    <ID>MaxLineLength:ShopIntegrationService.kt:ShopIntegrationService$if</ID>
+    <ID>MaxLineLength:ShopIntegrationService.kt:ShopIntegrationService$priceDisplay = price.getDisplay(player, purchaseTimes * shopItem.getEffectiveBuyMultiplier(BuyType.NORMAL, player))</ID>
+    <ID>MaxLineLength:ShopIntegrationService.kt:ShopIntegrationService$purchased.isEmpty()</ID>
+    <ID>MaxLineLength:SmeltingListener.kt:SmeltingListener$if (!checkCraftingConditions(plugin, unlockService, limitService, player, recipe, meta)) { event.isCancelled = true; return }</ID>
+    <ID>MaxLineLength:StonecutterListener.kt:StonecutterListener$.</ID>
+    <ID>MaxLineLength:WorkbenchListener.kt:WorkbenchListener$if (!checkCraftingConditions(plugin, unlockService, limitService, player, workstationRecipe, meta)) { event.isCancelled = true; return }</ID>
+    <ID>MaxLineLength:WorkbenchListener.kt:WorkbenchListener$when</ID>
+    <ID>MaxLineLength:WorkbenchListener.kt:internal</ID>
+    <ID>MaxLineLength:WorkstationRecipeMapping.kt:RecipeIngredient</ID>
+    <ID>MultilineLambdaItParameter:CommandCancel.kt:CommandCancel${ sender.sendMessage(it) return }</ID>
+    <ID>MultilineLambdaItParameter:CommandConfirm.kt:CommandConfirm${ sender.sendMessage(it) return }</ID>
+    <ID>MultilineLambdaItParameter:CommandCreate.kt:CommandCreate${ sender.sendMessage(it) return }</ID>
+    <ID>MultilineLambdaItParameter:CommandEdit.kt:CommandEdit${ sender.sendMessage(it) return }</ID>
+    <ID>MultilineLambdaItParameter:CraftingEffects.kt:{ player.sendMessage(plugin.langYml.getFormattedString(it)) return false }</ID>
+    <ID>MultilineLambdaItParameter:OutputSetupScreen.kt:{ newState.cookTime = it.cookTime newState.experience = it.experience newState.profession = it.profession newState.minLevel = it.minLevel newState.chance = it.chance newState.wanderingTrader = it.wanderingTrader newState.villagerXp = it.villagerXp newState.permission = it.permission newState.category = it.category newState.lockedByDefault = it.lockedByDefault newState.showWhenLocked = it.showWhenLocked newState.repairCost = it.repairCost newState.brewTime = it.brewTime }</ID>
+    <ID>MultilineLambdaItParameter:RecipeCategory.kt:CategoryStack.Companion${ ItemStackBuilder(Items.lookup(it.getString("item"))) .setDisplayName(it.getFormattedString("name")) .addLoreLines(it.getFormattedStrings("lore")) .build() }</ID>
+    <ID>MultilineLambdaItParameter:SmithingListener.kt:SmithingListener${ it.template.matches(inventory.getItem(0)) &amp;&amp; it.base.matches(inventory.getItem(1)) &amp;&amp; it.addition.matches(inventory.getItem(2)) }</ID>
+    <ID>MultilineLambdaItParameter:TradeServiceTest.kt:TradeServiceTest${ every { it.key } returns NamespacedKey("ecocrafting", id) every { it.permission } returns permission }</ID>
+    <ID>MultilineLambdaItParameter:WorkbenchListener.kt:WorkbenchListener${ it.base.matches(inventory.getItem(0)) &amp;&amp; (it.material == null || it.material!!.matches(inventory.getItem(1))) }</ID>
+    <ID>MultilineLambdaItParameter:WorkbenchListener.kt:WorkbenchListener${ it.item1.matches(inventory.getItem(0)) &amp;&amp; (it.item2 == null || it.item2!!.matches(inventory.getItem(1))) }</ID>
+    <ID>MultilineRawStringIndentation:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$""" enabled: true type: crafting_table output: diamond_sword permission: old.node lore: - "&amp;7Hand written" price: value: "100" type: coins effects: - id: give_xp args: amount: 10 crafting-conditions: - id: is_sneaking """</ID>
+    <ID>MultilineRawStringIndentation:BuilderEditPreservationTest.kt:BuilderEditPreservationTest$""" type: stonecutter outputs: - item: stone_slab id: slab give-result-item: true lore: - "&amp;7Slab" price: value: "5" type: coins effects: - id: give_xp crafting-conditions: - id: is_sneaking visibility-conditions: - id: is_flying conditions: - id: is_swimming - item: stone_stairs price: value: "9" type: coins effects: - id: give_money crafting-conditions: - id: is_gliding - item: stone_bricks price: value: "3" type: coins effects: - id: send_message crafting-conditions: - id: is_night """</ID>
+    <ID>NestedBlockDepth:CraftingTableListener.kt:CraftingTableListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCraft</ID>
+    <ID>NestedBlockDepth:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCampfire</ID>
+    <ID>NestedScopeFunctions:CategoryCategoryGUI.kt:CategoryCategoryGUI$let { addComponent( config.getInt("buttons.back.row"), config.getInt("buttons.back.column"), config.backSlot(prevMenu, configSound(guiServices.plugin, "back")) ) }</ID>
+    <ID>NestedScopeFunctions:CommandResetLimits.kt:CommandResetLimits$run { sender.sendMessage(plugin.langYml.getMessage("limits-unknown-recipe").replace("%recipe%", recipeId)) return }</ID>
+    <ID>NestedScopeFunctions:CraftingTableListener.kt:CraftingTableListener$apply { addAll(meta.lockedLore) }</ID>
+    <ID>NestedScopeFunctions:CraftingTableListener.kt:CraftingTableListener$apply { lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) } }</ID>
+    <ID>NestedScopeFunctions:DisplaySlots.kt:apply { amount = 1 }</ID>
+    <ID>NestedScopeFunctions:DisplaySlots.kt:apply { if (isIngredient) addLoreLines(config.getFormattedStrings("buttons.recipe-parts-lore")) if (lockedLore.isNotEmpty()) addLoreLines(lockedLore) }</ID>
+    <ID>NestedScopeFunctions:ItemCategoryGUI.kt:ItemCategoryGUI$let { addComponent( config.getInt("buttons.back.row"), config.getInt("buttons.back.column"), config.backSlot(prevMenu, configSound(guiServices.plugin, "back")) ) }</ID>
+    <ID>NestedScopeFunctions:QuickCraftService.kt:QuickCraftService$let(WorkstationRecipes::getByKey)</ID>
+    <ID>NestedScopeFunctions:QuickCraftSlot.kt:also { lines -&gt; val materialsIdx = lines.indexOfFirst { it.contains("%materials%") } if (materialsIdx != -1) { lines.removeAt(materialsIdx) lines.addAll(materialsIdx, materialCounts.map { it.toLoreLine(player, services) }) } }</ID>
+    <ID>NestedScopeFunctions:RecipeGUI.kt:RecipeGUI$let { addComponent( context.config.getInt("buttons.back.row"), context.config.getInt("buttons.back.column"), context.buildBackSlot(parent) ) }</ID>
+    <ID>NestedScopeFunctions:RecipeTypeLoaders.kt:let { builder.permission(it) }</ID>
+    <ID>NestedScopeFunctions:SmeltingListener.kt:SmeltingListener$apply { amount = remaining }</ID>
+    <ID>NoNameShadowing:RecipeSymmetryTest.kt:RecipeSymmetryTest${ current[it] }</ID>
+    <ID>NullableBooleanCheck:QuickCraftService.kt:QuickCraftService$meta?.giveResultItem ?: true</ID>
+    <ID>NullableBooleanCheck:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$giveResultItemSection?.let { if (it.contains("give-result-item")) it.getBoolean("give-result-item") else null } ?: true</ID>
+    <ID>NullableBooleanCheck:RecipeUnlockHolderProvider.kt:RecipeUnlockHolderProvider$plugin.configYml.getBoolOrNull("unlock-conditions.live") ?: true</ID>
+    <ID>NullableToStringCall:EcoRecipeMapping.kt:${e.message}</ID>
+    <ID>NullableToStringCall:QuickCraftService.kt:QuickCraftService$${itemMeta.displayName()}</ID>
+    <ID>NullableToStringCall:RecipeEditPreservation.kt:key.toString()</ID>
+    <ID>NullableToStringCall:RecipeLoader.kt:RecipeLoader$${e.message}</ID>
+    <ID>NullableToStringCall:ShopIntegrationService.kt:ShopIntegrationService$${e.message}</ID>
+    <ID>PF009:CraftLimitPlaceholders.kt:compile("limit_.+")</ID>
+    <ID>PF009:OptionsPrompts.kt:Regex("[^a-z0-9_]")</ID>
+    <ID>PF011:RecipeTypeLoaders.kt:outKey in outputKeys</ID>
+    <ID>PF012:VanillaRecipeScanner.kt:VanillaRecipeScanner$values()</ID>
+    <ID>ReplaceSafeCallChainWithRun:BlockOwnerService.kt:BlockOwnerService$location.world?.players ?.filter { it.isOwnedHere() &amp;&amp; it.location.distanceSquared(location) &lt;= (radius * radius).toDouble() } ?.minByOrNull { it.location.distanceSquared(location) }</ID>
+    <ID>ReplaceSafeCallChainWithRun:CommandResetLimits.kt:CommandResetLimits$args.getOrNull(1)?.let(::recipeIdArgument)?.let { recipeId -&gt; recipeService.keyOrWarn(recipeId)?.takeIf { recipeService.getMeta(it) != null } ?: run { sender.sendMessage(plugin.langYml.getMessage("limits-unknown-recipe").replace("%recipe%", recipeId)) return } }</ID>
+    <ID>ReplaceSafeCallChainWithRun:CraftLimitService.kt:CraftLimitService$recipeService.getMeta(recipeKey)?.globalCraftLimit?.takeIf { it &gt;= 0 }</ID>
+    <ID>ReplaceSafeCallChainWithRun:CraftLimitService.kt:CraftLimitService$recipeService.getMeta(recipeKey)?.playerCraftLimit?.takeIf { it &gt;= 0 }</ID>
+    <ID>ReplaceSafeCallChainWithRun:CraftingTableListener.kt:CraftingTableListener$recipe.output?.clone()?.apply { this.amount = craftedItemAmount(this.amount, amount) }</ID>
+    <ID>ReplaceSafeCallChainWithRun:CraftingTableListener.kt:CraftingTableListener$recipe.output?.clone()?.let { lockedOutput -&gt; lockedOutput.itemMeta = lockedOutput.itemMeta?.apply { lore = (lore ?: mutableListOf()).apply { addAll(meta.lockedLore) } } event.inventory.result = lockedOutput }</ID>
+    <ID>ReplaceSafeCallChainWithRun:QuickCraftService.kt:QuickCraftService$meta?.price?.pay(player, 1.0)</ID>
+    <ID>ReplaceSafeCallChainWithRun:RecipeResolverService.kt:RecipeResolverService$resolve(itemStack)?.output?.clone()</ID>
+    <ID>ReplaceSafeCallChainWithRun:RecipeTypeLoaders.kt:input2?.matcher?.toTestableItem()</ID>
+    <ID>ReplaceSafeCallChainWithRun:RecipeTypeLoaders.kt:item2?.matcher?.toTestableItem()</ID>
+    <ID>ReplaceSafeCallChainWithRun:RecipeTypeLoaders.kt:material?.matcher?.toTestableItem()</ID>
+    <ID>ReplaceSafeCallChainWithRun:TriggerCraft.kt:TriggerCraft$(event.recipe as? org.bukkit.Keyed)?.key?.toString()</ID>
+    <ID>ReplaceSafeCallChainWithRun:VanillaRecipeScanner.kt:VanillaRecipeScanner$(recipe as? Keyed)?.key?.namespace</ID>
+    <ID>ReplaceSafeCallChainWithRun:WorkbenchListener.kt:WorkbenchListener$event.currentItem?.type?.isAir</ID>
+    <ID>ReplaceSafeCallChainWithRun:WorkstationRecipeMapping.kt:(this as? BrewingRecipe)?.brewTime?.takeIf { it &gt; 0 }</ID>
+    <ID>ReplaceSafeCallChainWithRun:WorkstationRecipeMapping.kt:(this as? SmeltingRecipe)?.cookTime?.takeIf { it &gt; 0 }</ID>
+    <ID>ReplaceSafeCallChainWithRun:WorkstationRecipeMapping.kt:(this as? VillagerRecipe)?.villagerXp?.takeIf { it &gt; 0 }</ID>
+    <ID>ReturnCount:BlockOwnerService.kt:BlockOwnerService$@EventHandler fun onCampfireFeed</ID>
+    <ID>ReturnCount:BlockOwnerService.kt:BlockOwnerService$@EventHandler fun onFeedClick</ID>
+    <ID>ReturnCount:BlockOwnerService.kt:BlockOwnerService$@EventHandler fun onFeedDrag</ID>
+    <ID>ReturnCount:BlockOwnerService.kt:BlockOwnerService$private fun getStoredUUID: UUID?</ID>
+    <ID>ReturnCount:BrewingListener.kt:BrewingListener$private fun handleBrewCompleted</ID>
+    <ID>ReturnCount:CommandEdit.kt:CommandEdit$override fun onExecute</ID>
+    <ID>ReturnCount:CommandLock.kt:CommandLock$override fun onExecute</ID>
+    <ID>ReturnCount:CommandOpen.kt:CommandOpen$override fun onExecute</ID>
+    <ID>ReturnCount:CommandOpenTrade.kt:CommandOpenTrade$override fun onExecute</ID>
+    <ID>ReturnCount:CommandResetLimits.kt:CommandResetLimits$override fun onExecute</ID>
+    <ID>ReturnCount:CommandUnlock.kt:CommandUnlock$override fun onExecute</ID>
+    <ID>ReturnCount:ConditionHasCraftsRemaining.kt:ConditionHasCraftsRemaining$override fun isMet: Boolean</ID>
+    <ID>ReturnCount:ConditionHasUnlockedRecipe.kt:ConditionHasUnlockedRecipe$override fun isMet: Boolean</ID>
+    <ID>ReturnCount:CrafterBlockListener.kt:CrafterBlockListener$@EventHandler(priority = EventPriority.HIGHEST) fun onCrafterCraft</ID>
+    <ID>ReturnCount:CraftingEffects.kt:fun checkCraftingConditions: Boolean</ID>
+    <ID>ReturnCount:CraftingEffects.kt:fun priceAffordableAmount: Int</ID>
+    <ID>ReturnCount:CraftingTableListener.kt:CraftingTableListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCraft</ID>
+    <ID>ReturnCount:CraftingTableListener.kt:CraftingTableListener$private fun shapelessMatch: Boolean</ID>
+    <ID>ReturnCount:EffectLockRecipe.kt:EffectLockRecipe$override fun onTrigger: Boolean</ID>
+    <ID>ReturnCount:EffectUnlockRecipe.kt:EffectUnlockRecipe$override fun onTrigger: Boolean</ID>
+    <ID>ReturnCount:QuickCraftService.kt:QuickCraftService$fun craft: CraftAttempt</ID>
+    <ID>ReturnCount:RecipeCapEnforcer.kt:RecipeCapEnforcer$fun tryRegister: Boolean</ID>
+    <ID>ReturnCount:RecipeCategory.kt:CategoryStack.Companion$private fun expandItemString: List&lt;TestableItem&gt;</ID>
+    <ID>ReturnCount:RecipeCreatorConfigWriter.kt:internal fun itemLookupString: String</ID>
+    <ID>ReturnCount:RecipeIngredient.kt:IngredientMatcher.MaterialOnly$override fun matches: Boolean</ID>
+    <ID>ReturnCount:RecipeIngredient.kt:IngredientMatcher.SimilarItem$override fun matches: Boolean</ID>
+    <ID>ReturnCount:RecipeLockState.kt:fun ResolvedRecipe.withLockState: ResolvedRecipe</ID>
+    <ID>ReturnCount:RecipeResolverService.kt:RecipeResolverService$fun canCraft: Boolean</ID>
+    <ID>ReturnCount:RecipeResolverService.kt:RecipeResolverService$private fun effectivePermission: String?</ID>
+    <ID>ReturnCount:RecipeResolverService.kt:RecipeResolverService$private fun resolveUncached: ResolvedRecipe?</ID>
+    <ID>ReturnCount:RecipeUnlockHolderProvider.kt:RecipeUnlockHolderProvider$override fun provide: Collection&lt;ProvidedHolder&gt;</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$fun checkAutoUnlock: Boolean</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$fun isManuallyLocked: Boolean</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$fun isUnlocked: Boolean</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$fun lock: Boolean</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$fun unlock: Boolean</ID>
+    <ID>ReturnCount:RecipeUnlockService.kt:RecipeUnlockService$override fun isUnlocked: Boolean</ID>
+    <ID>ReturnCount:ShopIntegrationService.kt:ShopIntegrationService$fun getMaterialShopInfo: MaterialShopInfo?</ID>
+    <ID>ReturnCount:ShopIntegrationService.kt:ShopIntegrationService$fun purchaseMaterials: PurchaseResult</ID>
+    <ID>ReturnCount:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onCampfire</ID>
+    <ID>ReturnCount:SmeltingListener.kt:SmeltingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onSmelt</ID>
+    <ID>ReturnCount:SmithingListener.kt:SmithingListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onSmithingResultClick</ID>
+    <ID>ReturnCount:StonecutterListener.kt:StonecutterListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onStonecutterResultClick</ID>
+    <ID>ReturnCount:TradeEligibility.kt:fun isTradeVisible: Boolean</ID>
+    <ID>ReturnCount:TradeMerchantFactory.kt:TradeMerchantFactory$private fun buildMerchantRecipe: MerchantRecipe?</ID>
+    <ID>ReturnCount:TriggerCraft.kt:TriggerCraft$@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR) fun handle</ID>
+    <ID>ReturnCount:TriggerCraft.kt:TriggerCraft$private fun handleShiftClickCompletion: Int</ID>
+    <ID>ReturnCount:WorkbenchListener.kt:WorkbenchListener$@EventHandler(priority = EventPriority.HIGHEST) fun onPrepareAnvil</ID>
+    <ID>ReturnCount:WorkbenchListener.kt:WorkbenchListener$@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) fun onInventoryClick</ID>
+    <ID>SpreadOperator:CategoryCategoryGUI.kt:CategoryCategoryGUI$( MaskItems.fromItemNames(config.getStrings("mask.items")), *pattern.toTypedArray() )</ID>
+    <ID>SpreadOperator:ItemCategoryGUI.kt:ItemCategoryGUI$( MaskItems.fromItemNames(config.getStrings("mask.items")), *pattern.toTypedArray() )</ID>
+    <ID>SpreadOperator:RecipeGUI.kt:RecipeGUI$(MaskItems.fromItemNames(context.config.getStrings("mask.items")), *pattern.toTypedArray())</ID>
+    <ID>SpreadOperator:RecipeGUIContext.kt:RecipeGUIContext$(*globalFlags)</ID>
+    <ID>SwallowedException:CommandLock.kt:CommandLock$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:CommandUnlock.kt:CommandUnlock$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:RecipeService.kt:RecipeService$e: IllegalArgumentException</ID>
+    <ID>TooGenericExceptionCaught:EcoRecipeMapping.kt:e: Exception</ID>
+    <ID>TooGenericExceptionCaught:RecipeLoader.kt:RecipeLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ShopIntegrationService.kt:ShopIntegrationService$e: Exception</ID>
+    <ID>TooManyFunctions:CraftLimitService.kt:CraftLimitService : LimitManager</ID>
+    <ID>TooManyFunctions:OptionsPrompts.kt:com.exanthiax.ecocrafting.recipegui.ui.wizard.OptionsPrompts.kt</ID>
+    <ID>TooManyFunctions:RecipeLoader.kt:RecipeLoader : ConfigCategory</ID>
+    <ID>TooManyFunctions:RecipeResolverService.kt:RecipeResolverService</ID>
+    <ID>TooManyFunctions:RecipeService.kt:RecipeService : RecipesManager</ID>
+    <ID>TooManyFunctions:RecipeTypeLoaders.kt:com.exanthiax.ecocrafting.recipe.integration.RecipeTypeLoaders.kt</ID>
+    <ID>TooManyFunctions:RecipeUnlockService.kt:RecipeUnlockService : UnlockManager</ID>
+    <ID>TrimMultilineRawString:RecipeEditSaveTest.kt:RecipeEditSaveTest$""" enabled: true type: crafting_table output: diamond_sword permission: old.node lore: - "&amp;7Hand written" # Costs coins. price: value: "100" type: coins effects: - id: give_xp args: amount: 10 crafting-conditions: - id: is_sneaking """</ID>
+    <ID>TrimMultilineRawString:RecipeEditSaveTest.kt:RecipeEditSaveTest$""" type: stonecutter input: cobblestone outputs: - item: stone_slab price: value: "5" type: coins effects: - id: give_xp crafting-conditions: - id: is_sneaking - item: stone_stairs price: value: "9" type: coins effects: - id: give_money crafting-conditions: - id: is_gliding - item: stone_bricks price: value: "3" type: coins effects: - id: send_message crafting-conditions: - id: is_night """</ID>
+    <ID>UnnamedParameterUse:BuilderCraftLimitsTest.kt:BuilderCraftLimitsTest$craftLimitLines</ID>
+    <ID>UnnamedParameterUse:CategoryCategoryGUI.kt:CategoryCategoryGUI$addPageChanger</ID>
+    <ID>UnnamedParameterUse:CommandOpenTrade.kt:CommandOpenTrade$replace</ID>
+    <ID>UnnamedParameterUse:CommandReload.kt:CommandReload$replace</ID>
+    <ID>UnnamedParameterUse:CommandResetLimits.kt:CommandResetLimits$replace</ID>
+    <ID>UnnamedParameterUse:ConditionHasCraftsRemaining.kt:ConditionHasCraftsRemaining$require</ID>
+    <ID>UnnamedParameterUse:ConditionHasUnlockedRecipe.kt:ConditionHasUnlockedRecipe$require</ID>
+    <ID>UnnamedParameterUse:CraftLimitPlaceholders.kt:remainingUnder</ID>
+    <ID>UnnamedParameterUse:CraftLimitService.kt:CraftLimitService$minOf</ID>
+    <ID>UnnamedParameterUse:CraftLimitService.kt:CraftLimitService$remainingUnder</ID>
+    <ID>UnnamedParameterUse:CraftLimitWindows.kt:maxOf</ID>
+    <ID>UnnamedParameterUse:CraftLimitWindowsTest.kt:CraftLimitWindowsTest$remainingUnder</ID>
+    <ID>UnnamedParameterUse:CraftingConsumption.kt:minOf</ID>
+    <ID>UnnamedParameterUse:CraftingEffects.kt:replace</ID>
+    <ID>UnnamedParameterUse:CraftingTableListener.kt:CraftingTableListener$craftedItemAmount</ID>
+    <ID>UnnamedParameterUse:CraftingTableListener.kt:CraftingTableListener$minOf</ID>
+    <ID>UnnamedParameterUse:CraftingTableListener.kt:CraftingTableListener$trustedEventRecipe</ID>
+    <ID>UnnamedParameterUse:DisplaySlotsTest.kt:DisplaySlotsTest$isSameItemAs</ID>
+    <ID>UnnamedParameterUse:EffectLockRecipe.kt:EffectLockRecipe$require</ID>
+    <ID>UnnamedParameterUse:EffectUnlockRecipe.kt:EffectUnlockRecipe$require</ID>
+    <ID>UnnamedParameterUse:IngredientSetupScreen.kt:openOutputSetup</ID>
+    <ID>UnnamedParameterUse:ItemCategoryGUI.kt:ItemCategoryGUI$addPageChanger</ID>
+    <ID>UnnamedParameterUse:MaterialLore.kt:replace</ID>
+    <ID>UnnamedParameterUse:OptionsPrompts.kt:replace</ID>
+    <ID>UnnamedParameterUse:OptionsScreen.kt:buildOptionItem</ID>
+    <ID>UnnamedParameterUse:OptionsScreen.kt:openOutputSetup</ID>
+    <ID>UnnamedParameterUse:OutputSetupScreen.kt:WizardState</ID>
+    <ID>UnnamedParameterUse:OutputSetupScreen.kt:openIngredientSetup</ID>
+    <ID>UnnamedParameterUse:QuickCraftService.kt:QuickCraftService$minOf</ID>
+    <ID>UnnamedParameterUse:QuickCraftSlot.kt:replace</ID>
+    <ID>UnnamedParameterUse:RecipeCategory.kt:CategoryIcon$replace</ID>
+    <ID>UnnamedParameterUse:RecipeCategory.kt:RecipeCategory$CategoryPosition</ID>
+    <ID>UnnamedParameterUse:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$WizardState</ID>
+    <ID>UnnamedParameterUse:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$craftLimitLines</ID>
+    <ID>UnnamedParameterUse:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$replace</ID>
+    <ID>UnnamedParameterUse:RecipeCreatorGUI.kt:RecipeCreatorGUI$Triple</ID>
+    <ID>UnnamedParameterUse:RecipeCreatorGUI.kt:RecipeCreatorGUI$replace</ID>
+    <ID>UnnamedParameterUse:RecipeEditSaveTest.kt:RecipeEditSaveTest$pending</ID>
+    <ID>UnnamedParameterUse:RecipeGUI.kt:RecipeGUI$replace</ID>
+    <ID>UnnamedParameterUse:RecipeServiceTest.kt:RecipeServiceTest$registerVariant</ID>
+    <ID>UnnamedParameterUse:RecipeTypeLoaders.kt:coerceIn</ID>
+    <ID>UnnamedParameterUse:ShopIntegrationService.kt:ShopIntegrationService$replace</ID>
+    <ID>UnnamedParameterUse:StonecutterListener.kt:StonecutterListener$consume</ID>
+    <ID>UnnamedParameterUse:StonecutterListener.kt:StonecutterListener$minOf</ID>
+    <ID>UnnamedParameterUse:WorkbenchListener.kt:WorkbenchListener$classifyMerchantClick</ID>
+    <ID>UnnamedParameterUse:WorkbenchListener.kt:WorkbenchListener$consume</ID>
+    <ID>UnnamedParameterUse:WorkbenchListener.kt:WorkbenchListener$minOf</ID>
+    <ID>UnnamedParameterUse:WorkstationSlot.kt:replace</ID>
+    <ID>UnnecessaryAny:RecipeCategory.kt:RecipeCategory$any { it == item }</ID>
+    <ID>UnnecessaryLet:CategoryCategoryGUI.kt:CategoryCategoryGUI$let { addComponent( config.getInt("buttons.close.row"), config.getInt("buttons.close.column"), closeSlot(configSound(guiServices.plugin, "close")) ) }</ID>
+    <ID>UnnecessaryLet:CategoryCategoryGUI.kt:CategoryCategoryGUI$let { prevMenu?.let { addComponent( config.getInt("buttons.back.row"), config.getInt("buttons.back.column"), config.backSlot(prevMenu, configSound(guiServices.plugin, "back")) ) } }</ID>
+    <ID>UnnecessaryLet:ItemCategoryGUI.kt:ItemCategoryGUI$let { prevMenu?.let { addComponent( config.getInt("buttons.back.row"), config.getInt("buttons.back.column"), config.backSlot(prevMenu, configSound(guiServices.plugin, "back")) ) } }</ID>
+    <ID>UnnecessaryLet:RecipeGUI.kt:RecipeGUI$let { addComponent( context.config.getInt("buttons.quick-craft.row"), context.config.getInt("buttons.quick-craft.column"), context.buildQuickCraftSlot(player, recipe) ) }</ID>
+    <ID>UnnecessaryLet:RecipeGUI.kt:RecipeGUI$let { parent?.let { addComponent( context.config.getInt("buttons.back.row"), context.config.getInt("buttons.back.column"), context.buildBackSlot(parent) ) } }</ID>
+    <ID>UnnecessaryLet:RecipeGUI.kt:RecipeGUI$let { setSlot(context.config.getInt("buttons.next-variant.row"), context.config.getInt("buttons.next-variant.column"), context.buildVariantSlot(+1)) }</ID>
+    <ID>UnnecessaryLet:RecipeGUI.kt:RecipeGUI$let { setSlot(context.config.getInt("buttons.prev-variant.row"), context.config.getInt("buttons.prev-variant.column"), context.buildVariantSlot(-1)) }</ID>
+    <ID>UnnecessaryLet:RecipeResolverService.kt:RecipeResolverService$let { it.isSimilar(clean) }</ID>
+    <ID>UnnecessaryNotNullOperator:TriggerCraft.kt:TriggerCraft$item!!</ID>
+    <ID>UnnecessaryParentheses:ConditionHasCraftsRemaining.kt:ConditionHasCraftsRemaining$(config.getIntOrNull("amount") ?: 1)</ID>
+    <ID>UnnecessaryParentheses:CraftingEffects.kt:(groupKey != null &amp;&amp; player.hasPermission("ecocrafting.recipe.${groupKey.key}"))</ID>
+    <ID>UnnecessaryParentheses:CraftingEffectsTest.kt:CraftingEffectsTest$(it.invocation.args[1] as Double)</ID>
+    <ID>UnnecessaryParentheses:CraftingTableListener.kt:CraftingTableListener$(WorkstationRecipes.getByKey(recipeService.resolveBaseKey(recipeKey)) as? CrafterRecipe)</ID>
+    <ID>UnnecessaryParentheses:DisplaySlots.kt:(Bukkit.getCurrentTick() / 20)</ID>
+    <ID>UnnecessaryParentheses:QuickCraftService.kt:QuickCraftService$(it.needs - it.has)</ID>
+    <ID>UnnecessaryParentheses:RecipeCreatorGUI.kt:RecipeCreatorGUI$(row to col)</ID>
+    <ID>UnnecessaryParentheses:RecipeResolverService.kt:RecipeResolverService$(clean.type to (if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0))</ID>
+    <ID>UnnecessaryParentheses:RecipeResolverService.kt:RecipeResolverService$(if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0)</ID>
+    <ID>UnnecessaryParentheses:TypeSelectScreen.kt:(index % 9)</ID>
+    <ID>UnnecessaryParentheses:TypeSelectScreen.kt:(index / 9)</ID>
+    <ID>UnnecessarySafeCall:BukkitRecipeMapping.kt:itemStack?.clone()</ID>
+    <ID>UnnecessarySafeCall:BukkitRecipeMapping.kt:template?.toIngredient(air)</ID>
+    <ID>UnsafeCallOnNullableType:CategoryCategoryGUI.kt:CategoryCategoryGUI$category.guiPosition!!</ID>
+    <ID>UnsafeCallOnNullableType:CraftingConsumption.kt:it!!</ID>
+    <ID>UnsafeCallOnNullableType:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$yaml.getString("type")!!</ID>
+    <ID>UnsafeCallOnNullableType:TriggerCraft.kt:TriggerCraft$it!!</ID>
+    <ID>UnsafeCallOnNullableType:WorkbenchListener.kt:WorkbenchListener$it.item2!!</ID>
+    <ID>UnsafeCallOnNullableType:WorkbenchListener.kt:WorkbenchListener$it.material!!</ID>
+    <ID>UnsafeCallOnNullableType:WorkstationSlot.kt:MARKER_CONFIG_KEY[marker]!!</ID>
+    <ID>UnsafeCallOnNullableType:WorkstationSlot.kt:WORKSTATION_MARKERS[marker]!!</ID>
+    <ID>UnusedParameter:QuickCraftSlot.kt:event: InventoryClickEvent</ID>
+    <ID>UnusedParameter:RecipeUnlockService.kt:RecipeUnlockService$meta: EcoCraftingMeta</ID>
+    <ID>UnusedPrivateProperty:RecipeCategory.kt:CategoryStack$private val parent: RecipeCategory</ID>
+    <ID>UseIfInsteadOfWhen:BlockOwnerService.kt:BlockOwnerService$when (plugin.configYml.getString("owner-mode")) { "nearest" -&gt; { val radius = plugin.configYml.getInt("owner-nearest-radius") .takeIf { it &gt; 0 } ?: 32 location.world?.players ?.filter { it.isOwnedHere() &amp;&amp; it.location.distanceSquared(location) &lt;= (radius * radius).toDouble() } ?.minByOrNull { it.location.distanceSquared(location) } } else -&gt; { val uuid = getStoredUUID(location.block) ?: return null location.world?.players?.firstOrNull { it.uniqueId == uuid }?.takeIf { it.isOwnedHere() } } }</ID>
+    <ID>UseLet:WorkstationRecipeMapping.kt:if (materialItem != null) { val materialAlternatives = materialItem.allDisplayItems() RecipeIngredient(materialDisplay?.clone() ?: materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem), displayAlternatives = materialAlternatives.asDisplayAlternatives()) } else null</ID>
+    <ID>UseLet:WorkstationRecipeMapping.kt:if (secondInput != null) { val secondInputAlternatives = secondInput.allDisplayItems() RecipeIngredient(displayOrAir(input2Display), IngredientMatcher.EcoPart(secondInput), displayAlternatives = secondInputAlternatives.asDisplayAlternatives()) } else null</ID>
+    <ID>UseLet:WorkstationRecipeMapping.kt:if (secondItem != null) { val item2Alternatives = secondItem.allDisplayItems() RecipeIngredient(item2Display?.clone() ?: secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem), displayAlternatives = item2Alternatives.asDisplayAlternatives()) } else null</ID>
+    <ID>UseOrEmpty:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$yaml.getString("category") ?: ""</ID>
+    <ID>UseOrEmpty:RecipeCreatorConfigWriter.kt:RecipeCreatorConfigWriter$yaml.getString("profession")?.lowercase() ?: ""</ID>
+    <ID>UseOrEmpty:RecipeGUI.kt:RecipeGUI$meta?.price?.takeIf { it.getIdentifier() != ConfiguredPrice.FREE.getIdentifier() }?.let { price -&gt; val key = if (price.canAfford(player)) "messages.price-affordable" else "messages.price-unaffordable" listOf(plugin.langYml.getFormattedString(key).replace("%price%", price.getDisplay(player))) } ?: emptyList()</ID>
+    <ID>UseOrEmpty:RecipeTypeLoaders.kt:config.getStringOrNull("base") ?: ""</ID>
+    <ID>UseOrEmpty:WizardState.kt:WizardState$editingPermission ?: ""</ID>
+    <ID>VariableNaming:BlockOwnerService.kt:BlockOwnerService$private val PDC_KEY = NamespacedKey("ecocrafting", "owner")</ID>
+    <ID>VariableNaming:BlockOwnerService.kt:BlockOwnerService$private val TRACKED_INVENTORY_TYPES = setOf( InventoryType.FURNACE, InventoryType.BLAST_FURNACE, InventoryType.SMOKER, InventoryType.BREWING, InventoryType.CRAFTER )</ID>
+    <ID>VariableNaming:BlockOwnerService.kt:BlockOwnerService$private val TRACKED_MATERIALS = setOf( Material.FURNACE, Material.BLAST_FURNACE, Material.SMOKER, Material.BREWING_STAND, Material.CRAFTER, Material.CAMPFIRE, Material.SOUL_CAMPFIRE )</ID>
+  </CurrentIssues>
+</SmellBaseline>
