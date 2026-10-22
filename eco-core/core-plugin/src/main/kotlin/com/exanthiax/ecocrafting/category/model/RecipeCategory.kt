@@ -58,7 +58,7 @@ class RecipeCategory(
 }
 
 class CategoryStack private constructor(
-    private val parent: RecipeCategory,
+    val parent: RecipeCategory,
     val item: TestableItem,
     val displayNoPerm: Boolean,
     private val configuredNoPermItem: ItemStack?

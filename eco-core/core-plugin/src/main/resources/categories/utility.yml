@@ -25,7 +25,7 @@ items:
     display-no-perm: false
   - item: "powered_rail"
     display-no-perm: false
-  - item: "boat"
+  - item: "#minecraft:boats"
     display-no-perm: false
   - item: "minecart"
     display-no-perm: false

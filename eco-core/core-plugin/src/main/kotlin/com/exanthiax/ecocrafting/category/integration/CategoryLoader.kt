@@ -1,8 +1,10 @@
 package com.exanthiax.ecocrafting.category.integration
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.items.Items
 import com.willfp.libreforge.loader.LibreforgePlugin
 import com.willfp.libreforge.loader.configs.RegistrableCategory
+import com.exanthiax.ecocrafting.category.model.CategoryStack
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
 import com.exanthiax.ecocrafting.recipe.service.RecipeResolverService
@@ -40,7 +42,7 @@ class CategoryLoader(
     private fun validateCategories(plugin: LibreforgePlugin, categories: List<RecipeCategory>) {
         for (category in categories) {
             for (stack in category.items) {
-                if (resolverService.resolve(stack.item.item) == null) {
+                if (resolverService.resolve(stack.item.item) == null && stack.isListedDirectly()) {
                     plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
                 }
             }
@@ -51,4 +53,9 @@ class CategoryLoader(
             }
         }
     }
+
+    private fun CategoryStack.isListedDirectly(): Boolean =
+        parent.config.getSubsections("items")
+            .map { it.getString("item") }
+            .any { !it.startsWith("#") && Items.lookup(it).matches(item.item) }
 }
