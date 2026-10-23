@@ -113,6 +113,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         ConditionHasUnlockedRecipe.recipeService = recipeService
         ConditionHasUnlockedRecipe.unlockService = unlockService
         ConditionHasCraftsRemaining.recipeService = recipeService
+        FilterRecipe.recipeService = recipeService
         ConditionHasCraftsRemaining.limitService = craftLimitService
 
         Triggers.register(TriggerCraft)
