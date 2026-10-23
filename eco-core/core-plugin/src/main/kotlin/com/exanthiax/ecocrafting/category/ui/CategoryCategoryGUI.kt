@@ -26,11 +26,15 @@ class CategoryCategoryGUI(
     val config: Config,
     private val categoryLoader: CategoryLoader,
     private val categoryService: CategoryService,
-    private val guiServices: RecipeGuiServices
+    private val guiServices: RecipeGuiServices,
+    private val childIds: List<String>? = null
 ) : CategoryGUI {
+    private fun visibleCategories(): List<RecipeCategory> =
+        childIds?.takeIf { it.isNotEmpty() }?.mapNotNull { categoryLoader.getByID(it) } ?: categoryLoader.values().toList()
+
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         guiServices.unlockService.checkAutoUnlocks(player)
-        val maxPage = (categoryLoader.values()
+        val maxPage = (visibleCategories()
             .mapNotNull { it.guiPosition?.page }
             .maxOrNull() ?: 1).coerceAtLeast(1)
 
@@ -97,7 +101,7 @@ class CategoryCategoryGUI(
                         )
                     }
 
-                    val positionedCategories = categoryLoader.values()
+                    val positionedCategories = visibleCategories()
                         .filter { it.guiPosition?.page == pageNum }
 
                     for (category in positionedCategories) {
@@ -128,7 +132,7 @@ class CategoryCategoryGUI(
         return if (category.type == "items") {
             ItemCategoryGUI(category.config.getSubsection("gui"), category, categoryService, guiServices)
         } else {
-            CategoryCategoryGUI(category.config.getSubsection("gui"), categoryLoader, categoryService, guiServices)
+            CategoryCategoryGUI(category.config.getSubsection("gui"), categoryLoader, categoryService, guiServices, category.categories)
         }
     }
 
