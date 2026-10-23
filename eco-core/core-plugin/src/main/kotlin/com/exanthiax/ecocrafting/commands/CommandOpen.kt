@@ -54,7 +54,13 @@ class CommandOpen(
         val gui = if (category.type == "items") {
             ItemCategoryGUI(category.config.getSubsection("gui"), category, categoryService, guiServices)
         } else {
-            CategoryCategoryGUI(category.config.getSubsection("gui"), categoryLoader, categoryService, guiServices, category.categories)
+            CategoryCategoryGUI(
+                category.config.getSubsection("gui"),
+                categoryLoader,
+                categoryService,
+                guiServices,
+                category.categories
+            )
         }
         target.runOwned(plugin) { gui.open(target, 1, null) }
     }

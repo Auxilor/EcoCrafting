@@ -30,7 +30,9 @@ class CategoryCategoryGUI(
     private val childIds: List<String>? = null
 ) : CategoryGUI {
     private fun visibleCategories(): List<RecipeCategory> =
-        childIds?.takeIf { it.isNotEmpty() }?.mapNotNull { categoryLoader.getByID(it) } ?: categoryLoader.values().toList()
+        childIds?.takeIf { it.isNotEmpty() }
+            ?.mapNotNull { categoryLoader.getByID(it) }
+            ?: categoryLoader.values().toList()
 
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         guiServices.unlockService.checkAutoUnlocks(player)
@@ -132,7 +134,13 @@ class CategoryCategoryGUI(
         return if (category.type == "items") {
             ItemCategoryGUI(category.config.getSubsection("gui"), category, categoryService, guiServices)
         } else {
-            CategoryCategoryGUI(category.config.getSubsection("gui"), categoryLoader, categoryService, guiServices, category.categories)
+            CategoryCategoryGUI(
+                category.config.getSubsection("gui"),
+                categoryLoader,
+                categoryService,
+                guiServices,
+                category.categories
+            )
         }
     }
 
