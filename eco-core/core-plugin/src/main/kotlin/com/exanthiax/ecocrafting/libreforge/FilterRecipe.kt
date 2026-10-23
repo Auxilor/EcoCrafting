@@ -32,20 +32,9 @@ object FilterRecipe : Filter<NoCompileData, Collection<String>>("recipe") {
     }
 
     private fun namesFor(text: String): Set<String> {
-        val key = NamespacedKey.fromString(text) ?: return setOf(text)
-
-        if (key.namespace != "ecocrafting") {
-            return setOf(text)
-        }
-
-        val names = mutableSetOf(text, key.key)
+        val key = NamespacedKey.fromString(text)?.takeIf { it.namespace == "ecocrafting" } ?: return setOf(text)
         val groupKey = recipeService.getMeta(recipeService.resolveBaseKey(key))?.groupKey
 
-        if (groupKey != null) {
-            names += groupKey.toString()
-            names += groupKey.key
-        }
-
-        return names
+        return setOfNotNull(text, key.key, groupKey?.toString(), groupKey?.key)
     }
 }
