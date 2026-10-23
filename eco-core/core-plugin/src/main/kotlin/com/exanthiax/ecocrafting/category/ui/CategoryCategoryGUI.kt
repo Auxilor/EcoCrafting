@@ -36,9 +36,11 @@ class CategoryCategoryGUI(
 
     override fun open(player: Player, page: Int, prevMenu: Menu?) {
         guiServices.unlockService.checkAutoUnlocks(player)
-        val maxPage = (visibleCategories()
+        val maxPage = visibleCategories()
             .mapNotNull { it.guiPosition?.page }
-            .maxOrNull() ?: 1).coerceAtLeast(1)
+            .maxOrNull()
+            ?.coerceAtLeast(1)
+            ?: 1
 
         val pattern = config.getStrings("mask.pattern")
 
