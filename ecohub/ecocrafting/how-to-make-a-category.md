@@ -95,6 +95,15 @@ type: "items" # Flat list of items - most common type
 # type: "categories" # A group of sub-categories (nested browser)
 ```
 
+A `categories` type lists its sub-categories by ID. Its browser shows only those categories, each at its own `position`. With no list, it shows every category.
+
+```yaml
+type: "categories"
+categories: # The IDs of the categories shown in this browser.
+  - weapons
+  - armor
+```
+
 ### The Icon Section
 
 ```yaml
