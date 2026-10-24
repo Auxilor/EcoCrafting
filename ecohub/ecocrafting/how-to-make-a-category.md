@@ -59,6 +59,7 @@ gui:
     back:
       row: 6
       column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item: barrier name:"&cBack"
       lore: []
     next-page:
@@ -70,6 +71,7 @@ gui:
         inactive: []
       row: 6
       column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     prev-page:
       item:
         active: orange_stained_glass_pane name:"&aPrevious page"
@@ -79,6 +81,7 @@ gui:
         inactive: []
       row: 6
       column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     slot:
       lore:
         - ""
@@ -163,6 +166,7 @@ gui:
     back:
       row: 6
       column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item: barrier name:"&cBack"
       lore: []
     next-page:
@@ -171,12 +175,14 @@ gui:
         inactive: black_stained_glass_pane name:""
       row: 6
       column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     prev-page:
       item:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: black_stained_glass_pane name:""
       row: 6
       column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     slot:
       lore:
         - ""

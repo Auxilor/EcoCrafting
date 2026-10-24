@@ -93,17 +93,20 @@ category-browser-gui:
         inactive: black_stained_glass_pane name:""
       row: 5
       column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     prev-page:
       item:
         active: orange_stained_glass_pane name:"&aPrevious page"
         inactive: black_stained_glass_pane name:""
       row: 5
       column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     close:
       item: barrier name:"&cClose"
       lore: []
       row: 5
       column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
 
 #*/ EcoShop Integration /*#
 shop-integration:
@@ -134,11 +137,13 @@ craft-gui:
     back:
       row: 6
       column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item: barrier name:"&cBack"
       lore: []
     quick-craft:
       row: 6
       column: 1
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item: crafting_table name:"&aQuick Craft"
       lore:
         - ""
@@ -150,6 +155,7 @@ craft-gui:
     prev-variant:
       row: 6
       column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item:
         active: arrow name:"&aPrevious Method"
         inactive: black_stained_glass_pane name:""
@@ -157,6 +163,7 @@ craft-gui:
     next-variant:
       row: 6
       column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item:
         active: arrow name:"&aNext Method"
         inactive: black_stained_glass_pane name:""
@@ -165,6 +172,7 @@ craft-gui:
       enabled: false
       row: 5
       column: 7
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item:
         active: crafter name:"&aAvailable in Crafter"
         inactive: gray_dye name:"&7Not available in Crafter"
@@ -172,6 +180,7 @@ craft-gui:
       enabled: false
       row: 5
       column: 7
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       item:
         active: slime_ball name:"&aShapeless Recipe"
         inactive: gray_dye name:"&7Shaped Recipe"

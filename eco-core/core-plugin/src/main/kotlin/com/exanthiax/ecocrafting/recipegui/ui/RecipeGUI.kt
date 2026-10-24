@@ -1,10 +1,13 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
+import com.willfp.eco.core.gui.addCustomSlots
+import com.willfp.eco.core.gui.component.ConfigButton
+import com.willfp.eco.core.gui.component.addComponent
+import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.price.ConfiguredPrice
 import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
@@ -14,7 +17,6 @@ import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipe.service.withLockState
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.recipegui.ui.utils.RecipeGUIContext
-import com.exanthiax.ecocrafting.recipegui.ui.utils.buildBackSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildFuelSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildIndicatorSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildIngredientSlot
@@ -116,7 +118,15 @@ class RecipeGUI(
                             ingredientIndex++
                         }
                         marker.equals('o', ignoreCase = true) ->
-                            setSlot(row, col, context.buildIngredientSlot(listOf(recipe.output), isIngredient = false, lockedLore = outputLockedLore + priceLore + limitLore))
+                            setSlot(
+                                row,
+                                col,
+                                context.buildIngredientSlot(
+                                    listOf(recipe.output),
+                                    isIngredient = false,
+                                    lockedLore = outputLockedLore + priceLore + limitLore
+                                )
+                            )
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->
@@ -125,54 +135,59 @@ class RecipeGUI(
                 }
             }
 
-            setMask(FillerMask(MaskItems.fromItemNames(context.config.getStrings("mask.items")), *pattern.toTypedArray()))
+            setMask(context.config, "")
 
-            context.config.getSubsectionOrNull("buttons.back")?.let {
-                parent?.let {
-                    addComponent(
-                        context.config.getInt("buttons.back.row"),
-                        context.config.getInt("buttons.back.column"),
-                        context.buildBackSlot(parent)
-                    )
-                }
+            val backSection = context.config.getSubsectionOrNull("buttons.back")
+            if (backSection != null && parent != null) {
+                addComponent(
+                    ConfigButton(
+                        backSection,
+                        itemModifier = { item -> with(context) { ItemStackBuilder(item).withGlobalFlags().build() } },
+                        sound = context.sound("back")
+                    ) { clicker, _, _, _ -> parent.open(clicker) }
+                )
             }
 
-            context.config.getSubsectionOrNull("buttons.quick-craft")
-                ?.takeIf { if (context.config.has("quick-craft-enabled")) context.config.getBool("quick-craft-enabled") else true }
-                ?.let {
-                    addComponent(
-                        context.config.getInt("buttons.quick-craft.row"),
-                        context.config.getInt("buttons.quick-craft.column"),
-                        context.buildQuickCraftSlot(player, recipe)
-                    )
+            val quickCraftEnabled = !context.config.has("quick-craft-enabled") ||
+                context.config.getBool("quick-craft-enabled")
+            if (context.config.getSubsectionOrNull("buttons.quick-craft") != null && quickCraftEnabled) {
+                for (location in context.config.getSlotLocations("buttons.quick-craft")) {
+                    addComponent(location.row, location.column, context.buildQuickCraftSlot(player, recipe))
                 }
+            }
 
             context.config.getSubsectionOrNull("buttons.crafter-indicator")
                 ?.takeIf { it.getBool("enabled") }
                 ?.let { indicatorConfig ->
                     val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
-                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                    for (location in indicatorConfig.getSlotLocations()) {
+                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                    }
                 }
 
             context.config.getSubsectionOrNull("buttons.shapeless-indicator")
                 ?.takeIf { it.getBool("enabled") }
                 ?.let { indicatorConfig ->
                     val state = if (recipe.shapeless) "active" else "inactive"
-                    setSlot(indicatorConfig.getInt("row"), indicatorConfig.getInt("column"), context.buildIndicatorSlot(indicatorConfig, state))
+                    for (location in indicatorConfig.getSlotLocations()) {
+                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                    }
                 }
 
             if (effectiveAlternatives.size > 1) {
-                context.config.getSubsectionOrNull("buttons.prev-variant")?.let {
-                    setSlot(context.config.getInt("buttons.prev-variant.row"), context.config.getInt("buttons.prev-variant.column"), context.buildVariantSlot(-1))
+                if (context.config.getSubsectionOrNull("buttons.prev-variant") != null) {
+                    for (location in context.config.getSlotLocations("buttons.prev-variant")) {
+                        setSlot(location.row, location.column, context.buildVariantSlot(-1))
+                    }
                 }
-                context.config.getSubsectionOrNull("buttons.next-variant")?.let {
-                    setSlot(context.config.getInt("buttons.next-variant.row"), context.config.getInt("buttons.next-variant.column"), context.buildVariantSlot(+1))
+                if (context.config.getSubsectionOrNull("buttons.next-variant") != null) {
+                    for (location in context.config.getSlotLocations("buttons.next-variant")) {
+                        setSlot(location.row, location.column, context.buildVariantSlot(+1))
+                    }
                 }
             }
 
-            for (slotConfig in context.config.getSubsections("custom-slots")) {
-                setSlot(slotConfig.getInt("row"), slotConfig.getInt("column"), ConfigSlot(slotConfig))
-            }
+            addCustomSlots(context.config, "")
 
             onClose { _, _ -> refreshTask?.cancel() }
         }

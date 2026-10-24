@@ -1,7 +1,6 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
 import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.gui.slot.functional.SlotProvider
 import com.willfp.eco.core.items.Items
@@ -71,18 +70,6 @@ fun RecipeGUIContext.buildFuelSlot(): Slot? = with(this) {
             .withGlobalFlags()
             .build()
     ).build()
-}
-
-fun RecipeGUIContext.buildBackSlot(parentMenu: Menu): Slot = with(this) {
-    Slot.builder(
-        ItemStackBuilder(Items.lookup(config.getString("buttons.back.item")))
-            .addLoreLines(config.getFormattedStrings("buttons.back.lore"))
-            .withGlobalFlags()
-            .build()
-    ).onLeftClick { event, _ ->
-        parentMenu.open(event.whoClicked as Player)
-        sound("back")?.playTo(event.whoClicked as Player)
-    }.build()
 }
 
 fun RecipeGUIContext.buildIndicatorSlot(indicatorConfig: Config, state: String): Slot = with(this) {

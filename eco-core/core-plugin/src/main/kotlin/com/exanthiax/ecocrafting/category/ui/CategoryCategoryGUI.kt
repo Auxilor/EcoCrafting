@@ -1,17 +1,18 @@
 package com.exanthiax.ecocrafting.category.ui
 
 import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.ConfigButton
+import com.willfp.eco.core.gui.component.addComponent
+import com.willfp.eco.core.gui.component.closeButton
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.Menu
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.player
-import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.AbstractPlayableSound
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
@@ -54,56 +55,39 @@ class CategoryCategoryGUI(
             defaultPage { page }
 
             addPageChanger(
+                config,
+                "buttons.next-page",
                 PageChanger.Direction.FORWARDS,
-                config.pageChangerItem("next-page", true),
-                config.pageChangerItem("next-page", false),
-                configSound(guiServices.plugin, "next-page"),
-                config.getInt("buttons.next-page.row"),
-                config.getInt("buttons.next-page.column")
+                configSound(guiServices.plugin, "next-page")
             )
             addPageChanger(
+                config,
+                "buttons.prev-page",
                 PageChanger.Direction.BACKWARDS,
-                config.pageChangerItem("prev-page", true),
-                config.pageChangerItem("prev-page", false),
-                configSound(guiServices.plugin, "prev-page"),
-                config.getInt("buttons.prev-page.row"),
-                config.getInt("buttons.prev-page.column")
+                configSound(guiServices.plugin, "prev-page")
             )
 
             for (pageNum in 1..maxPage) {
                 addPage(pageNum) {
-                    setMask(
-                        FillerMask(
-                            MaskItems.fromItemNames(config.getStrings("mask.items")),
-                            *pattern.toTypedArray()
-                        )
-                    )
+                    setMask(config, "")
 
-                    config.getSubsectionOrNull("buttons.back")?.let {
-                        prevMenu?.let {
-                            addComponent(
-                                config.getInt("buttons.back.row"),
-                                config.getInt("buttons.back.column"),
-                                config.backSlot(prevMenu, configSound(guiServices.plugin, "back"))
-                            )
-                        }
+                    val backSection = config.getSubsectionOrNull("buttons.back")
+                    if (backSection != null && prevMenu != null) {
+                        addComponent(
+                            ConfigButton(
+                                backSection,
+                                sound = configSound(guiServices.plugin, "back")
+                            ) { clicker, _, _, _ ->
+                                prevMenu.open(clicker)
+                            }
+                        )
                     }
 
                     config.getSubsectionOrNull("buttons.close")?.let {
-                        addComponent(
-                            config.getInt("buttons.close.row"),
-                            config.getInt("buttons.close.column"),
-                            closeSlot(configSound(guiServices.plugin, "close"))
-                        )
+                        addComponent(closeButton(it, sound = configSound(guiServices.plugin, "close")))
                     }
 
-                    for (slotConfig in config.getSubsections("custom-slots")) {
-                        setSlot(
-                            slotConfig.getInt("row"),
-                            slotConfig.getInt("column"),
-                            ConfigSlot(slotConfig)
-                        )
-                    }
+                    addCustomSlots(config, "")
 
                     val positionedCategories = visibleCategories()
                         .filter { it.guiPosition?.page == pageNum }
@@ -117,19 +101,6 @@ class CategoryCategoryGUI(
             }
         }
         builtMenu.open(player)
-    }
-
-    private fun closeSlot(sound: AbstractPlayableSound<*>?): Slot {
-        return Slot.builder(
-            ItemStackBuilder(Items.lookup(config.getString("buttons.close.item")))
-                .addLoreLines(config.getFormattedStrings("buttons.close.lore"))
-                .build()
-        )
-            .onLeftClick { event, _, _ ->
-                event.player.closeInventory()
-                sound?.playTo(event.player)
-            }
-            .build()
     }
 
     private fun categoryGuiFor(category: RecipeCategory): CategoryGUI {
