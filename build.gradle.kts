@@ -101,7 +101,7 @@ allprojects {
         compileOnly("com.willfp:eco:$ecoVersion")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
-        compileOnly("com.willfp:EcoShop:2.5.0")
+        compileOnly("com.willfp:EcoShop:2.8.0")
     }
 
     tasks {
