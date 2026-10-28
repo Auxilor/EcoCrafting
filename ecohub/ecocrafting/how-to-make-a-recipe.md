@@ -81,7 +81,7 @@ unlock-conditions: [] # libreforge - unlock automatically when met. Empty means 
 Items use [eco item lookup format](https://hub.auxilor.io/wiki/eco/the-item-lookup-system-the-item-lookup-system).
 
 :::info Prices
-A player who can't afford `price` is blocked from crafting the same way a failed `crafting-conditions` check is. Cost scales with the craft amount, so shift-clicking a batch charges proportionally. Omitting `price` (or leaving it incomplete) means the recipe is always free. For `stonecutter` recipes, `price` is set per-output instead of at the top level - see the Stonecutter section below.
+A player who can't afford `price` is blocked from crafting the same way a failed `crafting-conditions` check is. Cost scales with the craft amount, so shift-clicking a batch charges proportionally. Omitting `price` (or leaving it incomplete) means the recipe is always free. For `stonecutter` recipes, a top-level `price` applies to every output, and an output can set its own - see the Stonecutter section below.
 :::
 
 :::info Unlocking recipes
@@ -118,7 +118,7 @@ Limits only reset with `/ecocrafting resetlimits <player|global|all> [recipe]`. 
 Both limits can also be set on the options screen of the in-game recipe creator.
 
 :::info Stonecutter
-Like `price`, `craft-limits` is set on each output, and each output counts its crafts separately. To reset one output's limit, use its output ID (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)).
+Like `price`, `craft-limits` can be set at the top level for every output or on one output, and each output counts its crafts separately. To reset one output's limit, use its output ID (see [Stonecutter recipe IDs](commands-and-permissions#stonecutter-recipe-ids)).
 :::
 
 :::warning Brewing stands are not supported
@@ -251,6 +251,11 @@ type: stonecutter
 # `input: stone 4` requires four of the item per cut, and consumes four each time.
 input: stone
 
+# Defaults for every output. An output that sets its own value uses that instead.
+price:
+  value: "10"
+  type: "coins"
+
 # Multiple outputs supported - each appears as a separate option in the UI.
 outputs:
   - item: stone_slab
@@ -272,8 +277,10 @@ outputs:
       - id: give_xp
         args:
           amount: 25
-    conditions: []
+    crafting-conditions: []
 ```
+
+These keys can be set at the top level as a default for every output, or on one output to override it: `price`, `effects`, `lore`, `give-result-item`, `craft-limits`, `visibility-conditions` and `crafting-conditions` (`conditions` on an output also works). `permission`, `category` and the locking keys (`locked-by-default`, `show-when-locked`, `locked-lore`, `unlock-conditions`) apply to the whole recipe. A recipe with one result can use `output: <item>` instead of an `outputs` list.
 
 :::tip Output IDs
 Give outputs an `id` if you might reorder them later. An output without one is named by its position in the list, so moving it hands its unlocks and craft counts to whichever output takes its place. How the IDs are used is on [Commands and Permissions](commands-and-permissions#stonecutter-recipe-ids).
