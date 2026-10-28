@@ -14,15 +14,10 @@ import com.willfp.eco.core.recipe.workstation.SmithingRecipe
 import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
 import com.willfp.eco.core.recipe.workstation.VillagerRecipe
 import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import com.exanthiax.ecocrafting.recipe.model.toTestableItem
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.Registry
@@ -137,8 +132,12 @@ internal fun RecipeLoader.loadSmithing(id: String, config: Config) {
 
 internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
     val input = parseIngredient(config.getString("input"))
-    val ctx = ViolationContext(plugin, "recipe-$id")
-    val rawOutputs = config.getSubsections("outputs")
+    if (config.has("outputs") && config.has("output")) {
+        plugin.logger.warning("Stonecutter recipe '$id' sets both outputs and output, output is ignored.")
+    }
+    val rawOutputs = config.getSubsections("outputs").ifEmpty {
+        if (config.has("output")) listOf(config) else emptyList()
+    }
     require(rawOutputs.isNotEmpty()) { "stonecutter '$id' must have at least one output" }
 
     val groupKey = key(id)
@@ -150,41 +149,16 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
             plugin.logger.warning("Stonecutter recipe '$id' has two outputs with key '${outKey.key}', skipping output $index")
             return@forEachIndexed
         }
-        val outItem = run {
-            val base = Items.lookup(outputConfig.getString("item")).item
-            val lore = outputConfig.getFormattedStrings("lore")
-            if (lore.isNotEmpty()) {
-                val itemMeta = base.itemMeta ?: return@run base
-                itemMeta.lore(lore.map {
-                    LegacyComponentSerializer.legacySection().deserialize(it)
-                })
-                base.itemMeta = itemMeta
-            }
-            base
-        }
+        val outItem = withLore(
+            Items.lookup(outputConfig.getStringOrNull("item") ?: config.getString("output")).item,
+            (if (outputConfig.has("lore")) outputConfig else config).getFormattedStrings("lore")
+        )
         val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
             .inputDisplay(input.displayItem)
             .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
             .build()
-        val giveResultItem = if (outputConfig.has("give-result-item")) outputConfig.getBool("give-result-item") else true
-        val effectsChain = Effects.compileChain(outputConfig.getSubsections("effects"), ctx.with("effects-$index"))
-        val outMeta = EcoCraftingMeta(
-            giveResultItem = giveResultItem,
-            effectsChain = effectsChain,
-            visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
-            craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
-            lockedByDefault = config.getBool("locked-by-default"),
-            showWhenLocked = config.getBool("show-when-locked"),
-            lockedLore = config.getFormattedStrings("locked-lore"),
-            unlockConditions = Conditions.compile(config.getSubsections("unlock-conditions"), ctx.with("unlock-conditions")),
-            displayType = RecipeDisplayType.STONECUTTER,
-            categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
-            price = parsePrice(outputConfig),
-            playerCraftLimit = parseCraftLimit(outputConfig, "player"),
-            globalCraftLimit = parseCraftLimit(outputConfig, "global"),
-            groupKey = groupKey
-        )
-        registerWithMeta(recipe, outMeta)
+        val outMeta = parseMeta(id, config, RecipeDisplayType.STONECUTTER, outputConfig, index)
+        registerWithMeta(recipe, outMeta.copy(groupKey = groupKey))
         outputKeys += outKey
     }
 
