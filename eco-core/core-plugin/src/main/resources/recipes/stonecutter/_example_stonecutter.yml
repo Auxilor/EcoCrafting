@@ -5,6 +5,12 @@ type: stonecutter
 
 input: stone
 
+# price, effects, lore, give-result-item, craft-limits, visibility-conditions and crafting-conditions
+# set here are the defaults for every output. An output that sets its own value uses that instead.
+# price:
+#   value: "10"
+#   type: "coins"
+
 # Multiple outputs supported - each appears as a separate option in the stonecutter UI.
 # give-result-item: false on an output means no item is given. Effects fire on every craft either way.
 outputs:
@@ -30,7 +36,7 @@ outputs:
       - id: give_xp
         args:
           amount: 25
-    conditions: [ ]
+    crafting-conditions: [ ]
 
 permission: ""
 locked-by-default: false

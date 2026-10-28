@@ -117,9 +117,10 @@ class RecipeLoader(
 
     internal fun key(id: String) = NamespacedKey("ecocrafting", id.lowercase())
 
-    internal fun parseOutputItem(config: Config): ItemStack {
-        val item = Items.lookup(config.getString("output")).item
-        val lore = config.getFormattedStrings("lore")
+    internal fun parseOutputItem(config: Config): ItemStack =
+        withLore(Items.lookup(config.getString("output")).item, config.getFormattedStrings("lore"))
+
+    internal fun withLore(item: ItemStack, lore: List<String>): ItemStack {
         if (lore.isNotEmpty()) {
             val meta = item.itemMeta ?: return item
             meta.lore(lore.map {
@@ -155,19 +156,38 @@ class RecipeLoader(
     internal fun parseCraftLimit(config: Config, limit: String): Int =
         normaliseLimit(config.getIntOrNull("craft-limits.$limit"))
 
-    internal fun parseMeta(id: String, config: Config, displayType: RecipeDisplayType): EcoCraftingMeta {
+    /**
+     * Build the meta for a recipe. With [output] (one stonecutter output), each per-output key is
+     * read from the output when it sets it, else from the recipe; recipe-wide keys stay top-level.
+     */
+    internal fun parseMeta(
+        id: String,
+        config: Config,
+        displayType: RecipeDisplayType,
+        output: Config? = null,
+        outputIndex: Int? = null
+    ): EcoCraftingMeta {
         val ctx = ViolationContext(plugin, "recipe-$id")
-        val giveResultItem = if (config.has("give-result-item")) config.getBool("give-result-item") else true
-        val effectsChain = Effects.compileChain(config.getSubsections("effects"), ctx.with("effects"))
+        val source = { key: String -> if (output?.has(key) == true) output else config }
+        val giveResultItem = source("give-result-item").getBoolOrNull("give-result-item") != false
+        val effectsContext = if (outputIndex == null) "effects" else "effects-$outputIndex"
+        val effectsChain = Effects.compileChain(source("effects").getSubsections("effects"), ctx.with(effectsContext))
         val supportsCraftLimits = displayType.supportsCraftLimits
+        val craftLimits = source("craft-limits")
         if (!supportsCraftLimits && config.has("craft-limits")) {
             plugin.logger.warning("Recipe $id: craft-limits is not supported on brewing_stand recipes and is ignored.")
         }
         return EcoCraftingMeta(
             giveResultItem = giveResultItem,
             effectsChain = effectsChain,
-            visibilityConditions = Conditions.compile(config.getSubsections("visibility-conditions"), ctx.with("visibility-conditions")),
-            craftingConditions = Conditions.compile(config.getSubsections("crafting-conditions"), ctx.with("crafting-conditions")),
+            visibilityConditions = Conditions.compile(
+                source("visibility-conditions").getSubsections("visibility-conditions"),
+                ctx.with("visibility-conditions")
+            ),
+            craftingConditions = Conditions.compile(
+                craftingConditionsOf(id, config, output),
+                ctx.with("crafting-conditions")
+            ),
             lockedByDefault = config.getBool("locked-by-default"),
             showWhenLocked = config.getBool("show-when-locked"),
             lockedLore = config.getFormattedStrings("locked-lore"),
@@ -175,11 +195,29 @@ class RecipeLoader(
             displayType = displayType,
             supportCrafter = config.getBool("support-crafter"),
             categoryId = config.getStringOrNull("category")?.takeIf { it.isNotBlank() },
-            price = parsePrice(config),
+            price = parsePrice(source("price")),
             maxUses = config.getIntOrNull("max-uses") ?: 0,
-            playerCraftLimit = if (supportsCraftLimits) parseCraftLimit(config, "player") else UNLIMITED,
-            globalCraftLimit = if (supportsCraftLimits) parseCraftLimit(config, "global") else UNLIMITED
+            playerCraftLimit = if (supportsCraftLimits) parseCraftLimit(craftLimits, "player") else UNLIMITED,
+            globalCraftLimit = if (supportsCraftLimits) parseCraftLimit(craftLimits, "global") else UNLIMITED
         )
+    }
+
+    private fun craftingConditionsOf(id: String, config: Config, output: Config?): List<Config> {
+        if (output == null || output === config) {
+            return config.getSubsections("crafting-conditions")
+        }
+
+        if (output.has("crafting-conditions") && output.has("conditions")) {
+            plugin.logger.warning(
+                "Recipe $id: an output sets both crafting-conditions and conditions, conditions is ignored."
+            )
+        }
+
+        return when {
+            output.has("crafting-conditions") -> output.getSubsections("crafting-conditions")
+            output.has("conditions") -> output.getSubsections("conditions")
+            else -> config.getSubsections("crafting-conditions")
+        }
     }
 
     internal fun registerWithMeta(recipe: WorkstationRecipe, meta: EcoCraftingMeta) {
