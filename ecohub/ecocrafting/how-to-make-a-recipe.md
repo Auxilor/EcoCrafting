@@ -42,7 +42,7 @@ The in-game recipe creator GUI can't capture potion effect data. Recipes with a 
 These fields exist on **every** recipe type.
 
 ```yaml
-enabled: true
+enabled: true # Optional. Omitted means the recipe loads. Set false to turn it off without deleting the file.
 # category: main # optional - category ID to assign this recipe to in the GUI
 
 type: crafting_table # workstation type (see table above)

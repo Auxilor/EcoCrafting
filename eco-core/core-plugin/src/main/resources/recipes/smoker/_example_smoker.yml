@@ -1,4 +1,4 @@
-enabled: true
+enabled: true # Optional. Omitted means enabled.
 # category: main # optional - assigns this recipe to a GUI category (must match a category id in categories/)
 
 type: smoker
