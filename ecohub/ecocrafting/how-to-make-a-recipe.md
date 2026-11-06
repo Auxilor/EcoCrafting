@@ -35,6 +35,10 @@ IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). 
 The in-game recipe creator GUI can't capture potion effect data. Recipes with a potion output or ingredient (e.g. `potion effect:...`) must be written directly in YAML instead of built with the GUI. Editing a recipe in the GUI keeps any config it does not show, such as `price`, `effects`, conditions and extra stonecutter outputs.
 :::
 
+:::tip Items from other plugins
+The in-game recipe creator saves items from a supported plugin by their ID, such as `nexo:forest_axe`. An item from a plugin with no eco integration is saved as SNBT, an exact copy of the item that is not updated if the item changes in that plugin. Some plugins also stop their items being used in other plugins' recipes, for example `default_allow_in_vanilla_recipes` in Nexo and `cancel-item-craft` in ExecutableItems, and these need turning off for the recipe to craft.
+:::
+
 ---
 
 ## Common Config
