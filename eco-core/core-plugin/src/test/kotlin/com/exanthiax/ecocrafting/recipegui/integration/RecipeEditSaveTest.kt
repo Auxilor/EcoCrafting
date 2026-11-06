@@ -58,9 +58,8 @@ class RecipeEditSaveTest {
     @BeforeEach
     fun setUp() {
         mockkStatic(Items::class)
-        every { Items.getCustomItem(any()) } returns null
-        every { Items.toLookupString(input) } returns "stone"
-        every { Items.toLookupString(output) } returns "netherite_sword"
+        every { Items.toExactLookupString(input) } returns "stone"
+        every { Items.toExactLookupString(output) } returns "netherite_sword"
     }
 
     @Test

@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack
 // as its key alone: toLookupString would also append every arg parser's output
 // (`texture:...`, `name:"..."`), and those become exact-match predicates at load time that
 // the item stops satisfying as soon as its texture or display name is edited.
+// SNBT from eco has to be quoted, or YAML reads it as a flow mapping.
 internal fun craftLimitLines(playerCraftLimit: Int, globalCraftLimit: Int, indent: String): List<String> {
     if (playerCraftLimit < 0 && globalCraftLimit < 0) return emptyList()
     return listOfNotNull(
@@ -39,9 +40,18 @@ internal fun parseLimitInput(input: String): Int? {
 
 internal fun itemLookupString(item: ItemStack?): String {
     if (item == null || item.isEmpty) return "air"
-    val custom = Items.getCustomItem(item) ?: return Items.toLookupString(item)
-    return if (item.amount > 1) "${custom.key} ${item.amount}" else custom.key.toString()
+    return Items.toExactLookupString(item)
 }
+
+internal fun itemYamlValue(item: ItemStack?): String {
+    val lookup = itemLookupString(item)
+    return if (lookup.startsWith("{")) yamlQuote(lookup) else lookup
+}
+
+// YAML double-quoted scalar: only backslash and the closing quote need escaping,
+// so free-form chat input (`:`, `#`, leading `*`, etc.) can't break the parse.
+private fun yamlQuote(value: String): String =
+    "\"" + value.replace(oldValue = "\\", newValue = "\\\\").replace(oldValue = "\"", newValue = "\\\"") + "\""
 
 data class EditSeed(
     val typeKey: String,
@@ -75,11 +85,6 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         return dir.walkTopDown()
             .firstOrNull { it.isFile && it.extension.equals("yml", ignoreCase = true) && it.nameWithoutExtension.equals(id, ignoreCase = true) }
     }
-
-    // YAML double-quoted scalar: only backslash and the closing quote need escaping,
-    // so free-form chat input (`:`, `#`, leading `*`, etc.) can't break the parse.
-    private fun yamlQuote(value: String): String =
-        "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
     // Reconstructs a WizardState (and the raw fields the ingredient/output screens need)
     // from a previously-saved recipe yaml, so /ecocrafting edit can re-enter the wizard
@@ -209,37 +214,37 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
                 yaml.appendLine("recipe:")
                 for (slot in 0..8) {
                     val item = pending.parts[slot]
-                    val lookup = if (item == null || item.type.isAir) "\"\"" else itemLookupString(item)
+                    val lookup = if (item == null || item.type.isAir) "\"\"" else itemYamlValue(item)
                     yaml.appendLine("  - $lookup")
                 }
             }
             "furnace", "blast_furnace", "smoker", "campfire" -> {
-                yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
+                yaml.appendLine("input: ${itemYamlValue(pending.parts[0])}")
                 pending.cookTime?.let { yaml.appendLine("cook-time: $it") }
                 yaml.appendLine("experience: ${pending.experience}")
             }
             "smithing_table" -> {
-                yaml.appendLine("template: ${itemLookupString(pending.parts[0])}")
-                yaml.appendLine("base: ${itemLookupString(pending.parts[1])}")
-                yaml.appendLine("addition: ${itemLookupString(pending.parts[2])}")
+                yaml.appendLine("template: ${itemYamlValue(pending.parts[0])}")
+                yaml.appendLine("base: ${itemYamlValue(pending.parts[1])}")
+                yaml.appendLine("addition: ${itemYamlValue(pending.parts[2])}")
             }
             "stonecutter" -> {
-                yaml.appendLine("input: ${itemLookupString(pending.parts[0])}")
+                yaml.appendLine("input: ${itemYamlValue(pending.parts[0])}")
                 craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, "    ").forEach { yaml.appendLine(it) }
                 yaml.append(stonecutterOutputsYaml(existing, itemLookupString(pending.output), pending.giveResultItem))
             }
             "brewing_stand" -> {
-                yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
-                yaml.appendLine("ingredient: ${itemLookupString(pending.parts[1])}")
+                yaml.appendLine("base: ${itemYamlValue(pending.parts[0])}")
+                yaml.appendLine("ingredient: ${itemYamlValue(pending.parts[1])}")
                 pending.brewTime?.let { yaml.appendLine("brew-time: $it") }
             }
             "grindstone" -> {
-                yaml.appendLine("item1: ${itemLookupString(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("item2: ${itemLookupString(it)}") }
+                yaml.appendLine("item1: ${itemYamlValue(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("item2: ${itemYamlValue(it)}") }
             }
             "villager" -> {
-                yaml.appendLine("input1: ${itemLookupString(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("input2: ${itemLookupString(it)}") }
+                yaml.appendLine("input1: ${itemYamlValue(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("input2: ${itemYamlValue(it)}") }
                 if (pending.profession.isNotBlank()) yaml.appendLine("profession: ${pending.profession}")
                 yaml.appendLine("min-level: ${pending.minLevel}")
                 yaml.appendLine("chance: ${pending.chance}")
@@ -247,14 +252,14 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
                 yaml.appendLine("villager-xp: ${pending.villagerXp}")
             }
             "anvil" -> {
-                yaml.appendLine("base: ${itemLookupString(pending.parts[0])}")
-                pending.parts[1]?.let { yaml.appendLine("material: ${itemLookupString(it)}") }
+                yaml.appendLine("base: ${itemYamlValue(pending.parts[0])}")
+                pending.parts[1]?.let { yaml.appendLine("material: ${itemYamlValue(it)}") }
                 yaml.appendLine("repair-cost: ${pending.repairCost}")
             }
         }
 
         if (pending.typeKey != "stonecutter") {
-            yaml.appendLine("output: ${itemLookupString(pending.output)}")
+            yaml.appendLine("output: ${itemYamlValue(pending.output)}")
             yaml.appendLine("give-result-item: ${pending.giveResultItem}")
             if (pending.typeKey != "brewing_stand") {
                 craftLimitLines(pending.playerCraftLimit, pending.globalCraftLimit, "").forEach { yaml.appendLine(it) }
