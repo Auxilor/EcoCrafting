@@ -36,7 +36,7 @@ The in-game recipe creator GUI can't capture potion effect data. Recipes with a 
 :::
 
 :::tip Items from other plugins
-The in-game recipe creator saves items from a supported plugin by their ID, such as `nexo:forest_axe`. An item from a plugin with no eco integration is saved as SNBT, an exact copy of the item that is not updated if the item changes in that plugin. Some plugins also stop their items being used in other plugins' recipes, for example `default_allow_in_vanilla_recipes` in Nexo and `cancel-item-craft` in ExecutableItems, and these need turning off for the recipe to craft.
+The in-game recipe creator saves items from a supported plugin by their ID, such as `nexo:forest_axe`. An item from a plugin with no eco integration is saved as SNBT, an exact copy of the item that is not updated if the item changes in that plugin. Some plugins also stop their items being used in other plugins' recipes. For the recipe to craft, set `default_allow_in_vanilla_recipes: true` in Nexo, and `cancel-item-craft: false` on the item in ExecutableItems.
 :::
 
 ---
