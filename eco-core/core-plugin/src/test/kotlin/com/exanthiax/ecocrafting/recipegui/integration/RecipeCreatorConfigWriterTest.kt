@@ -1,14 +1,21 @@
 package com.exanthiax.ecocrafting.recipegui.integration
 
+import com.exanthiax.ecocrafting.EcoCraftingPlugin
+import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import com.willfp.eco.core.items.Items
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkObject
+import java.io.File
+import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 class RecipeCreatorConfigWriterTest {
 
@@ -38,6 +45,51 @@ class RecipeCreatorConfigWriterTest {
 
         assertEquals(listOf(snbt), yaml.getStringList("recipe"))
         assertEquals(snbt, yaml.getString("output"))
+    }
+
+    @Test
+    fun `saved recipe keeps snbt`(@TempDir dataFolder: File) {
+        val snbt = """{DataVersion:4790,id:"minecraft:stone",components:{"minecraft:custom_data":{a:"b\\c"}}}"""
+        every { Items.toExactLookupString(item) } returns snbt
+        every { item.type } returns Material.STONE
+        mockkObject(Material.STONE)
+        every { Material.STONE.isAir } returns false
+        val plugin = mockk<EcoCraftingPlugin> {
+            every { getDataFolder() } returns dataFolder
+        }
+
+        try {
+            RecipeCreatorConfigWriter(plugin).saveRecipeYaml(
+                PendingRecipe(
+                    typeKey = "crafting_table",
+                    parts = mapOf(0 to item),
+                    output = item,
+                    shapeless = false,
+                    symmetry = false,
+                    supportCrafter = false,
+                    cookTime = null,
+                    experience = 0.0,
+                    profession = "",
+                    minLevel = 1,
+                    chance = 1.0,
+                    wanderingTrader = false,
+                    villagerXp = 0,
+                    id = "snbt_recipe",
+                    permission = "",
+                    category = "",
+                    lockedByDefault = false,
+                    showWhenLocked = false,
+                    repairCost = 0,
+                    brewTime = null
+                )
+            )
+        } finally {
+            unmockkObject(Material.STONE)
+        }
+
+        val saved = YamlConfiguration.loadConfiguration(File(dataFolder, "recipes/snbt_recipe.yml"))
+        assertEquals(snbt, saved.getStringList("recipe").first())
+        assertEquals(snbt, saved.getString("output"))
     }
 
     @Test
