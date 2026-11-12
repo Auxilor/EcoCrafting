@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import wiki.ecohub.gradle.modules.EcoModulesExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -7,12 +8,12 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("com.gradleup.shadow") version "9.3.1"
+    id("wiki.ecohub.eco-modules") version "1.0.0"
 }
 
 group = "com.exanthiax"
 version = findProperty("version")!!
 val ecoApiVersion = findProperty("eco-api-version")
-val ecoVersion = findProperty("eco-version")
 
 base {
     archivesName.set(if (project.hasProperty("free")) "${project.name}-Free" else project.name)
@@ -81,6 +82,11 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "com.gradleup.shadow")
+    apply(plugin = "wiki.ecohub.eco-modules")
+
+    configure<EcoModulesExtension> {
+        use("menus", "recipe", "effects-system")
+    }
 
     repositories {
         mavenCentral()
@@ -96,7 +102,6 @@ allprojects {
 
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-        compileOnly("wiki.ecohub:eco:$ecoVersion")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
         compileOnly("com.willfp:EcoShop:2026.46")
