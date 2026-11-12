@@ -1,14 +1,14 @@
 package com.exanthiax.ecocrafting.recipegui.ui.wizard
 
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.formatEco
 
 // Centred within the usable rows 1-6 / cols 1-7 area (cols 8-9 are the
 // workstation icon column), leaving row 6 col 5 clear for the Next button.

@@ -1,20 +1,20 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.google.common.collect.BiMap
-import com.willfp.eco.core.items.CustomItem
-import com.willfp.eco.core.recipe.Recipes
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.recipe.recipes.CraftingRecipe
-import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipe.model.asDisplayAlternatives
-import java.lang.reflect.Field
+import com.google.common.collect.BiMap
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.CustomItem
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import wiki.ecohub.modules.recipe.Recipes
+import wiki.ecohub.modules.recipe.crafting.CraftingRecipe
+import wiki.ecohub.modules.recipe.crafting.ShapedCraftingRecipe
+import java.lang.reflect.Field
 
 // Maps eco's own CraftingRecipe registry (Recipes.RECIPES) into ResolvedRecipe.
 

@@ -2,7 +2,6 @@ package com.exanthiax.ecocrafting.trade.service
 
 import com.exanthiax.ecocrafting.commands.parseTradeIds
 import com.exanthiax.ecocrafting.crafting.service.hasRecipePermission
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.NamespacedKey
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
 import java.util.UUID
 
 class TradeServiceTest {

@@ -1,6 +1,5 @@
 package com.exanthiax.ecocrafting.recipegui.integration
 
-import com.willfp.eco.core.items.Items
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import io.mockk.every
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import wiki.ecohub.game.item.Items
 import java.io.File
 
 class RecipeEditSaveTest {

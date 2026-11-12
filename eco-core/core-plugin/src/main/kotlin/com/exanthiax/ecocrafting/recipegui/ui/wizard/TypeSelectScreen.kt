@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.recipegui.ui.wizard
 
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.entity.Player
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.slot.Slot
 
 internal fun RecipeCreatorGUI.openTypeSelect(player: Player) {
     val builtMenu = menu(2) {

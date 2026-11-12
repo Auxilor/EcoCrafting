@@ -1,17 +1,17 @@
 package com.exanthiax.ecocrafting.category.model
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.recipe.parts.GroupedTestableItems
-import com.willfp.eco.core.registry.KRegistrable
 import com.exanthiax.ecocrafting.api.category.Category
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Tag
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.config.Config
+import wiki.ecohub.core.registry.KRegistrable
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.game.item.lookup.GroupedTestableItems
+import wiki.ecohub.game.item.lookup.TestableItem
 import java.util.concurrent.CopyOnWriteArrayList
 
 data class CategoryPosition(val column: Int, val row: Int, val page: Int)

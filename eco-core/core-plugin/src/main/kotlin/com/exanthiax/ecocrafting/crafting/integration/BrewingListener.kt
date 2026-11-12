@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.BrewingRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomBrewEvent
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
@@ -17,6 +15,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.BrewEvent
+import wiki.ecohub.modules.recipe.workstation.BrewingRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 class BrewingListener(
     private val plugin: EcoCraftingPlugin,

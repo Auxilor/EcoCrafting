@@ -1,14 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.willfp.eco.core.recipe.workstation.AnvilRecipe
-import com.willfp.eco.core.recipe.workstation.BrewingRecipe
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
-import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
-import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
-import com.willfp.eco.core.recipe.workstation.SmithingRecipe
-import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
@@ -17,6 +8,15 @@ import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipe.model.asDisplayAlternatives
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.modules.recipe.workstation.AnvilRecipe
+import wiki.ecohub.modules.recipe.workstation.BrewingRecipe
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
+import wiki.ecohub.modules.recipe.workstation.GrindstoneRecipe
+import wiki.ecohub.modules.recipe.workstation.SmeltingRecipe
+import wiki.ecohub.modules.recipe.workstation.SmithingRecipe
+import wiki.ecohub.modules.recipe.workstation.StonecuttingRecipe
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
 
 // Maps every EcoCrafting-registered WorkstationRecipe subtype into the normalized
 // 3x3-grid ResolvedRecipe shape the GUIs render.

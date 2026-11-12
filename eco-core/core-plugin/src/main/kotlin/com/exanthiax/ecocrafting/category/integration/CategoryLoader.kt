@@ -1,14 +1,14 @@
 package com.exanthiax.ecocrafting.category.integration
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.RegistrableCategory
 import com.exanthiax.ecocrafting.category.model.CategoryStack
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
 import com.exanthiax.ecocrafting.recipe.service.RecipeResolverService
-import com.willfp.eco.core.scheduling.EcoTask
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.category.RegistrableCategory
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.core.scheduler.EcoTask
+import wiki.ecohub.game.item.Items
 
 class CategoryLoader(
     private val resolverService: RecipeResolverService,

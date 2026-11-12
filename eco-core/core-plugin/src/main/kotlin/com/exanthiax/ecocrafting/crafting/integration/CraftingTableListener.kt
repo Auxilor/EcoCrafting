@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
@@ -19,9 +17,11 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.SmithingInventory
 import org.bukkit.inventory.StonecutterInventory
-import org.bukkit.inventory.ItemStack
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 // Eco registers a crafting recipe's Bukkit twin with material-only ingredients, so recipes
 // that differ only by which custom item a part tests for (several player_head-backed

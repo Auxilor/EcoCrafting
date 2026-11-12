@@ -4,12 +4,12 @@ import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
-import com.willfp.eco.core.gui.view.ViewBuilders
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.util.formatEco
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.MerchantRecipe
+import wiki.ecohub.modules.menus.view.ViewBuilders
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.ui.text.formatEco
 
 // Builds and opens a virtual merchant from EcoCrafting villager recipes, so trades can be
 // offered without a villager entity. The entity-side fields on a VillagerRecipe (profession,

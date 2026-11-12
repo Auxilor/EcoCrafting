@@ -1,14 +1,14 @@
 package com.exanthiax.ecocrafting.libreforge
 
-import com.willfp.eco.core.blocks.Blocks
-import com.willfp.eco.core.blocks.TestableBlock
 import com.willfp.eco.core.blocks.matches
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.util.containsIgnoreCase
-import com.willfp.libreforge.ArgType
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.filters.Filter
-import com.willfp.libreforge.triggers.TriggerData
+import wiki.ecohub.config.ArgType
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.ViolationContext
+import wiki.ecohub.game.block.Blocks
+import wiki.ecohub.game.block.lookup.TestableBlock
+import wiki.ecohub.rules.filter.Filter
+import wiki.ecohub.rules.trigger.TriggerData
+import wiki.ecohub.ui.text.containsIgnoreCase
 
 object FilterWorkstation : Filter<Collection<TestableBlock>, Collection<String>>("workstation") {
     override val description = "Matches when the EcoCrafting recipe was crafted at one of the given workstation blocks."

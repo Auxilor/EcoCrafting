@@ -1,20 +1,5 @@
 package com.exanthiax.ecocrafting.category.ui
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.gui.addCustomSlots
-import com.willfp.eco.core.gui.addPage
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.component.closeButton
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.player
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.AbstractPlayableSound
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.category.service.CategoryService
@@ -22,6 +7,21 @@ import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.recipegui.ui.utils.configSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.game.sound.AbstractPlayableSound
+import wiki.ecohub.modules.menus.addCustomSlots
+import wiki.ecohub.modules.menus.addPage
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.component.closeButton
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.menu.Menu
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.player
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot.Slot
 
 class CategoryCategoryGUI(
     val config: Config,

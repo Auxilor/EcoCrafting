@@ -1,6 +1,5 @@
 package com.exanthiax.ecocrafting.quickcraft.service
 
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
 import com.exanthiax.ecocrafting.crafting.service.fireCraftEffects
@@ -13,6 +12,7 @@ import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 class QuickCraftService(
     private val plugin: EcoCraftingPlugin,

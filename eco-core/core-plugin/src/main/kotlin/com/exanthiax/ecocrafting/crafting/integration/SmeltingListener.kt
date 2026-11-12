@@ -1,8 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
-import com.willfp.eco.core.recipe.workstation.SmeltingType
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomSmeltEvent
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
@@ -26,6 +23,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockCookEvent
 import org.bukkit.event.inventory.FurnaceSmeltEvent
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.modules.recipe.workstation.SmeltingRecipe
+import wiki.ecohub.modules.recipe.workstation.SmeltingType
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 // Furnace / blast furnace / smoker (FurnaceSmeltEvent) + campfire (BlockCookEvent).
 class SmeltingListener(

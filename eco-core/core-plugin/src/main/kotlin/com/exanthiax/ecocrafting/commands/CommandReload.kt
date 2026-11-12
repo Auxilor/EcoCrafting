@@ -1,12 +1,12 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNiceString
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.runOnGlobalRegion
+import com.willfp.eco.core.command.impl.Subcommand
 import org.bukkit.command.CommandSender
+import wiki.ecohub.core.stdlib.toNiceString
+import wiki.ecohub.ui.text.StringUtils
 
 class CommandReload(
     private val plugin: EcoCraftingPlugin,

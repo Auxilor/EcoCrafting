@@ -1,15 +1,15 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.quickcraft.service.CraftAttempt
 import com.exanthiax.ecocrafting.quickcraft.service.CraftFailure
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.formatEco
 
 fun RecipeGUIContext.buildQuickCraftSlot(player: Player, recipe: ResolvedRecipe): Slot = with(this) {
     val plugin = services.plugin

@@ -1,16 +1,5 @@
 package com.exanthiax.ecocrafting
 
-import com.willfp.eco.core.bstats.EcoMetricsChart
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.core.config.config
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.filters.Filters
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
-import com.willfp.libreforge.registerHolderProvider
-import com.willfp.libreforge.triggers.Triggers
 import com.exanthiax.ecocrafting.api.EcoCraftingApi
 import com.exanthiax.ecocrafting.api.EcoCraftingApiImpl
 import com.exanthiax.ecocrafting.category.integration.CategoriesManagerImpl
@@ -35,11 +24,19 @@ import com.exanthiax.ecocrafting.crafting.integration.SmeltingListener
 import com.exanthiax.ecocrafting.crafting.integration.SmithingListener
 import com.exanthiax.ecocrafting.crafting.integration.StonecutterListener
 import com.exanthiax.ecocrafting.crafting.integration.WorkbenchListener
+import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.libreforge.ConditionHasCraftsRemaining
+import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
+import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
+import com.exanthiax.ecocrafting.libreforge.EffectRecipeUnlockCheck
+import com.exanthiax.ecocrafting.libreforge.EffectUnlockRecipe
+import com.exanthiax.ecocrafting.libreforge.FilterRecipe
+import com.exanthiax.ecocrafting.libreforge.FilterWorkstation
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
+import com.exanthiax.ecocrafting.libreforge.TriggerRecipeLocked
+import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.limit.integration.registerCraftLimitPlaceholders
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
-import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.recipe.integration.RecipeCapEnforcer
 import com.exanthiax.ecocrafting.recipe.integration.RecipeLoader
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
@@ -53,17 +50,20 @@ import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
 import com.exanthiax.ecocrafting.trade.service.TradeSessionService
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockHolderProvider
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockListener
-import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
-import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
-import com.exanthiax.ecocrafting.libreforge.EffectRecipeUnlockCheck
-import com.exanthiax.ecocrafting.libreforge.EffectUnlockRecipe
-import com.exanthiax.ecocrafting.libreforge.FilterRecipe
-import com.exanthiax.ecocrafting.libreforge.FilterWorkstation
-import com.exanthiax.ecocrafting.libreforge.TriggerRecipeLocked
-import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
+import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.event.Listener
 import org.bukkit.plugin.ServicePriority
+import wiki.ecohub.config.ViolationContext
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.config.config
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.provider.metrics.EcoMetricsChart
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.rules.filter.Filters
+import wiki.ecohub.rules.holder.registerHolderProvider
+import wiki.ecohub.rules.trigger.Triggers
 
 class EcoCraftingPlugin : LibreforgePlugin() {
     private val dataKeys = PlayerDataKeys(this)

@@ -1,9 +1,9 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.willfp.eco.core.command.impl.Subcommand
 import com.exanthiax.ecocrafting.BuildConfig
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
+import com.willfp.eco.core.command.impl.Subcommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

@@ -5,11 +5,11 @@ import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.runOwned
 import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 // Splits the comma-separated recipe id argument. Order is preserved (it's the order trades
 // appear in the merchant) and duplicates are kept - listing the same trade twice is a valid,

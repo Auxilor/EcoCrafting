@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
@@ -12,6 +10,8 @@ import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 // Resolves an ItemStack to whichever recipe produces it (eco's own registry, EcoCrafting's
 // workstation recipes, or a plain Bukkit recipe) and checks permission to craft it. The

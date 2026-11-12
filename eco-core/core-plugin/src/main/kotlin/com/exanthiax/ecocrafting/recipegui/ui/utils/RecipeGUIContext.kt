@@ -1,13 +1,13 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.PlayableSound
 import com.exanthiax.ecocrafting.recipe.model.ResolvedRecipe
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.modules.menus.menu.Menu
 
 class RecipeGUIContext(
     val services: RecipeGuiServices,

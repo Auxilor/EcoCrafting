@@ -1,14 +1,14 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.runOwned
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
+import com.willfp.eco.core.command.impl.Subcommand
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 class CommandLock(
     private val plugin: EcoCraftingPlugin,

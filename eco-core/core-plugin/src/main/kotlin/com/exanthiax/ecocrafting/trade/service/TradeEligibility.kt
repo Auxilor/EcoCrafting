@@ -3,10 +3,10 @@ package com.exanthiax.ecocrafting.trade.service
 import com.exanthiax.ecocrafting.crafting.service.hasRecipePermission
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.toDispatcher
 import org.bukkit.entity.Player
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
 
 // Whether a trade should appear at all in a command-opened merchant.
 fun isTradeVisible(

@@ -1,15 +1,15 @@
 package com.exanthiax.ecocrafting.libreforge
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.libreforge.Dispatcher
-import com.willfp.libreforge.NoCompileData
-import com.willfp.libreforge.ProvidedHolder
-import com.willfp.libreforge.effects.Effect
-import com.willfp.libreforge.effects.Identifiers
-import com.willfp.libreforge.get
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockHolder
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.entity.Player
+import wiki.ecohub.config.Config
+import wiki.ecohub.core.registry.NoCompileData
+import wiki.ecohub.rules.effect.Effect
+import wiki.ecohub.rules.effect.Identifiers
+import wiki.ecohub.rules.holder.Dispatcher
+import wiki.ecohub.rules.holder.ProvidedHolder
+import wiki.ecohub.rules.holder.get
 
 object EffectRecipeUnlockCheck : Effect<NoCompileData>("recipe_unlock_check") {
     lateinit var unlockService: RecipeUnlockService

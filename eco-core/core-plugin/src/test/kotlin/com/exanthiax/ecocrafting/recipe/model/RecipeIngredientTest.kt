@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.model
 
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.parts.TestableStack
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.inventory.ItemStack
@@ -9,6 +7,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import wiki.ecohub.game.item.lookup.TestableItem
+import wiki.ecohub.game.item.lookup.TestableStack
 
 class RecipeIngredientTest {
 

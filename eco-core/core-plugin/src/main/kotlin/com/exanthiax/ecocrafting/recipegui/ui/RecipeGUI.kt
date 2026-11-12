@@ -1,15 +1,5 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
-import com.willfp.eco.core.gui.addCustomSlots
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.getSlotLocations
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.price.ConfiguredPrice
-import com.willfp.eco.core.scheduling.EcoTask
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
@@ -25,6 +15,16 @@ import com.exanthiax.ecocrafting.recipegui.ui.utils.buildVariantSlot
 import com.exanthiax.ecocrafting.recipegui.ui.utils.buildWorkstationSlot
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.core.price.ConfiguredPrice
+import wiki.ecohub.core.scheduler.EcoTask
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.addCustomSlots
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.getSlotLocations
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.menu.Menu
+import wiki.ecohub.modules.menus.setMask
 
 private fun RecipeDisplayType.guiSection() = when (this) {
     RecipeDisplayType.CRAFTING      -> "craft-gui"

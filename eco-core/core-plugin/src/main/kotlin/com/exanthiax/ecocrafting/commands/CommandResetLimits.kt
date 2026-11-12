@@ -1,9 +1,9 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.willfp.eco.core.command.impl.Subcommand
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import com.willfp.eco.core.command.impl.Subcommand
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender

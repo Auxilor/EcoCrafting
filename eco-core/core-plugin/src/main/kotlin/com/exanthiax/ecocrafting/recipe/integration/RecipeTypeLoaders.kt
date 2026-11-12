@@ -1,19 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.integration
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-import com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-import com.willfp.eco.core.recipe.workstation.AnvilRecipe
-import com.willfp.eco.core.recipe.workstation.BrewingRecipe
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
-import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
-import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
-import com.willfp.eco.core.recipe.workstation.SmithingRecipe
-import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
@@ -22,7 +8,21 @@ import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.inventory.ItemStack
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.TestableItem
+import wiki.ecohub.modules.recipe.crafting.ShapedCraftingRecipe
+import wiki.ecohub.modules.recipe.crafting.ShapelessCraftingRecipe
+import wiki.ecohub.modules.recipe.workstation.AnvilRecipe
+import wiki.ecohub.modules.recipe.workstation.BrewingRecipe
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
+import wiki.ecohub.modules.recipe.workstation.GrindstoneRecipe
+import wiki.ecohub.modules.recipe.workstation.SmeltingRecipe
+import wiki.ecohub.modules.recipe.workstation.SmithingRecipe
+import wiki.ecohub.modules.recipe.workstation.StonecuttingRecipe
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.modules.recipe.workstation.SmeltingType as WSmeltingType
 
 // Per-workstation-type config parsing, split out of RecipeLoader itself (which owns the
 // shared parse*/register* helpers these call into) purely to keep each file under the

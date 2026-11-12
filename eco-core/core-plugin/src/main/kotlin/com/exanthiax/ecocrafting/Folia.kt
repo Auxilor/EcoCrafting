@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting
 
-import com.willfp.eco.core.Eco
-import com.willfp.eco.core.EcoPlugin
-import com.willfp.eco.core.Prerequisite
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
+import wiki.ecohub.core.Eco
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.core.plugin.startup.Prerequisite
 
 internal inline fun Entity.runOwned(plugin: EcoPlugin, crossinline block: () -> Unit) {
     if (Eco.get().isOwnedByCurrentRegion(this)) {

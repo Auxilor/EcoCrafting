@@ -1,8 +1,5 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipegui.ui.MARKER_CONFIG_KEY
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeGUI
@@ -10,6 +7,9 @@ import com.exanthiax.ecocrafting.recipegui.ui.WORKSTATION_MARKERS
 import com.exanthiax.ecocrafting.recipegui.ui.WorkstationMarkerState
 import com.exanthiax.ecocrafting.recipegui.ui.workstationMarkerState
 import org.bukkit.entity.Player
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.slot.Slot
 
 fun RecipeGUIContext.buildWorkstationSlot(
     marker: Char,

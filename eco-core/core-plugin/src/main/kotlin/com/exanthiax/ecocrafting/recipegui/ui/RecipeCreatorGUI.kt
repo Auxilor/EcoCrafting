@@ -1,10 +1,5 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
-import com.willfp.eco.core.gui.menu.MenuBuilder
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipegui.integration.RecipeCreatorConfigWriter
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
@@ -13,12 +8,17 @@ import com.exanthiax.ecocrafting.recipegui.ui.wizard.openConfirmPreview
 import com.exanthiax.ecocrafting.recipegui.ui.wizard.openIngredientSetup
 import com.exanthiax.ecocrafting.recipegui.ui.wizard.openTypeSelect
 import com.exanthiax.ecocrafting.runOnGlobalRegion
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Material
 import org.bukkit.Registry
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.menu.MenuBuilder
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.formatEco
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 // Entry point + shared session state for the in-game recipe-creation wizard. Each screen
 // (type-select, ingredient-setup, output-setup, options, prompts) lives in its own file

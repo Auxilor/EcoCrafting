@@ -1,17 +1,17 @@
 package com.exanthiax.ecocrafting.recipegui.integration
 
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import com.exanthiax.ecocrafting.limit.model.normaliseLimit
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
-import java.io.File
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import java.io.File
 
 // Uses eco's own lookup serialization so items (not just their base Material) round-trip
 // through RecipeLoader.parseIngredient/parseOutputItem. A registered custom item is written

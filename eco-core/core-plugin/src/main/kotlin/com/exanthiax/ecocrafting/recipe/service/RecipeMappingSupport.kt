@@ -1,9 +1,9 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.parts.GroupedTestableItems
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.lookup.GroupedTestableItems
+import wiki.ecohub.game.item.lookup.TestableItem
 
 // Small helpers shared by every "external recipe -> ResolvedRecipe" mapping (eco's own
 // CraftingRecipe system, eco's WorkstationRecipes, and plain Bukkit recipes) - split out

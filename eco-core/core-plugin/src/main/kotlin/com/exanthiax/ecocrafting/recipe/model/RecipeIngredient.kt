@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.recipe.model
 
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.recipe.parts.MaterialTestableItem
-import com.willfp.eco.core.recipe.parts.TestableStack
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import wiki.ecohub.game.item.lookup.MaterialTestableItem
+import wiki.ecohub.game.item.lookup.TestableItem
+import wiki.ecohub.game.item.lookup.TestableStack
 
 data class RecipeIngredient(
     val displayItem: ItemStack,

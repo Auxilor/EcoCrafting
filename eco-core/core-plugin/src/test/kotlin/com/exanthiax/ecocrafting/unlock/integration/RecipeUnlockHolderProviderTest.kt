@@ -5,10 +5,6 @@ import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
-import com.willfp.libreforge.conditions.ConditionBlock
-import com.willfp.libreforge.conditions.ConditionList
-import com.willfp.libreforge.effects.EffectList
-import com.willfp.libreforge.toDispatcher
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.NamespacedKey
@@ -19,6 +15,10 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.rules.condition.ConditionBlock
+import wiki.ecohub.rules.condition.ConditionList
+import wiki.ecohub.rules.effect.EffectList
 import java.util.logging.Logger
 
 class RecipeUnlockHolderProviderTest {

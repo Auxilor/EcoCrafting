@@ -1,19 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.integration
 
-import com.willfp.eco.core.FoliaSupport
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.price.ConfiguredPrice
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.recipe.parts.GroupedTestableItems
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.exanthiax.ecocrafting.BuildConfig
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
@@ -33,7 +19,21 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.AbstractVillager
 import org.bukkit.inventory.ItemStack
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.ViolationContext
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.core.plugin.startup.FoliaSupport
+import wiki.ecohub.core.price.ConfiguredPrice
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import wiki.ecohub.game.item.lookup.GroupedTestableItems
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.modules.recipe.workstation.SmeltingType as WSmeltingType
 
 class RecipeLoader(
     internal val plugin: EcoCraftingPlugin,
