@@ -1,55 +1,31 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
 import com.exanthiax.ecocrafting.category.service.CategoryService
 import com.exanthiax.ecocrafting.category.ui.CategoryCategoryGUI
 import com.exanthiax.ecocrafting.category.ui.ItemCategoryGUI
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import com.exanthiax.ecocrafting.runOwned
-import com.willfp.eco.core.command.impl.Subcommand
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import wiki.ecohub.core.command.CommandBuilder
+import wiki.ecohub.core.command.CommandContext
 
-class CommandOpen(
-    private val plugin: EcoCraftingPlugin,
-    private val categoryLoader: CategoryLoader,
-    private val categoryService: CategoryService,
-    private val guiServices: RecipeGuiServices
-) : Subcommand(
-    plugin,
-    "open",
-    "ecocrafting.command.open",
-    false
+internal fun CommandBuilder<CommandSender>.openCommand(
+    categoryLoader: CategoryLoader,
+    categoryService: CategoryService,
+    guiServices: RecipeGuiServices
+) = subcommand(
+    name = "open",
+    permission = "ecocrafting.command.open"
 ) {
-    override fun onExecute(sender: CommandSender, args: List<String>) {
-        if (sender !is Player && args.size < 2) {
-            sender.sendMessage(plugin.langYml.getMessage("not-player"))
-            return
-        }
+    executes {
+        checkOpenTarget()
 
-        if (args.size >= 2 && !sender.hasPermission("ecocrafting.open.others")) {
-            sender.sendMessage(plugin.langYml.getMessage("no-permission"))
-            return
-        }
-
-        val menuString = args.firstOrNull() ?: run {
-            sender.sendMessage(plugin.langYml.getMessage("must-specify-category"))
-            return
-        }
-
-        val category = categoryLoader.getByID(menuString) ?: run {
-            sender.sendMessage(plugin.langYml.getMessage("invalid-category"))
-            return
-        }
-
-        val targetString = args.getOrElse(1) { sender.name }
-
-        val target = Bukkit.getPlayer(targetString) ?: run {
-            sender.sendMessage(plugin.langYml.getMessage("invalid-target"))
-            return
-        }
+        val menuString = argument(0, "must-specify-category")
+        val category = categoryLoader.getByID(menuString) ?: fail("invalid-category")
+        val target = Bukkit.getPlayer(args.getOrElse(1) { sender.name }) ?: fail("invalid-target")
 
         val gui = if (category.type == "items") {
             ItemCategoryGUI(category.config.getSubsection("gui"), category, categoryService, guiServices)
@@ -65,11 +41,24 @@ class CommandOpen(
         target.runOwned(plugin) { gui.open(target, 1, null) }
     }
 
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return when (args.size) {
+    completes {
+        when (args.size) {
             1 -> categoryLoader.values().map { it.id }
-            2 -> Bukkit.getOnlinePlayers().map { it.name }
+            2 -> playerNames()
             else -> emptyList()
         }
+    }
+}
+
+/**
+ * Console must name a target, and opening for someone else needs `ecocrafting.open.others`.
+ */
+internal fun CommandContext<CommandSender>.checkOpenTarget() {
+    if (sender !is Player && args.size < 2) {
+        fail("not-player")
+    }
+
+    if (args.size >= 2 && !sender.hasPermission("ecocrafting.open.others")) {
+        fail("no-permission")
     }
 }

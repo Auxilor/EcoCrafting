@@ -5,17 +5,16 @@ import com.exanthiax.ecocrafting.api.EcoCraftingApiImpl
 import com.exanthiax.ecocrafting.category.integration.CategoriesManagerImpl
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
 import com.exanthiax.ecocrafting.category.service.CategoryService
-import com.exanthiax.ecocrafting.commands.CommandCancel
-import com.exanthiax.ecocrafting.commands.CommandConfirm
-import com.exanthiax.ecocrafting.commands.CommandCreate
-import com.exanthiax.ecocrafting.commands.CommandEcoCrafting
-import com.exanthiax.ecocrafting.commands.CommandEdit
-import com.exanthiax.ecocrafting.commands.CommandLock
-import com.exanthiax.ecocrafting.commands.CommandOpen
-import com.exanthiax.ecocrafting.commands.CommandOpenTrade
-import com.exanthiax.ecocrafting.commands.CommandReload
-import com.exanthiax.ecocrafting.commands.CommandResetLimits
-import com.exanthiax.ecocrafting.commands.CommandUnlock
+import com.exanthiax.ecocrafting.commands.cancelCommand
+import com.exanthiax.ecocrafting.commands.confirmCommand
+import com.exanthiax.ecocrafting.commands.createCommand
+import com.exanthiax.ecocrafting.commands.ecoCraftingCommand
+import com.exanthiax.ecocrafting.commands.editCommand
+import com.exanthiax.ecocrafting.commands.openCommand
+import com.exanthiax.ecocrafting.commands.openTradeCommand
+import com.exanthiax.ecocrafting.commands.recipeAccessCommand
+import com.exanthiax.ecocrafting.commands.reloadCommand
+import com.exanthiax.ecocrafting.commands.resetLimitsCommand
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
 import com.exanthiax.ecocrafting.crafting.integration.BrewingListener
 import com.exanthiax.ecocrafting.crafting.integration.CrafterBlockListener
@@ -164,24 +163,22 @@ class EcoCraftingPlugin : LibreforgePlugin() {
 
     override fun loadPluginCommands(): List<PluginCommand> {
         return listOf(
-            CommandEcoCrafting(
-                this,
-                categoryLoader,
-                categoryService,
-                guiServices,
-                listOf(
-                    CommandReload(this, recipeService),
-                    CommandOpen(this, categoryLoader, categoryService, guiServices),
-                    CommandOpenTrade(this, recipeService, tradeMerchantFactory),
-                    CommandCreate(this, recipeCreatorGUI),
-                    CommandEdit(this, recipeCreatorGUI),
-                    CommandUnlock(this, recipeService, unlockService),
-                    CommandLock(this, recipeService, unlockService),
-                    CommandResetLimits(this, recipeService, craftLimitService),
-                    CommandConfirm(this, recipeCreatorGUI),
-                    CommandCancel(this, recipeCreatorGUI)
-                )
-            )
+            ecoCraftingCommand(categoryLoader, categoryService, guiServices) {
+                reloadCommand(recipeService)
+                openCommand(categoryLoader, categoryService, guiServices)
+                openTradeCommand(recipeService, tradeMerchantFactory)
+                createCommand(recipeCreatorGUI)
+                editCommand(recipeCreatorGUI)
+                recipeAccessCommand(name = "unlock", done = "Unlocked", recipeService = recipeService) { player, key ->
+                    unlockService.unlock(player, key)
+                }
+                recipeAccessCommand(name = "lock", done = "Locked", recipeService = recipeService) { player, key ->
+                    unlockService.lock(player, key)
+                }
+                resetLimitsCommand(recipeService, craftLimitService)
+                confirmCommand(recipeCreatorGUI)
+                cancelCommand(recipeCreatorGUI)
+            }
         )
     }
 
