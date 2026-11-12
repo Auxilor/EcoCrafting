@@ -569,7 +569,7 @@
     <ID>TooGenericExceptionCaught:ShopIntegrationService.kt:ShopIntegrationService$e: Exception</ID>
     <ID>TooManyFunctions:CraftLimitService.kt:CraftLimitService : LimitManager</ID>
     <ID>TooManyFunctions:OptionsPrompts.kt:com.exanthiax.ecocrafting.recipegui.ui.wizard.OptionsPrompts.kt</ID>
-    <ID>TooManyFunctions:RecipeLoader.kt:RecipeLoader : ConfigCategory</ID>
+    <ID>TooManyFunctions:RecipeLoader.kt:RecipeLoader : NativeConfigCategory</ID>
     <ID>TooManyFunctions:RecipeResolverService.kt:RecipeResolverService</ID>
     <ID>TooManyFunctions:RecipeService.kt:RecipeService : RecipesManager</ID>
     <ID>TooManyFunctions:RecipeTypeLoaders.kt:com.exanthiax.ecocrafting.recipe.integration.RecipeTypeLoaders.kt</ID>

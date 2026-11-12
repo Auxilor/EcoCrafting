@@ -50,12 +50,12 @@ import com.exanthiax.ecocrafting.trade.service.TradeSessionService
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockHolderProvider
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockListener
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
-import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.event.Listener
 import org.bukkit.plugin.ServicePriority
 import wiki.ecohub.config.ViolationContext
 import wiki.ecohub.config.category.NativeConfigCategory
 import wiki.ecohub.config.config
+import wiki.ecohub.core.command.EcoCommand
 import wiki.ecohub.core.plugin.EcoPlugin
 import wiki.ecohub.provider.metrics.EcoMetricsChart
 import wiki.ecohub.rules.condition.Conditions
@@ -64,7 +64,7 @@ import wiki.ecohub.rules.filter.Filters
 import wiki.ecohub.rules.holder.registerHolderProvider
 import wiki.ecohub.rules.trigger.Triggers
 
-class EcoCraftingPlugin : LibreforgePlugin() {
+class EcoCraftingPlugin : EcoPlugin() {
     private val dataKeys = PlayerDataKeys(this)
 
     private val recipeService = RecipeService(this)
@@ -128,6 +128,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         Filters.register(FilterWorkstation)
         Filters.register(FilterRecipe)
 
+        brewingListener.registerBrewHook()
         shopIntegrationService.init()
         registerCraftLimitPlaceholders(this, recipeService, craftLimitService)
         unlockHolderProvider = RecipeUnlockHolderProvider(this, recipeService, unlockService) {
@@ -154,14 +155,14 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     override fun handleDisable() {
     }
 
-    override fun loadConfigCategories(): List<ConfigCategory> {
+    override fun loadConfigCategories(): List<NativeConfigCategory> {
         return listOf(
             categoryLoader,
             recipeLoader
         )
     }
 
-    override fun loadPluginCommands(): List<PluginCommand> {
+    override fun loadPluginCommands(): List<EcoCommand> {
         return listOf(
             ecoCraftingCommand(categoryLoader, categoryService, guiServices) {
                 reloadCommand(recipeService)

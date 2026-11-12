@@ -26,7 +26,7 @@ class BrewingListener(
     private val blockOwnerService: BlockOwnerService
 ) : Listener {
 
-    init {
+    fun registerBrewHook() {
         WorkstationRecipes.registerBrewCompletedHook { location, recipe, matchedSlots ->
             handleBrewCompleted(location, recipe, matchedSlots)
         }

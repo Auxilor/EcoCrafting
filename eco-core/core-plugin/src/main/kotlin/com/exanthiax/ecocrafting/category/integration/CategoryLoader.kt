@@ -16,12 +16,12 @@ class CategoryLoader(
 ) : RegistrableCategory<RecipeCategory>("category", "categories") {
     private var pendingPostReload: EcoTask? = null
 
-    override fun clear(plugin: LibreforgePlugin) {
+    override fun clear(plugin: EcoPlugin) {
         registry.clear()
         resolverService.clearCache()
     }
 
-    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+    override fun acceptConfig(plugin: EcoPlugin, id: String, config: Config) {
         if (getByID(id) != null) {
             plugin.logger.severe("Duplicate category id '$id' - ignoring the duplicate; category ids must be unique.")
             return
@@ -29,7 +29,7 @@ class CategoryLoader(
         registry.register(RecipeCategory(id, config))
     }
 
-    override fun afterReload(plugin: LibreforgePlugin) {
+    override fun afterReload(plugin: EcoPlugin) {
         vanillaRecipeScanner.populate(values().toList())
         pendingPostReload?.cancel()
         pendingPostReload = plugin.scheduler.global().run {
@@ -39,7 +39,7 @@ class CategoryLoader(
         }
     }
 
-    private fun validateCategories(plugin: LibreforgePlugin, categories: List<RecipeCategory>) {
+    private fun validateCategories(plugin: EcoPlugin, categories: List<RecipeCategory>) {
         for (category in categories) {
             for (stack in category.items) {
                 if (resolverService.resolve(stack.item.item) == null && stack.isListedDirectly()) {

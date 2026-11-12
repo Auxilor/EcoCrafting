@@ -40,9 +40,9 @@ class RecipeLoader(
     internal val recipeService: RecipeService,
     private val capEnforcer: RecipeCapEnforcer,
     private val categoryLoader: CategoryLoader
-) : ConfigCategory("recipe", "recipes") {
+) : NativeConfigCategory("recipes", "recipe") {
 
-    override fun clear(plugin: LibreforgePlugin) {
+    override fun clear(plugin: EcoPlugin) {
         // Only ours: the workstation registry is shared with every other plugin that
         // uses it, so clearing all of it would drop their recipes until they happened
         // to reload too.
@@ -51,7 +51,7 @@ class RecipeLoader(
         capEnforcer.clear()
     }
 
-    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+    override fun acceptConfig(plugin: EcoPlugin, id: String, config: Config) {
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
 
@@ -83,7 +83,7 @@ class RecipeLoader(
         }
     }
 
-    override fun afterReload(plugin: LibreforgePlugin) {
+    override fun afterReload(plugin: EcoPlugin) {
         if (plugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
         recipeService.allKeys().forEach { key ->
             val categoryId = recipeService.getMeta(key)?.categoryId ?: return@forEach
