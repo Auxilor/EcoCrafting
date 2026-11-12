@@ -7,12 +7,10 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("com.gradleup.shadow") version "9.3.1"
-    id("com.willfp.libreforge-gradle-plugin") version "2.0.1"
 }
 
 group = "com.exanthiax"
 version = findProperty("version")!!
-val libreforgeVersion = findProperty("libreforge-version")
 val ecoApiVersion = findProperty("eco-api-version")
 val ecoVersion = findProperty("eco-version")
 
@@ -64,7 +62,7 @@ publishing {
 
 afterEvaluate {
     publishing.publications.named<MavenPublication>("private") {
-        artifact(tasks.named("libreforgeJar"))
+        artifact(tasks.named("shadowJar"))
     }
 }
 
@@ -98,7 +96,7 @@ allprojects {
 
     dependencies {
         compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-        compileOnly("com.willfp:eco:$ecoVersion")
+        compileOnly("wiki.ecohub:eco:$ecoVersion")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
         compileOnly("com.willfp:EcoShop:2.5.0")
@@ -107,11 +105,9 @@ allprojects {
     tasks {
         shadowJar {
             exclude("META-INF/**")
-            relocate("com.willfp.libreforge.loader", "com.exanthiax.ecocrafting.libreforge.loader")
-            relocate("kotlin", "com.willfp.eco.libs.kotlin")
-            relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
-            relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")
-            relocate("kotlin.reflect", "com.willfp.eco.libs.kotlin.reflect")
+            relocate("kotlin", "wiki.ecohub.libs.kotlin") {
+                exclude("kotlin.kotlin_builtins")
+            }
         }
 
         withType<KotlinJvmCompile>().configureEach {
@@ -130,7 +126,6 @@ allprojects {
             filesMatching(listOf("**plugin.yml", "**eco.yml")) {
                 expand(
                     "version" to project.version,
-                    "libreforgeVersion" to libreforgeVersion!!,
                     "ecoApiVersion" to ecoApiVersion!!,
                     "pluginName" to rootProject.name
                 )
