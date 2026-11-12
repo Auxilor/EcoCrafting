@@ -46,7 +46,7 @@ class CategoryCategoryGUI(
         val pattern = config.getStrings("mask.pattern")
 
         val builtMenu = menu(pattern.size) {
-            title = config.getFormattedString("title")
+            setTitle(config.getFormattedString("title"))
 
             maxPages(maxPage)
             // eco's defaultPage(Int) delegates to maxPages(...) instead of setting the
@@ -95,7 +95,11 @@ class CategoryCategoryGUI(
                     for (category in positionedCategories) {
                         val position = category.guiPosition!!
                         val icon = category.icon?.getItemStack() ?: continue
-                        setSlot(position.row, position.column, slot(icon, category, configSound(guiServices.plugin, "slot-click")))
+                        setSlot(
+                            row = position.row,
+                            column = position.column,
+                            slot = slot(icon, category, configSound(guiServices.plugin, "slot-click"))
+                        )
                     }
                 }
             }

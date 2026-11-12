@@ -41,7 +41,7 @@ class ItemCategoryGUI(
         val maxPages = getMaxPages(items.size, perPage).coerceAtLeast(1)
 
         val builtMenu = menu(pattern.size) {
-            title = config.getFormattedString("title")
+            setTitle(config.getFormattedString("title"))
 
             maxPages(maxPages)
             // eco's defaultPage(Int) delegates to maxPages(...) instead of setting the
@@ -85,7 +85,15 @@ class ItemCategoryGUI(
                         line.toCharArray().forEachIndexed { colIndex, character ->
                             if (character.equals('i', ignoreCase = true)) {
                                 if (itemIndex < items.size) {
-                                    setSlot(rowIndex + 1, colIndex + 1, slot(player, items[itemIndex], configSound(guiServices.plugin, "slot-click")))
+                                    setSlot(
+                                        row = rowIndex + 1,
+                                        column = colIndex + 1,
+                                        slot = slot(
+                                            player,
+                                            items[itemIndex],
+                                            configSound(guiServices.plugin, "slot-click")
+                                        )
+                                    )
                                 }
                                 itemIndex++
                             }

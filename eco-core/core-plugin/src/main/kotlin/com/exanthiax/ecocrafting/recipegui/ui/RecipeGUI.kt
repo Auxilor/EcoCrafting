@@ -103,7 +103,7 @@ class RecipeGUI(
         var refreshTask: EcoTask? = null
 
         val builtMenu = menu(pattern.size) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             var ingredientIndex = 0
             pattern.forEachIndexed { rowIndex, line ->
@@ -119,9 +119,9 @@ class RecipeGUI(
                         }
                         marker.equals('o', ignoreCase = true) ->
                             setSlot(
-                                row,
-                                col,
-                                context.buildIngredientSlot(
+                                row = row,
+                                column = col,
+                                slot = context.buildIngredientSlot(
                                     listOf(recipe.output),
                                     isIngredient = false,
                                     lockedLore = outputLockedLore + priceLore + limitLore
@@ -130,7 +130,11 @@ class RecipeGUI(
                         marker.equals('u', ignoreCase = true) ->
                             context.buildFuelSlot()?.let { setSlot(row, col, it) }
                         WORKSTATION_MARKERS.containsKey(marker) ->
-                            setSlot(row, col, context.buildWorkstationSlot(marker, currentType, currentTypes))
+                            setSlot(
+                                row = row,
+                                column = col,
+                                slot = context.buildWorkstationSlot(marker, currentType, currentTypes)
+                            )
                     }
                 }
             }
@@ -152,7 +156,11 @@ class RecipeGUI(
                 context.config.getBool("quick-craft-enabled")
             if (context.config.getSubsectionOrNull("buttons.quick-craft") != null && quickCraftEnabled) {
                 for (location in context.config.getSlotLocations("buttons.quick-craft")) {
-                    addComponent(location.row, location.column, context.buildQuickCraftSlot(player, recipe))
+                    addComponent(
+                        row = location.row,
+                        column = location.column,
+                        component = context.buildQuickCraftSlot(player, recipe)
+                    )
                 }
             }
 
@@ -161,7 +169,11 @@ class RecipeGUI(
                 ?.let { indicatorConfig ->
                     val state = if (effectiveAlternatives.any { it.displayType == RecipeDisplayType.CRAFTER }) "active" else "inactive"
                     for (location in indicatorConfig.getSlotLocations()) {
-                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                        setSlot(
+                            row = location.row,
+                            column = location.column,
+                            slot = context.buildIndicatorSlot(indicatorConfig, state)
+                        )
                     }
                 }
 
@@ -170,19 +182,23 @@ class RecipeGUI(
                 ?.let { indicatorConfig ->
                     val state = if (recipe.shapeless) "active" else "inactive"
                     for (location in indicatorConfig.getSlotLocations()) {
-                        setSlot(location.row, location.column, context.buildIndicatorSlot(indicatorConfig, state))
+                        setSlot(
+                            row = location.row,
+                            column = location.column,
+                            slot = context.buildIndicatorSlot(indicatorConfig, state)
+                        )
                     }
                 }
 
             if (effectiveAlternatives.size > 1) {
                 if (context.config.getSubsectionOrNull("buttons.prev-variant") != null) {
                     for (location in context.config.getSlotLocations("buttons.prev-variant")) {
-                        setSlot(location.row, location.column, context.buildVariantSlot(-1))
+                        setSlot(row = location.row, column = location.column, slot = context.buildVariantSlot(-1))
                     }
                 }
                 if (context.config.getSubsectionOrNull("buttons.next-variant") != null) {
                     for (location in context.config.getSlotLocations("buttons.next-variant")) {
-                        setSlot(location.row, location.column, context.buildVariantSlot(+1))
+                        setSlot(row = location.row, column = location.column, slot = context.buildVariantSlot(+1))
                     }
                 }
             }

@@ -54,16 +54,16 @@ internal fun RecipeCreatorGUI.openIngredientSetup(
     val slotLayout = ingredientSlotLayout(typeKey)
 
     val builtMenu = menu(6) {
-        title = "&8New Recipe - Ingredients"
+        setTitle("&8New Recipe - Ingredients")
 
         allowChangingHeldItem()
 
         slotLayout.forEachIndexed { index, (row, col) ->
             val slotBuilder = initialParts[index]?.let { Slot.builder(it) } ?: Slot.builder()
-            setSlot(row, col, slotBuilder.setCaptive().build())
+            setSlot(row = row, column = col, slot = slotBuilder.setCaptive().build())
         }
 
-        setSlot(6, 5, Slot.builder(
+        setSlot(row = 6, column = 5, slot = Slot.builder(
             ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →".formatEco()).build()
         ).onLeftClick { event, _ ->
             val collectedParts = mutableMapOf<Int, ItemStack>()

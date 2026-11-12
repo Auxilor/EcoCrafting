@@ -26,16 +26,16 @@ internal fun RecipeCreatorGUI.openOutputSetup(
     val backSlot = 6 to 3
 
     val builtMenu = menu(6) {
-        title = "&8New Recipe - Output"
+        setTitle("&8New Recipe - Output")
 
         allowChangingHeldItem()
 
         setSlot(
-            outputSlot.first, outputSlot.second,
-            (initialOutput?.let { Slot.builder(it) } ?: Slot.builder()).setCaptive().build()
+            row = outputSlot.first, column = outputSlot.second,
+            slot = (initialOutput?.let { Slot.builder(it) } ?: Slot.builder()).setCaptive().build()
         )
 
-        setSlot(backSlot.first, backSlot.second, Slot.builder(
+        setSlot(row = backSlot.first, column = backSlot.second, slot = Slot.builder(
             ItemStackBuilder(Material.RED_DYE).setDisplayName("&c← Back".formatEco()).build()
         ).onLeftClick { event, _ ->
             val outputRawSlot = (outputSlot.first - 1) * 9 + (outputSlot.second - 1)
@@ -46,7 +46,7 @@ internal fun RecipeCreatorGUI.openOutputSetup(
             )
         }.build())
 
-        setSlot(6, 5, Slot.builder(
+        setSlot(row = 6, column = 5, slot = Slot.builder(
             ItemStackBuilder(Material.LIME_DYE).setDisplayName("&aNext →".formatEco()).build()
         ).onLeftClick { event, _ ->
             val outputRawSlot = (outputSlot.first - 1) * 9 + (outputSlot.second - 1)

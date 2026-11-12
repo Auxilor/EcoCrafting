@@ -8,13 +8,13 @@ import wiki.ecohub.modules.menus.slot.Slot
 
 internal fun RecipeCreatorGUI.openTypeSelect(player: Player) {
     val builtMenu = menu(2) {
-        title = "&8New Recipe - Choose Type"
+        setTitle("&8New Recipe - Choose Type")
 
         stationTypes.forEachIndexed { index, (typeKey, material) ->
             val row = (index / 9) + 1
             val col = (index % 9) + 1
             val displayName = "&a" + plugin.langYml.getString("workstation-names.$typeKey")
-            setSlot(row, col, Slot.builder(
+            setSlot(row = row, column = col, slot = Slot.builder(
                 ItemStackBuilder(material).setDisplayName(displayName).build()
             ).onLeftClick { _, _ ->
                 openIngredientSetup(player, typeKey)
