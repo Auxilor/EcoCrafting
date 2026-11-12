@@ -72,9 +72,9 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val baseAlternatives = base.allDisplayItems()
             val ingredientAlternatives = ingredient.allDisplayItems()
             listOf(
-                RecipeIngredient(base.item.clone(), IngredientMatcher.EcoPart(base),
+                RecipeIngredient(base.getItem().clone(), IngredientMatcher.EcoPart(base),
                     displayAlternatives = baseAlternatives.asDisplayAlternatives()),
-                RecipeIngredient(ingredient.item.clone(), IngredientMatcher.EcoPart(ingredient),
+                RecipeIngredient(ingredient.getItem().clone(), IngredientMatcher.EcoPart(ingredient),
                     displayAlternatives = ingredientAlternatives.asDisplayAlternatives())
             ) + List(7) { emptyIngredient() }
         }
@@ -82,26 +82,24 @@ internal fun WorkstationRecipe.toResolvedRecipe(air: ItemStack, meta: EcoCraftin
             val secondItem = item2
             val item1Alternatives = item1.allDisplayItems()
             listOfNotNull(
-                RecipeIngredient(item1Display?.clone() ?: item1.item.clone(), IngredientMatcher.EcoPart(item1),
+                RecipeIngredient(item1Display?.clone() ?: item1.getItem().clone(), IngredientMatcher.EcoPart(item1),
                     displayAlternatives = item1Alternatives.asDisplayAlternatives()),
-                if (secondItem != null) {
-                    val item2Alternatives = secondItem.allDisplayItems()
-                    RecipeIngredient(item2Display?.clone() ?: secondItem.item.clone(), IngredientMatcher.EcoPart(secondItem),
-                        displayAlternatives = item2Alternatives.asDisplayAlternatives())
-                } else null
+                secondItem?.let { second ->
+                    RecipeIngredient(item2Display?.clone() ?: second.getItem().clone(), IngredientMatcher.EcoPart(second),
+                        displayAlternatives = second.allDisplayItems().asDisplayAlternatives())
+                }
             ) + List(7) { emptyIngredient() }
         }
         is AnvilRecipe -> {
             val materialItem = material
             val baseAlternatives = base.allDisplayItems()
             listOfNotNull(
-                RecipeIngredient(baseDisplay?.clone() ?: base.item.clone(), IngredientMatcher.EcoPart(base),
+                RecipeIngredient(baseDisplay?.clone() ?: base.getItem().clone(), IngredientMatcher.EcoPart(base),
                     displayAlternatives = baseAlternatives.asDisplayAlternatives()),
-                if (materialItem != null) {
-                    val materialAlternatives = materialItem.allDisplayItems()
-                    RecipeIngredient(materialDisplay?.clone() ?: materialItem.item.clone(), IngredientMatcher.EcoPart(materialItem),
-                        displayAlternatives = materialAlternatives.asDisplayAlternatives())
-                } else null
+                materialItem?.let { material ->
+                    RecipeIngredient(materialDisplay?.clone() ?: material.getItem().clone(), IngredientMatcher.EcoPart(material),
+                        displayAlternatives = material.allDisplayItems().asDisplayAlternatives())
+                }
             ) + List(7) { emptyIngredient() }
         }
         is VillagerRecipe -> {

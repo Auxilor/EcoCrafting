@@ -19,7 +19,7 @@ class VanillaRecipeScanner {
         val vanilla = vanillaOutputs
 
         for (category in wantsVanilla) {
-            val configuredMaterials = category.items.map { it.item.item.type }.toSet()
+            val configuredMaterials = category.items.map { it.item.getItem().type }.toSet()
             category.setVanillaItems(
                 vanilla.filter { it.type !in configuredMaterials }
             )

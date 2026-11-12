@@ -1,11 +1,11 @@
 package com.exanthiax.ecocrafting.libreforge
 
-import com.willfp.eco.core.blocks.matches
 import wiki.ecohub.config.ArgType
 import wiki.ecohub.config.Config
 import wiki.ecohub.config.ViolationContext
 import wiki.ecohub.game.block.Blocks
 import wiki.ecohub.game.block.lookup.TestableBlock
+import wiki.ecohub.game.block.matches
 import wiki.ecohub.rules.filter.Filter
 import wiki.ecohub.rules.trigger.TriggerData
 import wiki.ecohub.ui.text.containsIgnoreCase

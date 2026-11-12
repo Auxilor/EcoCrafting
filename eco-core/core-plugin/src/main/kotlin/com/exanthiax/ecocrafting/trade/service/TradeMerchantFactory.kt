@@ -51,15 +51,14 @@ class TradeMerchantFactory(
 
     private fun buildMerchantRecipe(recipe: VillagerRecipe, meta: EcoCraftingMeta): MerchantRecipe? {
         val result = recipe.output?.clone() ?: return null
-        val input1 = (recipe.input1Display ?: recipe.input1.item)?.clone() ?: return null
+        val input1 = (recipe.input1Display ?: recipe.input1.getItem()).clone()
 
         // uses = 0, no experience reward, no price multiplier - there's no villager to level up
         // or to apply demand-based pricing.
         val merchantRecipe = MerchantRecipe(result, 0, resolveMaxUses(meta.maxUses), false, 0, 0f)
         merchantRecipe.addIngredient(input1)
         recipe.input2?.let { secondInput ->
-            val input2 = (recipe.input2Display ?: secondInput.item)?.clone() ?: return@let
-            merchantRecipe.addIngredient(input2)
+            merchantRecipe.addIngredient((recipe.input2Display ?: secondInput.getItem()).clone())
         }
         return merchantRecipe
     }

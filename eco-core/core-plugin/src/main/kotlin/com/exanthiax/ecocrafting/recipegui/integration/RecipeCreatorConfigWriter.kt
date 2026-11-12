@@ -95,7 +95,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         fun lookupOrNull(raw: String?): ItemStack? {
             if (raw.isNullOrBlank() || raw == "air" || raw == "\"\"") return null
             val testable = Items.lookup(raw)
-            return if (testable is EmptyTestableItem) null else testable.item.clone()
+            return if (testable is EmptyTestableItem) null else testable.getItem().clone()
         }
 
         val parts = mutableMapOf<Int, ItemStack>()

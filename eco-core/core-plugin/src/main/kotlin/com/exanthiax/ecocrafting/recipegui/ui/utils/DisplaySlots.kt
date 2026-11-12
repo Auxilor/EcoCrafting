@@ -1,7 +1,6 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeGUI
-import com.willfp.eco.core.gui.slot.functional.SlotProvider
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -9,6 +8,7 @@ import wiki.ecohub.config.Config
 import wiki.ecohub.game.item.Items
 import wiki.ecohub.game.item.builder.ItemStackBuilder
 import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.modules.menus.slot.SlotProvider
 
 // Identity check for the "don't re-open the recipe already on screen" guard. Comparing
 // Material alone collapsed every custom item sharing a base material - all player_head
@@ -17,7 +17,7 @@ import wiki.ecohub.modules.menus.slot.Slot
 internal fun isSameItemAs(clicked: ItemStack, viewing: ItemStack): Boolean {
     val clickedCustom = Items.getCustomItem(clicked)
     val viewingCustom = Items.getCustomItem(viewing)
-    if (clickedCustom != null || viewingCustom != null) return clickedCustom?.key == viewingCustom?.key
+    if (clickedCustom != null || viewingCustom != null) return clickedCustom?.getKey() == viewingCustom?.getKey()
     return clicked.isSimilar(viewing)
 }
 

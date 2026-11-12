@@ -150,7 +150,7 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
             return@forEachIndexed
         }
         val outItem = withLore(
-            Items.lookup(outputConfig.getStringOrNull("item") ?: config.getString("output")).item,
+            Items.lookup(outputConfig.getStringOrNull("item") ?: config.getString("output")).getItem(),
             (if (outputConfig.has("lore")) outputConfig else config).getFormattedStrings("lore")
         )
         val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
@@ -168,7 +168,12 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
 internal fun RecipeLoader.loadBrewing(id: String, config: Config) {
     val base = parseIngredient(config.getStringOrNull("base") ?: "")
     val ingredient = parseIngredient(config.getString("ingredient"))
-    val recipe = BrewingRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem(), ingredient.matcher.toTestableItem())
+    val recipe = BrewingRecipe.builder(
+        key = key(id),
+        output = parseOutputItem(config),
+        base = base.matcher.toTestableItem(),
+        ingredient = ingredient.matcher.toTestableItem()
+    )
         .brewTime(config.getIntOrNull("brew-time") ?: 400)
         .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
@@ -208,7 +213,10 @@ internal fun RecipeLoader.loadVillager(id: String, config: Config) {
         .input1Display(input1.displayItem)
         .input2(input2?.matcher?.toTestableItem())
         .input2Display(input2?.displayItem)
-        .profession(parseVillagerProfession(config.getStringOrNull("profession"), Registry.VILLAGER_PROFESSION))
+        .profession(
+            parseVillagerProfession(config.getStringOrNull("profession"), Registry.VILLAGER_PROFESSION)
+                ?.run { key.toString() }
+        )
         .minLevel(config.getIntOrNull("min-level") ?: 0)
         .chance(parseVillagerChance(config.getStringOrNull("chance")))
         .wanderingTrader(config.getBool("wandering-trader"))

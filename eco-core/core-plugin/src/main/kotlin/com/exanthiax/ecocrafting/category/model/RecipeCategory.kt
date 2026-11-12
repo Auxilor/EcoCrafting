@@ -46,9 +46,7 @@ class RecipeCategory(
         runtimeItems += item
     }
 
-    fun allItemStacks(): List<ItemStack> {
-        return items.map { it.item.item } + vanillaItems + runtimeItems
-    }
+    fun allItemStacks(): List<ItemStack> = items.map { it.item.getItem() } + vanillaItems + runtimeItems
 
     fun extraItemStacks(): List<ItemStack> = vanillaItems + runtimeItems
 
@@ -100,7 +98,7 @@ class CategoryStack private constructor(
 
             // Eco custom tag fallback - enumerate via matches()
             val lookup = Items.lookup(itemString)
-            if (lookup is GroupedTestableItems) return lookup.children.toList()
+            if (lookup is GroupedTestableItems) return lookup.getChildren().toList()
             return Material.entries
                 .filter { !it.isAir && it.isItem && lookup.matches(ItemStack(it)) }
                 .map { Items.lookup(it.name.lowercase()) }

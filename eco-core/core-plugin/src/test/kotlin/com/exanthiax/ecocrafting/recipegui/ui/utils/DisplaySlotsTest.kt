@@ -18,7 +18,7 @@ class DisplaySlotsTest {
     private val flawed: ItemStack = mockk()
 
     private fun custom(id: String): CustomItem = mockk {
-        every { key } returns NamespacedKey("ecoitems", id)
+        every { getKey() } returns NamespacedKey("ecoitems", id)
     }
 
     @BeforeEach

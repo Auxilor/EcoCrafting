@@ -20,6 +20,7 @@ import wiki.ecohub.rules.condition.ConditionBlock
 import wiki.ecohub.rules.condition.ConditionList
 import wiki.ecohub.rules.effect.EffectList
 import java.util.logging.Logger
+import wiki.ecohub.game.block.toDispatcher as toBlockDispatcher
 
 class RecipeUnlockHolderProviderTest {
 
@@ -96,7 +97,7 @@ class RecipeUnlockHolderProviderTest {
         recipeService.register(key("first"), meta(metConditions()))
         locked += key("first")
 
-        assertTrue(provider.provide(mockk<Block>(relaxed = true).toDispatcher()).isEmpty())
+        assertTrue(provider.provide(mockk<Block>(relaxed = true).toBlockDispatcher()).isEmpty())
     }
 
     @Test

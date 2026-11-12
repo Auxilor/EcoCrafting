@@ -10,8 +10,8 @@ import wiki.ecohub.game.item.lookup.TestableItem
 // so none of those three mapping files need to depend on each other.
 
 internal fun TestableItem.allDisplayItems(): List<ItemStack> =
-    if (this is GroupedTestableItems && children.isNotEmpty()) children.map { it.item.clone() }
-    else listOf(item.clone())
+    if (this is GroupedTestableItems && getChildren().isNotEmpty()) getChildren().map { it.getItem().clone() }
+    else listOf(getItem().clone())
 
 internal fun List<RecipeIngredient>.normalizeToNine(air: ItemStack): List<RecipeIngredient> {
     if (size == 9) return this

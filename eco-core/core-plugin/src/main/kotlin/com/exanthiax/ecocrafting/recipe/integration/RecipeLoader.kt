@@ -118,7 +118,7 @@ class RecipeLoader(
     internal fun key(id: String) = NamespacedKey("ecocrafting", id.lowercase())
 
     internal fun parseOutputItem(config: Config): ItemStack =
-        withLore(Items.lookup(config.getString("output")).item, config.getFormattedStrings("lore"))
+        withLore(Items.lookup(config.getString("output")).getItem(), config.getFormattedStrings("lore"))
 
     internal fun withLore(item: ItemStack, lore: List<String>): ItemStack {
         if (lore.isNotEmpty()) {
@@ -137,10 +137,10 @@ class RecipeLoader(
         val testable = Items.lookup(lookup)
         if (testable is EmptyTestableItem)
             error("Cannot resolve item: $lookup")
-        val displayItems = if (testable is GroupedTestableItems && testable.children.isNotEmpty())
-            testable.children.map { it.item.clone() }
+        val displayItems = if (testable is GroupedTestableItems && testable.getChildren().isNotEmpty())
+            testable.getChildren().map { it.getItem().clone() }
         else
-            listOf(testable.item.clone())
+            listOf(testable.getItem().clone())
         return RecipeIngredient(
             displayItem = displayItems.first(),
             matcher = IngredientMatcher.EcoPart(testable),

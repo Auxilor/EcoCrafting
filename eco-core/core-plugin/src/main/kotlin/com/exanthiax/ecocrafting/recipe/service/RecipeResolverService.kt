@@ -88,7 +88,7 @@ class RecipeResolverService(
         // Registered eco custom items cache by their stable key; everything else caches by
         // (Material, meta-hash) so NBT/meta-variants of the same Material (potions, renamed
         // items, enchanted books, ...) don't collapse onto one shared cache entry.
-        val cacheKey: Any = Items.getCustomItem(clean)?.key
+        val cacheKey: Any = Items.getCustomItem(clean)?.getKey()
             ?: (clean.type to (if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0))
         synchronized(resolveCache) {
             if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]

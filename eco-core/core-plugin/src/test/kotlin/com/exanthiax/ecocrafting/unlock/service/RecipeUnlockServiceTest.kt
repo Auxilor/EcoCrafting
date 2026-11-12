@@ -23,21 +23,18 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import wiki.ecohub.core.Eco
 import wiki.ecohub.rules.condition.ConditionBlock
 import wiki.ecohub.rules.condition.ConditionList
 import java.util.logging.Logger
+import wiki.ecohub.core.plugin as ecoPlugin
 
 class RecipeUnlockServiceTest {
 
     companion object {
         @JvmStatic
         @BeforeAll
-        fun seedLibreforgePlugin() {
-            Class.forName("com.willfp.libreforge.LibreforgeSpigotPluginKt").getDeclaredField("plugin").apply {
-                isAccessible = true
-                set(null, mockk<LibreforgeSpigotPlugin>(relaxed = true))
-            }
+        fun seedEcoPlugin() {
+            ecoPlugin = mockk(relaxed = true)
         }
     }
 

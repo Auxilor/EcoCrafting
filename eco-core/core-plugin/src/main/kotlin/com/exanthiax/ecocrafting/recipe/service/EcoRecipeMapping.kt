@@ -20,11 +20,11 @@ import java.lang.reflect.Field
 
 internal fun findEcoRecipe(customItem: CustomItem, air: ItemStack, plugin: EcoCraftingPlugin): ResolvedRecipe? {
     val direct = listOf(
-        customItem.key,
-        NamespacedKey(customItem.key.namespace, customItem.key.key.removePrefix("set_"))
+        customItem.getKey(),
+        NamespacedKey(customItem.getKey().namespace, customItem.getKey().key.removePrefix("set_"))
     ).firstNotNullOfOrNull { Recipes.getRecipe(it) }
 
-    val recipe = direct ?: getEcoRecipes(plugin).firstOrNull { customItem.matches(it.output) }
+    val recipe = direct ?: getEcoRecipes(plugin).firstOrNull { customItem.matches(it.getOutput()) }
     return recipe?.toResolvedRecipe(air)
 }
 
@@ -49,7 +49,7 @@ private fun getRecipesBiMap(): BiMap<NamespacedKey, CraftingRecipe> {
 }
 
 internal fun CraftingRecipe.toResolvedRecipe(air: ItemStack): ResolvedRecipe {
-    val ingredients = parts.map { part ->
+    val ingredients = getParts().map { part ->
         if (part is EmptyTestableItem) {
             RecipeIngredient.empty(air)
         } else {
@@ -63,10 +63,10 @@ internal fun CraftingRecipe.toResolvedRecipe(air: ItemStack): ResolvedRecipe {
     }.normalizeToNine(air)
 
     return ResolvedRecipe(
-        key = key,
-        output = output.clone(),
+        key = getKey(),
+        output = getOutput().clone(),
         ingredients = ingredients,
-        permission = permission,
+        permission = getPermission(),
         source = RecipeSource.ECO,
         shapeless = this !is ShapedCraftingRecipe
     )

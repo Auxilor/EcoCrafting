@@ -42,8 +42,11 @@ class CategoryLoader(
     private fun validateCategories(plugin: EcoPlugin, categories: List<RecipeCategory>) {
         for (category in categories) {
             for (stack in category.items) {
-                if (resolverService.resolve(stack.item.item) == null && stack.isListedDirectly()) {
-                    plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
+                if (resolverService.resolve(stack.item.getItem()) == null && stack.isListedDirectly()) {
+                    plugin.logger.warning(
+                        "Invalid item '${stack.item.getItem().type.name}' in category '${category.id}': " +
+                            "no supported recipe"
+                    )
                 }
             }
             for (subId in category.categories) {
@@ -57,5 +60,5 @@ class CategoryLoader(
     private fun CategoryStack.isListedDirectly(): Boolean =
         parent.config.getSubsections("items")
             .map { it.getString("item") }
-            .any { !it.startsWith("#") && Items.lookup(it).matches(item.item) }
+            .any { !it.startsWith("#") && Items.lookup(it).matches(item.getItem()) }
 }

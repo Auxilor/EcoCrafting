@@ -16,6 +16,7 @@ import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import wiki.ecohub.core.platform.profile
 import wiki.ecohub.game.entity.player.profile
 
 const val LIMIT_BYPASS_PERMISSION = "ecocrafting.limit.bypass"

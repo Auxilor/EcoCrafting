@@ -77,4 +77,4 @@ fun TestableItem.requiredAmount(): Int = (this as? TestableStack)?.amount ?: 1
 // A TestableStack folds its size requirement into matches(), which is no use to a
 // caller that has to tell "wrong item" apart from "right item, not enough of it".
 fun TestableItem.matchesIgnoringAmount(stack: ItemStack?): Boolean =
-    (this as? TestableStack)?.handle?.matches(stack) ?: matches(stack)
+    (this as? TestableStack)?.run { handle.matches(stack) } ?: matches(stack)
