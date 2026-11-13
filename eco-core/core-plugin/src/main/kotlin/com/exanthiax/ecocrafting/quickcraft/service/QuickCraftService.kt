@@ -164,7 +164,7 @@ class QuickCraftService(
 
     private fun ItemStack.displayKey(): String {
         return if (hasItemMeta()) {
-            "${type.name}:${itemMeta.persistentDataContainer.hashCode()}:${itemMeta.displayName()}"
+            "${type.name}:${itemMeta.persistentDataContainer.hashCode()}:${itemMeta.displayName}"
         } else {
             type.name
         }

@@ -14,15 +14,20 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import wiki.ecohub.game.item.Items
 import java.io.File
+import wiki.ecohub.game.item.isEmptyStack
 
 class RecipeEditSaveTest {
 
     @TempDir
     lateinit var dataFolder: File
 
-    private val input: ItemStack = mockk { every { isEmpty } returns false }
+    init {
+        mockkStatic("wiki.ecohub.game.item.ItemStacksKt")
+    }
 
-    private val output: ItemStack = mockk { every { isEmpty } returns false }
+    private val input: ItemStack = mockk { every { isEmptyStack } returns false }
+
+    private val output: ItemStack = mockk { every { isEmptyStack } returns false }
 
     private fun pending(typeKey: String, id: String) = PendingRecipe(
         typeKey = typeKey,

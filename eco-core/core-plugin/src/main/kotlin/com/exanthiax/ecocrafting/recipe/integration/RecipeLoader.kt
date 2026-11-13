@@ -24,6 +24,7 @@ import wiki.ecohub.config.ViolationContext
 import wiki.ecohub.config.category.NativeConfigCategory
 import wiki.ecohub.core.plugin.EcoPlugin
 import wiki.ecohub.core.plugin.startup.FoliaSupport
+import wiki.ecohub.core.plugin.startup.Prerequisite
 import wiki.ecohub.core.price.ConfiguredPrice
 import wiki.ecohub.game.item.Items
 import wiki.ecohub.game.item.lookup.EmptyTestableItem
@@ -123,9 +124,13 @@ class RecipeLoader(
     internal fun withLore(item: ItemStack, lore: List<String>): ItemStack {
         if (lore.isNotEmpty()) {
             val meta = item.itemMeta ?: return item
-            meta.lore(lore.map {
-                LegacyComponentSerializer.legacySection().deserialize(it)
-            })
+            if (Prerequisite.HAS_PAPER.isMet) {
+                meta.lore(lore.map {
+                    LegacyComponentSerializer.legacySection().deserialize(it)
+                })
+            } else {
+                meta.lore = lore
+            }
             item.itemMeta = meta
         }
         return item

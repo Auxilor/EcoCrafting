@@ -16,11 +16,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import wiki.ecohub.game.item.Items
 import java.io.File
+import wiki.ecohub.game.item.isEmptyStack
 
 class RecipeCreatorConfigWriterTest {
 
+    init {
+        mockkStatic("wiki.ecohub.game.item.ItemStacksKt")
+    }
+
     private val item: ItemStack = mockk {
-        every { isEmpty } returns false
+        every { isEmptyStack } returns false
     }
 
     @BeforeEach
@@ -109,7 +114,7 @@ class RecipeCreatorConfigWriterTest {
 
     @Test
     fun `empty item serializes to air`() {
-        assertEquals("air", itemLookupString(mockk<ItemStack> { every { isEmpty } returns true }))
+        assertEquals("air", itemLookupString(mockk<ItemStack> { every { isEmptyStack } returns true }))
         assertEquals("air", itemLookupString(null))
     }
 }

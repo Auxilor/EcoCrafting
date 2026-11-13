@@ -4,21 +4,14 @@ import com.exanthiax.ecocrafting.quickcraft.service.MaterialCount
 import com.exanthiax.ecocrafting.recipegui.service.RecipeGuiServices
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.ItemMeta
+import wiki.ecohub.core.plugin.startup.Prerequisite
 
 fun MaterialCount.toLoreLine(player: Player, services: RecipeGuiServices): String {
     val plugin = services.plugin
     val meta = item.itemMeta
     val fallbackName = item.type.name.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() }
-    val itemName = when {
-        // Custom-item plugins (Nexo etc.) commonly set the item_name component rather than
-        // the legacy display-name NBT, so check it first or their names fall back to the
-        // base material here.
-        meta != null && meta.hasItemName() ->
-            LegacyComponentSerializer.legacySection().serialize(meta.itemName())
-        meta != null && meta.hasDisplayName() ->
-            meta.displayName()?.let { LegacyComponentSerializer.legacySection().serialize(it) } ?: fallbackName
-        else -> fallbackName
-    }
+    val itemName = meta?.legacyName() ?: fallbackName
     val langKey = if (has >= needs) "messages.material-sufficient" else "messages.material-missing"
     var line = plugin.langYml.getString(langKey)
         .replace("%has%", has.toString())
@@ -33,4 +26,23 @@ fun MaterialCount.toLoreLine(player: Player, services: RecipeGuiServices): Strin
         }
     }
     return line
+}
+
+/**
+ * Custom-item plugins (Nexo etc.) commonly set the item_name component rather than
+ * the legacy display-name NBT, so check it first or their names fall back to the
+ * base material here.
+ */
+internal fun ItemMeta.legacyName(): String? = when {
+    hasItemName() -> if (Prerequisite.HAS_PAPER.isMet) {
+        LegacyComponentSerializer.legacySection().serialize(itemName())
+    } else {
+        itemName
+    }
+    hasDisplayName() -> if (Prerequisite.HAS_PAPER.isMet) {
+        displayName()?.let { LegacyComponentSerializer.legacySection().serialize(it) }
+    } else {
+        displayName
+    }
+    else -> null
 }

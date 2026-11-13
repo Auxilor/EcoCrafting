@@ -1,7 +1,6 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeGUI
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import wiki.ecohub.config.Config
@@ -42,7 +41,7 @@ fun RecipeGUIContext.buildIngredientSlot(
         Slot.builder(buildDisplay(items.first()))
     } else {
         Slot.builder(SlotProvider { _, _ ->
-            val index = (Bukkit.getCurrentTick() / 20) % items.size
+            val index = (System.currentTimeMillis() / 1000 % items.size).toInt()
             buildDisplay(items[index])
         })
     }

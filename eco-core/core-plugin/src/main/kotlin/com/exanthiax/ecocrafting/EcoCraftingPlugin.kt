@@ -195,7 +195,8 @@ class EcoCraftingPlugin : EcoPlugin() {
             brewingListener,
             workbenchListener,
             tradeSessionService,
-            recipeCreatorChatListener
+            recipeCreatorChatListener,
+            recipeCreatorChatListener.chatListener()
         )
     }
 

@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
 import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.isEmptyStack
 import wiki.ecohub.game.item.lookup.EmptyTestableItem
 import java.io.File
 
@@ -39,7 +40,7 @@ internal fun parseLimitInput(input: String): Int? {
 }
 
 internal fun itemLookupString(item: ItemStack?): String {
-    if (item == null || item.isEmpty) return "air"
+    if (item == null || item.isEmptyStack) return "air"
     return Items.toExactLookupString(item)
 }
 

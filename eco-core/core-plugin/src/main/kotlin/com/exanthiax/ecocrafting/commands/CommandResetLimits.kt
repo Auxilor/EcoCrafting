@@ -4,9 +4,11 @@ import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import wiki.ecohub.core.command.CommandBuilder
 import wiki.ecohub.core.command.CommandContext
+import wiki.ecohub.core.plugin.startup.Prerequisite
 
 internal fun recipeIdArgument(raw: String): String = raw.removePrefix("ecocrafting:")
 
@@ -56,9 +58,16 @@ private fun CommandContext<CommandSender>.resetLimits(limitService: CraftLimitSe
             reply("limits-reset-all", "recipe" to recipeName)
         }
         else -> {
-            val target = Bukkit.getOfflinePlayerIfCached(args[0]) ?: fail("invalid-target")
+            val target = cachedOfflinePlayer(args[0]) ?: fail("invalid-target")
             limitService.resetPlayer(target, recipeKey)
             reply("limits-reset-player", "player" to (target.name ?: args[0]), "recipe" to recipeName)
         }
     }
 }
+
+private fun cachedOfflinePlayer(name: String): OfflinePlayer? =
+    if (Prerequisite.HAS_PAPER.isMet) {
+        Bukkit.getOfflinePlayerIfCached(name)
+    } else {
+        Bukkit.getOfflinePlayers().firstOrNull { it.name.equals(name, ignoreCase = true) }
+    }
