@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.unlock.integration
 
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
-import com.willfp.libreforge.Holder
-import com.willfp.libreforge.conditions.ConditionList
-import com.willfp.libreforge.effects.EffectList
 import org.bukkit.NamespacedKey
+import wiki.ecohub.rules.condition.ConditionList
+import wiki.ecohub.rules.effect.EffectList
+import wiki.ecohub.rules.holder.Holder
 
 class RecipeUnlockHolder(
     val recipeKey: NamespacedKey,

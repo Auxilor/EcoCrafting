@@ -1,17 +1,18 @@
 package com.exanthiax.ecocrafting.recipegui.integration
 
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import com.exanthiax.ecocrafting.limit.model.normaliseLimit
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
-import java.io.File
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.isEmptyStack
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import java.io.File
 
 // Uses eco's own lookup serialization so items (not just their base Material) round-trip
 // through RecipeLoader.parseIngredient/parseOutputItem. A registered custom item is written
@@ -39,7 +40,7 @@ internal fun parseLimitInput(input: String): Int? {
 }
 
 internal fun itemLookupString(item: ItemStack?): String {
-    if (item == null || item.isEmpty) return "air"
+    if (item == null || item.isEmptyStack) return "air"
     return Items.toExactLookupString(item)
 }
 
@@ -95,7 +96,7 @@ class RecipeCreatorConfigWriter(private val plugin: EcoCraftingPlugin) {
         fun lookupOrNull(raw: String?): ItemStack? {
             if (raw.isNullOrBlank() || raw == "air" || raw == "\"\"") return null
             val testable = Items.lookup(raw)
-            return if (testable is EmptyTestableItem) null else testable.item.clone()
+            return if (testable is EmptyTestableItem) null else testable.getItem().clone()
         }
 
         val parts = mutableMapOf<Int, ItemStack>()

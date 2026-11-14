@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
@@ -12,6 +10,8 @@ import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 // Resolves an ItemStack to whichever recipe produces it (eco's own registry, EcoCrafting's
 // workstation recipes, or a plain Bukkit recipe) and checks permission to craft it. The
@@ -88,7 +88,7 @@ class RecipeResolverService(
         // Registered eco custom items cache by their stable key; everything else caches by
         // (Material, meta-hash) so NBT/meta-variants of the same Material (potions, renamed
         // items, enchanted books, ...) don't collapse onto one shared cache entry.
-        val cacheKey: Any = Items.getCustomItem(clean)?.key
+        val cacheKey: Any = Items.getCustomItem(clean)?.getKey()
             ?: (clean.type to (if (clean.hasItemMeta()) clean.itemMeta.hashCode() else 0))
         synchronized(resolveCache) {
             if (resolveCache.containsKey(cacheKey)) return resolveCache[cacheKey]

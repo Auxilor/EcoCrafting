@@ -1,14 +1,13 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.gui.slot.functional.SlotProvider
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeGUI
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.modules.menus.slot.SlotProvider
 
 // Identity check for the "don't re-open the recipe already on screen" guard. Comparing
 // Material alone collapsed every custom item sharing a base material - all player_head
@@ -17,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 internal fun isSameItemAs(clicked: ItemStack, viewing: ItemStack): Boolean {
     val clickedCustom = Items.getCustomItem(clicked)
     val viewingCustom = Items.getCustomItem(viewing)
-    if (clickedCustom != null || viewingCustom != null) return clickedCustom?.key == viewingCustom?.key
+    if (clickedCustom != null || viewingCustom != null) return clickedCustom?.getKey() == viewingCustom?.getKey()
     return clicked.isSimilar(viewing)
 }
 
@@ -42,7 +41,7 @@ fun RecipeGUIContext.buildIngredientSlot(
         Slot.builder(buildDisplay(items.first()))
     } else {
         Slot.builder(SlotProvider { _, _ ->
-            val index = (Bukkit.getCurrentTick() / 20) % items.size
+            val index = (System.currentTimeMillis() / 1000 % items.size).toInt()
             buildDisplay(items[index])
         })
     }

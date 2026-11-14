@@ -1,12 +1,12 @@
 package com.exanthiax.ecocrafting.libreforge
 
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.libreforge.ArgType
-import com.willfp.libreforge.NoCompileData
-import com.willfp.libreforge.filters.Filter
-import com.willfp.libreforge.triggers.TriggerData
 import org.bukkit.NamespacedKey
+import wiki.ecohub.config.ArgType
+import wiki.ecohub.config.Config
+import wiki.ecohub.core.registry.NoCompileData
+import wiki.ecohub.rules.filter.Filter
+import wiki.ecohub.rules.trigger.TriggerData
 
 object FilterRecipe : Filter<NoCompileData, Collection<String>>("recipe") {
     override val description = "Matches when the crafted EcoCrafting recipe ID matches one of the given values."

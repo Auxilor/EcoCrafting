@@ -1,12 +1,12 @@
 package com.exanthiax.ecocrafting.recipegui.ui.wizard
 
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.recipegui.integration.parseLimitInput
 import com.exanthiax.ecocrafting.recipegui.service.WizardState
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.ui.text.formatEco
 
 // Chat-input prompts for the options screen's fields. Each one registers a one-shot
 // handler in RecipeCreatorGUI.awaitingInput, consumed by RecipeCreatorChatListener.

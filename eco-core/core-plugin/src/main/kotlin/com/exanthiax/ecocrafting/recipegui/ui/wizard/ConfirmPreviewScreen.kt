@@ -1,13 +1,13 @@
 package com.exanthiax.ecocrafting.recipegui.ui.wizard
 
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.formatEco
 
 internal fun RecipeCreatorGUI.openConfirmPreview(player: Player, pending: PendingRecipe) {
     val slotLayout = ingredientSlotLayout(pending.typeKey)
@@ -16,21 +16,21 @@ internal fun RecipeCreatorGUI.openConfirmPreview(player: Player, pending: Pendin
     val confirmSlot = 6 to 5
 
     val builtMenu = menu(6) {
-        title = "&8New Recipe - Confirm"
+        setTitle("&8New Recipe - Confirm")
 
         slotLayout.forEachIndexed { index, (row, col) ->
-            pending.parts[index]?.let { setSlot(row, col, Slot.builder(it.clone()).build()) }
+            pending.parts[index]?.let { setSlot(row = row, column = col, slot = Slot.builder(it.clone()).build()) }
         }
-        setSlot(outputSlot.first, outputSlot.second, Slot.builder(pending.output.clone()).build())
+        setSlot(row = outputSlot.first, column = outputSlot.second, slot = Slot.builder(pending.output.clone()).build())
 
-        setSlot(cancelSlot.first, cancelSlot.second, Slot.builder(
+        setSlot(row = cancelSlot.first, column = cancelSlot.second, slot = Slot.builder(
             ItemStackBuilder(Material.RED_WOOL).setDisplayName("&c✗ Cancel".formatEco()).build()
         ).onLeftClick { _, _ ->
             player.closeInventory()
             cancelSave(player)
         }.build())
 
-        setSlot(confirmSlot.first, confirmSlot.second, Slot.builder(
+        setSlot(row = confirmSlot.first, column = confirmSlot.second, slot = Slot.builder(
             ItemStackBuilder(Material.GREEN_WOOL).setDisplayName("&a✓ Confirm".formatEco()).build()
         ).onLeftClick { _, _ ->
             player.closeInventory()

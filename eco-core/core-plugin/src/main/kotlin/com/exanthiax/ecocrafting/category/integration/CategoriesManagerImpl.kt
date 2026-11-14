@@ -1,7 +1,7 @@
 package com.exanthiax.ecocrafting.category.integration
 
-import com.exanthiax.ecocrafting.api.category.Category
 import com.exanthiax.ecocrafting.api.category.CategoriesManager
+import com.exanthiax.ecocrafting.api.category.Category
 
 // Thin adapter so CategoryLoader (a RegistrableCategory<RecipeCategory>, which already
 // declares its own getByID(String): RecipeCategory?) doesn't need a return-type-clashing

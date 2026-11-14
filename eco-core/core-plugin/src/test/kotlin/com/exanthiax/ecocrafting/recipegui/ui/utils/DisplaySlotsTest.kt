@@ -1,16 +1,16 @@
 package com.exanthiax.ecocrafting.recipegui.ui.utils
 
-import com.willfp.eco.core.items.CustomItem
-import com.willfp.eco.core.items.Items
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemStack
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.CustomItem
+import wiki.ecohub.game.item.Items
 
 class DisplaySlotsTest {
 
@@ -18,7 +18,7 @@ class DisplaySlotsTest {
     private val flawed: ItemStack = mockk()
 
     private fun custom(id: String): CustomItem = mockk {
-        every { key } returns NamespacedKey("ecoitems", id)
+        every { getKey() } returns NamespacedKey("ecoitems", id)
     }
 
     @BeforeEach

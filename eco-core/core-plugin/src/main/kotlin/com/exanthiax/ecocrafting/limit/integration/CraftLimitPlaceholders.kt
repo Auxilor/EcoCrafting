@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.limit.integration
 
-import com.willfp.eco.core.placeholder.PlayerDynamicPlaceholder
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.limit.model.remainingUnder
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
+import wiki.ecohub.ui.placeholder.type.PlayerDynamicPlaceholder
 import java.util.regex.Pattern
 
 enum class LimitStat(val suffix: String) {

@@ -2,8 +2,6 @@ package com.exanthiax.ecocrafting.crafting.service
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.isOwnedHere
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -20,6 +18,8 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class BlockOwnerService(private val plugin: EcoCraftingPlugin) : Listener {
 

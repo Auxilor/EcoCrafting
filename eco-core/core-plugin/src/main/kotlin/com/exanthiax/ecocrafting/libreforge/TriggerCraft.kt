@@ -1,9 +1,5 @@
 package com.exanthiax.ecocrafting.libreforge
 
-import com.willfp.libreforge.toDispatcher
-import com.willfp.libreforge.triggers.Trigger
-import com.willfp.libreforge.triggers.TriggerData
-import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -14,6 +10,10 @@ import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.rules.trigger.Trigger
+import wiki.ecohub.rules.trigger.TriggerData
+import wiki.ecohub.rules.trigger.TriggerParameter
 import java.util.Collections
 import java.util.WeakHashMap
 

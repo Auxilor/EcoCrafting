@@ -1,11 +1,11 @@
 package com.exanthiax.ecocrafting.recipe.model
 
-import com.willfp.libreforge.conditions.ConditionList
 import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import wiki.ecohub.rules.condition.ConditionList
 
 class EcoCraftingMetaLimitTest {
 

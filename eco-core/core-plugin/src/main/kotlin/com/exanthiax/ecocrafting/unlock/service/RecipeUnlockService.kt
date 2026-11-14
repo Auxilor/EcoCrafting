@@ -1,9 +1,5 @@
 package com.exanthiax.ecocrafting.unlock.service
 
-import com.willfp.eco.core.data.profile
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.toDispatcher
-import com.willfp.libreforge.triggers.TriggerData
 import com.exanthiax.ecocrafting.api.unlock.UnlockManager
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
 import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
@@ -12,6 +8,10 @@ import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import wiki.ecohub.game.entity.player.profile
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
+import wiki.ecohub.rules.trigger.TriggerData
 
 class RecipeUnlockService(
     private val dataKeys: PlayerDataKeys,
