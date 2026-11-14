@@ -32,7 +32,10 @@ class TradeMerchantFactory(
 
         if (eligible.isEmpty()) return false
 
-        val merchant = Bukkit.createMerchant()
+        val title = plugin.configYml.getString("trade-gui.title").formatEco()
+
+        // Titled here as well as on the view: before 1.21.4 the merchant's own title is shown.
+        val merchant = Bukkit.createMerchant(title)
         merchant.recipes = eligible.map { it.second }
 
         // Registered before opening: the click handler resolves trades through the session, and
@@ -43,7 +46,7 @@ class TradeMerchantFactory(
         // its title as a String on Spigot and a Component on Paper, so calling it here would tie
         // the plugin to whichever one we compiled against.
         ViewBuilders.merchant()
-            .title(plugin.configYml.getString("trade-gui.title").formatEco())
+            .title(title)
             .merchant(merchant)
             .open(player)
         return true
