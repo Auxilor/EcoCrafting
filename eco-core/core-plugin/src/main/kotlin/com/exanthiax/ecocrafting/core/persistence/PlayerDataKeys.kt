@@ -1,8 +1,8 @@
 package com.exanthiax.ecocrafting.core.persistence
 
-import com.willfp.eco.core.data.keys.PersistentDataKey
-import com.willfp.eco.core.data.keys.PersistentDataKeyType
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
+import wiki.ecohub.data.PersistentDataKey
+import wiki.ecohub.data.PersistentDataKeyType
 
 class PlayerDataKeys(plugin: EcoCraftingPlugin) {
     val unlockedRecipes = PersistentDataKey(

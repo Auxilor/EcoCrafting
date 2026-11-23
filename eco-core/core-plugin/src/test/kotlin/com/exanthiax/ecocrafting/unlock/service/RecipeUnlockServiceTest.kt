@@ -6,9 +6,6 @@ import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
-import com.willfp.libreforge.LibreforgeSpigotPlugin
-import com.willfp.libreforge.conditions.ConditionBlock
-import com.willfp.libreforge.conditions.ConditionList
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -26,18 +23,18 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wiki.ecohub.rules.condition.ConditionBlock
+import wiki.ecohub.rules.condition.ConditionList
 import java.util.logging.Logger
+import wiki.ecohub.core.plugin as ecoPlugin
 
 class RecipeUnlockServiceTest {
 
     companion object {
         @JvmStatic
         @BeforeAll
-        fun seedLibreforgePlugin() {
-            Class.forName("com.willfp.libreforge.LibreforgeSpigotPluginKt").getDeclaredField("plugin").apply {
-                isAccessible = true
-                set(null, mockk<LibreforgeSpigotPlugin>(relaxed = true))
-            }
+        fun seedEcoPlugin() {
+            ecoPlugin = mockk(relaxed = true)
         }
     }
 

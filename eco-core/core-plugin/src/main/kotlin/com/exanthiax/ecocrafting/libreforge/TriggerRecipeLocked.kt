@@ -1,7 +1,7 @@
 package com.exanthiax.ecocrafting.libreforge
 
-import com.willfp.libreforge.triggers.Trigger
-import com.willfp.libreforge.triggers.TriggerParameter
+import wiki.ecohub.rules.trigger.Trigger
+import wiki.ecohub.rules.trigger.TriggerParameter
 
 object TriggerRecipeLocked : Trigger("recipe_locked") {
     override val description = "Fires when a custom recipe is locked for the player."

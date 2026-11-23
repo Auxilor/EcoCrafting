@@ -1,12 +1,12 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.NamespacedKey
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
 
 class CraftingTableRecipeSelectionTest {
 

@@ -3,9 +3,12 @@ package com.exanthiax.ecocrafting.recipe.integration
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Keyed
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import wiki.ecohub.core.plugin.startup.Prerequisite
 
 class VanillaRecipeScanner {
 
@@ -19,7 +22,7 @@ class VanillaRecipeScanner {
         val vanilla = vanillaOutputs
 
         for (category in wantsVanilla) {
-            val configuredMaterials = category.items.map { it.item.item.type }.toSet()
+            val configuredMaterials = category.items.map { it.item.getItem().type }.toSet()
             category.setVanillaItems(
                 vanilla.filter { it.type !in configuredMaterials }
             )
@@ -56,10 +59,16 @@ class VanillaRecipeScanner {
     internal fun displayNameFor(item: ItemStack): String {
         return item.itemMeta
             ?.takeIf { it.hasDisplayName() }
-            ?.displayName()
-            ?.let { PlainTextComponentSerializer.plainText().serialize(it) }
+            ?.let(::plainDisplayName)
             ?: formatMaterialName(item.type)
     }
+
+    private fun plainDisplayName(meta: ItemMeta): String? =
+        if (Prerequisite.HAS_PAPER.isMet) {
+            meta.displayName()?.let { PlainTextComponentSerializer.plainText().serialize(it) }
+        } else {
+            ChatColor.stripColor(meta.displayName)
+        }
 
     internal fun formatMaterialName(material: Material): String = formatName(material.name)
 

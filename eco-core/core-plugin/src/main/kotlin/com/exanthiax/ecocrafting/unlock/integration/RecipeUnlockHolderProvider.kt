@@ -3,14 +3,14 @@ package com.exanthiax.ecocrafting.unlock.integration
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.service.RecipeService
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
-import com.willfp.libreforge.Dispatcher
-import com.willfp.libreforge.HolderProvider
-import com.willfp.libreforge.ProvidedHolder
-import com.willfp.libreforge.SimpleProvidedHolder
-import com.willfp.libreforge.effects.EffectList
-import com.willfp.libreforge.get
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
+import wiki.ecohub.rules.effect.EffectList
+import wiki.ecohub.rules.holder.Dispatcher
+import wiki.ecohub.rules.holder.HolderProvider
+import wiki.ecohub.rules.holder.ProvidedHolder
+import wiki.ecohub.rules.holder.SimpleProvidedHolder
+import wiki.ecohub.rules.holder.get
 import java.util.concurrent.ConcurrentHashMap
 
 class RecipeUnlockHolderProvider(

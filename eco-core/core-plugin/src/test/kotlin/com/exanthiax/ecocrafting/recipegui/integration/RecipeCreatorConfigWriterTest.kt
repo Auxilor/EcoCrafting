@@ -2,13 +2,11 @@ package com.exanthiax.ecocrafting.recipegui.integration
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipegui.service.PendingRecipe
-import com.willfp.eco.core.items.Items
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.unmockkObject
-import java.io.File
 import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
@@ -16,11 +14,18 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import wiki.ecohub.game.item.Items
+import java.io.File
+import wiki.ecohub.game.item.isEmptyStack
 
 class RecipeCreatorConfigWriterTest {
 
+    init {
+        mockkStatic("wiki.ecohub.game.item.ItemStacksKt")
+    }
+
     private val item: ItemStack = mockk {
-        every { isEmpty } returns false
+        every { isEmptyStack } returns false
     }
 
     @BeforeEach
@@ -109,7 +114,7 @@ class RecipeCreatorConfigWriterTest {
 
     @Test
     fun `empty item serializes to air`() {
-        assertEquals("air", itemLookupString(mockk<ItemStack> { every { isEmpty } returns true }))
+        assertEquals("air", itemLookupString(mockk<ItemStack> { every { isEmptyStack } returns true }))
         assertEquals("air", itemLookupString(null))
     }
 }

@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.recipe.model
 
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.recipe.parts.MaterialTestableItem
-import com.willfp.eco.core.recipe.parts.TestableStack
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import wiki.ecohub.game.item.lookup.MaterialTestableItem
+import wiki.ecohub.game.item.lookup.TestableItem
+import wiki.ecohub.game.item.lookup.TestableStack
 
 data class RecipeIngredient(
     val displayItem: ItemStack,
@@ -77,4 +77,4 @@ fun TestableItem.requiredAmount(): Int = (this as? TestableStack)?.amount ?: 1
 // A TestableStack folds its size requirement into matches(), which is no use to a
 // caller that has to tell "wrong item" apart from "right item, not enough of it".
 fun TestableItem.matchesIgnoringAmount(stack: ItemStack?): Boolean =
-    (this as? TestableStack)?.handle?.matches(stack) ?: matches(stack)
+    (this as? TestableStack)?.run { handle.matches(stack) } ?: matches(stack)

@@ -1,19 +1,5 @@
 package com.exanthiax.ecocrafting.category.ui
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.gui.addCustomSlots
-import com.willfp.eco.core.gui.addPage
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.player
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.builder.ItemStackBuilder
-import com.willfp.eco.core.sound.AbstractPlayableSound
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.category.service.CategoryService
 import com.exanthiax.ecocrafting.recipe.model.RecipeSource
@@ -23,6 +9,20 @@ import com.exanthiax.ecocrafting.recipegui.ui.RecipeGUI
 import com.exanthiax.ecocrafting.recipegui.ui.utils.configSound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.builder.ItemStackBuilder
+import wiki.ecohub.game.sound.AbstractPlayableSound
+import wiki.ecohub.modules.menus.addCustomSlots
+import wiki.ecohub.modules.menus.addPage
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.menu.Menu
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.player
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot.Slot
 
 class ItemCategoryGUI(
     val config: Config,
@@ -41,7 +41,7 @@ class ItemCategoryGUI(
         val maxPages = getMaxPages(items.size, perPage).coerceAtLeast(1)
 
         val builtMenu = menu(pattern.size) {
-            title = config.getFormattedString("title")
+            setTitle(config.getFormattedString("title"))
 
             maxPages(maxPages)
             // eco's defaultPage(Int) delegates to maxPages(...) instead of setting the
@@ -85,7 +85,15 @@ class ItemCategoryGUI(
                         line.toCharArray().forEachIndexed { colIndex, character ->
                             if (character.equals('i', ignoreCase = true)) {
                                 if (itemIndex < items.size) {
-                                    setSlot(rowIndex + 1, colIndex + 1, slot(player, items[itemIndex], configSound(guiServices.plugin, "slot-click")))
+                                    setSlot(
+                                        row = rowIndex + 1,
+                                        column = colIndex + 1,
+                                        slot = slot(
+                                            player,
+                                            items[itemIndex],
+                                            configSound(guiServices.plugin, "slot-click")
+                                        )
+                                    )
                                 }
                                 itemIndex++
                             }

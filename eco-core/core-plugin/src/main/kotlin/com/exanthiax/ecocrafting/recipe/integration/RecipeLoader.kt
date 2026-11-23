@@ -1,19 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.integration
 
-import com.willfp.eco.core.FoliaSupport
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.price.ConfiguredPrice
-import com.willfp.eco.core.recipe.parts.EmptyTestableItem
-import com.willfp.eco.core.recipe.parts.GroupedTestableItems
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.exanthiax.ecocrafting.BuildConfig
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
@@ -33,16 +19,31 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.AbstractVillager
 import org.bukkit.inventory.ItemStack
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.ViolationContext
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.core.plugin.startup.FoliaSupport
+import wiki.ecohub.core.plugin.startup.Prerequisite
+import wiki.ecohub.core.price.ConfiguredPrice
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.EmptyTestableItem
+import wiki.ecohub.game.item.lookup.GroupedTestableItems
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.modules.recipe.workstation.SmeltingType as WSmeltingType
 
 class RecipeLoader(
     internal val plugin: EcoCraftingPlugin,
     internal val recipeService: RecipeService,
     private val capEnforcer: RecipeCapEnforcer,
     private val categoryLoader: CategoryLoader
-) : ConfigCategory("recipe", "recipes") {
+) : NativeConfigCategory("recipes", "recipe") {
 
-    override fun clear(plugin: LibreforgePlugin) {
+    override fun clear(plugin: EcoPlugin) {
         // Only ours: the workstation registry is shared with every other plugin that
         // uses it, so clearing all of it would drop their recipes until they happened
         // to reload too.
@@ -51,7 +52,7 @@ class RecipeLoader(
         capEnforcer.clear()
     }
 
-    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+    override fun acceptConfig(plugin: EcoPlugin, id: String, config: Config) {
         if (config.has("enabled") && !config.getBool("enabled")) return
         val type = config.getString("type").lowercase()
 
@@ -83,7 +84,7 @@ class RecipeLoader(
         }
     }
 
-    override fun afterReload(plugin: LibreforgePlugin) {
+    override fun afterReload(plugin: EcoPlugin) {
         if (plugin.configYml.getBool("villager-scan-on-reload")) scanVillagers()
         recipeService.allKeys().forEach { key ->
             val categoryId = recipeService.getMeta(key)?.categoryId ?: return@forEach
@@ -118,14 +119,18 @@ class RecipeLoader(
     internal fun key(id: String) = NamespacedKey("ecocrafting", id.lowercase())
 
     internal fun parseOutputItem(config: Config): ItemStack =
-        withLore(Items.lookup(config.getString("output")).item, config.getFormattedStrings("lore"))
+        withLore(Items.lookup(config.getString("output")).getItem(), config.getFormattedStrings("lore"))
 
     internal fun withLore(item: ItemStack, lore: List<String>): ItemStack {
         if (lore.isNotEmpty()) {
             val meta = item.itemMeta ?: return item
-            meta.lore(lore.map {
-                LegacyComponentSerializer.legacySection().deserialize(it)
-            })
+            if (Prerequisite.HAS_PAPER.isMet) {
+                meta.lore(lore.map {
+                    LegacyComponentSerializer.legacySection().deserialize(it)
+                })
+            } else {
+                meta.lore = lore
+            }
             item.itemMeta = meta
         }
         return item
@@ -137,10 +142,10 @@ class RecipeLoader(
         val testable = Items.lookup(lookup)
         if (testable is EmptyTestableItem)
             error("Cannot resolve item: $lookup")
-        val displayItems = if (testable is GroupedTestableItems && testable.children.isNotEmpty())
-            testable.children.map { it.item.clone() }
+        val displayItems = if (testable is GroupedTestableItems && testable.getChildren().isNotEmpty())
+            testable.getChildren().map { it.getItem().clone() }
         else
-            listOf(testable.item.clone())
+            listOf(testable.getItem().clone())
         return RecipeIngredient(
             displayItem = displayItems.first(),
             matcher = IngredientMatcher.EcoPart(testable),

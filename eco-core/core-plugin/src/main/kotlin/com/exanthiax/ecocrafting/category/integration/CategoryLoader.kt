@@ -1,14 +1,14 @@
 package com.exanthiax.ecocrafting.category.integration
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.RegistrableCategory
 import com.exanthiax.ecocrafting.category.model.CategoryStack
 import com.exanthiax.ecocrafting.category.model.RecipeCategory
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
 import com.exanthiax.ecocrafting.recipe.service.RecipeResolverService
-import com.willfp.eco.core.scheduling.EcoTask
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.category.RegistrableCategory
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.core.scheduler.EcoTask
+import wiki.ecohub.game.item.Items
 
 class CategoryLoader(
     private val resolverService: RecipeResolverService,
@@ -16,12 +16,12 @@ class CategoryLoader(
 ) : RegistrableCategory<RecipeCategory>("category", "categories") {
     private var pendingPostReload: EcoTask? = null
 
-    override fun clear(plugin: LibreforgePlugin) {
+    override fun clear(plugin: EcoPlugin) {
         registry.clear()
         resolverService.clearCache()
     }
 
-    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+    override fun acceptConfig(plugin: EcoPlugin, id: String, config: Config) {
         if (getByID(id) != null) {
             plugin.logger.severe("Duplicate category id '$id' - ignoring the duplicate; category ids must be unique.")
             return
@@ -29,7 +29,7 @@ class CategoryLoader(
         registry.register(RecipeCategory(id, config))
     }
 
-    override fun afterReload(plugin: LibreforgePlugin) {
+    override fun afterReload(plugin: EcoPlugin) {
         vanillaRecipeScanner.populate(values().toList())
         pendingPostReload?.cancel()
         pendingPostReload = plugin.scheduler.global().run {
@@ -39,11 +39,14 @@ class CategoryLoader(
         }
     }
 
-    private fun validateCategories(plugin: LibreforgePlugin, categories: List<RecipeCategory>) {
+    private fun validateCategories(plugin: EcoPlugin, categories: List<RecipeCategory>) {
         for (category in categories) {
             for (stack in category.items) {
-                if (resolverService.resolve(stack.item.item) == null && stack.isListedDirectly()) {
-                    plugin.logger.warning("Invalid item '${stack.item.item.type.name}' in category '${category.id}': no supported recipe")
+                if (resolverService.resolve(stack.item.getItem()) == null && stack.isListedDirectly()) {
+                    plugin.logger.warning(
+                        "Invalid item '${stack.item.getItem().type.name}' in category '${category.id}': " +
+                            "no supported recipe"
+                    )
                 }
             }
             for (subId in category.categories) {
@@ -57,5 +60,5 @@ class CategoryLoader(
     private fun CategoryStack.isListedDirectly(): Boolean =
         parent.config.getSubsections("items")
             .map { it.getString("item") }
-            .any { !it.startsWith("#") && Items.lookup(it).matches(item.item) }
+            .any { !it.startsWith("#") && Items.lookup(it).matches(item.getItem()) }
 }

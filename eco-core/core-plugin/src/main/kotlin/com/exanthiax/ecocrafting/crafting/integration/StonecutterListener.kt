@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
@@ -20,6 +18,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import wiki.ecohub.modules.recipe.workstation.StonecuttingRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 class StonecutterListener(
     private val plugin: EcoCraftingPlugin,

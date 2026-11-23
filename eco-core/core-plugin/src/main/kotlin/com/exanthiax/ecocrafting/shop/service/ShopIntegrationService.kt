@@ -1,11 +1,11 @@
 package com.exanthiax.ecocrafting.shop.service
 
+import com.exanthiax.ecocrafting.BuildConfig
+import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.willfp.ecoshop.shop.BuyStatus
 import com.willfp.ecoshop.shop.BuyType
 import com.willfp.ecoshop.shop.ShopItem
 import com.willfp.ecoshop.shop.shopItem
-import com.exanthiax.ecocrafting.BuildConfig
-import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

@@ -1,19 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.integration
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.recipe.recipes.ShapedCraftingRecipe
-import com.willfp.eco.core.recipe.recipes.ShapelessCraftingRecipe
-import com.willfp.eco.core.recipe.workstation.AnvilRecipe
-import com.willfp.eco.core.recipe.workstation.BrewingRecipe
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
-import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
-import com.willfp.eco.core.recipe.workstation.SmeltingRecipe
-import com.willfp.eco.core.recipe.workstation.SmithingRecipe
-import com.willfp.eco.core.recipe.workstation.StonecuttingRecipe
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.recipe.model.IngredientMatcher
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
 import com.exanthiax.ecocrafting.recipe.model.RecipeIngredient
@@ -22,7 +8,21 @@ import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.inventory.ItemStack
-import com.willfp.eco.core.recipe.workstation.SmeltingType as WSmeltingType
+import wiki.ecohub.config.Config
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.TestableItem
+import wiki.ecohub.modules.recipe.crafting.ShapedCraftingRecipe
+import wiki.ecohub.modules.recipe.crafting.ShapelessCraftingRecipe
+import wiki.ecohub.modules.recipe.workstation.AnvilRecipe
+import wiki.ecohub.modules.recipe.workstation.BrewingRecipe
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
+import wiki.ecohub.modules.recipe.workstation.GrindstoneRecipe
+import wiki.ecohub.modules.recipe.workstation.SmeltingRecipe
+import wiki.ecohub.modules.recipe.workstation.SmithingRecipe
+import wiki.ecohub.modules.recipe.workstation.StonecuttingRecipe
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.modules.recipe.workstation.SmeltingType as WSmeltingType
 
 // Per-workstation-type config parsing, split out of RecipeLoader itself (which owns the
 // shared parse*/register* helpers these call into) purely to keep each file under the
@@ -150,7 +150,7 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
             return@forEachIndexed
         }
         val outItem = withLore(
-            Items.lookup(outputConfig.getStringOrNull("item") ?: config.getString("output")).item,
+            Items.lookup(outputConfig.getStringOrNull("item") ?: config.getString("output")).getItem(),
             (if (outputConfig.has("lore")) outputConfig else config).getFormattedStrings("lore")
         )
         val recipe = StonecuttingRecipe.builder(outKey, outItem, input.matcher.toTestableItem())
@@ -168,7 +168,12 @@ internal fun RecipeLoader.loadStonecutter(id: String, config: Config) {
 internal fun RecipeLoader.loadBrewing(id: String, config: Config) {
     val base = parseIngredient(config.getStringOrNull("base") ?: "")
     val ingredient = parseIngredient(config.getString("ingredient"))
-    val recipe = BrewingRecipe.builder(key(id), parseOutputItem(config), base.matcher.toTestableItem(), ingredient.matcher.toTestableItem())
+    val recipe = BrewingRecipe.builder(
+        key = key(id),
+        output = parseOutputItem(config),
+        base = base.matcher.toTestableItem(),
+        ingredient = ingredient.matcher.toTestableItem()
+    )
         .brewTime(config.getIntOrNull("brew-time") ?: 400)
         .also { builder -> config.permissionOrNull()?.let { builder.permission(it) } }
         .build()
@@ -208,7 +213,10 @@ internal fun RecipeLoader.loadVillager(id: String, config: Config) {
         .input1Display(input1.displayItem)
         .input2(input2?.matcher?.toTestableItem())
         .input2Display(input2?.displayItem)
-        .profession(parseVillagerProfession(config.getStringOrNull("profession"), Registry.VILLAGER_PROFESSION))
+        .profession(
+            parseVillagerProfession(config.getStringOrNull("profession"), Registry.VILLAGER_PROFESSION)
+                ?.run { key.toString() }
+        )
         .minLevel(config.getIntOrNull("min-level") ?: 0)
         .chance(parseVillagerChance(config.getStringOrNull("chance")))
         .wanderingTrader(config.getBool("wandering-trader"))

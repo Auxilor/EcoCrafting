@@ -1,34 +1,58 @@
 package com.exanthiax.ecocrafting.recipegui.ui
 
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
-import io.papermc.paper.event.player.AsyncChatEvent
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import wiki.ecohub.core.plugin.startup.Prerequisite
 
 class RecipeCreatorChatListener(
     private val plugin: EcoCraftingPlugin,
     private val recipeCreatorGUI: RecipeCreatorGUI
 ) : Listener {
 
-    @EventHandler
-    fun onChat(event: AsyncChatEvent) {
-        val handler = recipeCreatorGUI.awaitingInput.remove(event.player.uniqueId) ?: return
-        event.isCancelled = true
-        val message = PlainTextComponentSerializer.plainText().serialize(event.message())
+    /**
+     * Takes [message] as the answer [player] is being asked for.
+     *
+     * @return If the message was an answer, so the chat message should be cancelled.
+     */
+    fun handleInput(player: Player, message: String): Boolean {
+        val handler = recipeCreatorGUI.awaitingInput.remove(player.uniqueId) ?: return false
 
-        if (message.trim().equals("cancel", ignoreCase = true)) {
-            plugin.scheduler.on(event.player).run { recipeCreatorGUI.cancelSave(event.player) }
-            return
+        plugin.scheduler.on(player).run {
+            if (message.trim().equals("cancel", ignoreCase = true)) {
+                recipeCreatorGUI.cancelSave(player)
+            } else {
+                handler(message)
+            }
         }
-
-        plugin.scheduler.on(event.player).run { handler(message) }
+        return true
     }
 
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         recipeCreatorGUI.awaitingInput.remove(event.player.uniqueId)
         recipeCreatorGUI.pendingConfirm.remove(event.player.uniqueId)
+    }
+
+    /** The chat listener for this platform, feeding answers to [handleInput]. */
+    fun chatListener(): Listener =
+        if (Prerequisite.HAS_PAPER.isMet) {
+            PaperRecipeCreatorChatListener(this)
+        } else {
+            SpigotRecipeCreatorChatListener(this)
+        }
+}
+
+class SpigotRecipeCreatorChatListener(
+    private val input: RecipeCreatorChatListener
+) : Listener {
+    @EventHandler
+    fun onChat(event: AsyncPlayerChatEvent) {
+        if (input.handleInput(event.player, event.message)) {
+            event.isCancelled = true
+        }
     }
 }

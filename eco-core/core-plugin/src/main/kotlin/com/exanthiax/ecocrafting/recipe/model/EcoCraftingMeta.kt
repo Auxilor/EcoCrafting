@@ -1,10 +1,10 @@
 package com.exanthiax.ecocrafting.recipe.model
 
-import com.willfp.eco.core.price.ConfiguredPrice
-import com.willfp.libreforge.conditions.ConditionList
-import com.willfp.libreforge.effects.Chain
 import com.exanthiax.ecocrafting.limit.model.UNLIMITED
 import org.bukkit.NamespacedKey
+import wiki.ecohub.core.price.ConfiguredPrice
+import wiki.ecohub.rules.chain.Chain
+import wiki.ecohub.rules.condition.ConditionList
 
 data class EcoCraftingMeta(
     // Omitted in config means the recipe hands over its result: only an explicit

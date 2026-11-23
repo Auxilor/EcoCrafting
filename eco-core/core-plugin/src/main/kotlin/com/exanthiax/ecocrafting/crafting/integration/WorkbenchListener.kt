@@ -1,11 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.AnvilRecipe
-import com.willfp.eco.core.recipe.workstation.GrindstoneRecipe
-import com.willfp.eco.core.recipe.workstation.VillagerRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
-import com.willfp.eco.util.formatEco
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.event.CustomWorkbenchCraftEvent
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
@@ -27,6 +21,12 @@ import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.MerchantInventory
+import wiki.ecohub.modules.recipe.workstation.AnvilRecipe
+import wiki.ecohub.modules.recipe.workstation.GrindstoneRecipe
+import wiki.ecohub.modules.recipe.workstation.VillagerRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
+import wiki.ecohub.ui.text.formatEco
 
 internal enum class MerchantClick { IGNORE, BLOCK_SHIFT, PROCEED }
 

@@ -1,10 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.service
 
-import com.willfp.eco.core.price.ConfiguredPrice
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.toDispatcher
-import com.willfp.libreforge.triggers.TriggerData
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
@@ -14,6 +9,11 @@ import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.core.price.ConfiguredPrice
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
+import wiki.ecohub.rules.trigger.TriggerData
 
 fun fireCraftEffects(
     player: Player,

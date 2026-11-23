@@ -1,7 +1,5 @@
 package com.exanthiax.ecocrafting.crafting.integration
 
-import com.willfp.eco.core.recipe.workstation.CrafterRecipe
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipes
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.crafting.service.checkCraftingConditions
@@ -14,6 +12,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.CrafterCraftEvent
+import wiki.ecohub.modules.recipe.workstation.CrafterRecipe
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipes
 
 class CrafterBlockListener(
     private val plugin: EcoCraftingPlugin,

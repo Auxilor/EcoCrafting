@@ -1,40 +1,27 @@
 package com.exanthiax.ecocrafting.commands
 
-import com.willfp.eco.core.command.impl.Subcommand
 import com.exanthiax.ecocrafting.BuildConfig
-import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipegui.ui.RecipeCreatorGUI
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import wiki.ecohub.core.command.CommandBuilder
 
-class CommandCreate(
-    plugin: EcoCraftingPlugin,
-    private val recipeCreatorGUI: RecipeCreatorGUI
-) : Subcommand(
-    plugin,
-    "create",
-    "ecocrafting.admin.create",
-    false
+internal fun CommandBuilder<CommandSender>.createCommand(recipeCreatorGUI: RecipeCreatorGUI) = subcommand(
+    name = "create",
+    permission = "ecocrafting.admin.create"
 ) {
-    override fun onExecute(sender: CommandSender, args: List<String>) {
-        PremiumGate.builderBlockMessage(BuildConfig.FREE_VERSION)?.let {
-            sender.sendMessage(it)
-            return
-        }
+    executes {
+        val blocked = PremiumGate.builderBlockMessage(BuildConfig.FREE_VERSION)
+        val player = sender as? Player
 
-        val player = sender as? Player ?: run {
-            sender.sendMessage("Players only.")
-            return
+        when {
+            blocked != null -> sender.sendMessage(blocked)
+            player == null -> sender.sendMessage("Players only.")
+            else -> recipeCreatorGUI.startWizard(player, args.getOrNull(0))
         }
-
-        recipeCreatorGUI.startWizard(player, args.getOrNull(0))
     }
 
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        if (args.size > 1) {
-            return emptyList()
-        }
-
-        return recipeCreatorGUI.stationTypeKeys
+    completes {
+        if (args.size > 1) emptyList() else recipeCreatorGUI.stationTypeKeys
     }
 }

@@ -1,32 +1,20 @@
 package com.exanthiax.ecocrafting
 
-import com.willfp.eco.core.bstats.EcoMetricsChart
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.core.config.config
-import com.willfp.libreforge.ViolationContext
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.filters.Filters
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
-import com.willfp.libreforge.registerHolderProvider
-import com.willfp.libreforge.triggers.Triggers
 import com.exanthiax.ecocrafting.api.EcoCraftingApi
 import com.exanthiax.ecocrafting.api.EcoCraftingApiImpl
 import com.exanthiax.ecocrafting.category.integration.CategoriesManagerImpl
 import com.exanthiax.ecocrafting.category.integration.CategoryLoader
 import com.exanthiax.ecocrafting.category.service.CategoryService
-import com.exanthiax.ecocrafting.commands.CommandCancel
-import com.exanthiax.ecocrafting.commands.CommandConfirm
-import com.exanthiax.ecocrafting.commands.CommandCreate
-import com.exanthiax.ecocrafting.commands.CommandEcoCrafting
-import com.exanthiax.ecocrafting.commands.CommandEdit
-import com.exanthiax.ecocrafting.commands.CommandLock
-import com.exanthiax.ecocrafting.commands.CommandOpen
-import com.exanthiax.ecocrafting.commands.CommandOpenTrade
-import com.exanthiax.ecocrafting.commands.CommandReload
-import com.exanthiax.ecocrafting.commands.CommandResetLimits
-import com.exanthiax.ecocrafting.commands.CommandUnlock
+import com.exanthiax.ecocrafting.commands.cancelCommand
+import com.exanthiax.ecocrafting.commands.confirmCommand
+import com.exanthiax.ecocrafting.commands.createCommand
+import com.exanthiax.ecocrafting.commands.ecoCraftingCommand
+import com.exanthiax.ecocrafting.commands.editCommand
+import com.exanthiax.ecocrafting.commands.openCommand
+import com.exanthiax.ecocrafting.commands.openTradeCommand
+import com.exanthiax.ecocrafting.commands.recipeAccessCommand
+import com.exanthiax.ecocrafting.commands.reloadCommand
+import com.exanthiax.ecocrafting.commands.resetLimitsCommand
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
 import com.exanthiax.ecocrafting.crafting.integration.BrewingListener
 import com.exanthiax.ecocrafting.crafting.integration.CrafterBlockListener
@@ -35,11 +23,19 @@ import com.exanthiax.ecocrafting.crafting.integration.SmeltingListener
 import com.exanthiax.ecocrafting.crafting.integration.SmithingListener
 import com.exanthiax.ecocrafting.crafting.integration.StonecutterListener
 import com.exanthiax.ecocrafting.crafting.integration.WorkbenchListener
+import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.libreforge.ConditionHasCraftsRemaining
+import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
+import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
+import com.exanthiax.ecocrafting.libreforge.EffectRecipeUnlockCheck
+import com.exanthiax.ecocrafting.libreforge.EffectUnlockRecipe
+import com.exanthiax.ecocrafting.libreforge.FilterRecipe
+import com.exanthiax.ecocrafting.libreforge.FilterWorkstation
 import com.exanthiax.ecocrafting.libreforge.TriggerCraft
+import com.exanthiax.ecocrafting.libreforge.TriggerRecipeLocked
+import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.limit.integration.registerCraftLimitPlaceholders
 import com.exanthiax.ecocrafting.limit.service.CraftLimitService
-import com.exanthiax.ecocrafting.crafting.service.BlockOwnerService
 import com.exanthiax.ecocrafting.recipe.integration.RecipeCapEnforcer
 import com.exanthiax.ecocrafting.recipe.integration.RecipeLoader
 import com.exanthiax.ecocrafting.recipe.integration.VanillaRecipeScanner
@@ -53,19 +49,22 @@ import com.exanthiax.ecocrafting.trade.service.TradeMerchantFactory
 import com.exanthiax.ecocrafting.trade.service.TradeSessionService
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockHolderProvider
 import com.exanthiax.ecocrafting.unlock.integration.RecipeUnlockListener
-import com.exanthiax.ecocrafting.libreforge.ConditionHasUnlockedRecipe
-import com.exanthiax.ecocrafting.libreforge.EffectLockRecipe
-import com.exanthiax.ecocrafting.libreforge.EffectRecipeUnlockCheck
-import com.exanthiax.ecocrafting.libreforge.EffectUnlockRecipe
-import com.exanthiax.ecocrafting.libreforge.FilterRecipe
-import com.exanthiax.ecocrafting.libreforge.FilterWorkstation
-import com.exanthiax.ecocrafting.libreforge.TriggerRecipeLocked
-import com.exanthiax.ecocrafting.libreforge.TriggerRecipeUnlocked
 import com.exanthiax.ecocrafting.unlock.service.RecipeUnlockService
 import org.bukkit.event.Listener
 import org.bukkit.plugin.ServicePriority
+import wiki.ecohub.config.ViolationContext
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.config.config
+import wiki.ecohub.core.command.EcoCommand
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.provider.metrics.EcoMetricsChart
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.rules.filter.Filters
+import wiki.ecohub.rules.holder.registerHolderProvider
+import wiki.ecohub.rules.trigger.Triggers
 
-class EcoCraftingPlugin : LibreforgePlugin() {
+class EcoCraftingPlugin : EcoPlugin() {
     private val dataKeys = PlayerDataKeys(this)
 
     private val recipeService = RecipeService(this)
@@ -129,6 +128,7 @@ class EcoCraftingPlugin : LibreforgePlugin() {
         Filters.register(FilterWorkstation)
         Filters.register(FilterRecipe)
 
+        brewingListener.registerBrewHook()
         shopIntegrationService.init()
         registerCraftLimitPlaceholders(this, recipeService, craftLimitService)
         unlockHolderProvider = RecipeUnlockHolderProvider(this, recipeService, unlockService) {
@@ -155,33 +155,31 @@ class EcoCraftingPlugin : LibreforgePlugin() {
     override fun handleDisable() {
     }
 
-    override fun loadConfigCategories(): List<ConfigCategory> {
+    override fun loadConfigCategories(): List<NativeConfigCategory> {
         return listOf(
             categoryLoader,
             recipeLoader
         )
     }
 
-    override fun loadPluginCommands(): List<PluginCommand> {
+    override fun loadPluginCommands(): List<EcoCommand> {
         return listOf(
-            CommandEcoCrafting(
-                this,
-                categoryLoader,
-                categoryService,
-                guiServices,
-                listOf(
-                    CommandReload(this, recipeService),
-                    CommandOpen(this, categoryLoader, categoryService, guiServices),
-                    CommandOpenTrade(this, recipeService, tradeMerchantFactory),
-                    CommandCreate(this, recipeCreatorGUI),
-                    CommandEdit(this, recipeCreatorGUI),
-                    CommandUnlock(this, recipeService, unlockService),
-                    CommandLock(this, recipeService, unlockService),
-                    CommandResetLimits(this, recipeService, craftLimitService),
-                    CommandConfirm(this, recipeCreatorGUI),
-                    CommandCancel(this, recipeCreatorGUI)
-                )
-            )
+            ecoCraftingCommand(categoryLoader, categoryService, guiServices) {
+                reloadCommand(recipeService)
+                openCommand(categoryLoader, categoryService, guiServices)
+                openTradeCommand(recipeService, tradeMerchantFactory)
+                createCommand(recipeCreatorGUI)
+                editCommand(recipeCreatorGUI)
+                recipeAccessCommand(name = "unlock", done = "Unlocked", recipeService = recipeService) { player, key ->
+                    unlockService.unlock(player, key)
+                }
+                recipeAccessCommand(name = "lock", done = "Locked", recipeService = recipeService) { player, key ->
+                    unlockService.lock(player, key)
+                }
+                resetLimitsCommand(recipeService, craftLimitService)
+                confirmCommand(recipeCreatorGUI)
+                cancelCommand(recipeCreatorGUI)
+            }
         )
     }
 
@@ -197,7 +195,8 @@ class EcoCraftingPlugin : LibreforgePlugin() {
             brewingListener,
             workbenchListener,
             tradeSessionService,
-            recipeCreatorChatListener
+            recipeCreatorChatListener,
+            recipeCreatorChatListener.chatListener()
         )
     }
 

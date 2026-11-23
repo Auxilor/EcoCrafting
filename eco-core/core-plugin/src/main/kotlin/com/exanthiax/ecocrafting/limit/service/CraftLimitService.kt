@@ -1,6 +1,5 @@
 package com.exanthiax.ecocrafting.limit.service
 
-import com.willfp.eco.core.data.profile
 import com.exanthiax.ecocrafting.api.limit.LimitManager
 import com.exanthiax.ecocrafting.core.persistence.PlayerDataKeys
 import com.exanthiax.ecocrafting.limit.model.ALL_RECIPES
@@ -17,6 +16,8 @@ import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import wiki.ecohub.core.platform.profile
+import wiki.ecohub.game.entity.player.profile
 
 const val LIMIT_BYPASS_PERMISSION = "ecocrafting.limit.bypass"
 

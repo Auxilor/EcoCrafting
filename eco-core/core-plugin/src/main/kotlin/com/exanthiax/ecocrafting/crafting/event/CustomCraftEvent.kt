@@ -1,11 +1,11 @@
 package com.exanthiax.ecocrafting.crafting.event
 
-import com.willfp.eco.core.recipe.workstation.WorkstationRecipe
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.modules.recipe.workstation.WorkstationRecipe
 
 class CustomCraftEvent(
     player: Player,

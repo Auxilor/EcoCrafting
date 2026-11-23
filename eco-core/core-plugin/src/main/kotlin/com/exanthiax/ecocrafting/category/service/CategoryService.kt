@@ -36,7 +36,7 @@ class CategoryService(
     }
 
     private fun filterConfiguredItem(player: Player, stack: CategoryStack, filterNoRecipe: Boolean): ItemStack? {
-        val itemStack = stack.item.item
+        val itemStack = stack.item.getItem()
         if (filterNoRecipe && !resolverService.hasAnyRecipe(itemStack)) return null
         return if (canCraft(player, itemStack)) {
             itemStack

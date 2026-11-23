@@ -1,6 +1,5 @@
 package com.exanthiax.ecocrafting.recipe.service
 
-import com.willfp.libreforge.conditions.ConditionList
 import com.exanthiax.ecocrafting.EcoCraftingPlugin
 import com.exanthiax.ecocrafting.recipe.model.EcoCraftingMeta
 import com.exanthiax.ecocrafting.recipe.model.RecipeDisplayType
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import wiki.ecohub.rules.condition.ConditionList
 import java.util.logging.Logger
 
 class RecipeServiceTest {
